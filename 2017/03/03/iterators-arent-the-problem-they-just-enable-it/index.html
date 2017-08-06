@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Iterators aren’t the problem, they just enable it &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Iterators aren’t the problem, they just enable it</h1>
+  <span class="post-date">03 Mar 2017
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>The post presenting the <a href="/2017/02/22/iterators-a-failure-case/">failure case for iterators</a> contrasted this simple Python list comprehension:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+</code></pre>
+</div>
+
+<p>with its C++ equivalent using the STL:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">a</span> <span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">};</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">t1</span> <span class="p">{};</span>
+<span class="n">copy_if</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">a</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">back_inserter</span><span class="p">(</span><span class="n">t1</span><span class="p">),</span>
+              <span class="p">[](</span><span class="k">auto</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="p">});</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">res</span> <span class="p">{};</span>
+<span class="n">transform</span> <span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">t1</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">back_inserter</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
+               <span class="p">[](</span><span class="k">auto</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span> <span class="o">*</span> <span class="n">i</span><span class="p">;</span> <span class="p">});</span>
+</code></pre>
+</div>
+
+<p>The list comprehension reduces the notation to the essentials of the algorithm: The source <code>a</code> and sink <code>res</code> are each mentioned once, while the code presents the transformations of an individual value <code>i</code> on its way from source to sink.</p>
+
+<p>By contrast, the STL version obscures the transformation of <code>i</code>, reducing it to the parameter of two lambda expressions. The bulk of the C++ code is concerned with the source, sink, and the intermediate result <code>t1</code>. For each step, the programmer must specify the start and end of the range, decide whether the range is immutable (<code>cbegin()/cend()</code>) or mutable (<code>begin()/end()</code>), the class of transformation (<code>copy_if</code> or <code>transform</code>), the specifics of the transformation (via lambda expressions for the filter and and the square), and the extension strategy for the sink for each transformation (in this case, a <code>back_inserter</code>). That’s a lot of details. Indeed, the actual transformations performed, so elegantly phrased in the list comprehension, are secondary in the STL version, for which the <em>traversal mechanics</em> are the primary focus.</p>
+
+<p>The classic defence of designs requiring detailed specification of the mechanics is that they permit more efficient code. Certainly the STL version permits gcc 6.2 to generate great code (see the post linked above). It is much harder to determine whether the list comprehension will <em>inevitably</em> generate less efficient code. In statically-typed languages such as Haskell, the compiler has the same type information about the source and sink as C++. In just-in-time compiled languages such as JavaScript, the compiler can generate code for the source and sink types actually encountered in program runs. In both cases, the compiler has greater flexibility in how intermediate results are stored than the C++ compiler because the intermediate representation is left entirely to the compiler rather than specified by the programmer. I wouldn’t bet against a modern compiler to generate as efficient code for the list comprehension as the C++ compiler generates for the STL version.</p>
+
+<p>Even for environments in which list comprehensions do not generate comparable code, for small lists the inefficiency is irrelevant outside tight inner loops. If a programmer can whip off simple code to transform small lists in the less-frequent sections of code, they have more time to optimize the code that genuinely slows the system.  Execution efficiency is not an absolute virtue but only a requirement for code that contributes substantively to execution time.</p>
+
+<p>The STL code is especially inefficient in terms of programmer time. Each decision requires at least momentary attention from the programmer. Each feature that the programmer is required to specify incurs a cognitive load for that decision. Some of those decisions can be subsumed into idioms—for example, always specifying <code>const_iterator</code>s (via <code>cbegin()/cend()</code>) for the source range in a <code>copy()</code> or <code>copy_if()</code> algorithm, but these idioms are highly local. For example, you must specify regular, mutable iterators (via <code>begin()/end()</code>) for the range passed to <code>generate()</code>. Idioms only mitigate the load incurred by all these decisions, they do not eliminate it.</p>
+
+<p>The decisions required of a programer writing the code are mirrored by the questions that must be answered by any programmer reading the code. Although the process is somewhat different, the result is similar: Code that specifies that many choices is harder to read than code that merely implies them.</p>
+
+<h2>The complexity arises from <em>designing around</em> iterators</h2>
+
+<p>I have framed this discussion in terms of iterators but iterators themselves are not causing the complexity. The <a href="/2017/02/21/iterators-one-success-story/">successful case</a> showed that with the right syntactic sugar, an iterator-based approach could be equivalently clear and terse as the list comprehension approach. But the syntactic sugar of ranged <code>for</code> only addresses a small set of requirements. The moment we move outside that range, we have to specify traversal rules and containers for intermediate results.</p>
+
+<p>The complexity of the STL approach arises from the very core of the STL design:  by separating containers from algorithms and linking them via the category of iterators supported by a given container, the design <em>forces</em> the programmer to consider all three parts. The designer can simplify around the edges but the core complexity remains irreducible. Iterators are a cool idea but designing collections and algorithms around them seems to inevitably make the resulting design complex to use.</p>
+
+<p>There is one particular piece of the puzzle that is complex enough to warrant its own post. I’ve alluded several times to the choice of how to actually add results to the sinks. This is a use case where C++’s insistence on explicit allocation and construction of values goes from a strength to a liability. I’ll tackle this point in the next post.</p>
+
+
+
+</div>
+
+
+
+
+    </div>
+
+  </body>
+</html>

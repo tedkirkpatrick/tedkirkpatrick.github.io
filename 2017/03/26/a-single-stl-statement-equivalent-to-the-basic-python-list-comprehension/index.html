@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      A single STL statement equivalent to the basic Python list comprehension &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">A single STL statement equivalent to the basic Python list comprehension</h1>
+  <span class="post-date">26 Mar 2017
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>In <a href="/2017/03/21/the-limits-of-list-comprehensions/">the last post</a>, I described the structure of the basic Python list comprehension</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>[expression1(var) for var in expression2 if condition(var)]
+</code></pre>
+</div>
+
+<p>and lamented that all the straightforward translations to the STL algorithms required two statements, one for the filter and one for the computation.</p>
+
+<!--more-->
+<p>These “straightforward” translations use the <a href="http://en.cppreference.com/w/cpp/algorithm/transform">std::transform()</a> algorithm, which seemingly enforces a one-to-one mapping from source to sink.  But this one-to-one mapping is not really enforced by the algorithm but instead by the insertion iterator for the sink. If the inserter would only output items that passed the filter, the basic Python list comprehension could be accomplished in a single STL <code>transform()</code>. To produce this, the filter expression, a C++ lambda, must communicate to the insertion iterator whether a value has passed the filter. The iterator would only insert passed values.</p>
+
+<p>We can use the C++ 17 <a href="http://en.cppreference.com/w/cpp/utility/optional"><code>std::optional</code></a> type (available in earlier versions of the language via <a href="http://www.boost.org/doc/libs/1_63_0/libs/optional/doc/html/index.html"><code>boost::optional</code></a>) as the link between the filter and iterator. In addition, we need a version of <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator"><code>back_insert_iterator()</code></a> that accepts an <code>optional</code> value and only performs a <code>push_back()</code> when its argument contains a value. I built one starting from <a href="http://stackoverflow.com/questions/18728257/back-emplacer-implementation-default-operator-vs-universal-reference-version">Andre Tomazo’s <code>back_emplace_iterator()</code></a> (code provided in the Appendix).</p>
+
+<p>With these tools, the list comprehension from the last post</p>
+
+<!-- highlight="2,3" -->
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lst</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">'US'</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s">'BC'</span><span class="p">,</span><span class="s">'NB'</span><span class="p">,</span><span class="s">'BC'</span><span class="p">,</span><span class="s">'US'</span><span class="p">,</span><span class="s">'NB'</span><span class="p">,</span><span class="s">'BC'</span><span class="p">,</span><span class="s">'BC'</span><span class="p">],</span><span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">)))</span>
+    <span class="k">print</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>can be written in the STL as</p>
+
+<!-- highlight="2,30,31,32,33,34,35,36,37,38,39,40" -->
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">using</span> <span class="n">ppair</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">oppair</span> <span class="o">=</span> <span class="n">optional</span><span class="o">&lt;</span><span class="n">ppair</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">plist</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ppair</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="n">ostream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="k">const</span> <span class="n">ppair</span><span class="o">&amp;</span> <span class="n">pp</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"("</span> <span class="o">&lt;&lt;</span> <span class="n">pp</span><span class="p">.</span><span class="n">first</span> <span class="o">&lt;&lt;</span> <span class="s">", "</span> <span class="o">&lt;&lt;</span> <span class="n">pp</span><span class="p">.</span><span class="n">second</span> <span class="o">&lt;&lt;</span> <span class="s">")"</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">os</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">ostream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="k">const</span> <span class="n">plist</span><span class="o">&amp;</span> <span class="n">pl</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="n">pl</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="n">pl</span><span class="p">.</span><span class="n">cbegin</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">pl</span><span class="p">.</span><span class="n">cend</span><span class="p">();</span> <span class="o">++</span><span class="n">p</span><span class="p">)</span>
+      <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">", "</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">os</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="n">plist</span> <span class="n">src</span> <span class="p">{</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"BC"</span><span class="p">,</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"NB"</span><span class="p">,</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"BC"</span><span class="p">,</span> <span class="mi">2</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"US"</span><span class="p">,</span> <span class="mi">3</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"NB"</span><span class="p">,</span> <span class="mi">4</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"BC"</span><span class="p">,</span> <span class="mi">5</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"BC"</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+  <span class="p">};</span>
+
+  <span class="n">plist</span> <span class="n">res</span> <span class="p">{};</span>
+  <span class="n">res</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">transform</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">src</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">opt_back_inserter</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
+    <span class="p">[](</span><span class="k">auto</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">==</span> <span class="n">string</span><span class="p">(</span><span class="s">"US"</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">oppair</span><span class="p">();</span>
+      <span class="k">else</span>
+        <span class="k">return</span> <span class="n">oppair</span><span class="p">(</span><span class="n">ppair</span><span class="p">{</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">});</span>
+    <span class="p">}</span> <span class="p">);</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">sort</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">res</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">res</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The second line defines a convenient alias for <code>optional</code>, <code>oppair</code>.  The lines corresponding to the list comprehension, Lines 30–40, no longer have a <code>std::copy_if()</code> statement but only a <code>std::transform()</code>. The sink for the transform is now an <code>opt_back_insert_iterator</code> and the filter lambda returns an <code>oppair</code> that indicates whether the value passed the filter.</p>
+
+<p>Once a programmer has acquired the <code>transform/opt_back_insert_iterator</code> idiom, a given use only requires them to derive the lambda combining the filter and and computation. The lambda is essentially the Python list comprehension annotated with types.</p>
+
+<p>This idiom allows you to write C++ expressions equivalent to basic list comprehensions with about the same complexity. There is a lot of boilerplate the in C++ code—the definition of <code>opt_back_insert_iterator</code>, the call to <code>res.reserve()</code>, and the elaborate <code>std::transform()</code> call—that is automatically provided by Python, but that code is the same for any use.  All the customization is contained in the lambda. The programmer does have to choose between the various <a href="three-idioms-for-appending-values-a-damaging-decision">approaches to building the result vector</a>, though the reserve/insert-back one used here is a good default.</p>
+
+<p>The method has introduced many abstractions: the algorithm, the lambda, the <code>optional</code> type, the inserter template.  Do these bloat the code or can the compiler reduce them to their basic constructs? And how does the generated code compare with the code generated from a basic <code>for</code> loop?  It depends upon the values we are passing through the expression. I will explore the generated machine code in the next post.</p>
+
+<h2>Appendix: Full code</h2>
+
+<p>The full code for the above program, including the definition of <code>opt_back_insert_iterator()</code>. Take care when using this code with Standard Library implementations, such as libstdc++ 6.2, that do not support the <code>has_type()</code> member of <code>optional</code>. In that case, the <code>operator=()</code> member function template simply requires a type that supports both a boolean conversion and a <code>value()</code> member. This may include types that are not implementations of some optional type.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="cm">/*
+  Example of passing optional values to OutputIterator 
+ */</span>
+
+<span class="cp">#include &lt;algorithm&gt;
+#include &lt;iostream&gt;
+#include &lt;iterator&gt;
+#include &lt;string&gt;
+#include &lt;tuple&gt;
+#include &lt;vector&gt;
+</span>
+<span class="cp">#include &lt;experimental/optional&gt;
+</span>
+<span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">;</span>
+
+<span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">optional</span><span class="p">;</span>
+
+<span class="cm">/*
+  Class opt_back_insert_iterator derived from Andre Tomazos's
+  back_emplace_iterator():
+  http://stackoverflow.com/questions/18728257/back-emplacer-implementation-default-operator-vs-universal-reference-version
+
+  with following changes:
+  1. operator=() expects an optional&lt;&gt; type and uses push_back() only when
+     argument contains an actual value.
+  2. Deprecated (as of C++ 17) std::iterator derivation replaced by
+     explicit using declarations.
+  3. Typedefs converted to using declarations.
+  4. "class" in template parameters replaced with "typename"
+  5. Formatting slightly modified.
+
+  libstdc++ 6.2 implementation of optional&lt;&gt; does not have "has_value()" member.
+  When full C++17 implementation is available, undefine
+  OPT_BACK_INSERT_NO_HAS_VALUE.
+ */</span>
+
+<span class="cp">#define OPT_BACK_INSERT_NO_HAS_VALUE
+</span>
+<span class="cp">#ifdef OPT_BACK_INSERT_NO_HAS_VALUE
+#define HAS_VALUE(t) (bool(t))
+#else
+#define HAS_VALUE(t) (t.has_value())
+#endif
+</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">Container</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">opt</span><span class="n">_back_insert_iterator</span>
+<span class="p">{</span>
+<span class="k">protected</span><span class="o">:</span>
+  <span class="n">Container</span><span class="o">*</span> <span class="n">container</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+  <span class="k">using</span> <span class="n">iterator_category</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">output_iterator_tag</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">value_type</span> <span class="o">=</span> <span class="kt">void</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">reference</span> <span class="o">=</span> <span class="kt">void</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">pointer</span> <span class="o">=</span> <span class="kt">void</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">difference_type</span> <span class="o">=</span> <span class="kt">void</span><span class="p">;</span>
+
+  <span class="k">using</span> <span class="n">container_type</span> <span class="o">=</span> <span class="n">Container</span><span class="p">;</span>
+
+  <span class="k">explicit</span> <span class="nf">opt_back_insert_iterator</span><span class="p">(</span><span class="n">Container</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">)</span> <span class="o">:</span> <span class="n">container</span><span class="p">(</span><span class="o">&amp;</span><span class="n">x</span><span class="p">)</span> <span class="p">{}</span>
+
+  <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+  <span class="k">using</span> <span class="n">_not_self</span> <span class="o">=</span>
+    <span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_if</span><span class="o">&lt;</span>
+      <span class="o">!</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span>
+        <span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">decay</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">type</span><span class="p">,</span>
+        <span class="n">opt_back_insert_iterator</span>
+       <span class="o">&gt;::</span><span class="n">value</span>
+    <span class="o">&gt;::</span><span class="n">type</span><span class="p">;</span>
+
+  <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="o">=</span> <span class="n">_not_self</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+    <span class="n">opt_back_insert_iterator</span><span class="o">&lt;</span><span class="n">Container</span><span class="o">&gt;&amp;</span>
+    <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">t</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">HAS_VALUE</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="n">container</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">t</span><span class="p">).</span><span class="n">value</span><span class="p">());</span>
+      <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">// ========================================
+</span>
+    <span class="n">opt_back_insert_iterator</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">*</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">opt_back_insert_iterator</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">++</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">opt_back_insert_iterator</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">++</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">Container</span><span class="o">&gt;</span>
+<span class="kr">inline</span> <span class="n">opt_back_insert_iterator</span><span class="o">&lt;</span><span class="n">Container</span><span class="o">&gt;</span>
+<span class="n">opt_back_inserter</span><span class="p">(</span> <span class="n">Container</span><span class="o">&amp;</span> <span class="n">c</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">opt_back_insert_iterator</span><span class="o">&lt;</span><span class="n">Container</span><span class="o">&gt;</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">using</span> <span class="n">ppair</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">oppair</span> <span class="o">=</span> <span class="n">optional</span><span class="o">&lt;</span><span class="n">ppair</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">plist</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ppair</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="n">ostream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="k">const</span> <span class="n">ppair</span><span class="o">&amp;</span> <span class="n">pp</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"("</span> <span class="o">&lt;&lt;</span> <span class="n">pp</span><span class="p">.</span><span class="n">first</span> <span class="o">&lt;&lt;</span> <span class="s">", "</span> <span class="o">&lt;&lt;</span> <span class="n">pp</span><span class="p">.</span><span class="n">second</span> <span class="o">&lt;&lt;</span> <span class="s">")"</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">os</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">ostream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="k">const</span> <span class="n">plist</span><span class="o">&amp;</span> <span class="n">pl</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="n">pl</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="n">pl</span><span class="p">.</span><span class="n">cbegin</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">pl</span><span class="p">.</span><span class="n">cend</span><span class="p">();</span> <span class="o">++</span><span class="n">p</span><span class="p">)</span>
+      <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">", "</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">os</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="n">plist</span> <span class="n">src</span> <span class="p">{</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"BC"</span><span class="p">,</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"NB"</span><span class="p">,</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"BC"</span><span class="p">,</span> <span class="mi">2</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"US"</span><span class="p">,</span> <span class="mi">3</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"NB"</span><span class="p">,</span> <span class="mi">4</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"BC"</span><span class="p">,</span> <span class="mi">5</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"BC"</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+  <span class="p">};</span>
+
+  <span class="n">plist</span> <span class="n">res</span> <span class="p">{};</span>
+  <span class="n">res</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">transform</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">src</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">opt_back_inserter</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
+    <span class="p">[](</span><span class="k">auto</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">==</span> <span class="n">string</span><span class="p">(</span><span class="s">"US"</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">oppair</span><span class="p">();</span>
+      <span class="k">else</span>
+        <span class="k">return</span> <span class="n">oppair</span><span class="p">(</span><span class="n">ppair</span><span class="p">{</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">});</span>
+    <span class="p">}</span> <span class="p">);</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">sort</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">res</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">res</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+
+</div>
+
+
+
+
+    </div>
+
+  </body>
+</html>

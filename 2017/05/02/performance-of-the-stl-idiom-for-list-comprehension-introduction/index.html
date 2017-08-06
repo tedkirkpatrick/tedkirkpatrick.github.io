@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Performance of the STL idiom for list comprehension: Introduction &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Performance of the STL idiom for list comprehension: Introduction</h1>
+  <span class="post-date">02 May 2017
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>In my <a href="/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/">last post</a>, I promised to consider the machine code generated from the STL idiom equivalent to a basic Python list comprehension. As I proceeded, the project expanded to a broader analysis of the idiom’s performance. I am shocked at how much effort this project took.  I have spent much of the last five weeks generating and reading the output from g++ 6.2.  So. Many. Alternatives.  In this post, I’ll describe my baseline for comparison and the criteria I’ll use. In future posts, I’ll present the results.</p>
+
+<p>All performance analyses are fraught. Conference speakers frequently argue that the gold standard is to run your actual code on your actual data, or as close to actual code and data as you can get. I think this claim is overly strong, but whatever its merits, by design this method by provides no general comparison of two approaches to writing code, only specific results for your context.</p>
+
+<p>My focus for this series has been more general, on combining the standard algorithms and lambda expressions to create C++ expressions that approximate the concision of basic Python list comprehensions. The design of the C++ language and the STL components of the Standard Library purports to support abstractions that can be compiled to efficient object code. In principle, you get the benefits of abstraction with the efficiency of more concrete, machine-specific code. The general idiom for <code>std::transform()</code> that I presented in the last post had its share of abstractions: the transform algorithm itself, the <code>std::optional</code> type, and a custom <a href="http://en.cppreference.com/w/cpp/concept/OutputIterator"><code>OutputIterator</code></a> to conditionally append values.  What price do we pay for all that abstraction? And how might we best estimate the price?</p>
+
+<p>In this series, I will address these questions using two approaches: Analysis of the generated code and microbenchmarks.  The machine code is the definitive indicator of how well the compiler was able to infer the simple structure underlying the abstractions and generate code for that essential structure. Microbenchmarks indicate how well the compiler was able to organize that structure into an operation sequence that executes efficiently on a specific microarchitecture and memory hierarchy.  There are other stories, aspects that these approaches miss, but together these approaches capture many important aspects of performance.</p>
+
+<h2>Criteria for analysis of generated machine code</h2>
+
+<p>The criteria for quality of generated code are various and potentially contradictory.  The most obvious criterion, code length, is only the most indirect approximation of execution efficiency. Execution time is heavily influenced by locality of reference, given the roughly <a href="https://people.eecs.berkeley.edu/~rcs/research/interactive_latency.html">100-fold penalty</a> of accessing main memory instead of L1 cache. Locality of reference can be improved both by tightening the range of locations accessed by the code and by making such accesses more amenable to hardware prefetch.</p>
+
+<p>Furthermore, the proper focus of the analysis is the loop code. Assuming the idiom transforms long sequences, the bulk of its time will be consumed by the loop. Accordingly, I’ll emphasize the following metrics when assessing the machine code for the <code>transform</code> loop:</p>
+
+<ul>
+<li>Number of instruction cache lines to represent the code. For loops such as the code of interest in this analysis, the lines will be cache-resident for every iteration after the first, so their access cost will be typically not be a major factor, although if one or more external routines are called mid-loop, these lines could be flushed and require reloading for the next iteration.</li>
+<li>Number of data cache lines accessed for local values. As with the instruction cache lines, for a loop these lines will typically be cache-resident for every iteration except the first and so their access cost will not contribute substantially to performance. Note: In the rest of this series, I will use "cache" to refer to the data cache and "instruction cache" in those few places I want to refer to the instruction cache.
+</li>
+<li>Number of heap allocations and deallocations, each of which will typically require access to multiple lines not currently in the cache. This count is an indirect measure of the cost of those main memory accesses.
+</li>
+<li>Number of data cache lines accessed for values on the heap. Unlike accesses to local variables, accesses to heap values have a far higher likelihood of requiring access to main memory. 
+</li>
+<li>Predictability of data accesses for hardware prefetch. This feature can partially mitigate the cost of heap accesses. If the hardware prefetch unit can load heap data into the cache before the references occur, a stall can be averted.
+</li>
+</ul>
+
+<p>I will assume that instruction and data cache lines are 64 bytes, the typical size for processors implementing the x86_64 instruction set. The number of cache lines required for a block of data or instructions ranges from <code>ceil(size/64)–ceil(size/64)+1</code>, depending upon the block’s alignment.</p>
+
+<h3>Factors contributing to these metrics</h3>
+
+<p>The metrics listed above are influenced by the algorithm, the encoding in C++, the library implementation of the data types, and the compiler code generator. My focus in these posts is to compare two C++ encodings of the same algorithm, one using the STL paradigm of standard algorithms and iterators, the other using basic C++ facilities (but still using the Standard Library string and vector classes). Thus the effects of the algorithm are held constant. The effects of the encoding in C++ and the efficiency of its generated code are direct questions in this work.</p>
+
+<p>Finally, the library implementation of the data types is orthogonal to the above.  As we will see, the choice of data type has major effects on the generated code, the pattern of cache misses, and its execution speed. In short, the question “Can the compiler generate as efficient code for the transform idiom as for the idiom using basic control structures?” depends strongly on <em>what</em> is being transformed. A source vector whose province names are represented using <code>char const *</code> null-terminated strings is easier for the optimizer than a source vector whose province names are represented using <code>std::string</code> instances as implemented by <code>libstdc++</code> 6.2, and both generate substantially different code from say, Version 4.x of the same library, which lacked a short-string optimization.</p>
+
+<p>Due to the strong effects of data type implementation, I will analyze and benchmark versions of the two idioms operating on different data types. Initially, I will use the type I presented in the earlier posts, a <code>std::pair&lt;std::string,int&gt;</code>. In future posts, I will extend the analysis to pairs of other types.</p>
+
+<h3>Implementation of <code>std::string</code> in <code>libstsdc++</code> 6.2</h3>
+
+<p>As we will see, the implementation of <code>std::string</code> has a large effect on the efficiency of the code and even of the optimizer’s ability to compile down the <code>std::transform</code> and <code>std::optional&lt;&gt;</code> abstractions. To understand the machine code and estimate its accesses to main memory, we need to understand the string implementation in the library.</p>
+
+<p>The 64-bit-address implementation of <code>std::string</code> in <code>libstdc++</code> 6.2 represents a string using a combination of a 32-byte data type handle and an optional heap block. The handle has four fields:</p>
+
+<table>
+<caption>Fields for <code>std::string</code> in <code>libstdc++</code> 6.2
+</caption>
+<thead>
+<tr>
+<td>Hex offset
+</td>
+<td>Name used in this series
+</td>
+<td>Field name in library code
+</td>
+<td>Purpose
+</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;"><code>0x0</code></td><td><code>str_buff</code></td><td><code>_M_p</code></td><td>Pointer to string body, either <code>_M_local_buf</code> or heap buffer</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>0x8</code></td><td><code>size</code></td><td><code>_M_string_length</code></td><td>String length, not counting null terminator</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>0x10</code></td><td><code>zstring</code></td><td><code>_M_local_buf</code></td><td>String body for strings &lt; 16 characters (null-terminated; union with <code>_M_allocated_capacity</code>)</td>
+</tr>
+<tr>
+<td style="text-align:right;"><code>0x10</code></td><td><code>capacity</code></td><td><code>_M_allocated_capacity</code></td><td>Capacity of heap buffer, if allocated (union with <code>_M_local_buf</code>)</td>
+</tr>
+</tbody>
+</table>
+
+<p>The handle includes an 8-byte pointer to the string body, which is null-terminated, and an 8-byte count of the characters (not including the terminating null).</p>
+
+<p>Strings of less than 16 characters are directly stored in the remaining 16 bytes of the handle. For these strings, the pointer at the head of the handle points to the first of these bytes.  Strings of 16 or more characters are stored in a heap-allocated block, which can be larger than the string.  The pointer in the handle indicates the first byte of this block, while the second half of the handle includes an 8-byte count of the heap block capacity.</p>
+
+<p>This structure is designed to minimize heap accesses and by implication cache misses. It supports a fast check for string inequality: If two strings have unequal lengths, which can be determined simply by looking at the handle, there is no need to access the heap values. If two strings are the same length and less than 16 characters, their bodies can be compared with a fast access to the string handle, but strings of equal length greater than or equal to 16 characters require access to heap values, typically requiring two or more cache lines to be loaded.</p>
+
+<p>Move constructors and move assignments are fast for all strings, even those whose bodies are on the heap, as the operation only requires copying the fields in the handle.</p>
+
+<p>Copy constructors and copy assignments are fast for <em>short</em> strings, as the operation simply copies the local values in the handles. For longer strings, however, both operations will require an expensive heap allocation, potentially incurring multiple cache line loads. Once this has completed, the actual copy operations should access the already-loaded lines.</p>
+
+<h2>The comparison baseline</h2>
+
+<p>The original idiom embedded conditionals into abstractions (the <code>std::transform</code> algorithm, the <code>std::optional</code> type, and the <code>opt_back_insert_iterator</code>) to allow a filter-and-transform algorithm to be expressed declaratively.  The baseline comparison exposes the conditionals directly as standard C++ control structures. Here is the filter-and-transform algorithm implemented using basic control structures:</p>
+
+<!-- highlight="7,8,9" -->
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">using</span> <span class="n">ppair</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">plist</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ppair</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="n">plist</span> <span class="n">res</span> <span class="p">{};</span>
+<span class="n">res</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">p</span> <span class="o">:</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">!=</span> <span class="n">us</span><span class="p">)</span>
+    <span class="n">res</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>This version does a range <code>for</code> over <code>src</code> and an <code>if</code> to select the elements to add to <code>res</code>.  The <code>for</code> index is by reference and <code>res</code> is extended using <code>vector::emplace_back()</code>, minimizing intermediate copies. The code isn’t particularly long and is arguably simpler than the transform idiom, at least if you have never seen the transform before.</p>
+
+<h2>Machine code for the basic C++</h2>
+
+<p>Here is the annotated <code>gdb</code> disassembly of the  machine code generated from <code>-O2</code> for the loop (Lines 7–9, highlighted) of the basic C++ source presented above.  The code was generated by g++ 6.2 and its associated version of <code>libstdc++</code>, compiled with only the <code>-g -O2</code> options, for 64-bit Ubuntu 16.04. I found that using <code>-O3</code> optimization increased code length substantially (40% more bytes). I will include the <code>-O3</code> in the benchmarks but use the shorter <code>-O2</code> output for annotation.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>// LOOP
+// 654 - 536 = 118 bytes = 2-3 instruction cache lines
+// All (non-terminating) branches are local to loop body
+
+// Register usage
+// %rbx == src_i
+// %r13 == res_i
+// %r14 == src.end()
+
+// Local variables
+// Range for local variables used in loop: 0x70 = 112 bytes = 2-3 data cache
+//   lines
+// (includes 0xc+0x8+0x8 = 0x1c = 28 bytes = 0-1 extra cache lines for
+//   alignment padding)
+// Local variable offsets (hexadecimal) from %rsp:
+//  c Rvalue SQUARE (value ^ 2)
+// 10 src
+//   10 begin()
+//   18 end()
+//   20 cap_end() Pointer to byte following the reserved capacity
+// 30 res
+//   30 begin()
+//   38 end()
+//   40 cap_end() Pointer to byte following the reserved capacity
+// 50 us
+//   50 str_buff
+//   58 size
+//   60 Union
+//      zstring 16-byte buffer for null-terminated strings of length &lt; 16
+//      capacity 8-byte size of heap buffer for strings of length &gt;= 16
+
+// Heap references (arrays for src and res, strings longer than 15 chars)
+// src and res: Single pass in monotonically-increasing order
+// (data prefetching should work)
+// strings: single memcpy call for every string &gt; 15 chars
+// (most likely two distinct heap locations = 2 data cache lines)
+//          When us.len &gt; 15:
+//            single memcmp call for every string of same length as us
+//            (most likely two distinct heap locations = 2 data cache lines)
+
+// rvalue SQUARE &lt;- src_i-&gt;value ^ 2
+&lt;+536&gt;:	mov    0x20(%rbx),%eax          
+&lt;+539&gt;:	imul   %eax,%eax                 %eax &lt;- src_i-&gt;value ^ 2
+&lt;+542&gt;:	cmp    %r13,0x40(%rsp)           res_i ==? res.cap_end()
+&lt;+547&gt;:	mov    %eax,0xc(%rsp)            SQUARE &lt;- value ^ 2
+&lt;+551&gt;:	je     0x4010fe &lt;main()+942&gt;     Jump if need to extend res (never taken in this idiom)
+&lt;+557&gt;:	test   %r13,%r13
+&lt;+560&gt;:	je     0x400fa6 &lt;main()+598&gt;     Jump if res has not been allocated (never taken in this idiom)
+// *res_i &lt;- (src_i-&gt;province, rvalue SQUARE)
+&lt;+562&gt;:	lea    0x10(%r13),%rax           %rax &lt;- &amp; res_i-&gt;province.zstring
+&lt;+566&gt;:	mov    %r13,%rdi                 %rdi &lt;- &amp; res_i-&gt;province
+&lt;+569&gt;:	mov    %rax,0x0(%r13)            res_i-&gt;str_buff &lt;- &amp; res_i-&gt;province.zstring
+&lt;+573&gt;:	mov    (%rbx),%rsi               %rsi &lt;- src_i-&gt;province.str_buff
+&lt;+576&gt;:	lea    (%rsi,%rbp,1),%rdx        %rdx &lt;- src_i-&gt;province.str_buff + src_i-&gt;province.size+1
+&lt;+580&gt;:	callq  std::string::_M_construct&lt;char*&gt;(char*, char*, std::forward_iterator_tag) HEAP STRING REFERENCE (for string &gt; 15 chars)
+&lt;+585&gt;:	mov    0xc(%rsp),%eax
+&lt;+589&gt;:	mov    %eax,0x20(%r13)           res_i-&gt;value &lt;- SQUARE
+
+// Increment res_i, src_i, check strings, take branches
+&lt;+593&gt;:	mov    0x38(%rsp),%r13           (Unnecessary load, %r13 already contains res_i)
+&lt;+598&gt;:	add    $0x28,%r13                res_i++  
+&lt;+602&gt;:	mov    %r13,0x38(%rsp)           res.end() &lt;- res_i
+
+&lt;+607&gt;:	add    $0x28,%rbx                src_i++
+&lt;+611&gt;:	cmp    %rbx,%r14                 src_i == src.end()
+&lt;+614&gt;:	je     0x400fe0 &lt;main()+656&gt;     At end, start sort
+&lt;+616&gt;:	mov    0x8(%rbx),%rbp            %rbp &lt;- src_i-&gt;province.size
+&lt;+620&gt;:	cmp    0x58(%rsp),%rbp           us.size ==? src_i-&gt;province.size
+&lt;+625&gt;:	jne    0x400f68 &lt;main()+536&gt;     Jump if strings different sizes
+&lt;+627&gt;:	test   %rbp,%rbp
+&lt;+630&gt;:	je     0x400faf &lt;main()+607&gt;     Go to next src_i if src_i-&gt;province.size == 0
+&lt;+632&gt;:	mov    0x50(%rsp),%rsi           %rsi &lt;- us.str_buff
+&lt;+637&gt;:	mov    (%rbx),%rdi               %rdi &lt;- src_i-&gt;province.str_buff
+&lt;+640&gt;:	mov    %rbp,%rdx                 %rdx &lt;- src_i-&gt;province.size
+&lt;+643&gt;:	callq  0x400cd0 &lt;memcmp@plt&gt;     Compare string contents HEAP STRING REFERENCE (for string &gt; 15 chars)
+&lt;+648&gt;:	test   %eax,%eax
+&lt;+650&gt;:	jne    0x400f68 &lt;main()+536&gt;     Strings not equal: Store value
+&lt;+652&gt;:	jmp    0x400faf &lt;main()+607&gt;     Strings equal: Go to next value
+</code></pre>
+</div>
+
+<p>The code is annotated by lines beginning with <code>//</code> and comments starting in Column 41, many of which require horizontal scrolling to read completely.</p>
+
+<p>The generated code is short and straightforward, requiring 2–3 lines of the instruction cache.  Other than branches to terminate the loop, all conditionals in the loop body branch to locations within the body.</p>
+
+<p>The local variables require only 112 bytes, 2–3 data cache lines. These lines are likely to be loaded during the first iteration and remain in the cache for the loop duration.</p>
+
+<p>Heap references have the greatest potential to slow down the code, as they may require access to locations that have not been recently accessed, causing last-level cache misses.</p>
+
+<p>For the two vectors, whose elements are stored in blocks on the heap, the machine code makes the fewest possible such accesses, walking through them in a single pass each, a pattern amenable to hardware prefetch.</p>
+
+<p>As described above, the <code>std::string</code> types can incur multiple cache misses, depending upon the lengths of the strings and how many long strings have the same length but different contents.  In every case, the above code makes the minimum such accesses.</p>
+
+<p>This baseline demonstrates that code for the filter-and-transform algorithm using basic C++ control structures and the Standard Library string and vector can generate straightforward code.  Indeed, most of the complexity in the above performance analysis is the complexity of the performance of the <code>std::string </code> type. This complexity stems in turn from <em>optimizations</em> in the string algorithms.  As we will see, using <code>char const *</code> types generates simpler code but it can produce more cache misses. But before we consider alternative data types, we need to explore the code produced by the <code>std::transform</code> idiom for the data types used in the baseline. Spoiler: It’s more complex.</p>
+
+
+</div>
+
+
+
+
+    </div>
+
+  </body>
+</html>

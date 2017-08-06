@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Iterators: A failure case &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Iterators: A failure case</h1>
+  <span class="post-date">22 Feb 2017
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>In my first post on iterators, I presented a case where they work well.  In this post, I’ll present a clear failure and begin discussing why the deep structure of the design leads to this failure.</p>
+
+<p>Consider the simple Python list comprehension:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+</code></pre>
+</div>
+
+<p>Given a list of numbers <code>a</code>, this constructs a numeric list <code>res</code> containing the squares of all positive values in <code>a</code>. Comparable facilities exist in <a href="https://wiki.haskell.org/List_comprehension">Haskell</a> and other languages.</p>
+
+<p>At first glance, the C++ STL has all the facilities to do this in a slightly different way:</p>
+
+<ul>
+<li><a href="http://en.cppreference.com/w/cpp/iterator">iterators</a> allow us to walk through a collection (the Python list is most closely matched by the STL <code>vector</code>)</li>
+<li><a href="http://en.cppreference.com/w/cpp/algorithm/copy">std::copy_if()</a> allows us to copy only elements that satisfy a given criterion</li>
+<li><a href="http://en.cppreference.com/w/cpp/language/lambda">lambda expressions</a> allow us to define on-the-fly callable objects to square a value and to implement the "greater-than-zero" criterion</li>
+</ul>
+
+<p>And in fact these are sufficient to replicate the functionality of the Python expression.  But Oh the syntax!</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">a</span> <span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">};</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">t1</span> <span class="p">{};</span>
+<span class="n">copy_if</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">a</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">back_inserter</span><span class="p">(</span><span class="n">t1</span><span class="p">),</span>
+              <span class="p">[](</span><span class="k">auto</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="p">});</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">res</span> <span class="p">{};</span>
+<span class="n">transform</span> <span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">t1</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">back_inserter</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
+               <span class="p">[](</span><span class="k">auto</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span> <span class="o">*</span> <span class="n">i</span><span class="p">;</span> <span class="p">});</span>
+</code></pre>
+</div>
+
+<p>There’s really no way to claim that this is close to the clarity and concision of its equivalent Python or Haskell expressions. And we’ll see in future posts that along the way, we have to make subtle decisions about storage allocation (the <a href="http://en.cppreference.com/w/cpp/iterator/back_inserter"><code>back_inserter()</code></a> adaptors are only one of three contending approaches with different tradeoffs).</p>
+
+<p>Furthermore, I wouldn’t expect anyone familiar with list comprehensions to be able to see that the C++ code implemented the same algorithm.  There’s so much stuff idiosyncratic to the STL:  <code>cbegin()/cend()</code>, <code>back_inserter()</code>, and the arcane syntax of C++ lambdas (you <em>did</em> recognize that <code>[](auto i) { .... }</code> is a lambda-expression, right?). Whereas a non-C++ programmer could likely recognize the gist of the ranged-<code>for</code> used in the last post, there is no way they could understand this algorithm without specific knowledge of C++ and the STL.</p>
+
+<p>Most distracting of all is how the STL foregrounds the intermediate results. In the Python expression, the only names are the source, the sink, and the local scalar representing an element being processed, whereas the STL code forces us to define the intermediate vector <code>t1</code> and constantly reference all three vectors (<code>a</code>, <code>t1</code>, <code>res</code>) in the expression.</p>
+
+<p>The Python code focuses on the essential algorithm: The source and sink are each mentioned once, while the rest of the expression shows how a given element is transformed along the way.  This focus is lost completely in the C++ version, with its constant restatement of the underlying vectors containing the values.</p>
+
+<p>So from a notational standpoint, this approach isn’t up to contemporary standards. The code gcc 6.2 produces, on the other hand, is clean and tight. As with the example in the last post, the optimizer can recognize that the iterators are walking through contiguous blocks of memory and generate simple indirect references. It’s all inline, as well. The only function called in the sequence is a utility to construct values in the result vector, potentially expanding its allocation as necessary. Of particular note is that both lambda expressions have been completely inlined, generating two and one instruction each, respectively. Once again template specialization has allowed abstract source code to produce terse object code.</p>
+
+<p>I can personally attest that this approach is learnable:  I was able to write this example without consulting a single reference and compile it the first time. But rather than a testimony to the design, this may just indicate that I’ve <a href="https://en.wikipedia.org/wiki/Stockholm_syndrome">fallen in love with my kidnappers</a>.</p>
+
+<p>In the next posts, I want to consider to what degree the notational flaws in this approach are readily correctable. In the last example, the syntactic sugar of ranged-<code>for</code> simplified the notation, bringing it closer to contemporary practice in other languages and making the code more robust. How much can this code be simplified by a few notational improvements and how much is inherent to the whole STL design? I’ll start by comparing C++ lambdas to their counterparts in other languages.</p>
+
+
+</div>
+
+
+
+
+    </div>
+
+  </body>
+</html>

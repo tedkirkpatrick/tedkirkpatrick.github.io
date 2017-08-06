@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Lambdas: Sweet, sweet syntactic sugar &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Lambdas: Sweet, sweet syntactic sugar</h1>
+  <span class="post-date">23 Feb 2017
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p><b>Update:</b> The <a href="/2017/02/25/lambdas-typical-use-cases/">next post</a> provides recipes for common use cases of lambdas.  If parts of this post seem too abstract, you might find the examples in the next post clarify things.</p>
+
+<p>STL iterators and algorithms really can’t be discussed without also talking about lambdas. Although the STL design predates the introduction of lambdas by almost two decades, the introduction of lambdas in C++ 2011 improved the usability of STL algorithms substantially.  I don’t have statistics but I presume that the STL algorithms now receive substantially more use due to the greater simplicity of passing callbacks as lambdas rather than instances of named classes. Lambdas are purely a matter of convenience—they introduce nothing to the language that you couldn’t do before—but by making common use cases more convenient, they effectively extend the range of use cases where calling a standard algorithm makes sense.</p>
+
+<!--more-->
+
+<p>Programmers accustomed to languages like Python, JavaScript, or Scheme might counter that C++ lambdas retain an awkward complexity compared to the corresponding facilities in the other languages. What’s up with the by-value and by-reference free variables, and the <code>mutable</code> keyword?  Scheme gets on fine without those. Ah, [and here the Python/JavaScript/Scheme … programmer smiles good-naturedly at their benighted C++-using colleague] it’s just that C++ programmers seem to <em>revel</em> in a foolish complexity. But [shrug] what can you do?</p>
+
+<p>I’m not ready—yet—to defend or critique the concrete syntax of C++ lambdas but I think we need to understand that a C++ lambda has been delegated a greater responsibility by the core language than a Scheme lambda.  Where lambdas in Python, JavaScript and Scheme all define <em>anonymous functions</em>, lambdas in C++ define <em>an instance of an anonymous callable class</em>.  The same issues must arise in Java and C#, though I am unfamiliar with the specifics of their solutions. Analyzing the design of C++ lambdas will help us understand a deep distinction between it (and its object-oriented cousins Java and C#) and languages like Python, JavaScript, and Scheme.</p>
+
+<h2>Who builds the closure: The language or a class constructor?</h2>
+
+<p>Consider the Python lambda expression</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="n">c</span>
+</code></pre>
+</div>
+
+<p>Variable <code>i</code> is a parameter, while <code>c</code> is a free variable.  Whenever a language permits lambdas—indeed, whenever a language permits defining functions of any sort inside another function—its designers have to make two decisions regarding free variables:</p>
+
+<ul>
+<li>What is their scope?</li>
+<li>How are they bound to values at runtime?</li>
+</ul>
+
+<p>Scheme was one of the first languages to recognize the depth of these questions and to answer them in a coordinated, elegant way. In fact, the designers consider these choices to be so foundational to the language that the <em>first substantive paragraph</em> of the language’s defining document reads, <a href="https://docs.racket-lang.org/r6rs/r6rs-std/r6rs-Z-H-4.html">in its entirety</a>:</p>
+
+<blockquote>
+Following Algol, Scheme is a statically scoped programming language. Each use of a variable is associated with a lexically apparent binding of that variable.
+</blockquote>
+
+<p>Python adopts the same rules, so I’ll illustrate with Python code:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="n">c</span>
+    <span class="k">return</span> <span class="n">l</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">a</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">a</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="s">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">res</span><span class="p">)))</span>
+</code></pre>
+</div>
+
+<p>What value will this print?  It depends upon whether the free <code>c</code> in the lambda expression binds to the parameter <code>c</code> (line 1), whose value is 2, or the global <code>c</code> (line 5), whose value is 1. Python uses Scheme’s notion of “lexically apparent binding”, binding the free <code>c</code> to the parameter <code>c</code> and printing <code>0, 2, 4, 6</code>.</p>
+
+<p>This choice makes <a href="https://en.wikipedia.org/wiki/Higher-order_function">higher-order functions</a> more useful but it complicates the language runtime. In particular, local variables can no longer be stored on a stack and require more elaborate storage management.</p>
+
+<p>If your spidey-sense tingled at the phrase, “more elaborate storage management”, you have a strong intuition for C++. The language’s designers are unlikely to adopt a semantics that presumes “elaborate storage management”. But the choice is much broader than just lambda semantics; it is a choice of whether the binding of names to values is handled by the language or the programmer.</p>
+
+<p>(<strong>Aside:</strong> A couple of notes about Python: First, Python lambdas are deliberately restricted compared to those of every other language I describe here. Those restrictions don’t limit them in the context here of list comprehensions and higher-order list functions such as <a href="https://docs.python.org/3/library/functions.html#map"><code>map</code></a>.  Second, Python’s name-value binding is a hybrid of object-oriented and functional. Scheme represents a purer exemplar of what I describe but fewer people know that language. Again, within the context of list comprehensions, Python’s free variable bindings exemplify the differences I describe here, even if the overall language does not.)</p>
+
+<p>In programming language theory, the data structure binding names to values is called an environment. In Scheme, Haskell, and other languages with a strong functional programming basis, the environment is managed by the language and programmers never explicitly work with them. Environments have no names and you cannot manipulate them directly.  But the programmer has to understand them enough to make sense of free variable bindings.</p>
+
+<p>When a function result is a function value that includes free variables, the result refers to an environment that defines the values bound to those free variables. The environment (at least the part representing bindings of the free variables) must be retained at least as long as the function value exists. The (function value, environment) pair is a <a href="https://en.wikipedia.org/wiki/Closure_(computer_programming)">closure</a>. A simple stack regime is insufficient to represent closures because the environment bindings in the closure have to persist even after the function that created those bindings has completed and returned to its caller.</p>
+
+<p>Unlike languages with a strong functional basis, C++ reifies its environments as member variables of an object. Rather than defining a function and using a closure to complete that definition via an environment binding the free variables, C++ uses <em>callable objects</em>. Where a Python lambda binds its free variables to the lexically nearest variables, carrying the resulting environment in a closure, a C++ lambda is an object with member variables providing the values of all free variables in the lambda expression. This fits more naturally within an object-oriented language:  Rather than invisible environments whose presence is only indicated by the meaning they provide a function value, we have object instances like any other.</p>
+
+<p><em>A C++ lambda expression defines a new, unnamed class and instantiates a single object of that class.</em>  The class has a single member function, the function body of the lambda. The prefix to the lambda defines the member variables of the class. This is the source of the extra complexity in C++ lambda syntax compared to Python/JavaScript/Scheme: In addition to defining a function, the C++ lambda has to define the member variables providing values for any free variables in the function body and specify how they are to be initialized.</p>
+
+<h2>Defining a lambda object in C++</h2>
+
+<p>Here’s how the Python functions defined above could be defined in C++:</p>
+
+<!-- highlight="2" -->
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">auto</span> <span class="nf">foo</span> <span class="p">(</span><span class="kt">int</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span> <span class="o">*</span> <span class="n">c</span><span class="p">;</span> <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">a</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">};</span>
+  <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">res</span> <span class="p">{};</span>
+  <span class="n">transform</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">a</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">back_inserter</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+
+  <span class="n">copy</span> <span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">res</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">make_ostream_joiner</span><span class="p">(</span><span class="n">cout</span><span class="p">,</span> <span class="s">", "</span><span class="p">));</span>
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>(The <a href="http://en.cppreference.com/w/cpp/experimental/ostream_joiner"><code>ostream_joiner</code></a> in Line 11 is a C++ 2017 feature that is a close analogue of Python’s <a href="https://docs.python.org/3/library/stdtypes.html#str.join"><code>str.join()</code></a> function.)</p>
+
+<p>Let’s highlight the lambda in Line 2:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span> <span class="o">*</span> <span class="n">c</span><span class="p">;</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Where the Python lambda uses the rules of Python environments to bind the free <code>c</code> to the parameter <code>c</code>, the C++ lambda prefix <code>[c]</code> specifies that the callable object will have a member variable <code>c</code> with the following properties:</p>
+
+<ol>
+<li><code>c</code> in the lambda will be copy-constructed (the default) from the lexically closest <code>c</code>, namely the function parameter, taking whatever value the parameter has at the time the lambda is built.</li>
+<li><code>c</code> will be <code>const</code> (the default).</li>
+<li>The free variable <code>c</code> in the function <em>body</em> refers to the <em>member</em> <code>c</code>.</li>
+</ol>
+
+<p>Given that the sole purpose of the lambda object’s member variables is to provide bindings for free variables in the function body, the lambda syntax only supports a subset of member variable definitions most useful for this purpose. You can specify that the member variables are either copy-initialized or by-reference. By default, all copy-initialized values are <code>const</code>, but if any need to be updated, declaring the lambda <code>mutable</code> makes them <em>all</em> mutable. Member variables that are references are always mutable as long as the values they reference are.</p>
+
+<p>A lambda object whose member variables are all copy-constructed is self-contained and can have arbitrary lifetime; it can persist long after the original sources of its member variables have been deallocated.  Lambda objects with member reference variables can only have lifetime within the lifetimes of all of the variables that it refers to. Consult the reference for <a href="http://en.cppreference.com/w/cpp/language/lambda">lambda expressions</a> for the details.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The greater complexity of C++ lambda syntax is due to its more complicated semantics.  More than defining a function, you are defining a class and the initialization of its member variables. The concrete syntax for lambdas aims to provide a concise way to specify the kinds of classes most likely to be used to construct anonymous, callable objects. Understanding that it’s simply an alternate style of class definition gives it all more sense.</p>
+
+
+</div>
+
+
+
+
+    </div>
+
+  </body>
+</html>

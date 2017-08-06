@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Sidling up to the long string slowdown &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Sidling up to the long string slowdown</h1>
+  <span class="post-date">14 Jun 2017
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>In the last post, I highlighted an anomaly in the results for filtering long strings using the by-value implementation of the loop. The usual suspect for such outcomes, heap fragmentation, didn’t seem to apply in this case. What might be the actual source of the problem?</p>
+
+<p>The slowdown arises only for long strings, which suggests it is related to the heap, as long strings are the only form of string considered in these posts that use the heap. Unique <code>char const *</code> strings only move pointers, while short strings, <code>std::string</code> instances less than 16 characters, are stored in the string handle by <code>libstdc++</code> 6.2. The degree of slowdown correlates well with the number of elements that have been moved in the source vector after it was initially created.  This suggests that the slowdown is related to some measure of the “degree of disorder” in the heap.</p>
+
+<p>For some reason, moving elements of the source vector slows performance. What might be the mechanisms? If memory had uniform access cost, moving the elements would not have any effect. The effect must be due to nonuniform access costs incurred by the memory hierarchy. There several possible mechanisms, in increasing order of execution cost:</p>
+
+<ul>
+<li>Data cache misses due to the heap entries being more dispersed. For example, if when shuffling the array the string bodies are copied into a more dispersed range of locations, the pass through the array by the <code>for</code> loop will no longer be a consecutive pass through the heap memory but instead require accessing widely-separated parts of memory.  Such accesses require 1--2 cache line loads per string body, with no benefit from data prefetching.
+</li>
+<li>TLB cache misses due to the heap entries being even more widely dispersed.  The TLB cache can only accommodate so many pages. For these benchmarks, the page size is 4,096 B. If the 50,000 string bodies are stored contiguously (ignoring any metadata required by the allocator), they require 330 pages.  If the strings are stored in the worst possible layout, they require 50,000 pages. If the total pages required to access the code plus all data exceeds the TLB cache capacity, TLB misses will slow the benchmark.  Given that the Haswell architecture of my chip has an L2 TLB with <a href="http://www.realworldtech.com/haswell-cpu/5/">1,024 8-way associative</a> entries, I consider this possibility less likely than data cache misses.
+</li>
+<li>Swap costs due to accesses of data pages that have been swapped. <code>vmstat</code> reports no swaps occurred or these benchmarks, so swapping is not a factor in this case.
+</li>
+</ul>
+
+<p>Note that I am running the benchmarks in an Ubuntu 16.04 guest operating system under Virtual Box, in turn running on a Mac OS 10.12 host. This may add confounding effects on the actual, physical cache and TLB, as they are multiplexed between the host and guest systems by Virtual Box.</p>
+
+<p>In addition to memory hierarchy effects, there is the possible effect of cache fragmentation: The allocator may have to walk through more candidate blocks to find one of acceptable size (classical slowdown due to fragmentation). In addition to the basic cost of walking the data structure, increased heap walking could incur any of the above memory hierarchy costs.</p>
+
+<h2>The actual benchmarks make some causes unlikely</h2>
+
+<p>We can argue against some causes based upon how the specific benchmarks are written. As noted in the last post, the consistent size of the string bodies, all exactly 27 bytes long, ensures that classical fragmentation will not be a problem. Fragmentation is caused by sequences of allocation requests of differing sizes, whereas in this benchmark, any released blocks can be reused for the next request.</p>
+
+<p>The benchmark structure also ensures that the string bodies in the source vector will in fact not be moved when the vector is sorted or shuffled.  The <code>std::vector</code> code can call the move assignment, <code>std::string::operator=(string&amp;&amp;)</code>, to swap elements (although I have not verified this). The move assignment only copies the pointer to the string body, not the actual body. Consequently, sorting or shuffling the source vector should not affect the heap layout at all. The “degree of dispersal” of the heap bodies will be exactly the same, whether the source data has been reordered or not.</p>
+
+<p>A more subtle form of dispersal remains possible, however. Although the string bodies are never moved, <em>the pointers to them are moved</em>. After reordering, sequential access to the pointers in the source vector produces nonsequential access to the string bodies in the heap.  This might well result in more cache misses when processing sorted or shuffled data. I will consider the evidence for this in the next post.</p>
+
+
+</div>
+
+
+
+
+    </div>
+
+  </body>
+</html>

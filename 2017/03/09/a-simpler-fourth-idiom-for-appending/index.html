@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      A simpler, fourth idiom for appending &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">A simpler, fourth idiom for appending</h1>
+  <span class="post-date">09 Mar 2017
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>This morning, I realized that there is a fourth approach to appending items to a vector that combines <a href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/">elements of the first and third</a>.  I’m embarrassed to have missed this one because it is a longstanding, well-understood approach that’s particularly applicable to the kinds of “list comprehension algorithms” I’m considering in this series.</p>
+
+<p>Reviewing the output of the first method, a large proportion of the extra effort is due to the incremental <em>allocation</em> of the vector’s data member, where the values are actually stored. In some use cases, this is the best you can do because you do not know in advance how large the result is going to be. However, in the case considered in our examples, we know exactly how many elements the result will have:  exactly as many elements as the source vector.  In such cases, we can pre-allocate a storage block of the right size and then the back insertions simply consist of moving the values into that allocated space, with no reallocations to expand the vector. This was a crucial part of the efficiency of the third idiom, using <code>emplace_back()</code>.</p>
+
+<p>This approach simply adds one line to the first idiom:</p>
+
+<!-- highlight="2"-->
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">Coll</span> <span class="n">c4</span> <span class="p">{};</span>
+<span class="n">c4</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">init</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="n">transform</span> <span class="p">(</span><span class="n">init</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">init</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">back_inserter</span><span class="p">(</span><span class="n">c4</span><span class="p">),</span>
+           <span class="p">[]</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">C</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span> <span class="p">});</span>
+</code></pre>
+</div>
+
+<p>This code performs considerably fewer operations than the first idiom:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>New collection c4
+[Vector allocates space for at least 5 values, c4[0] to c4[4]]
+
+// Append C(0, 0)
+Basic constructor for T0
+Move constructor for c4[0] from T0
+Destructor for T0
+
+// Append C(1, 1)
+Basic constructor for T0
+Move constructor for c4[1] from T0
+Destructor for T0
+
+// Append C(2, 2)
+Basic constructor for T0
+Move constructor for c4[2] from T0
+Destructor for T0
+
+// Append C(3, 3)
+Basic constructor for T0
+Move constructor for c4[3] from T0
+Destructor for T0
+
+// Append C(4, 4)
+Basic constructor for T0
+Move constructor for c4[4] from T0
+Destructor for T0
+</code></pre>
+</div>
+
+<p>We have completely eliminated the allocate/copy/deallocate sequences. We always have to construct the value, so the only extra work performed relative to the third, <code>emplace_back()</code>-based, idiom is the move-assign from the temporary value and its destruction.  Both of these are likely to be fast. The move will be fast for objects that are small or implemented as small handles to a larger heap data object, though it will be slower for objects that contain a large amount of data directly.  The destructor will typically be fast or even nonexistent, a simple pop of the stack pointer.</p>
+
+<p>This method also has the substantial advantage of neatly fitting as a sink for a standard algorithm, unlike the third idiom, which was incompatible with the standard algorithms and required reconstructing them from <code>for</code> loops and basic logic. For the case where the exact size of the result is known in advance, this idiom is likely preferable to the <code>emplace_back()</code> approach.</p>
+
+<h2>Applying this pattern for filters</h2>
+
+<p>Unlike the <code>std::transform</code> algorithm in the above example, there are algorithms where we do not know the number of results in advance. Consider <a href="http://en.cppreference.com/w/cpp/algorithm/copy"><code>std::copy_if()</code></a>. We know the maximum number of results, which can never be larger than the source, but the actual size is determined by the number of elements for which the filter returns <code>true</code>. If we’re willing to over-reserve space, we can just use the above approach and accept that capacity may exceed size, perhaps significantly. This problem also exists for the <code>emplace_back()</code> approach, whose efficiency also depended upon pre-reservation.</p>
+
+<p>C++11 added the <a href="http://en.cppreference.com/w/cpp/container/vector/shrink_to_fit"><code>std::vector::shrink_to_fit()</code></a> function, which potentially eliminates the extra space after the <code>copy_if()</code> completes, but the standard gives implementers wide latitude:  The function could do nothing at all, shrink the vector’s data in place, or allocate-and-copy into a smaller region. Whether it provides a real performance improvement will be specific to your application and library.</p>
+
+<h2>Reconsidering my critique of the STL design in light of this idiom</h2>
+
+<p>I ended the last post by carping on the decision load imposed by the STL design on programmers, who have to choose amongst multiple idioms, each of which exceeds the others by at least one criterion. The addition of this idiom simplifies the choice substantially. For many, many use cases, I would choose this idiom.</p>
+
+<p>But not for all cases. Large <a href="http://en.cppreference.com/w/cpp/concept/PODType"><code>PODType</code></a> objects are best handled via <code>emplace_back()</code>, which never copies or moves the value. Objects whose constructors and destructors perform expensive resource reservation / release pairs are also be better-suited to <code>emplace_back()</code>—though I cannot think of many actual use cases where large numbers of such objects are going to be stored in a vector.</p>
+
+<p>In short, the pre-reserve/back_insert approach is appropriate for a wide range of use cases, making it a useful default idiom. Programmers must still take care to avoid it in those cases where it will be substantially more inefficient than the <code>emplace_back()</code> idiom.</p>
+
+<p>The larger point remains, although its severity is tempered: By exposing so many decisions to the programmer, the C++ language and its Standard Library increase the effort required to solve common tasks. Whether the potential gains in efficiency and robustness are worth the extra effort remains an open question.</p>
+
+
+
+</div>
+
+
+
+
+    </div>
+
+  </body>
+</html>

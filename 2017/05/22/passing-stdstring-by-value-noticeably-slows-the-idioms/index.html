@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Passing std::string by-value noticeably slows the idioms &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Passing std::string by-value noticeably slows the idioms</h1>
+  <span class="post-date">22 May 2017
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>The <a href="benchmarking-the-transform-and-loop-idioms">benchmarks comparing <code>transform</code> to a loop</a> also highlighted the substantial contribution that copying values made to their performance. Copying costs become especially noticeable for complex types, such as standard strings too long to fit in the short string optimization.</p>
+
+<p>In my original presentation of the <code>transform</code> idiom, I slipped up and used a by-value parameter to the lambda expression rather than by-reference. For the actual benchmarks, I corrected that and specified a by-reference parameter.  How much of an effect would the original by-value parameter have had?</p>
+
+<p>I have rerun the benchmarks with that single change: The index of the <code>for</code> loop is by-value and the parameter to the lambda is by-value. The <code>exclude</code> value remained a global, evaluated once rather than every loop iteration.</p>
+
+<p>The resulting functions are (modified lines are highlighted):</p>
+
+<h3><code>str_loop_emplace</code>: Basic loop using <code>emplace_back()</code></h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">str_loop_emplace</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">assert</span> <span class="p">(</span> <span class="o">!</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+  <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">p</span> <span class="o">:</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">!=</span> <span class="n">exclude</span><span class="p">)</span>
+      <span class="n">res</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<h3><code>str_loop_push</code>: Basic loop using <code>push_back()</code></h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">str_loop_push</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">assert</span> <span class="p">(</span> <span class="o">!</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+  <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">p</span> <span class="o">:</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">!=</span> <span class="n">exclude</span><span class="p">)</span>
+      <span class="n">res</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">ppair</span><span class="p">{</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">});</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<h3><code>str_option_emp</code>: <code>transform</code> idiom using an output iterator calling <code>emplace_back()</code></h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">str_option_emp</span><span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">assert</span> <span class="p">(</span> <span class="o">!</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">transform</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">src</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">opt_back_emplacer</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
+    <span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="k">auto</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">==</span> <span class="n">exclude</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">oppair</span><span class="p">();</span>
+      <span class="k">else</span>
+        <span class="k">return</span> <span class="n">oppair</span><span class="p">(</span><span class="n">ppair</span><span class="p">{</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">});</span>
+    <span class="p">}</span> <span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<h3><code>str_option</code>: <code>transform</code> idiom using an output iterator calling <code>push_back()</code></h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">str_option</span><span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">assert</span> <span class="p">(</span> <span class="o">!</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">transform</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">src</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">opt_back_inserter</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
+    <span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="k">auto</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">==</span> <span class="n">exclude</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">oppair</span><span class="p">();</span>
+      <span class="k">else</span>
+        <span class="k">return</span> <span class="n">oppair</span><span class="p">(</span><span class="n">ppair</span><span class="p">{</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">});</span>
+    <span class="p">}</span> <span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<h2>Results</h2>
+
+<p>All other conditions of the benchmarks were the same as the <a href="benchmarking-the-transform-and-loop-idioms">previous post</a>.</p>
+
+<h3>Overview</h3>
+
+<p>First, a general comparison between the results for by-reference (“Ref”) and by-value (“Copy”):</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/05/overview_by_ref.png" alt="overview_by_ref" width="482" height="681" class="alignnone size-full wp-image-7600" /></p>
+
+<p>The by-value construct essentially doubles the time for the complex, long string, increases it for optimized, short strings, and has little to no effect for <code>char const *</code> strings.  Bear in mind that this change adds an extra copy for <em>every</em> value, not just the ones that will be appended to the result vector.</p>
+
+<h3>Long strings</h3>
+
+<p>The left subplot below is the (by-reference) long string plot from the last post, rescaled to match the plot for the by-value version on the right:</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/05/long_by_ref.png" alt="long_by_ref" width="621" height="318" class="alignnone size-full wp-image-7598" /></p>
+
+<p>The means have all been roughly doubled. Long strings are so complex that adding another copy dominates the time.</p>
+
+<h3>Short strings</h3>
+
+<p>Again, the left subplot below is the (by-reference) short string plot from the last post, rescaled to match the plot for the by-value version on the right:</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/05/short_by_ref.png" alt="short_by_ref" width="620" height="318" class="alignnone size-full wp-image-7599" /></p>
+
+<p>For short strings, the means are mostly about 50% higher, though the mean for 0% copied is around three times higher. The extra copy has a proportionately higher effect on the 0% data set because its entire time is due to the loop processing time, which is increased by the extra copy.</p>
+
+<h3>Unique strings</h3>
+
+<p>Repeating the above structure for unique <code>char const *</code> strings:</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/05/unique_by_ref.png" alt="unique_by_ref" width="620" height="318" class="alignnone size-full wp-image-7597" /></p>
+
+<p>Unlike standard strings, strings uniquely identified by their pointer show no effect from an extra copy.  Indeed, for this type, by-reference is arguably slower than by-value, as the by-reference value requires an indirect load.  In the optimized code, however, the lambda function is inlined and the two cases produce identical object code for <code>char const *</code>.</p>
+
+<h2>Conclusion</h2>
+
+<p>Passing complex types by reference is considerably faster than passing by value. The semantics require an extra copy for by-value passing; it will not be eliminated by inlining the function.</p>
+
+<p>This isn’t news.  It is <a href="http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rf-in">Recommendation F.16 of the C++ Core Guidelines</a>. The contribution of this small post is merely to relate the cost of by-value to the relative costs of the idioms. For <code>std::string</code> (as implemented by <code>libstdc++</code> 6.2), on average you save twice as much by passing by-reference (a matter of adding a single <code>&amp;</code>) than by choosing the loop over the <code>transform</code> idiom.</p>
+
+
+</div>
+
+
+
+
+    </div>
+
+  </body>
+</html>

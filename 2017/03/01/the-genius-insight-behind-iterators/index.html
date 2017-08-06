@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      The genius insight behind iterators &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">The genius insight behind iterators</h1>
+  <span class="post-date">01 Mar 2017
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>The story so far:</p>
+
+<ol>
+<li>List comprehensions and related techniques such as LINQ are a widely-used, well-adopted notation. They are part of the current consensus on programming language features.
+</li>
+<li>C++ and the STL provide the basic mechanisms for implementing list comprehensions.</li>
+<li>In the simple cases addressed by the C++ ranged <code>for</code> loop, C++/STL can be as concise as a list comprehension.</li>
+<li>For more complex cases, the C++/STL patterns that address the same use cases as list comprehensions are far more verbose than their Python or Haskell equivalents, introducing many running details and requiring a different focus by the programmer.</li>
+<li>The syntax of C++ lambdas is not the source of this syntactic complexity. Although the full syntax and semantics of lambdas is subtle, the idioms used in actual code (and the examples used to compare with Python list comprehensions) are simple.
+</li>
+<li>We need to look at other components of the C++/STL design for sources of the complexity.
+</li>
+</ol>
+
+<p>Several mechanisms are provided by C++/STL (I write it this way to emphasize that it is a combined design of features provided by the core C++ language and by the Standard Template Library) to support this sort of algorithm:</p>
+
+<ul>
+<li><a href="http://en.cppreference.com/w/cpp/container">STL containers</a> hold data. Different containers support different patterns of efficient access.
+</li>
+<li><a href="http://en.cppreference.com/w/cpp/algorithm">STL algorithms</a> satisfy commonly-useful requirements for processing collections of data, assuming that the data can be accessed efficiently in one or more patterns.
+</li>
+<li><a href="http://en.cppreference.com/w/cpp/language/range-for">C++ ranged <code>for</code> loops</a> provide a concise notation for the special case of single-pass sequential iteration through any STL container.
+</li>
+<li><a href="http://en.cppreference.com/w/cpp/language/lambda">C++ lambda expressions</a> provide a concise notation for customizing algorithms with one-off provisions such as filters, accumulators, and so forth.
+</li>
+<li><a href="http://en.cppreference.com/w/cpp/language/templates">C++ templates</a> provide a mechanism for using the access patterns of a collection to select the most appropriate implementation of an algorithm to use with that collection.
+</li>
+<li><a href="http://en.cppreference.com/w/cpp/iterator">STL iterators</a> provide specified patterns of efficient access.
+</li>
+</ul>
+
+<p>That last component, iterators, are the STL’s genius contribution to computing. Whether or not you find the C++/STL combination comfortable to use, it is worth learning the approach because it provides a uniquely visible mechanism for a principle connecting data structures and algorithms in any language:</p>
+
+<p style="margin-left:2em;">
+Data structures support patterns of efficient access. Algorithms depend upon specific patterns of efficient access. <em>STL iterators are an explicit representation of the access patterns connecting a data structure (container) and an algorithm.</em>
+</p>
+
+<p>To illustrate this connection, consider the classic binary search algorithm over a collection. As typically presented, this algorithm presupposes constant-time access to a random element with the collection from any other element. In principle, you can run a binary search on a singly-linked list, but the classical performance guarantees of binary search will not be met: The number of element accesses would increase linearly with the size of the array, rather than the predicted logarithmic increase. You might even get fewer element accesses with linear search. The poor performance arises because a singly-linked list does not support efficient constant-time access from any one element to any other. A container that stores its elements contiguously, such as <a href="http://en.cppreference.com/w/cpp/container/array">array</a> or <a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>, is required for the binary search algorithm to achieve its classical guarantees.</p>
+
+<p>The STL <a href="http://en.cppreference.com/w/cpp/algorithm/binary_search">binary search algorithm</a> takes advantage of iterators to run on both linked lists and vectors.  It uses the most efficient access pattern supported by the container.
+I’ll return to this below.</p>
+
+<p>In discussions of data structures and algorithms, as well as most implementations of them, the access patterns linking the two are left implicit. Making that link explicit was a brilliant insight and a contribution to the computing field from the STL design.</p>
+
+<h2>The common iterator access patterns</h2>
+
+<p>Iterators are <a href="http://en.cppreference.com/w/cpp/iterator">categorized</a> according to  the efficient access patterns they support. The full set of categories is complex and their distinctions are subtle; I’ll just list three common ones and summarize each informally.</p>
+
+<dl>
+<dt><a href="http://en.cppreference.com/w/cpp/concept/ForwardIterator"><code>ForwardIterator</code></a>
+</dt>
+<dd>Given an element, access to its immediate successor. If you make a copy of the iterator, the copy will generate the same sequence of accesses as the original. (This last point is a rephrasing of the "multi-pass" requirement.)
+</dd>
+<dt><a href="http://en.cppreference.com/w/cpp/concept/BidirectionalIterator"><code>BidirectionalIterator</code></a>
+</dt>
+<dd>Given an element, access to its immediate predecessor <em>and successor</em>. A copy of the iterator will generate the same sequence of accesses as the original.
+</dd>
+<dt><a href="http://en.cppreference.com/w/cpp/concept/RandomAccessIterator"><code>RandomAccessIterator</code></a>
+</dt>
+<dd>Given en element, <em>constant-time</em> access to <em>any other</em> element. A copy of the iterator will generate the same sequence of accesses as the original.
+</dd>
+</dl>
+
+<p>Note that <code>ForwardIterator</code> and <code>BidirectionalIterator</code> technically only specify which access patterns will be <em>inefficient</em>: Given an iterator that only supports successor (and predecessor in the bidirectional case), moving more than one element requires iterating through all intervening elements. The efficiency of the basic successor/predecessor operations is determined by the underlying data structure; in all the standard collections it is constant irrespective of the collection size.</p>
+
+<p>The <a href="http://en.cppreference.com/w/cpp/iterator">full list of categories</a> is longer and the requirements more detailed. The above list captures the common distinctions.</p>
+
+<h2>Example: The STL Binary search algorithm</h2>
+
+<p>The performance of the <a href="http://en.cppreference.com/w/cpp/algorithm/binary_search">STL binary search algorithm</a> depends upon the category of iterators that it is passed. Its minimal requirement is a <code>ForwardIterator</code>, which only supports the basic successor operation and whose copies are guaranteed to produce an identical sequence. This last point is essential for the algorithm to work without access to a predecessor operation: Rather than iterating backward, it retains a copy of the iterator to the lowest point in the search range and iterates <em>forward</em> from there.</p>
+
+<p>The binary search algorithm guarantees comparisons proportional to the log of the collection size for any collection supporting <code>ForwardIterator</code>s or better but the number of <em>element accesses</em> depends upon the category of iterators provided by the collection. For collections supporting <code>RandomAccessIterator</code>s, which permit computation of a midpoint iterator in constant time, the algorithm guarantees logarithmic number of element accesses.  However for collections that only support <code>ForwardIterator</code>s, such as a linked list, the algorithm guarantees accesses proportional <em>linearly</em> to the collection size. If comparisons are particularly expensive, this may still make <code>binary_search()</code> more efficient than simple linear search for a linked list, even though both algorithms are linear in number of accesses. (In many cases, the binary search algorithm will require more accesses than linear search, due to its initial scan over all elements, so binary search’s saving in comparison time will have to be particularly big to make it faster.)</p>
+
+<p>This flexibility is enabled by the C++ template facility. The library selects a different implementation of binary search depending upon the category of iterator that it is passed. The iterator category in turn is determined by the collection, which exports the iterators representing the best access patterns that it supports.</p>
+
+<p>This design allows the library to choose the best possible algorithm for a given collection, without the programmer explicitly choosing that algorithm:</p>
+
+<!-- highlight="18,19" -->
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">vals_v</span> <span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+  <span class="n">generate</span><span class="p">(</span><span class="n">vals_v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">vals_v</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span>
+    <span class="p">[</span><span class="n">ind</span><span class="o">=</span><span class="mi">0</span><span class="p">]()</span> <span class="k">mutable</span> <span class="p">{</span><span class="k">return</span> <span class="n">ind</span><span class="o">++</span><span class="p">;</span> <span class="p">});</span>
+
+  <span class="n">forward_list</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">vals_l</span> <span class="p">{};</span>
+  <span class="n">copy</span> <span class="p">(</span><span class="n">vals_v</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">vals_v</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span>
+    <span class="n">make_back_inserter_fl</span><span class="p">(</span><span class="n">vals_l</span><span class="p">));</span>
+  
+  <span class="n">copy</span> <span class="p">(</span><span class="n">vals_v</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">vals_v</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span>
+    <span class="n">make_ostream_joiner</span><span class="p">(</span><span class="n">cout</span><span class="p">,</span> <span class="s">", "</span><span class="p">));</span>
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+
+  <span class="n">copy</span> <span class="p">(</span><span class="n">vals_l</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">vals_l</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span>
+    <span class="n">make_ostream_joiner</span><span class="p">(</span><span class="n">cout</span><span class="p">,</span> <span class="s">", "</span><span class="p">));</span>
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n\n</span><span class="s">"</span><span class="p">;</span>
+
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">binary_search</span><span class="p">(</span><span class="n">vals_v</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">vals_v</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="mi">5</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">binary_search</span><span class="p">(</span><span class="n">vals_l</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">vals_l</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="mi">5</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The highlighted lines are the two calls to <code>std::binary_search()</code>. The first runs on <code>std::vector vals_v</code>, which provides <code>RandomAccessIterator</code> iterators, while the second runs on <code>std::forward_list vals_l</code>, which provides <code>ForwardIterator</code> iterators. Assuming the two containers have the same contents, both calls will perform comparable numbers of comparisons (logarithmic in the number of elements) but the call on the <code>forward_list</code> will perform far more element accesses (linear rather than logarithmic).</p>
+
+<h2>So why are iterators so tedious to use?</h2>
+
+<p>Iterators are a method for containers to explicitly represent their favoured access patterns, allowing algorithms to optimize their behaviour for those patterns. This is a genuinely novel idea and one that will change how you program once you have used it enough to be comfortable with it.</p>
+
+<p>Yet the example <a href="https://ted376.wordpress.com/2017/02/22/iterators-a-failure-case/">failure case</a> highlighted the tediousness of the iterator approach versus the simplicity of list comprehensions. What is the source of the problem? As with so many complexities of C++ code, it stems from the language’s insistence that you state where and how every value is stored. I’ll turn to that topic in the next post.</p>
+
+<h2>Appendix: <code>class back_inserter_fl</code></h2>
+
+<p>The sample program uses a class <code>back_inserter_fl</code> I wrote, together with a convenience function for creating it, <code>make_back_inserter_fl()</code>.  The STL <a href="http://en.cppreference.com/w/cpp/iterator/back_inserter"><code></code>std::back_inserter()</a> adaptor requires that the underlying container have a <code>push_back()</code> member.  The <code>forward_list</code> cannot support such a function because it has no tail pointer. Building a back inserter for a <code>forward_list</code> is tricky because assignment to the iterator also creates an iterator that will be the location of the next assignment.</p>
+
+<p>I think the following code is pretty close to meeting all the formal requirements but I have neither checked it nor tested in exhaustively.  I’m including it here for completeness—check carefully before using it in any production code.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">_L</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">back</span><span class="n">_inserter_fl</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+  <span class="k">using</span> <span class="n">iterator_category</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">forward_iterator_tag</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">value_type</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">_L</span><span class="o">::</span><span class="n">value_type</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">pointer</span> <span class="o">=</span> <span class="n">value_type</span><span class="o">*</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">reference</span> <span class="o">=</span> <span class="n">value_type</span><span class="o">&amp;</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">difference_type</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">_L</span><span class="o">::</span><span class="n">iterator</span><span class="o">::</span><span class="n">difference_type</span><span class="p">;</span>
+
+  <span class="k">class</span> <span class="nc">proxy</span> <span class="p">{</span>
+  <span class="k">public</span><span class="o">:</span>
+    <span class="n">proxy</span> <span class="p">(</span><span class="n">_L</span><span class="o">&amp;</span> <span class="n">fl_i</span><span class="p">,</span>
+	   <span class="n">back_inserter_fl</span><span class="o">&amp;</span> <span class="n">bi_i</span><span class="p">)</span> <span class="o">:</span>
+      <span class="n">fl</span> <span class="p">{</span><span class="n">fl_i</span><span class="p">},</span>
+      <span class="n">bi</span> <span class="p">{</span><span class="n">bi_i</span><span class="p">}</span>
+    <span class="p">{}</span>
+
+    <span class="n">value_type</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">value_type</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">auto</span> <span class="n">next_it</span> <span class="o">=</span> <span class="n">fl</span><span class="p">.</span><span class="n">insert_after</span><span class="p">(</span><span class="n">bi</span><span class="p">.</span><span class="n">it</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
+      <span class="n">bi</span><span class="p">.</span><span class="n">it</span> <span class="o">=</span> <span class="n">next_it</span><span class="p">;</span>
+      <span class="k">return</span> <span class="o">*</span><span class="n">next_it</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="k">private</span><span class="o">:</span>
+    <span class="n">_L</span><span class="o">&amp;</span> <span class="n">fl</span><span class="p">;</span>
+    <span class="n">back_inserter_fl</span><span class="o">&amp;</span> <span class="n">bi</span><span class="p">;</span>
+  <span class="p">};</span>
+
+  <span class="n">back_inserter_fl</span> <span class="p">(</span><span class="n">_L</span><span class="o">&amp;</span> <span class="n">fl_i</span><span class="p">)</span> <span class="o">:</span> <span class="n">fl</span> <span class="p">{</span><span class="o">&amp;</span><span class="n">fl_i</span><span class="p">},</span>
+                                <span class="n">it</span> <span class="p">{</span><span class="n">fl_i</span><span class="p">.</span><span class="n">before_begin</span><span class="p">()}</span> <span class="p">{}</span>
+  <span class="n">back_inserter_fl</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+  <span class="n">back_inserter_fl</span><span class="p">(</span><span class="k">const</span> <span class="n">back_inserter_fl</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+  <span class="n">back_inserter_fl</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">back_inserter_fl</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+  <span class="o">~</span><span class="n">back_inserter_fl</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+
+  <span class="n">proxy</span> <span class="k">operator</span><span class="o">*</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">proxy</span><span class="p">(</span><span class="o">*</span><span class="n">fl</span><span class="p">,</span> <span class="o">*</span><span class="k">this</span><span class="p">);</span> <span class="p">}</span>
+  <span class="n">back_inserter_fl</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">++</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+  <span class="n">back_inserter_fl</span>  <span class="k">operator</span><span class="o">++</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+  <span class="n">back_inserter_fl</span><span class="o">*</span> <span class="k">operator</span><span class="o">-&gt;</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+  <span class="n">_L</span><span class="o">*</span> <span class="k">const</span> <span class="n">fl</span> <span class="p">{</span><span class="n">nullptr</span><span class="p">};</span>
+  <span class="k">typename</span> <span class="n">_L</span><span class="o">::</span><span class="n">iterator</span> <span class="n">it</span> <span class="p">{};</span>
+<span class="p">};</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">_T</span><span class="o">&gt;</span>
+<span class="k">auto</span> <span class="n">make_back_inserter_fl</span><span class="p">(</span><span class="n">forward_list</span><span class="o">&lt;</span><span class="n">_T</span><span class="o">&gt;&amp;</span> <span class="n">fl</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">back_inserter_fl</span><span class="o">&lt;</span><span class="n">forward_list</span><span class="o">&lt;</span><span class="n">_T</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">fl</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+
+</div>
+
+
+
+
+    </div>
+
+  </body>
+</html>

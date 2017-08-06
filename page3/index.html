@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      All my marbles in one place &middot; Ted's blog
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="posts">
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/03/21/the-limits-of-list-comprehensions/">
+        The limits of list comprehensions
+      </a>
+    </h1>
+    
+    <span class="post-date">21 Mar 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>,
+        
+      
+        
+        <a href="/tag/Python">Python</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>I’ve spent my recent posts unfavourably comparing the STL design of containers/iterators/algorithms with Python list comprehensions and their close relatives in Haskell.  This is an unfairly restrictive way to view the STL design, which addresses a wider range of use cases than the ones addressed by list comprehensions.  But it is also unfair in that it ignores the limitations of list comprehensions themselves, limitations avoided by the more general structure provided by the STL.  In this post, I’ll start from the other direction, considering the inherent limitations of Python list comprehensions. This in turn leads to an idiom in the STL that in fact provides virtually all the functionality of basic list comprehensions, with only slightly more complex syntax.</p>
+
+ <a href="/2017/03/21/the-limits-of-list-comprehensions/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/03/09/a-simpler-fourth-idiom-for-appending/">
+        A simpler, fourth idiom for appending
+      </a>
+    </h1>
+    
+    <span class="post-date">09 Mar 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>This morning, I realized that there is a fourth approach to appending items to a vector that combines <a href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/">elements of the first and third</a>.  I’m embarrassed to have missed this one because it is a longstanding, well-understood approach that’s particularly applicable to the kinds of “list comprehension algorithms” I’m considering in this series.</p>
+
+ <a href="/2017/03/09/a-simpler-fourth-idiom-for-appending/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/">
+        Three idioms for appending values&mdash;a damaging decision?
+      </a>
+    </h1>
+    
+    <span class="post-date">07 Mar 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p><b>Update:</b> See also the <a href="/2017/03/09/a-simpler-fourth-idiom-for-appending/">next post</a>, which adds a fourth idiom and mitigates some of the criticisms in the conclusion of this post.</p>
+
+<p>The <a href="/2017/02/22/iterators-a-failure-case/">STL code for squaring the positive values</a>, included the following lines to create the intermediate result <code>t1</code> containing the positive values of the original list <code>a</code>:</p>
+
+ <a href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/03/03/iterators-arent-the-problem-they-just-enable-it/">
+        Iterators aren’t the problem, they just enable it
+      </a>
+    </h1>
+    
+    <span class="post-date">03 Mar 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>The post presenting the <a href="/2017/02/22/iterators-a-failure-case/">failure case for iterators</a> contrasted this simple Python list comprehension:</p>
+
+ <a href="/2017/03/03/iterators-arent-the-problem-they-just-enable-it/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/03/01/the-genius-insight-behind-iterators/">
+        The genius insight behind iterators
+      </a>
+    </h1>
+    
+    <span class="post-date">01 Mar 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>The story so far:</p>
+
+ <a href="/2017/03/01/the-genius-insight-behind-iterators/">more ...</a>
+  </div>
+  
+</div>
+
+<div class="pagination">
+  
+    <a class="pagination-item older" href="/page4">Older</a>
+  
+  
+    
+      <a class="pagination-item newer" href="/page2">Newer</a>
+    
+  
+</div>
+    </div>
+
+  </body>
+</html>

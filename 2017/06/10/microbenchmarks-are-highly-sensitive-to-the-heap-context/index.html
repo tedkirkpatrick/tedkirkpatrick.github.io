@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Microbenchmarks are highly sensitive to the heap context! &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Microbenchmarks are highly sensitive to the heap context!</h1>
+  <span class="post-date">10 Jun 2017
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>Over two weeks ago, I posted an article about <a href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/">by-value parameters in the loop and <code class="highlighter-rouge">transform</code> idioms</a>. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis.  In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda.</p>
+
+<h2>The anomaly</h2>
+
+<p>But this is getting ahead of the story. I’ll begin with the results that started it all: The upper-left corner plot in the overview section of that two-week-old post. I’ve isolated the relevant data in the following plot, together with some new replication runs that demonstrate the effect is reliable:</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/06/loop_emp_long_copy.png" alt="loop_emp_long_copy" width="495" height="369" class="alignnone size-full wp-image-7915" /></p>
+
+<p>The plot compares the results for the two versions of the loop, which differ only in using either <code>emplace_back()</code> or <code>push_back()</code> in their body. The by-value version of the loop parameter was used in both cases:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">str_loop_emplace</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">assert</span> <span class="p">(</span> <span class="o">!</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+  <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">p</span> <span class="o">:</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">!=</span> <span class="n">exclude</span><span class="p">)</span>
+      <span class="n">res</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">str_loop_push</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">assert</span> <span class="p">(</span> <span class="o">!</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+  <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">p</span> <span class="o">:</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">!=</span> <span class="n">exclude</span><span class="p">)</span>
+      <span class="n">res</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">ppair</span><span class="p">{</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">});</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Each version has been compiled with <code>-O2</code> and run twice on random data sets, with from 0–100% of the source data set copied to the result.</p>
+
+<p>At first glance, the result wasn’t surprising. The loop using <code>push_back()</code> was slower, which I would expect, given that it constructs an extra <code>pair</code> compared to the one using <code>emplace_back()</code>. This is borne out by an analysis of the generated object code.  Summarizing their object code in pseudo-C:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>// str_loop_emplace_long_by_copy:
+
+goto begin
+
+loop: V &lt;- src_i-&gt;second ^ 2
+ if (res.cap_end() == res_i) goto expand_capacity [never taken]
+ res_i-&gt;first &lt;- p.first
+ res_i-&gt;second &lt;- V
+ ++res_i
+next: p.first.~string()
+ if (++src_i == src.end()) goto end
+begin: p &lt;- *src_i
+ if (exclude != p.first) goto loop
+ else goto next
+end:
+
+// str_loop_push_long_by_copy:
+
+goto begin
+
+loop: T.first &lt;- p. first
+ T.second &lt;- src_i-&gt;second ^ 2
+ res.emplace_back(T)
+ T.first.~string()
+next: p.first.~string()
+ if (++src_i == src.end()) goto end
+begin: p &lt;- *src_i
+ if (exclude != p.first) goto loop
+ else goto next
+end:
+</code></pre>
+</div>
+
+<p>Spot the problem?  I’ll take solace if you didn’t; I looked at the original plot for weeks before seeing it myself.</p>
+
+<p>Here’s the anomaly: For a data set in which no values are copied (a 0% data set), <em>the executed code is identical</em> but in the above plot the <code>push_back()</code> loop is <em>75% slower</em> on that data set.  (Note that the <code>push_back()</code> loop could be slower on other data sets that actually require copying data. The two loops only execute identical code for the 0% case.)</p>
+
+<h2>The order effect</h2>
+
+<p>Results such as this strongly suggest an order effect: The <code>emplace_back()</code> loop is faster because it is executed first. Given that the <code>nonius</code> benchmarking framework executes complex code as it analyses the results after each benchmark, there could easily be such an effect. And in fact when the order of the two benchmarks is reversed, the <code>push_back()</code> loop becomes faster than the <code>emplace_back()</code> loop.</p>
+
+<p>I revised the structure of the benchmark calls so that a given run executes only a single benchmark, followed by computing the analysis.  When the loops are re-benchmarked under the revised structure, we get the following results (new values in right column of each lane, in green):</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/06/loop_emp_long_copy_by_run.png" alt="loop_emp_long_copy_by_run" width="495" height="369" class="alignnone size-full wp-image-7916" /></p>
+
+<p>The <code>emplace_back()</code> loop has the same times whether run individually or first in a sequence, whereas the <code>push_back()</code> loop is much slower than the other loop when run second in sequence but achieves comparable speed when measured in its own run. A similarly dramatic speedup occurs (shown later) when the <code>transform</code> idiom is measured in its own run rather than following the loop benchmarks.  Given such clear evidence of an order effect, the benchmarks should all be run individually rather than in sequence.</p>
+
+<p>The confounding effect of order means that all the microbenchmark results in my previous posts in this series should be considered tentative until they can be replicated using individual runs. Most likely only the long string, by-value runs will require revision but this needs to be verified. I will do those tests later. For now, let us continue exploring the order effect.</p>
+
+<h2>The likely source of the order effect</h2>
+
+<p>When does order matter? The effect doesn’t appear on any runs with with short or unique strings nor on runs with long strings and by-reference parameters, only on runs with long strings and by-value parameters. These runs make the heaviest use of the heap. Short and unique strings do not use the heap at all and the by-reference code for long strings use the heap far less than the by-value ones.</p>
+
+<p>The traditional first response to an outcome like this is “heap fragmentation”. But when considered in detail, fragmentation doesn’t seem to be the likely cause of this performance.  Fragmentation has two observable outcomes:</p>
+
+<ul>
+<li>An allocation request fails despite there being sufficient available space to satisfy it (because that available space is spread across multiple smaller blocks, none of which is individually large enough), or
+</li>
+<li>Allocation requests become progressively slower (because the allocator has to consider progressively more available blocks before finding one sufficiently large for the request).
+</li>
+</ul>
+
+<p>The first result is manifestly not occurring—all requests succeed.  The second result is unlikely to arise in these benchmarks because for our test datasets, every long string body is exactly 27 bytes long.  Thus <em>any</em> previously-freed block for a string body would be sufficient to satisfy a new request.</p>
+
+<p>If classical heap fragmentation is not the source of the order effect, what is?  The cause is most likely due to some interaction between the heap layout and the sequence of heap requests, just not due to a sequence of progressively-larger requests that induce classical fragmentation.  The cause of the slowdown seen in these benchmarks is related but more subtle.</p>
+
+<p>Consider the following plot:</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/06/long-strings-by-value-consec-vs-ind-runs.png" alt="long-strings-by-value-consec-vs-ind-runs" width="906" height="476" class="alignnone size-full wp-image-8086" /></p>
+
+<p>The left-hand facet (BY_REF=Ref) is the original by-reference results, run using the old structure, with all four benchmarks consecutively in a single run. The right-hand facet (BY_REF=Copy) is the by-value results, including both the older consecutive structure (blue) and the newer individual (green) structure. The plot compares results for the loop with <code>emplace_back()</code> and the <code>transform</code> idiom with <code>push_back()</code>.  The two idioms are run on four data sets, including the random (R) and sorted (S) used in previous benchmarks, together with two new data sets, the shuffled (H) and in-situ sorted (I).  We’ll get to the new data sets in a bit; for now, we’ll focus on the random and sorted data sets, specifically the left four lanes (lp_em(R), lp_em(S)) on the right facet.</p>
+
+<p>These four lanes are timings for the <code>emplace_back()</code> loop, for random and sorted data sets, run first in a consecutive run (followed by three other benchmarks) and individually (no benchmarks following). Previous results suggest that:</p>
+
+<ul>
+<li>The times for a first-in-consecutive run and an individual run on the same data set should be identical. There is no prior benchmark affecting the heap.
+</li>
+<li>For the random and sorted data sets, the times for 0% and 100% copies should be the same but the times for 25%, 50%, and 75% copied should be shorter for sorted data.
+</li>
+</ul>
+
+<p>But these are not the patterns that we see in the above plot.  Instead:</p>
+
+<ul>
+<li>For sorted data, the individual runs are <em>slower</em> than the first-in-consecutive runs, despite the nominal similarity of the setup preceding them.
+</li>
+<li>For individual runs, sorted data sets with 75% and 100% copies are <em>slower</em> than random data sets, despite the branch prediction benefits of sorted data.
+</li>
+</ul>
+
+<p>These results both seem to result from heap effects:</p>
+
+<ul>
+<li>The setup sequence for the individual runs is not identical to that for consecutive runs but in fact does more heap operations.  This seems to slow down the benchmark code that follows, at least on sorted data.
+</li>
+<li>The sorted data set is created by applying <a href="http://en.cppreference.com/w/cpp/algorithm/sort"><code>std::sort</code></a> to the random data set. Moving the source array values around seems to slow down the code, at least when it is copying large parts of the source array into the result (75% and 100%).
+</li>
+</ul>
+
+<p>In short, performing more heap operations before running the benchmarks seems to slow the code.  To test this with more extreme cases, I added two new data sets:</p>
+
+<ul>
+<li>Shuffled (H):  The random data set is fully shuffled via <a href="http://en.cppreference.com/w/cpp/algorithm/random_shuffle"><code>std::shuffle</code></a>.  As a full shuffle, this does many more moves than a sort on a data set with only two distinct values.
+</li>
+<li>In-situ sorted (I): Where the "sorted" data set was created by sorting the random data set, which required moving some values, this data set was created by building the values in sorted order directly in their original locations.  Consequently, no element in this data set has been moved.
+</li>
+</ul>
+
+<p>As you can see in the above plot (lanes suffixed (H) and (I)), number of element moves is strongly predictive of time:  The in-situ sorted data covers the same range as the random data (no moves in either data set), while the shuffled data set (with many moves) is the slowest by far, for both idioms.</p>
+
+<h2>What next?</h2>
+
+<p>These results highlight two potentially-related effects that arise when the by-value versions of these idioms process strings whose bodies lie on the heap:</p>
+
+<ul>
+<li>The number and type of heap operations in the setup modestly affect the idioms' speed.
+</li>
+<li>The number of times elements in the source vector have been moved in the setup strongly affects the idioms' speed.
+</li>
+<li>The uniform length of the string bodies (27 bytes) manipulated by the idioms indicates that the timing effects are not due to classical heap fragmentation.
+</li>
+</ul>
+
+<p>What is the problem and what tools might we use to identify it? That, reader, is the tale to come.</p>
+
+
+</div>
+
+
+
+
+    </div>
+
+  </body>
+</html>

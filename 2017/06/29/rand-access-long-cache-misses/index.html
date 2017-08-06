@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Random access to long string bodies incurs cache misses &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Random access to long string bodies incurs cache misses</h1>
+  <span class="post-date">29 Jun 2017
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>As I <a href="/2017/06/23/for-long-strings-access-order-determines-performance/">described in the last post</a>, shuffling the items in the source vector leaves the string handles in contiguous sequential order while introducing disorder into the sequence of string bodies. The NShuffled “data set” is really a family of 11 related data sets, differing in the fraction of their items that were shuffled.  All sets start with the same vector <code>src</code> of 50,000 elements, then <code>std::shuffle()</code> is run on the first <i>N</i> items in the vector, where <i>N</i> ranges from 0 (no items shuffled) to 50,000 (all items shuffled) in increments of 5,000. All the data sets will have 37,500 (75% of 50,000) of their source elements copied to the result vector.</p>
+
+<p>These data sets allow us to correlate the degree of disorder in the string bodies with the execution time of the filter-and-transform algorithm.  More disorder in the string bodies produces more cache misses, slowing performance. I will use the NShuffle data sets to demonstrate this.</p>
+
+<h2>Shuffling items proportionately slows performance</h2>
+
+<p>The first step is to verify that shuffling produces the expected slowdown. The following graph shows the times for all 11 NShuffle data sets (right), together with the original Random data set (left), which is not shuffled:</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/06/nshuffle-times.png" alt="nshuffle-times" width="495" height="369" class="alignnone size-full wp-image-8749" /></p>
+
+<p>The execution time strongly tracks the number of shuffled items.  The original unshuffled data set and the 0% NShuffle data set have the same times (3.5 ms), with each increment of 5,000 more shuffled items adding about 0.25–0.30 ms. The NShuffled data set exemplifies the performance slowdown we want to understand.</p>
+
+<h2>Shuffling items leaves long string bodies in disorder</h2>
+
+<p>The next step is to verify that this data set produces the data structure effects that we claim is causing the slowdown. I created an approximate measure of “disorder” in the loop bodies of the <code>src</code> vector by counting “jumps”, the number of string bodies that followed their preceding string body within a single 64-byte cache line:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">check_addresses</span><span class="p">(</span><span class="k">const</span> <span class="n">plist</span><span class="o">&amp;</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">constexpr</span> <span class="n">plist</span><span class="o">::</span><span class="n">size_type</span> <span class="n">gap</span> <span class="o">=</span> <span class="mi">64</span><span class="p">;</span>
+  <span class="kt">unsigned</span> <span class="n">jumps</span> <span class="o">=</span> <span class="mi">0u</span><span class="p">;</span>
+  <span class="k">auto</span> <span class="n">last</span> <span class="o">=</span> <span class="n">src</span><span class="p">.</span><span class="n">cbegin</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">first</span><span class="p">.</span><span class="n">data</span><span class="p">();</span>
+  <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">p</span> <span class="o">:</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">data</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">last</span> <span class="o">||</span> <span class="n">last</span> <span class="o">+</span> <span class="n">gap</span> <span class="o">&lt;</span> <span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">data</span><span class="p">())</span> <span class="p">{</span>
+      <span class="n">jumps</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">data</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="o">*</span><span class="n">addr_out</span> <span class="o">&lt;&lt;</span> <span class="s">"Total of "</span> <span class="o">&lt;&lt;</span> <span class="n">jumps</span> <span class="o">&lt;&lt;</span> <span class="s">" jumps</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The <code>std::string::data()</code> member returns the address of the string body.</p>
+
+<p>The number of these “jumps” closely tracks the number of shuffled items:</p>
+
+<table>
+<thead>
+<tr><td style="text-align:right;"><code>n_shuffled</code></td><td style="text-align:right;">Jumps</td></tr>
+</thead>
+<tbody>
+<tr><td style="text-align:right;">0    </td><td style="text-align:right;">1</td></tr>
+<tr><td style="text-align:right;">5,000 </td><td style="text-align:right;">5,000</td></tr>
+<tr><td style="text-align:right;">10,000</td><td style="text-align:right;">9,999</td></tr>
+<tr><td style="text-align:right;">15,000</td><td style="text-align:right;">14,998</td></tr>
+<tr><td style="text-align:right;">20,000</td><td style="text-align:right;">19,997</td></tr>
+<tr><td style="text-align:right;">25,000</td><td style="text-align:right;">24,997</td></tr>
+<tr><td style="text-align:right;">30,000</td><td style="text-align:right;">29,999</td></tr>
+<tr><td style="text-align:right;">35,000</td><td style="text-align:right;">34,999</td></tr>
+<tr><td style="text-align:right;">40,000</td><td style="text-align:right;">39,999</td></tr>
+<tr><td style="text-align:right;">45,000</td><td style="text-align:right;">45,000</td></tr>
+<tr><td style="text-align:right;">50,000</td><td style="text-align:right;">49,999</td></tr>
+</tbody>
+</table>
+
+<h2>Jumps in string body location predict benchmark times</h2>
+
+<p>A simple least-squares regression on benchmark time by number of shuffled items shows a strong linear fit:</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/06/nshuffle-jumps-x-times.png" alt="nshuffle-jumps-x-times" width="487" height="369" class="alignnone size-full wp-image-8834" /></p>
+
+<p>There are measurable performance consequences to scrambling the order in which we read the string bodies.  Is it due to cache misses?</p>
+
+<h2>Jumps in string body location predict L1 cache read misses</h2>
+
+<p>The jump count only estimates cache misses.  For example, any string body located in a lower memory address than the address of its predecessor string is counted as a jump, though they might share a cache line. We need to verify that the jump count is a reasonable proxy for cache misses.</p>
+
+<p>The <a href="http://valgrind.org/docs/manual/cl-manual.html">callgrind tool</a> in the <a href="http://valgrind.org/docs/manual/">valgrind</a> suite estimates the number of cache misses for a program by simulating execution of the program binary on a specified processor architecture, counting several types of cache misses. The tool reports L1 and last-level (last-level is L3 on the Haswell architecture used in these tests) cache data read and write misses, as well as instruction read misses.</p>
+
+<p>Using <code class="highlighter-rouge">callgrind</code>, we see L1 cache read misses are perfectly correlated with the number of string body jumps in the source vector:</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/06/nshuffle-jumps-x-l1r.png" alt="nshuffle-jumps-x-l1r" width="426" height="448" class="alignnone size-full wp-image-8841" /></p>
+
+<p>Each core on the Haswell chip on which these tests were run has a 32K level-1 data cache and 32K level-1 instruction cache. There are negligible instruction cache misses (under 50 for every condition) because the loop is tight and cache lines for the instructions remain hot during its entire run.  In contrast, each string body jump requires loading an unread cache line from a nonsequential location, preventing prefetching. The small size of the L1 cache results in every jump causing about 5.5 read misses.  These misses are resolved from the L2 cache (unmonitored by <code>callgrind</code>), with L2 misses resolved from the last-level L3 cache. On this chip, the L3 cache is 3 MB, shared across both cores. The benchmarks were run on a quiet system, ensuring most to all L3 cache activity was from the benchmarks and not processes on the other core.</p>
+
+<h2>More than 20,000 string body jumps increases L3 cache read misses</h2>
+
+<p>The larger size of the last-level cache allows it to accommodate more distinct string bodies before read misses arise:</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/06/nshuffle-jumps-x-llr.png" alt="nshuffle-jumps-x-llr" width="420" height="448" class="alignnone size-full wp-image-8876" /></p>
+
+<p>Up to around 20,000 jumps, the number of L3 cache read misses is constant but as more jumps are added, the number of L3 cache read misses increases linearly with the jumps.</p>
+
+<h2>Cache write misses are harder to interpret</h2>
+
+<p>Increasing the number of source vector string body jumps directly affects read misses (because the string body of the loop parameter has to be copied from an unpredictable heap location) but only indirectly affects write misses.  The loop writes to two heap locations:</p>
+
+<ol>
+<li>The string body of the loop parameter: As every string body is exactly the same length, the heap location for the last parameter body potentially can be re-used for the next.  If so, these writes will land on a hot cache location.
+</li>
+<li>The 37,500 strings that pass the filter will be copied from the parameter to the next available spot in the result vector. Given that the loop parameter is an l-value, a copy-assignment must be used, which requires that a new heap location be allocated for the string body and the body from the loop parameter copied into it.  As these are the only heap operations performed in the loop, the blocks allocated for string bodies of the result vector should be in close to ascending, semi-contiguous order.
+</li>
+</ol>
+
+<p>This analysis suggests that the string body writes themselves will be to hot cache lines (the loop parameter) or in prefetchable cache lines (appending to the result vector).  However, write misses might be caused by interference from the read operations, as cache lines are evicted to make space for reads.</p>
+
+<p>The <code>callgrind</code> results for L1 cache write misses show little variation by jumps:</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/06/nshuffle-jumps-x-l1w.png" alt="nshuffle-jumps-x-l1w" width="431" height="448" class="alignnone size-full wp-image-8925" /></p>
+
+<p>The small range of the cache miss values relative to the y-axis is deliberate, emphasizing the small variation in L1 write misses.  The values are the same to three significant figures, only varying over the last 5,000.</p>
+
+<p>The results for L3 cache write misses indicate several distinct write regimes (0 jumps, 5,000–20,000 jumps, and 25,000–50,000 jumps), with a range of 200,000 misses:</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/06/nshuffle-jumps-x-llw.png" alt="nshuffle-jumps-x-llw" width="426" height="448" class="alignnone size-full wp-image-8933" /></p>
+
+<p>The causes of the behaviours of each level are unclear. L1 write misses seem independent of the number of jumps but jumps, and in particular large jump counts, do affect L3 write misses.  The L3 effect may be due to cache evictions or due to greater disorder in the overall heap.  We do not have sufficient data to tell at this point.</p>
+
+<h2>Conclusion</h2>
+
+<p>The order in which we access the bodies of long strings, which are stored on the heap by <code>libstdc++</code>, substantially affects the overall performance of the loop processing the vectors. Reading 50,000 string bodies in random order of addresses is 2.5 times slower than reading them in sequential order of address. Randomness in the string addresses incurs greater L1 cache read misses and, for the larger counts of random access, greater L3 cache read misses as well.</p>
+
+<p>Random access to string bodies has a more complicated relationship to cache write performance. In any case, the read miss performance is the dominant predictor.</p>
+
+<p>In my next post, I will use <code>callgrind</code> to locate the statement where the L1 read misses arise.</p>
+
+
+</div>
+
+
+
+
+    </div>
+
+  </body>
+</html>

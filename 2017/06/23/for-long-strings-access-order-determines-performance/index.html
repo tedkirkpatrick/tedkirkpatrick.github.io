@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      For long strings, access order determines performance &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">For long strings, access order determines performance</h1>
+  <span class="post-date">23 Jun 2017
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>In the last post, I described several possible causes of the slowdown for long strings in the by-value version of the idioms.  I concluded the most likely actual cause was the order in which the string bodies are accessed.</p>
+
+<h2>Structure of long strings in <code>libstdc++</code></h2>
+
+<p>To understand how the order of long strings affects performance, we must first understand the memory layout of long strings in <code>libstdc++</code> 6.2, the version used in this series.  This implementation of <code>std::string</code> stores a long string in two parts: the handle and the string body.</p>
+
+<p>The string handle occupies 32 bytes (in an environment with 64-bit pointers).  The handle has the <a href="http://en.cppreference.com/w/cpp/language/storage_duration">storage duration</a> of its string value: automatic, static, thread, or dynamic. For a long string, the handle comprises three fields:</p>
+
+<ol>
+<li>An 8-byte pointer to the string body.</li>
+<li>An 8-byte string length.</li>
+<li>An 8-byte capacity of the string body.</li>
+<li>An unused 8-byte block (used only for short strings).</li>
+</ol>
+
+<p>For the algorithms studied in these posts, the handles for the strings in the <code>src</code> vector are stored in the vector body (itself allocated on the heap), while the handle for the loop parameter string is stored in a local variable on the stack.</p>
+
+<p>The string body is stored in a separate block, always allocated on the heap, regardless of the storage duration of its handle. Its size is stored in the capacity field of the handle. It must be at least long enough to hold the current string value plus a terminating null byte. In the case of the algorithms studied in these posts, all the strings have a capacity of 27, the minimum necessary for a 26-byte string.</p>
+
+<h2>The memory layout of the "random" condition</h2>
+
+<p>Now consider how the source vector is built in the basic, random, case using the <code>libstdc++</code> implementations of <code>std::vector</code> and <code>std::string</code>. For the dataset with 75% of its entries copied to the source, the algorithm is:</p>
+
+<ol>
+<li>Define two strings:  An "included" string, that will be copied to the result vector, and an "excluded" string, that will not be copied. Because both strings are 27 bytes long (26 characters plus a null terminator), their bodies will be stored on the heap.
+</li>
+<li>The source vector is prereserved to a capacity of 50,000 entries.
+</li>
+<li>A random number generator is called 50,000 times, generating integers in the range [0,99].
+</li>
+<li>For a random integer in the range [0,74], a copy of the "included" string is constructed at the next available entry in the source vector.  For an integer in the range [75,99], a copy of the "excluded" string is constructed in the next available source entry.  In either case, the string's 32-byte handle will be stored directly in the vector, while its body will be copied to a 27-byte block obtained from the heap.
+</li>
+</ol>
+
+<p>Each string body is stored in a separate block.  The layout of these blocks depends upon the underlying allocator, which for these tests is the <a href="https://sourceware.org/git/?p=glibc.git;a=tree;f=malloc;h=d975e2c01d63ca983379033b183f0f404da8188c;hb=ab30899d880f9741a409cbc0d7a28399bdac21bf"><code>glibc 2.23</code> implementation of <code>malloc</code></a>. Rather than get into the specifics of this implementation, I will describe the general issues raised by all <code>malloc</code>-style allocators.</p>
+
+<p>Each string body is allocated via a separate call to <code>malloc()</code>.  Thus every string body will be in a separate block. Because most allocators will insert metadata and perhaps padding between these blocks, they will not be contiguous. However, the blocks typically will be <em>near</em> each other, in increasing order of memory address, although the blocks can in principle be allocated at arbitrary memory locations.  For example, the <code>glibc 2.23</code> allocator allocates the 50,000 source string bodies in adjacent 48-byte blocks, with one or two longer jumps in the sequence.</p>
+
+<p>The resulting memory layout of the <code>src</code> vector will look like:</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/06/coherent-long-string-bodies-75-pct.png" alt="coherent-long-string-bodies-75-pct" width="502" height="383" class="alignnone size-full wp-image-8665" /></p>
+
+<p>Now consider the code (<code>loop_emplace()</code> version) that reads that vector:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">p</span> <span class="o">:</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// by-value version
+</span>  <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">!=</span> <span class="n">exclude</span><span class="p">)</span>
+    <span class="n">res</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The loop accesses each element of the source vector <code>src</code> in sequential order. The string portion of the source element is copy-constructed into <code>p.first</code>. (The element cannot be move-constructed because <code>src</code> must not be modified.) Consequently, the string handles (stored contiguously and in sequence in the vector body, located on the heap) and the string bodies (stored semi-contiguously and in sequence as individual blocks on the heap) are accessed in sequentially-increasing order of addresses.  This maximizes the benefit from hardware prefetching, which will pull the next handle and string body into the cache before we request them.</p>
+
+<h2>The memory layout of the "shuffled" condition</h2>
+
+<p>Now consider the memory layout in the “shuffled” condition.  This condition begins with the same initialization as the “random” condition and then adds a fifth step:</p>
+
+<ol start="5">
+<li>
+    <p>Call <a href="http://en.cppreference.com/w/cpp/algorithm/random_shuffle"><code>std::shuffle</code></a> on <code>src</code>:</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">shuffle</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">src</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="o">*</span><span class="n">rbits</span><span class="p">);</span>
+</code></pre>
+    </div>
+
+    <p>The <code>libstdc++</code> implementation of the <code>std::shuffle</code> algorithm swaps string values by calling <a href=""><code>std::string::swap(std::string&amp;)</code></a>, which swaps the string handles but leaves the string bodies in their original heap locations. (This behaviour is enabled by the library standard but not required, so we have to check whether a given implementation in fact does this.)</p>
+  </li>
+</ol>
+
+<p>After the shuffle, access to the string handles in the source vector remains sequential but <em>access to the string bodies</em> in the heap is <em>random</em>:</p>
+
+<p><img src="https://ted376.files.wordpress.com/2017/06/incoherent-long-string-bodies-75.png" alt="Incoherent long string bodies-75" width="502" height="382" class="alignnone size-full wp-image-8669" /></p>
+
+<p>When the string bodies are accessed in random order, copy-constructing the loop parameter will generate many cache misses.</p>
+
+<h2>Specifying the level of disorderly heap access</h2>
+
+<p>The test data sets used to date in this series only test the extremes of heap disorder.  The original (“Random”) data set and in-situ sorted data set access all string bodies sequentially, while the shuffle data set accesses all the bodies randomly.  We want to be able to specify a specific degree of randomness in the source vector access and measure its effects on runtime.</p>
+
+<p>We will add fifth data set, “NShuffle”, in which we can specify the proportion of source strings whose bodies are accessed randomly, while the remaining proportion of source strings are accessed sequentially.  This data set is created similarly to Shuffle, except that only the first <code>n_shuffle</code> number of elements are shuffled, while the rest are left in their original order. The <code>n_shuffle</code> parameter can range from 0 (all elements accessed sequentially) to 50,000 (all elements accessed randomly):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">shuffle</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">src</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span><span class="o">+</span><span class="n">n_shuffle</span><span class="p">,</span> <span class="o">*</span><span class="n">rbits</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<p>Running the benchmarks on NShuffle data sets with <code>n_shuffle</code> ranging from 0 to 50,000, in units of 5,000, yields very interesting results.  I’ll leave that here as a teaser and present the actual results in the next post.</p>
+
+
+</div>
+
+
+
+
+    </div>
+
+  </body>
+</html>

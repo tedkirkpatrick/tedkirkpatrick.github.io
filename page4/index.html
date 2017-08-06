@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      All my marbles in one place &middot; Ted's blog
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="posts">
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/02/25/lambdas-typical-use-cases/">
+        Lambdas: Typical use cases
+      </a>
+    </h1>
+    
+    <span class="post-date">25 Feb 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>My last post, highlighting the differences between C++ lambdas and the lambdas in languages based upon functional programs, went more deeply into the weeds than I had intended. I realized too late that it cried out for examples.  The rules for declaring free variables (the member variables of the anonymous class) in C++ lambdas can seem contorted but most uses of them fall into one of a few simple types.  In this post, I want to present three simple use cases of C++ lambdas, each demonstrating a different way to use free variables.</p>
+
+ <a href="/2017/02/25/lambdas-typical-use-cases/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/">
+        Lambdas: Sweet, sweet syntactic sugar
+      </a>
+    </h1>
+    
+    <span class="post-date">23 Feb 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p><b>Update:</b> The <a href="/2017/02/25/lambdas-typical-use-cases/">next post</a> provides recipes for common use cases of lambdas.  If parts of this post seem too abstract, you might find the examples in the next post clarify things.</p>
+
+<p>STL iterators and algorithms really can’t be discussed without also talking about lambdas. Although the STL design predates the introduction of lambdas by almost two decades, the introduction of lambdas in C++ 2011 improved the usability of STL algorithms substantially.  I don’t have statistics but I presume that the STL algorithms now receive substantially more use due to the greater simplicity of passing callbacks as lambdas rather than instances of named classes. Lambdas are purely a matter of convenience—they introduce nothing to the language that you couldn’t do before—but by making common use cases more convenient, they effectively extend the range of use cases where calling a standard algorithm makes sense.</p>
+
+ <a href="/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/02/22/iterators-a-failure-case/">
+        Iterators: A failure case
+      </a>
+    </h1>
+    
+    <span class="post-date">22 Feb 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>In my first post on iterators, I presented a case where they work well.  In this post, I’ll present a clear failure and begin discussing why the deep structure of the design leads to this failure.</p>
+
+ <a href="/2017/02/22/iterators-a-failure-case/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/02/21/iterators-one-success-story/">
+        Iterators: One success story
+      </a>
+    </h1>
+    
+    <span class="post-date">21 Feb 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    
+<p>Iterators intrigue me because they seem to bring to C++ facilities that I’ve found congenial in other languages. I’ve spent some time in Haskell and a lot of time in Python, which both support <a href="https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions">list comprehensions</a>. I’ve also enjoyed the limited amount of C# <a href="https://msdn.microsoft.com/en-us/library/bb397933.aspx">Language-Integrated Query (LINQ)</a> programming that I’ve done.</p>
+
+<p>Yet when I come to actually use the STL iterators, it feels awkward and requires much more text than achieving comparable results using list comprehensions or LINQ. Some of that may be simple unfamiliarity but that is itself a problem: A good design will allow me to apply patterns I’ve learned in other languages.</p>
+
+ <a href="/2017/02/21/iterators-one-success-story/">more ...</a>
+  </div>
+  
+</div>
+
+<div class="pagination">
+  
+    <span class="pagination-item older">Older</span>
+  
+  
+    
+      <a class="pagination-item newer" href="/page3">Newer</a>
+    
+  
+</div>
+    </div>
+
+  </body>
+</html>

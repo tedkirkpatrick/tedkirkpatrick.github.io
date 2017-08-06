@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      All my marbles in one place &middot; Ted's blog
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item active" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="posts">
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/06/29/rand-access-long-cache-misses/">
+        Random access to long string bodies incurs cache misses
+      </a>
+    </h1>
+    
+    <span class="post-date">29 Jun 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>As I <a href="/2017/06/23/for-long-strings-access-order-determines-performance/">described in the last post</a>, shuffling the items in the source vector leaves the string handles in contiguous sequential order while introducing disorder into the sequence of string bodies. The NShuffled “data set” is really a family of 11 related data sets, differing in the fraction of their items that were shuffled.  All sets start with the same vector <code>src</code> of 50,000 elements, then <code>std::shuffle()</code> is run on the first <i>N</i> items in the vector, where <i>N</i> ranges from 0 (no items shuffled) to 50,000 (all items shuffled) in increments of 5,000. All the data sets will have 37,500 (75% of 50,000) of their source elements copied to the result vector.</p>
+
+ <a href="/2017/06/29/rand-access-long-cache-misses/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/06/23/for-long-strings-access-order-determines-performance/">
+        For long strings, access order determines performance
+      </a>
+    </h1>
+    
+    <span class="post-date">23 Jun 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>In the last post, I described several possible causes of the slowdown for long strings in the by-value version of the idioms.  I concluded the most likely actual cause was the order in which the string bodies are accessed.</p>
+
+ <a href="/2017/06/23/for-long-strings-access-order-determines-performance/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/06/14/sidling-up-to-the-long-string-slowdown/">
+        Sidling up to the long string slowdown
+      </a>
+    </h1>
+    
+    <span class="post-date">14 Jun 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>In the last post, I highlighted an anomaly in the results for filtering long strings using the by-value implementation of the loop. The usual suspect for such outcomes, heap fragmentation, didn’t seem to apply in this case. What might be the actual source of the problem?</p>
+
+ <a href="/2017/06/14/sidling-up-to-the-long-string-slowdown/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/">
+        Microbenchmarks are highly sensitive to the heap context!
+      </a>
+    </h1>
+    
+    <span class="post-date">10 Jun 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>Over two weeks ago, I posted an article about <a href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/">by-value parameters in the loop and <code class="highlighter-rouge">transform</code> idioms</a>. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis.  In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda.</p>
+
+ <a href="/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/05/24/the-elegant-machine-code-for-char-const/">
+        The elegant machine code for char const *
+      </a>
+    </h1>
+    
+    <span class="post-date">24 May 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>Unique strings—null-terminated strings uniquely identified by their <code>char const *</code>—are the simplest type considered in this series of posts. Constructing, copying, moving, and assigning these strings are trivial operations on a single pointer. No destructor code is required.</p>
+
+ <a href="/2017/05/24/the-elegant-machine-code-for-char-const/">more ...</a>
+  </div>
+  
+</div>
+
+<div class="pagination">
+  
+    <a class="pagination-item older" href="/page2">Older</a>
+  
+  
+    <span class="pagination-item newer">Newer</span>
+  
+</div>
+    </div>
+
+  </body>
+</html>

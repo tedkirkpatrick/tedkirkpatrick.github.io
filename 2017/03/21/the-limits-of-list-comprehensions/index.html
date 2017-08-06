@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      The limits of list comprehensions &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	  	    
+            <a href="/tag/Python/">Python</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2017. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">The limits of list comprehensions</h1>
+  <span class="post-date">21 Mar 2017
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>,
+      
+    
+      
+      <a href="/tag/Python">Python</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>I’ve spent my recent posts unfavourably comparing the STL design of containers/iterators/algorithms with Python list comprehensions and their close relatives in Haskell.  This is an unfairly restrictive way to view the STL design, which addresses a wider range of use cases than the ones addressed by list comprehensions.  But it is also unfair in that it ignores the limitations of list comprehensions themselves, limitations avoided by the more general structure provided by the STL.  In this post, I’ll start from the other direction, considering the inherent limitations of Python list comprehensions. This in turn leads to an idiom in the STL that in fact provides virtually all the functionality of basic list comprehensions, with only slightly more complex syntax.</p>
+
+<h2>The general and basic forms of Python list comprehensions</h2>
+
+<p>The <a href="https://docs.python.org/3/reference/expressions.html#displays-for-lists-sets-and-dictionaries">full form of Python list comprehensions</a> is complex, permitting <a href="https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions">many forms of nesting</a>. For this post, I’m going to focus on the most basic form, <code>[expression1 for var in expression2 if condition(var)]</code>, where <code>expression2</code> evaluates to an iterator and <code>expression1</code> is some function of <code>var</code>.  I won’t consider the cases where there are multiple <code>for ... if ... </code> on the right, nor the cases where <code>expression1</code> is itself a list comprehension.</p>
+
+<p>I am also not going to consider Python’s syntactically similar <a href="https://docs.python.org/3/reference/expressions.html#generator-expressions">generator expressions</a>, which only compute elements on demand, handling very long and infinite streams.  This is not how the <a href="http://en.cppreference.com/w/cpp/algorithm">STL algorithms</a> work, which all require the complete evaluation of their range, corresponding to list comprehensions.</p>
+
+<p>Within those restrictions, the basic Python list comprehension has this structure:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>for each element returned by an iterator
+  if the element passes the filter
+    compute a function of the element
+    append the computed value to the result list
+</code></pre>
+</div>
+
+<p>This structure is broadly useful but its element-at-a-time structure has a fundamental limitation:  You have to leave the paradigm whenever you have an operation on two or more values from the iterator.  The classic algorithm requiring such an operation is sorting, which must test pairs of values.</p>
+
+<p>It turns out that use cases that require you to filter, sort, and then filter again are rather specialized. The Python example that I wrote for this post wound up being so contrived that I won’t bother to include it here.  I suspect the primary use cases for filter/sort/filter lie in database operations, where the intermediate sort step is required to efficiently scan key lists along indices, producing more efficient access to external storage. Intermediate sort steps seem far less useful for the cases considered in this post, where the entire data structure is already in memory.</p>
+
+<h2>If needed, sorting commonly precedes or follows a list comprehension</h2>
+
+<p>A far more common use case requires the filtering and computation to be performed in one step, with the sorting done either before or after. For example,  given a list of pairs whose first value is an abbreviation for either a Canadian province or <code>US</code> for the USA and whose second value is an amount, <code>func()</code> filters out the US amounts and returns the squares of the Canadian amounts, sorted by province and squared amount:</p>
+
+<!-- highlight="2,3" -->
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lst</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">'US'</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s">'BC'</span><span class="p">,</span><span class="s">'NB'</span><span class="p">,</span><span class="s">'BC'</span><span class="p">,</span><span class="s">'US'</span><span class="p">,</span><span class="s">'NB'</span><span class="p">,</span><span class="s">'BC'</span><span class="p">,</span><span class="s">'BC'</span><span class="p">],</span><span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">)))</span>
+    <span class="k">print</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>The per-pair processing is handled well by the list comprehension (Line 2), with the sort done (Line 3) on the computed result.  The same effect can be accomplished via the considerably more prolix STL sequence (equivalent code highlighted)</p>
+
+<!-- highlight="29,30,31,32,33,34,35,36,37,38,39" -->
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">using</span> <span class="n">ppair</span> <span class="o">=</span> <span class="n">pair</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">plist</span> <span class="o">=</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">ppair</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="n">ostream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="k">const</span> <span class="n">ppair</span><span class="o">&amp;</span> <span class="n">pp</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">"("</span> <span class="o">&lt;&lt;</span> <span class="n">pp</span><span class="p">.</span><span class="n">first</span> <span class="o">&lt;&lt;</span> <span class="s">", "</span> <span class="o">&lt;&lt;</span> <span class="n">pp</span><span class="p">.</span><span class="n">second</span> <span class="o">&lt;&lt;</span> <span class="s">")"</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">os</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">ostream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="k">const</span> <span class="n">plist</span><span class="o">&amp;</span> <span class="n">pl</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="n">pl</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="n">pl</span><span class="p">.</span><span class="n">cbegin</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">pl</span><span class="p">.</span><span class="n">cend</span><span class="p">();</span> <span class="o">++</span><span class="n">p</span><span class="p">)</span>
+      <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">", "</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">os</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="n">plist</span> <span class="n">src</span> <span class="p">{</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"BC"</span><span class="p">,</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"NB"</span><span class="p">,</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"BC"</span><span class="p">,</span> <span class="mi">2</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"US"</span><span class="p">,</span> <span class="mi">3</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"NB"</span><span class="p">,</span> <span class="mi">4</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"BC"</span><span class="p">,</span> <span class="mi">5</span><span class="p">},</span>
+    <span class="n">ppair</span><span class="p">{</span><span class="s">"BC"</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+  <span class="p">};</span>
+
+  <span class="n">plist</span> <span class="n">t1</span> <span class="p">{};</span>
+  <span class="n">t1</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">copy_if</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">src</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">back_inserter</span><span class="p">(</span><span class="n">t1</span><span class="p">),</span> 
+    <span class="p">[](</span><span class="k">auto</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">!=</span> <span class="n">string</span><span class="p">(</span><span class="s">"US"</span><span class="p">);</span> <span class="p">});</span>
+
+  <span class="n">plist</span> <span class="n">res</span> <span class="p">{};</span>
+  <span class="n">res</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">transform</span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">t1</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">back_inserter</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
+    <span class="p">[](</span><span class="k">auto</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">ppair</span><span class="p">{</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span> <span class="o">*</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">};</span> <span class="p">});</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">sort</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">res</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">res</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The STL version uses the <a href=""><a href="/2017/03/09/a-simpler-fourth-idiom-for-appending/"><code class="highlighter-rouge">reserve/back_inserter</code> approach</a> to building the temporary <code>t1</code> and the result <code>res</code>.</a></p>
+
+<p>The primary source of the extra length of the STL algorithm is the requirement for separate <code>copy_if</code> and <code>transform</code> steps. This separation is necessitated by the <code>transform</code> algorithm’s requirement that it produce exactly one transformed result for every element in the source.  By contrast, the Python list comprehension’s <code>if</code> filter allows its result to have fewer elements than its source.</p>
+
+<p>Although it is not obvious, there <em>is</em> a way to combine the filter and computation in the STL <code>transform</code> function, giving a one-line transform that produces fewer elements than its sink.  The trick is that the filter isn’t located in the lambda expression—at least not entirely.  I’ll present that solution in my next post.</p>
+
+
+
+</div>
+
+
+
+
+    </div>
+
+  </body>
+</html>
