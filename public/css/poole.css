@@ -210,6 +210,23 @@ pre code {
   border-radius: 0;
 }
 
+/* Pull text */
+.pull {
+  padding: .5rem 1rem;
+  margin: .8rem 0;
+  color: #7a7a7a;
+}
+
+.pull p:last-child {
+  margin-bottom: 0;
+}
+@media (min-width: 30em) {
+  .pull {
+    padding-right: 5rem;
+    padding-left: 1.25rem;
+  }
+}
+
 /* Quotes */
 blockquote {
   padding: .5rem 1rem;

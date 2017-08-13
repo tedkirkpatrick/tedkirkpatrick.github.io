@@ -4,13 +4,74 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2017-08-06T16:00:26-07:00</updated>
+ <updated>2017-08-13T12:11:18-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>The many and varied audiences for Big Data training</title>
+   <link href="/2017/08/13/the-many-and-varied-audiences-for-big-data-training/"/>
+   <updated>2017-08-13T00:00:00-07:00</updated>
+   <id>/2017/08/13/the-many-and-varied-audiences-for-big-data-training</id>
+   <content type="html">&lt;p&gt;There’s a wide range of Big Data training on offer, from full in-person university degree programs (in the North American context, typically Master’s degrees), to certificates from online universities (such as Coursera or EdX), to short professional development courses from for-profit trainers.  A common element of the sales pitches is the presumed universality of the need.  Every discipline and nearly every profession, it is claimed, will benefit from the technologies of Big Data.  Some pitches make an even stronger claim, that incorporating data analysis is now &lt;em&gt;essential&lt;/em&gt; for success.&lt;/p&gt;
+
+&lt;p&gt;These pitches tacitly presume another form of universality: That a small suite of courses will be sufficient to cover all potential audiences. For example, the on-line courses in data analysis from Coursera fall into several distinct categories:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Courses with a full-on technology focus, such as Hadoop and Spark or analogous technologies.  These presume the students have good prerequisite knowledge of programming.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Courses with a mostly-technology focus, covering R or Python and the essentials of data analysis.  These address a similar audience to above but the focus includes smaller data sets and the level of prior technical knowledge isn’t as high.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Courses with an emphasis on an application domain, with a secondary focus on spreadsheets (typically Microsoft Excel). Specific domains include brand development, market segmentation, and related fields.  The courses presume a higher level of skill in the source domain and a lower level of technical skill. Their audience is analysts who use spreadsheets but do little to no programming.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Overviews for experts in non-analytic domains.  These presume no technical knowledge but aim to give experts in other domains sufficient background to collaborate with more technical specialists who will do the actual analysis.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The first three, featuring more technical content, are by far the most common type of courses on offer. I think a big factor in this consensus is that the technologies used, whether Big Data, statistical suites, or spreadsheets, are coherent and readily identified. There are substantial populations using each of these tool chains and analysts tend to consistently use a given chain.  The programmer who builds the Spark pipeline and configures a cluster for Web site click analysis is unlikely to move on next to an Excel market segmentation. Such analyses require different skill set that are rarely posessed by any single analyst.&lt;/p&gt;
+
+&lt;p&gt;Yet this stable clustering of tool chains belies a potentially vast range of analysis domains. I think it is indicative that the spreadsheet-based courses, which incorporate more domain knowledge, are more segmented and diverse than courses focused on tool chains. Although technologies for data analysis may fall into distinct clusters, their use cases vary widely.&lt;/p&gt;
+
+&lt;p&gt;What happens if we design Big Data training from the other direction, starting with the needs of the ultimate consumer of its results? First, we have to identify that consumer. &lt;a href=&quot;https://www.linkedin.com/learning/instructors/doug-rose&quot;&gt;Doug Rose&lt;/a&gt; makes the case in &lt;a href=&quot;https://www.lynda.com/Business-Skills-tutorials/Understanding-Data-Science/477452-2.html&quot;&gt;Learning Data Science: Understanding the Basics&lt;/a&gt; that Data Science (which includes Big Data as a subfield) is inherently exploratory: It uncovers opportunities.
+If Big Data (and Data Science more generally) is exploratory, then it takes three steps to have real effects in the world:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The analyst uncovers an opportunity: An unmet need, an unacknowledged problem, an unaddressed risk.&lt;/li&gt;
+  &lt;li&gt;One or more proposals are developed to address the opportunity.  A company might propose products or services, a not-for-profit might propose campaigns or programs, while a government agency might propose policies.&lt;/li&gt;
+  &lt;li&gt;A proposal is chosen and implemented. This will often proceed in phases, including focus groups, test markets, or progressive rollouts.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Each step addresses a different audience and makes different arguments:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The analyst must demonstrate that the opportunity presents a substantial benefit or cost to outcomes of interest to the organization.  The case is successful when funders allocate resources to proposal development.&lt;/li&gt;
+  &lt;li&gt;For proposal development, the analyst typically takes a support role, with domain specialists developing the proposal.  The case is successful when the funders select a proposal for implementation.&lt;/li&gt;
+  &lt;li&gt;For implementation the analyst is further in the background. They may provide data for assessing the first stages of rollout or develop production pipelines necessary to support full implementation of the proposal.  The effort is successful if the product,  program, or policy succeeds.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Each stage addresses a different audience, using a different style of argument. Although the technical details of data analysis may be consistent, the work products will be very different. A market analysis would estimate the monetary value of an unmet need, while a business plan for a product addressing that need would describe price points and value propositions and the test marketing of the actual product would assess customer perception of value.&lt;/p&gt;
+
+&lt;p&gt;Different domains have different styles of argument and different presentations of evidence, differences arising from both distinct needs and distinct histories. The various forms of presentation in turn drive differences in the original data analysis.&lt;/p&gt;
+
+&lt;p&gt;I’ll present detailed examples of this argument in future posts.  For now, I only want to emphasize this point:&lt;/p&gt;
+
+&lt;p class=&quot;pull&quot;&gt;If we design Big Data training from the perspective of which tool chain is
+used, we create a small number of curricula focused on stable, coherent
+tools.  But if we design Big Data training from the perspective of which
+arguments are going to be made to which audience, we may have to instead
+create a much larger number of domain-specific courses.&lt;/p&gt;
+
+&lt;p&gt;Successful arguments address concerns of interest to &lt;em&gt;the people with authority to effect the necessary change&lt;/em&gt;. For Big Data training to succeed, it must emphasize how much the analysis, from its earliest stages, has that focus.  That will probably require a much greater diversity of training than we currently see.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Random access to long string bodies incurs cache misses</title>
