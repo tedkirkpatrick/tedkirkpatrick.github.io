@@ -228,7 +228,7 @@
 </code></pre>
     </div>
 
-    <p>The <code>libstdc++</code> implementation of the <code>std::shuffle</code> algorithm swaps string values by calling <a href=""><code>std::string::swap(std::string&amp;)</code></a>, which swaps the string handles but leaves the string bodies in their original heap locations. (This behaviour is enabled by the library standard but not required, so we have to check whether a given implementation in fact does this.)</p>
+    <p>The <code>libstdc++</code> implementation of the <code>std::shuffle</code> algorithm swaps string values by calling <a href="http://en.cppreference.com/w/cpp/string/basic_string/swap"><code>std::string::swap(std::string&amp;)</code></a>, which swaps the string handles but leaves the string bodies in their original heap locations. (This behaviour is enabled by the library standard but not required, so we have to check whether a given implementation in fact does this.)</p>
   </li>
 </ol>
 

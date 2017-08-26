@@ -243,7 +243,16 @@
 
 <p>Once a programmer has acquired the <code>transform/opt_back_insert_iterator</code> idiom, a given use only requires them to derive the lambda combining the filter and and computation. The lambda is essentially the Python list comprehension annotated with types.</p>
 
-<p>This idiom allows you to write C++ expressions equivalent to basic list comprehensions with about the same complexity. There is a lot of boilerplate the in C++ code—the definition of <code>opt_back_insert_iterator</code>, the call to <code>res.reserve()</code>, and the elaborate <code>std::transform()</code> call—that is automatically provided by Python, but that code is the same for any use.  All the customization is contained in the lambda. The programmer does have to choose between the various <a href="three-idioms-for-appending-values-a-damaging-decision">approaches to building the result vector</a>, though the reserve/insert-back one used here is a good default.</p>
+<p>This idiom allows you to write C++ expressions equivalent to basic
+list comprehensions with about the same complexity. There is a lot of
+boilerplate the in C++ code—the definition of
+<code>opt_back_insert_iterator</code>, the call to
+<code>res.reserve()</code>, and the elaborate
+<code>std::transform()</code> call—that is automatically provided by
+Python, but that code is the same for any use.  All the customization
+is contained in the lambda. The programmer does have to choose between
+the various <a href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/">approaches
+to building the result vector</a>, though the reserve/insert-back one used here is a good default.</p>
 
 <p>The method has introduced many abstractions: the algorithm, the lambda, the <code>optional</code> type, the inserter template.  Do these bloat the code or can the compiler reduce them to their basic constructs? And how does the generated code compare with the code generated from a basic <code>for</code> loop?  It depends upon the values we are passing through the expression. I will explore the generated machine code in the next post.</p>
 

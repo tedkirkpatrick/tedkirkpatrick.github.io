@@ -163,7 +163,8 @@
   
   </span>
   
-  <p>The <a href="benchmarking-the-transform-and-loop-idioms">benchmarks comparing <code>transform</code> to a loop</a> also highlighted the substantial contribution that copying values made to their performance. Copying costs become especially noticeable for complex types, such as standard strings too long to fit in the short string optimization.</p>
+  <p>The <a href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/">benchmarks comparing <code>transform</code> to a
+loop</a> also highlighted the substantial contribution that copying values made to their performance. Copying costs become especially noticeable for complex types, such as standard strings too long to fit in the short string optimization.</p>
 
 <p>In my original presentation of the <code>transform</code> idiom, I slipped up and used a by-value parameter to the lambda expression rather than by-reference. For the actual benchmarks, I corrected that and specified a by-reference parameter.  How much of an effect would the original by-value parameter have had?</p>
 
@@ -229,7 +230,7 @@
 
 <h2>Results</h2>
 
-<p>All other conditions of the benchmarks were the same as the <a href="benchmarking-the-transform-and-loop-idioms">previous post</a>.</p>
+<p>All other conditions of the benchmarks were the same as the <a href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/">previous post</a>.</p>
 
 <h3>Overview</h3>
 

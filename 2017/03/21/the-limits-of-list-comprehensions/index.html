@@ -252,7 +252,7 @@
 </code></pre>
 </div>
 
-<p>The STL version uses the <a href=""><a href="/2017/03/09/a-simpler-fourth-idiom-for-appending/"><code class="highlighter-rouge">reserve/back_inserter</code> approach</a> to building the temporary <code>t1</code> and the result <code>res</code>.</a></p>
+<p>The STL version uses the <a href="/2017/03/09/a-simpler-fourth-idiom-for-appending/"><code class="highlighter-rouge">reserve/back_inserter</code> approach</a> to building the temporary <code>t1</code> and the result <code>res</code>.</p>
 
 <p>The primary source of the extra length of the STL algorithm is the requirement for separate <code>copy_if</code> and <code>transform</code> steps. This separation is necessitated by the <code>transform</code> algorithm’s requirement that it produce exactly one transformed result for every element in the source.  By contrast, the Python list comprehension’s <code>if</code> filter allows its result to have fewer elements than its source.</p>
 

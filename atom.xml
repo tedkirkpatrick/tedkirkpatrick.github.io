@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2017-08-26T12:27:26-07:00</updated>
+ <updated>2017-08-26T13:06:27-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -266,7 +266,7 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
 &lt;/code&gt;&lt;/pre&gt;
     &lt;/div&gt;
 
-    &lt;p&gt;The &lt;code&gt;libstdc++&lt;/code&gt; implementation of the &lt;code&gt;std::shuffle&lt;/code&gt; algorithm swaps string values by calling &lt;a href=&quot;&quot;&gt;&lt;code&gt;std::string::swap(std::string&amp;amp;)&lt;/code&gt;&lt;/a&gt;, which swaps the string handles but leaves the string bodies in their original heap locations. (This behaviour is enabled by the library standard but not required, so we have to check whether a given implementation in fact does this.)&lt;/p&gt;
+    &lt;p&gt;The &lt;code&gt;libstdc++&lt;/code&gt; implementation of the &lt;code&gt;std::shuffle&lt;/code&gt; algorithm swaps string values by calling &lt;a href=&quot;http://en.cppreference.com/w/cpp/string/basic_string/swap&quot;&gt;&lt;code&gt;std::string::swap(std::string&amp;amp;)&lt;/code&gt;&lt;/a&gt;, which swaps the string handles but leaves the string bodies in their original heap locations. (This behaviour is enabled by the library standard but not required, so we have to check whether a given implementation in fact does this.)&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ol&gt;
 
@@ -665,7 +665,8 @@ generated identical code and &lt;a href=&quot;/2017/05/22/passing-stdstring-by-v
    <link href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/"/>
    <updated>2017-05-22T00:00:00-07:00</updated>
    <id>/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms</id>
-   <content type="html">&lt;p&gt;The &lt;a href=&quot;benchmarking-the-transform-and-loop-idioms&quot;&gt;benchmarks comparing &lt;code&gt;transform&lt;/code&gt; to a loop&lt;/a&gt; also highlighted the substantial contribution that copying values made to their performance. Copying costs become especially noticeable for complex types, such as standard strings too long to fit in the short string optimization.&lt;/p&gt;
+   <content type="html">&lt;p&gt;The &lt;a href=&quot;/2017/05/19/benchmarking-the-transform-and-loop-idioms/&quot;&gt;benchmarks comparing &lt;code&gt;transform&lt;/code&gt; to a
+loop&lt;/a&gt; also highlighted the substantial contribution that copying values made to their performance. Copying costs become especially noticeable for complex types, such as standard strings too long to fit in the short string optimization.&lt;/p&gt;
 
 &lt;p&gt;In my original presentation of the &lt;code&gt;transform&lt;/code&gt; idiom, I slipped up and used a by-value parameter to the lambda expression rather than by-reference. For the actual benchmarks, I corrected that and specified a by-reference parameter.  How much of an effect would the original by-value parameter have had?&lt;/p&gt;
 
@@ -731,7 +732,7 @@ generated identical code and &lt;a href=&quot;/2017/05/22/passing-stdstring-by-v
 
 &lt;h2&gt;Results&lt;/h2&gt;
 
-&lt;p&gt;All other conditions of the benchmarks were the same as the &lt;a href=&quot;benchmarking-the-transform-and-loop-idioms&quot;&gt;previous post&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;All other conditions of the benchmarks were the same as the &lt;a href=&quot;/2017/05/19/benchmarking-the-transform-and-loop-idioms/&quot;&gt;previous post&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h3&gt;Overview&lt;/h3&gt;
 
@@ -1449,7 +1450,7 @@ The above is the main loop body.  We're not done though, as there are these two 
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Whoa, that’s a lot more code than &lt;a href=&quot;&quot;&gt;&lt;a href=&quot;/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/&quot;&gt;the basic C++ version generated&lt;/a&gt;! Just over 3.4 times more code, in fact. As well as 2.3 times more stack storage for local variables and temporaries.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Whoa, that’s a lot more code than &lt;a href=&quot;/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/&quot;&gt;the basic C++ version generated&lt;/a&gt;! Just over 3.4 times more code, in fact. As well as 2.3 times more stack storage for local variables and temporaries.&lt;/p&gt;
 
 &lt;p&gt;The increased stack storage indicates the key contributor to the increased code size:  There are a lot more local variables and temporaries in this version. Given that these locals typically include a &lt;code class=&quot;highlighter-rouge&quot;&gt;std::string&lt;/code&gt; member, there is a lot of code managing that complex type. The basic version uses one 4-byte temporary for the result of the squared integer value, while the &lt;code class=&quot;highlighter-rouge&quot;&gt;transform&lt;/code&gt; idiom generates one 8-byte temporary to save a register and 128 bytes of temporary values (&lt;code class=&quot;highlighter-rouge&quot;&gt;l_us&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;T1&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;RT&lt;/code&gt;).&lt;/p&gt;
 
@@ -1795,7 +1796,16 @@ in the element at &lt;code class=&quot;highlighter-rouge&quot;&gt;res.end()&lt;/
 
 &lt;p&gt;Once a programmer has acquired the &lt;code&gt;transform/opt_back_insert_iterator&lt;/code&gt; idiom, a given use only requires them to derive the lambda combining the filter and and computation. The lambda is essentially the Python list comprehension annotated with types.&lt;/p&gt;
 
-&lt;p&gt;This idiom allows you to write C++ expressions equivalent to basic list comprehensions with about the same complexity. There is a lot of boilerplate the in C++ code—the definition of &lt;code&gt;opt_back_insert_iterator&lt;/code&gt;, the call to &lt;code&gt;res.reserve()&lt;/code&gt;, and the elaborate &lt;code&gt;std::transform()&lt;/code&gt; call—that is automatically provided by Python, but that code is the same for any use.  All the customization is contained in the lambda. The programmer does have to choose between the various &lt;a href=&quot;three-idioms-for-appending-values-a-damaging-decision&quot;&gt;approaches to building the result vector&lt;/a&gt;, though the reserve/insert-back one used here is a good default.&lt;/p&gt;
+&lt;p&gt;This idiom allows you to write C++ expressions equivalent to basic
+list comprehensions with about the same complexity. There is a lot of
+boilerplate the in C++ code—the definition of
+&lt;code&gt;opt_back_insert_iterator&lt;/code&gt;, the call to
+&lt;code&gt;res.reserve()&lt;/code&gt;, and the elaborate
+&lt;code&gt;std::transform()&lt;/code&gt; call—that is automatically provided by
+Python, but that code is the same for any use.  All the customization
+is contained in the lambda. The programmer does have to choose between
+the various &lt;a href=&quot;/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/&quot;&gt;approaches
+to building the result vector&lt;/a&gt;, though the reserve/insert-back one used here is a good default.&lt;/p&gt;
 
 &lt;p&gt;The method has introduced many abstractions: the algorithm, the lambda, the &lt;code&gt;optional&lt;/code&gt; type, the inserter template.  Do these bloat the code or can the compiler reduce them to their basic constructs? And how does the generated code compare with the code generated from a basic &lt;code&gt;for&lt;/code&gt; loop?  It depends upon the values we are passing through the expression. I will explore the generated machine code in the next post.&lt;/p&gt;
 
@@ -2035,7 +2045,7 @@ in the element at &lt;code class=&quot;highlighter-rouge&quot;&gt;res.end()&lt;/
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;The STL version uses the &lt;a href=&quot;&quot;&gt;&lt;a href=&quot;/2017/03/09/a-simpler-fourth-idiom-for-appending/&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;reserve/back_inserter&lt;/code&gt; approach&lt;/a&gt; to building the temporary &lt;code&gt;t1&lt;/code&gt; and the result &lt;code&gt;res&lt;/code&gt;.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The STL version uses the &lt;a href=&quot;/2017/03/09/a-simpler-fourth-idiom-for-appending/&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;reserve/back_inserter&lt;/code&gt; approach&lt;/a&gt; to building the temporary &lt;code&gt;t1&lt;/code&gt; and the result &lt;code&gt;res&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;The primary source of the extra length of the STL algorithm is the requirement for separate &lt;code&gt;copy_if&lt;/code&gt; and &lt;code&gt;transform&lt;/code&gt; steps. This separation is necessitated by the &lt;code&gt;transform&lt;/code&gt; algorithm’s requirement that it produce exactly one transformed result for every element in the source.  By contrast, the Python list comprehension’s &lt;code&gt;if&lt;/code&gt; filter allows its result to have fewer elements than its source.&lt;/p&gt;
 

@@ -410,7 +410,7 @@ The above is the main loop body.  We're not done though, as there are these two 
 </code></pre>
 </div>
 
-<p>Whoa, that’s a lot more code than <a href=""><a href="/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/">the basic C++ version generated</a>! Just over 3.4 times more code, in fact. As well as 2.3 times more stack storage for local variables and temporaries.</a></p>
+<p>Whoa, that’s a lot more code than <a href="/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/">the basic C++ version generated</a>! Just over 3.4 times more code, in fact. As well as 2.3 times more stack storage for local variables and temporaries.</p>
 
 <p>The increased stack storage indicates the key contributor to the increased code size:  There are a lot more local variables and temporaries in this version. Given that these locals typically include a <code class="highlighter-rouge">std::string</code> member, there is a lot of code managing that complex type. The basic version uses one 4-byte temporary for the result of the squared integer value, while the <code class="highlighter-rouge">transform</code> idiom generates one 8-byte temporary to save a register and 128 bytes of temporary values (<code class="highlighter-rouge">l_us</code>, <code class="highlighter-rouge">T1</code>, and <code class="highlighter-rouge">RT</code>).</p>
 
