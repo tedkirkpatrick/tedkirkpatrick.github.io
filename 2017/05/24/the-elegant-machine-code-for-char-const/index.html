@@ -203,11 +203,13 @@ generated identical code and <a href="/2017/05/22/passing-stdstring-by-value-not
 &lt;+95&gt;:	mov    0x10(%r14),%rsi           %rsi &lt;- res.cap_end()
 &lt;+99&gt;:	imul   %ecx,%ecx                 %ecx &lt;- src_i-&gt;value ^ 2
 &lt;+102&gt;:	cmp    %rbp,%rsi                 res_i ==? res.cap_end()
-&lt;+105&gt;:	je     0x407968 &lt;+168&gt;           if at capacity, branch to reallocate vector
+&lt;+105&gt;:	je     0x407968 &lt;+168&gt;           if at capacity, branch to
+                                         reallocate vector
 &lt;+107&gt;:	test   %rbp,%rbp                 res_i ==? 0
 &lt;+110&gt;:	je     0x407937 &lt;+119&gt;
-&lt;+112&gt;:	mov    %rdx,0x0(%rbp)            res_i-&gt;province &lt;- res_i-&gt;province
-&lt;+116&gt;:	mov    %ecx,0x8(%rbp)            res_i-&gt;value &lt;- srt_i-&gt;value ^ 2
+&lt;+112&gt;:	mov    %rdx,0x0(%rbp)            res_i-&gt;province &lt;-
+                                                res_i-&gt;province
+&lt;+116&gt;:	mov    %ecx,0x8(%rbp)            res_i-&gt;value&lt;-srt_i-&gt;value^2
 &lt;+119&gt;:	add    $0x10,%rbp                ++res_i
 &lt;+123&gt;:	mov    %rbp,0x8(%r14)            res.end() &lt;- res_i
 

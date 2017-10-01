@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2017-08-26T13:06:27-07:00</updated>
+ <updated>2017-09-30T17:57:29-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -537,11 +537,13 @@ generated identical code and &lt;a href=&quot;/2017/05/22/passing-stdstring-by-v
 &amp;lt;+95&amp;gt;:	mov    0x10(%r14),%rsi           %rsi &amp;lt;- res.cap_end()
 &amp;lt;+99&amp;gt;:	imul   %ecx,%ecx                 %ecx &amp;lt;- src_i-&amp;gt;value ^ 2
 &amp;lt;+102&amp;gt;:	cmp    %rbp,%rsi                 res_i ==? res.cap_end()
-&amp;lt;+105&amp;gt;:	je     0x407968 &amp;lt;+168&amp;gt;           if at capacity, branch to reallocate vector
+&amp;lt;+105&amp;gt;:	je     0x407968 &amp;lt;+168&amp;gt;           if at capacity, branch to
+                                         reallocate vector
 &amp;lt;+107&amp;gt;:	test   %rbp,%rbp                 res_i ==? 0
 &amp;lt;+110&amp;gt;:	je     0x407937 &amp;lt;+119&amp;gt;
-&amp;lt;+112&amp;gt;:	mov    %rdx,0x0(%rbp)            res_i-&amp;gt;province &amp;lt;- res_i-&amp;gt;province
-&amp;lt;+116&amp;gt;:	mov    %ecx,0x8(%rbp)            res_i-&amp;gt;value &amp;lt;- srt_i-&amp;gt;value ^ 2
+&amp;lt;+112&amp;gt;:	mov    %rdx,0x0(%rbp)            res_i-&amp;gt;province &amp;lt;-
+                                                res_i-&amp;gt;province
+&amp;lt;+116&amp;gt;:	mov    %ecx,0x8(%rbp)            res_i-&amp;gt;value&amp;lt;-srt_i-&amp;gt;value^2
 &amp;lt;+119&amp;gt;:	add    $0x10,%rbp                ++res_i
 &amp;lt;+123&amp;gt;:	mov    %rbp,0x8(%r14)            res.end() &amp;lt;- res_i
 
@@ -2129,7 +2131,7 @@ Destructor for T0
  </entry>
  
  <entry>
-   <title>Three idioms for appending values&mdash;a damaging decision?</title>
+   <title>Three idioms for appending values&#8212;a damaging decision?</title>
    <link href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"/>
    <updated>2017-03-07T00:00:00-08:00</updated>
    <id>/2017/03/07/three-idioms-for-appending-values-a-damaging-decision</id>
