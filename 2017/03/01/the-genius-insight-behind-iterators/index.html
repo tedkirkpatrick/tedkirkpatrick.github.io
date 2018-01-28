@@ -143,7 +143,7 @@
 
     </nav>
 
-    <p>&copy; 2017. All rights reserved.</p>
+    <p>&copy; 2018. All rights reserved.</p>
   </div>
 </div>
 
@@ -270,11 +270,11 @@ I’ll return to this below.</p>
 
 <p>Iterators are a method for containers to explicitly represent their favoured access patterns, allowing algorithms to optimize their behaviour for those patterns. This is a genuinely novel idea and one that will change how you program once you have used it enough to be comfortable with it.</p>
 
-<p>Yet the example <a href="https://ted376.wordpress.com/2017/02/22/iterators-a-failure-case/">failure case</a> highlighted the tediousness of the iterator approach versus the simplicity of list comprehensions. What is the source of the problem? As with so many complexities of C++ code, it stems from the language’s insistence that you state where and how every value is stored. I’ll turn to that topic in the next post.</p>
+<p>Yet the example <a href="2017/02/22/iterators-a-failure-case/">failure case</a> highlighted the tediousness of the iterator approach versus the simplicity of list comprehensions. What is the source of the problem? As with so many complexities of C++ code, it stems from the language’s insistence that you state where and how every value is stored. I’ll turn to that topic in the next post.</p>
 
 <h2>Appendix: <code>class back_inserter_fl</code></h2>
 
-<p>The sample program uses a class <code>back_inserter_fl</code> I wrote, together with a convenience function for creating it, <code>make_back_inserter_fl()</code>.  The STL <a href="http://en.cppreference.com/w/cpp/iterator/back_inserter"><code></code>std::back_inserter()</a> adaptor requires that the underlying container have a <code>push_back()</code> member.  The <code>forward_list</code> cannot support such a function because it has no tail pointer. Building a back inserter for a <code>forward_list</code> is tricky because assignment to the iterator also creates an iterator that will be the location of the next assignment.</p>
+<p>The sample program uses a class <code>back_inserter_fl</code> I wrote, together with a convenience function for creating it, <code>make_back_inserter_fl()</code>.  The STL <a href="http://en.cppreference.com/w/cpp/iterator/back_inserter"><code>std::back_inserter()</code></a> adaptor requires that the underlying container have a <code>push_back()</code> member.  The <code>forward_list</code> cannot support such a function because it has no tail pointer. Building a back inserter for a <code>forward_list</code> is tricky because assignment to the iterator also creates an iterator that will be the location of the next assignment.</p>
 
 <p>I think the following code is pretty close to meeting all the formal requirements but I have neither checked it nor tested in exhaustively.  I’m including it here for completeness—check carefully before using it in any production code.</p>
 

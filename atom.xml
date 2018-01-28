@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2017-09-30T17:57:29-07:00</updated>
+ <updated>2018-01-27T18:56:50-08:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -14,7 +14,7 @@
  
  <entry>
    <title>The many and varied audiences for Big Data training</title>
-   <link href="https://tedkirkpatrick.github.io/2017/08/13/the-many-and-varied-audiences-for-big-data-training/"/>
+   <link href="/2017/08/13/the-many-and-varied-audiences-for-big-data-training/"/>
    <updated>2017-08-13T00:00:00-07:00</updated>
    <id>/2017/08/13/the-many-and-varied-audiences-for-big-data-training</id>
    <content type="html">&lt;p&gt;There’s a wide range of Big Data training on offer, from full in-person university degree programs (in the North American context, typically Master’s degrees), to certificates from online universities (such as Coursera or EdX), to short professional development courses from for-profit trainers.  A common element of the sales pitches is the presumed universality of the need.  Every discipline and nearly every profession, it is claimed, will benefit from the technologies of Big Data.  Some pitches make an even stronger claim, that incorporating data analysis is now &lt;em&gt;essential&lt;/em&gt; for success.&lt;/p&gt;
@@ -75,7 +75,7 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Random access to long string bodies incurs cache misses</title>
-   <link href="https://tedkirkpatrick.github.io/2017/06/29/rand-access-long-cache-misses/"/>
+   <link href="/2017/06/29/rand-access-long-cache-misses/"/>
    <updated>2017-06-29T00:00:00-07:00</updated>
    <id>/2017/06/29/rand-access-long-cache-misses</id>
    <content type="html">&lt;p&gt;As I &lt;a href=&quot;/2017/06/23/for-long-strings-access-order-determines-performance/&quot;&gt;described in the last post&lt;/a&gt;, shuffling the items in the source vector leaves the string handles in contiguous sequential order while introducing disorder into the sequence of string bodies. The NShuffled “data set” is really a family of 11 related data sets, differing in the fraction of their items that were shuffled.  All sets start with the same vector &lt;code&gt;src&lt;/code&gt; of 50,000 elements, then &lt;code&gt;std::shuffle()&lt;/code&gt; is run on the first &lt;i&gt;N&lt;/i&gt; items in the vector, where &lt;i&gt;N&lt;/i&gt; ranges from 0 (no items shuffled) to 50,000 (all items shuffled) in increments of 5,000. All the data sets will have 37,500 (75% of 50,000) of their source elements copied to the result vector.&lt;/p&gt;
@@ -198,7 +198,7 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>For long strings, access order determines performance</title>
-   <link href="https://tedkirkpatrick.github.io/2017/06/23/for-long-strings-access-order-determines-performance/"/>
+   <link href="/2017/06/23/for-long-strings-access-order-determines-performance/"/>
    <updated>2017-06-23T00:00:00-07:00</updated>
    <id>/2017/06/23/for-long-strings-access-order-determines-performance</id>
    <content type="html">&lt;p&gt;In the last post, I described several possible causes of the slowdown for long strings in the by-value version of the idioms.  I concluded the most likely actual cause was the order in which the string bodies are accessed.&lt;/p&gt;
@@ -292,7 +292,7 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Sidling up to the long string slowdown</title>
-   <link href="https://tedkirkpatrick.github.io/2017/06/14/sidling-up-to-the-long-string-slowdown/"/>
+   <link href="/2017/06/14/sidling-up-to-the-long-string-slowdown/"/>
    <updated>2017-06-14T00:00:00-07:00</updated>
    <id>/2017/06/14/sidling-up-to-the-long-string-slowdown</id>
    <content type="html">&lt;p&gt;In the last post, I highlighted an anomaly in the results for filtering long strings using the by-value implementation of the loop. The usual suspect for such outcomes, heap fragmentation, didn’t seem to apply in this case. What might be the actual source of the problem?&lt;/p&gt;
@@ -326,7 +326,7 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Microbenchmarks are highly sensitive to the heap context!</title>
-   <link href="https://tedkirkpatrick.github.io/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"/>
+   <link href="/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"/>
    <updated>2017-06-10T00:00:00-07:00</updated>
    <id>/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context</id>
    <content type="html">&lt;p&gt;Over two weeks ago, I posted an article about &lt;a href=&quot;/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/&quot;&gt;by-value parameters in the loop and &lt;code class=&quot;highlighter-rouge&quot;&gt;transform&lt;/code&gt; idioms&lt;/a&gt;. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis.  In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda.&lt;/p&gt;
@@ -494,7 +494,7 @@ end:
  
  <entry>
    <title>The elegant machine code for char const *</title>
-   <link href="https://tedkirkpatrick.github.io/2017/05/24/the-elegant-machine-code-for-char-const/"/>
+   <link href="/2017/05/24/the-elegant-machine-code-for-char-const/"/>
    <updated>2017-05-24T00:00:00-07:00</updated>
    <id>/2017/05/24/the-elegant-machine-code-for-char-const</id>
    <content type="html">&lt;p&gt;Unique strings—null-terminated strings uniquely identified by their &lt;code&gt;char const *&lt;/code&gt;—are the simplest type considered in this series of posts. Constructing, copying, moving, and assigning these strings are trivial operations on a single pointer. No destructor code is required.&lt;/p&gt;
@@ -664,7 +664,7 @@ generated identical code and &lt;a href=&quot;/2017/05/22/passing-stdstring-by-v
  
  <entry>
    <title>Passing std::string by-value noticeably slows the idioms</title>
-   <link href="https://tedkirkpatrick.github.io/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/"/>
+   <link href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/"/>
    <updated>2017-05-22T00:00:00-07:00</updated>
    <id>/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms</id>
    <content type="html">&lt;p&gt;The &lt;a href=&quot;/2017/05/19/benchmarking-the-transform-and-loop-idioms/&quot;&gt;benchmarks comparing &lt;code&gt;transform&lt;/code&gt; to a
@@ -778,7 +778,7 @@ loop&lt;/a&gt; also highlighted the substantial contribution that copying values
  
  <entry>
    <title>Benchmarking the transform and loop idioms</title>
-   <link href="https://tedkirkpatrick.github.io/2017/05/19/benchmarking-the-transform-and-loop-idioms/"/>
+   <link href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/"/>
    <updated>2017-05-19T00:00:00-07:00</updated>
    <id>/2017/05/19/benchmarking-the-transform-and-loop-idioms</id>
    <content type="html">&lt;p&gt;The last posts compared the machine code generated by &lt;code&gt;transform&lt;/code&gt; and the equivalent idiom using an explicit &lt;code&gt;for&lt;/code&gt; loop and &lt;code&gt;if&lt;/code&gt; statement.  The &lt;code&gt;transform&lt;/code&gt; idiom generated more intermediate copies of the &lt;code&gt;std::string&lt;/code&gt; member than the loop.&lt;/p&gt;
@@ -1202,7 +1202,7 @@ The &lt;code&gt;transform&lt;/code&gt; idiom used &lt;code&gt;push_back()&lt;/co
  
  <entry>
    <title>Analysis of code generated from the transform idiom</title>
-   <link href="https://tedkirkpatrick.github.io/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/"/>
+   <link href="/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/"/>
    <updated>2017-05-03T00:00:00-07:00</updated>
    <id>/2017/05/03/analysis-of-code-generated-from-the-transform-idiom</id>
    <content type="html">&lt;p&gt;The last post presented the baseline C++ code and its generated machine code. Now it’s time to compare the code generated by the &lt;code class=&quot;highlighter-rouge&quot;&gt;std::transform&lt;/code&gt; idiom and see how well it fares.&lt;/p&gt;
@@ -1506,7 +1506,7 @@ in the element at &lt;code class=&quot;highlighter-rouge&quot;&gt;res.end()&lt;/
  
  <entry>
    <title>Performance of the STL idiom for list comprehension: Introduction</title>
-   <link href="https://tedkirkpatrick.github.io/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/"/>
+   <link href="/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/"/>
    <updated>2017-05-02T00:00:00-07:00</updated>
    <id>/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction</id>
    <content type="html">&lt;p&gt;In my &lt;a href=&quot;/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/&quot;&gt;last post&lt;/a&gt;, I promised to consider the machine code generated from the STL idiom equivalent to a basic Python list comprehension. As I proceeded, the project expanded to a broader analysis of the idiom’s performance. I am shocked at how much effort this project took.  I have spent much of the last five weeks generating and reading the output from g++ 6.2.  So. Many. Alternatives.  In this post, I’ll describe my baseline for comparison and the criteria I’ll use. In future posts, I’ll present the results.&lt;/p&gt;
@@ -1715,7 +1715,7 @@ in the element at &lt;code class=&quot;highlighter-rouge&quot;&gt;res.end()&lt;/
  
  <entry>
    <title>A single STL statement equivalent to the basic Python list comprehension</title>
-   <link href="https://tedkirkpatrick.github.io/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/"/>
+   <link href="/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/"/>
    <updated>2017-03-26T00:00:00-07:00</updated>
    <id>/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension</id>
    <content type="html">&lt;p&gt;In &lt;a href=&quot;/2017/03/21/the-limits-of-list-comprehensions/&quot;&gt;the last post&lt;/a&gt;, I described the structure of the basic Python list comprehension&lt;/p&gt;
@@ -1959,7 +1959,7 @@ to building the result vector&lt;/a&gt;, though the reserve/insert-back one used
  
  <entry>
    <title>The limits of list comprehensions</title>
-   <link href="https://tedkirkpatrick.github.io/2017/03/21/the-limits-of-list-comprehensions/"/>
+   <link href="/2017/03/21/the-limits-of-list-comprehensions/"/>
    <updated>2017-03-21T00:00:00-07:00</updated>
    <id>/2017/03/21/the-limits-of-list-comprehensions</id>
    <content type="html">&lt;p&gt;I’ve spent my recent posts unfavourably comparing the STL design of containers/iterators/algorithms with Python list comprehensions and their close relatives in Haskell.  This is an unfairly restrictive way to view the STL design, which addresses a wider range of use cases than the ones addressed by list comprehensions.  But it is also unfair in that it ignores the limitations of list comprehensions themselves, limitations avoided by the more general structure provided by the STL.  In this post, I’ll start from the other direction, considering the inherent limitations of Python list comprehensions. This in turn leads to an idiom in the STL that in fact provides virtually all the functionality of basic list comprehensions, with only slightly more complex syntax.&lt;/p&gt;
@@ -2058,7 +2058,7 @@ to building the result vector&lt;/a&gt;, though the reserve/insert-back one used
  
  <entry>
    <title>A simpler, fourth idiom for appending</title>
-   <link href="https://tedkirkpatrick.github.io/2017/03/09/a-simpler-fourth-idiom-for-appending/"/>
+   <link href="/2017/03/09/a-simpler-fourth-idiom-for-appending/"/>
    <updated>2017-03-09T00:00:00-08:00</updated>
    <id>/2017/03/09/a-simpler-fourth-idiom-for-appending</id>
    <content type="html">&lt;p&gt;This morning, I realized that there is a fourth approach to appending items to a vector that combines &lt;a href=&quot;/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/&quot;&gt;elements of the first and third&lt;/a&gt;.  I’m embarrassed to have missed this one because it is a longstanding, well-understood approach that’s particularly applicable to the kinds of “list comprehension algorithms” I’m considering in this series.&lt;/p&gt;
@@ -2131,8 +2131,8 @@ Destructor for T0
  </entry>
  
  <entry>
-   <title>Three idioms for appending values&#8212;a damaging decision?</title>
-   <link href="https://tedkirkpatrick.github.io/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"/>
+   <title>Three idioms for appending values&mdash;a damaging decision?</title>
+   <link href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"/>
    <updated>2017-03-07T00:00:00-08:00</updated>
    <id>/2017/03/07/three-idioms-for-appending-values-a-damaging-decision</id>
    <content type="html">&lt;p&gt;&lt;b&gt;Update:&lt;/b&gt; See also the &lt;a href=&quot;/2017/03/09/a-simpler-fourth-idiom-for-appending/&quot;&gt;next post&lt;/a&gt;, which adds a fourth idiom and mitigates some of the criticisms in the conclusion of this post.&lt;/p&gt;
@@ -2668,7 +2668,7 @@ Basic constructor for c3[4]
  
  <entry>
    <title>Iterators aren’t the problem, they just enable it</title>
-   <link href="https://tedkirkpatrick.github.io/2017/03/03/iterators-arent-the-problem-they-just-enable-it/"/>
+   <link href="/2017/03/03/iterators-arent-the-problem-they-just-enable-it/"/>
    <updated>2017-03-03T00:00:00-08:00</updated>
    <id>/2017/03/03/iterators-arent-the-problem-they-just-enable-it</id>
    <content type="html">&lt;p&gt;The post presenting the &lt;a href=&quot;/2017/02/22/iterators-a-failure-case/&quot;&gt;failure case for iterators&lt;/a&gt; contrasted this simple Python list comprehension:&lt;/p&gt;
@@ -2716,7 +2716,7 @@ Basic constructor for c3[4]
  
  <entry>
    <title>The genius insight behind iterators</title>
-   <link href="https://tedkirkpatrick.github.io/2017/03/01/the-genius-insight-behind-iterators/"/>
+   <link href="/2017/03/01/the-genius-insight-behind-iterators/"/>
    <updated>2017-03-01T00:00:00-08:00</updated>
    <id>/2017/03/01/the-genius-insight-behind-iterators</id>
    <content type="html">&lt;p&gt;The story so far:&lt;/p&gt;
@@ -2826,11 +2826,11 @@ I’ll return to this below.&lt;/p&gt;
 
 &lt;p&gt;Iterators are a method for containers to explicitly represent their favoured access patterns, allowing algorithms to optimize their behaviour for those patterns. This is a genuinely novel idea and one that will change how you program once you have used it enough to be comfortable with it.&lt;/p&gt;
 
-&lt;p&gt;Yet the example &lt;a href=&quot;https://ted376.wordpress.com/2017/02/22/iterators-a-failure-case/&quot;&gt;failure case&lt;/a&gt; highlighted the tediousness of the iterator approach versus the simplicity of list comprehensions. What is the source of the problem? As with so many complexities of C++ code, it stems from the language’s insistence that you state where and how every value is stored. I’ll turn to that topic in the next post.&lt;/p&gt;
+&lt;p&gt;Yet the example &lt;a href=&quot;2017/02/22/iterators-a-failure-case/&quot;&gt;failure case&lt;/a&gt; highlighted the tediousness of the iterator approach versus the simplicity of list comprehensions. What is the source of the problem? As with so many complexities of C++ code, it stems from the language’s insistence that you state where and how every value is stored. I’ll turn to that topic in the next post.&lt;/p&gt;
 
 &lt;h2&gt;Appendix: &lt;code&gt;class back_inserter_fl&lt;/code&gt;&lt;/h2&gt;
 
-&lt;p&gt;The sample program uses a class &lt;code&gt;back_inserter_fl&lt;/code&gt; I wrote, together with a convenience function for creating it, &lt;code&gt;make_back_inserter_fl()&lt;/code&gt;.  The STL &lt;a href=&quot;http://en.cppreference.com/w/cpp/iterator/back_inserter&quot;&gt;&lt;code&gt;&lt;/code&gt;std::back_inserter()&lt;/a&gt; adaptor requires that the underlying container have a &lt;code&gt;push_back()&lt;/code&gt; member.  The &lt;code&gt;forward_list&lt;/code&gt; cannot support such a function because it has no tail pointer. Building a back inserter for a &lt;code&gt;forward_list&lt;/code&gt; is tricky because assignment to the iterator also creates an iterator that will be the location of the next assignment.&lt;/p&gt;
+&lt;p&gt;The sample program uses a class &lt;code&gt;back_inserter_fl&lt;/code&gt; I wrote, together with a convenience function for creating it, &lt;code&gt;make_back_inserter_fl()&lt;/code&gt;.  The STL &lt;a href=&quot;http://en.cppreference.com/w/cpp/iterator/back_inserter&quot;&gt;&lt;code&gt;std::back_inserter()&lt;/code&gt;&lt;/a&gt; adaptor requires that the underlying container have a &lt;code&gt;push_back()&lt;/code&gt; member.  The &lt;code&gt;forward_list&lt;/code&gt; cannot support such a function because it has no tail pointer. Building a back inserter for a &lt;code&gt;forward_list&lt;/code&gt; is tricky because assignment to the iterator also creates an iterator that will be the location of the next assignment.&lt;/p&gt;
 
 &lt;p&gt;I think the following code is pretty close to meeting all the formal requirements but I have neither checked it nor tested in exhaustively.  I’m including it here for completeness—check carefully before using it in any production code.&lt;/p&gt;
 
@@ -2889,7 +2889,7 @@ I’ll return to this below.&lt;/p&gt;
  
  <entry>
    <title>Lambdas: Typical use cases</title>
-   <link href="https://tedkirkpatrick.github.io/2017/02/25/lambdas-typical-use-cases/"/>
+   <link href="/2017/02/25/lambdas-typical-use-cases/"/>
    <updated>2017-02-25T00:00:00-08:00</updated>
    <id>/2017/02/25/lambdas-typical-use-cases</id>
    <content type="html">&lt;p&gt;My last post, highlighting the differences between C++ lambdas and the lambdas in languages based upon functional programs, went more deeply into the weeds than I had intended. I realized too late that it cried out for examples.  The rules for declaring free variables (the member variables of the anonymous class) in C++ lambdas can seem contorted but most uses of them fall into one of a few simple types.  In this post, I want to present three simple use cases of C++ lambdas, each demonstrating a different way to use free variables.&lt;/p&gt;
@@ -2962,7 +2962,7 @@ I’ll return to this below.&lt;/p&gt;
  
  <entry>
    <title>Lambdas: Sweet, sweet syntactic sugar</title>
-   <link href="https://tedkirkpatrick.github.io/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/"/>
+   <link href="/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/"/>
    <updated>2017-02-23T00:00:00-08:00</updated>
    <id>/2017/02/23/lambdas-sweet-sweet-syntactic-sugar</id>
    <content type="html">&lt;p&gt;&lt;b&gt;Update:&lt;/b&gt; The &lt;a href=&quot;/2017/02/25/lambdas-typical-use-cases/&quot;&gt;next post&lt;/a&gt; provides recipes for common use cases of lambdas.  If parts of this post seem too abstract, you might find the examples in the next post clarify things.&lt;/p&gt;
@@ -3075,7 +3075,7 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
  
  <entry>
    <title>Iterators: A failure case</title>
-   <link href="https://tedkirkpatrick.github.io/2017/02/22/iterators-a-failure-case/"/>
+   <link href="/2017/02/22/iterators-a-failure-case/"/>
    <updated>2017-02-22T00:00:00-08:00</updated>
    <id>/2017/02/22/iterators-a-failure-case</id>
    <content type="html">&lt;p&gt;In my first post on iterators, I presented a case where they work well.  In this post, I’ll present a clear failure and begin discussing why the deep structure of the design leads to this failure.&lt;/p&gt;
@@ -3128,7 +3128,7 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
  
  <entry>
    <title>Iterators: One success story</title>
-   <link href="https://tedkirkpatrick.github.io/2017/02/21/iterators-one-success-story/"/>
+   <link href="/2017/02/21/iterators-one-success-story/"/>
    <updated>2017-02-21T00:00:00-08:00</updated>
    <id>/2017/02/21/iterators-one-success-story</id>
    <content type="html">
