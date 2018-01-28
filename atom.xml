@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2018-01-27T18:56:50-08:00</updated>
+ <updated>2018-01-27T19:02:19-08:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -2826,7 +2826,7 @@ I’ll return to this below.&lt;/p&gt;
 
 &lt;p&gt;Iterators are a method for containers to explicitly represent their favoured access patterns, allowing algorithms to optimize their behaviour for those patterns. This is a genuinely novel idea and one that will change how you program once you have used it enough to be comfortable with it.&lt;/p&gt;
 
-&lt;p&gt;Yet the example &lt;a href=&quot;2017/02/22/iterators-a-failure-case/&quot;&gt;failure case&lt;/a&gt; highlighted the tediousness of the iterator approach versus the simplicity of list comprehensions. What is the source of the problem? As with so many complexities of C++ code, it stems from the language’s insistence that you state where and how every value is stored. I’ll turn to that topic in the next post.&lt;/p&gt;
+&lt;p&gt;Yet the example &lt;a href=&quot;/2017/02/22/iterators-a-failure-case/&quot;&gt;failure case&lt;/a&gt; highlighted the tediousness of the iterator approach versus the simplicity of list comprehensions. What is the source of the problem? As with so many complexities of C++ code, it stems from the language’s insistence that you state where and how every value is stored. I’ll turn to that topic in the next post.&lt;/p&gt;
 
 &lt;h2&gt;Appendix: &lt;code&gt;class back_inserter_fl&lt;/code&gt;&lt;/h2&gt;
 
