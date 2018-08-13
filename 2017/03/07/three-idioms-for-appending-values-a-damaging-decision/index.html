@@ -121,6 +121,14 @@
           
         
       
+        
+          
+        
+      
+        
+          
+        
+      
 
     
         <div class="sidebar-tags">
@@ -134,8 +142,12 @@
 	    <a href="/tag/Python/">Python</a>,
 	  
         
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
 	  	    
-            <a href="/tag/Course design/">Course design</a>
+            <a href="/tag/Soft skills/">Soft skills</a>
           
         
 	</div>
@@ -412,7 +424,7 @@ Destructor for T0
 
 <p>The remaining inefficiency in the second idiom is that we construct a sequence of default values that we never need and will overwrite as soon as the collection is ready. What we really want to do is simpler than that: Have the collection allocate all the storage we need and then construct our values directly in that storage.</p>
 
-<p>This approach became viable in 2011 with the addition of <em>emplace members</em> to the STL collections (this feature in turn was enabled by the C++ 2011 core language addition of <a href="http://en.cppreference.com/w/cpp/language/parameter_pack">template parameter packs</a>). In particular, the emplace_back() member constructs a value directly after the last value in the collection. If there is allocated space available after the last value, the appended value is simply constructed there, but if the vector is full, the same allocate-copy-deallocate sequence as the first method must be used.</p>
+<p>This approach became viable in 2011 with the addition of <em>emplace members</em> to the STL collections (this feature in turn was enabled by the C++ 2011 core language addition of <a href="http://en.cppreference.com/w/cpp/language/parameter_pack">template parameter packs</a>). In particular, the<code class="highlighter-rouge"> emplace_back()</code> member constructs a value directly after the last value in the collection. If there is allocated space available after the last value, the appended value is simply constructed there, but if the vector is full, the same allocate-copy-deallocate sequence as the first method must be used.</p>
 
 <p>This suggests the following pattern:</p>
 

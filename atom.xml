@@ -4,13 +4,59 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2018-01-27T19:02:19-08:00</updated>
+ <updated>2018-08-13T16:36:39-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>The best process for effective group decisions</title>
+   <link href="/2018/08/13/the-best-process-for-group-decisions/"/>
+   <updated>2018-08-13T00:00:00-07:00</updated>
+   <id>/2018/08/13/the-best-process-for-group-decisions</id>
+   <content type="html">&lt;p&gt;John E. Tropman’s &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work: Achieving High Quality Group Decisions&lt;/a&gt; is the single most important book I’ve read for developing the skills of effective organizational work. (His more recent book, &lt;a href=&quot;https://www.amazon.com/Effective-Meetings-Improving-Decision-Services-ebook/dp/aB00JFC3XXU/&quot;&gt;Effective Meetings: Improving Group Decision Making&lt;/a&gt;, which I haven’t read, appears to cover much the same territory.)&lt;/p&gt;
+
+&lt;p&gt;To benefit from &lt;em&gt;Making Meetings Work&lt;/em&gt;, you have to apply sustained effort. Although simply reading through it once and then shelving it might nudge you towards slightly more effective meeting habits, the big gains accrue from practice.&lt;/p&gt;
+
+&lt;p&gt;Much of the book is concerned with practical details of setting agendas (don’t allow last-minute additions, include time for discussing long-term issues, …), keeping to agendas (do what you planned, no more and no less), recording minutes (record points made but not the person who made them), and similar skills. Become proficient in these skills and people will want to attend your meetings because the meetings will be reliably efficient and productive.&lt;/p&gt;
+
+&lt;p&gt;But for me the genius of Tropman’s ideas, and the heart of the book, is Chapters 10 and 11 on how to lead a group to make effective decisions.  Chapters 1–9 describe how to prepare the group for a decision; the meeting is the mechanism for actually making the decision. Chapters 10 and 11 lay out the process for that decision to be &lt;em&gt;effective&lt;/em&gt;: supported by all parties necessary for its success, responsive to outside constraints, matched to the culture of the organization, and situated within the history of previous agreements. If one or more groups had to postpone or sacrifice a goal important to them, they are confident that their concerns are valued and will be addressed in future.&lt;/p&gt;
+
+&lt;h2 id=&quot;decision-rules-evaluating-your-options&quot;&gt;Decision rules: Evaluating your options&lt;/h2&gt;
+
+&lt;p&gt;Chapter 10 describes the criteria participant use to assess support for a decision. Tropman calls such criteria &lt;em&gt;decision rules&lt;/em&gt; and describes five in wide use:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Extensive: Choose the option with the most votes, with every vote weighted equally.&lt;/li&gt;
+  &lt;li&gt;Intensive: Weight votes by intensity of feeling, for or against.&lt;/li&gt;
+  &lt;li&gt;Expertise: Rule options in or out based upon expert advice, as might be provided by legal, technical, or accounting professionals&lt;/li&gt;
+  &lt;li&gt;Involvement: Choose the option preferred by those responsible for implementing the decision.&lt;/li&gt;
+  &lt;li&gt;Power: Select the choice favoured by the management, funders, the government, competition judges, or other arbiters.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;This classification is not absolute. Some groups may use variations or even favour rules distinct from these.  For example, an organization might have a “cultural fit” rule that favours options conforming to “our way of doing things”, such as favouring decentralized decisions. Overall however, Tropman’s five rules are used by groups from a very wide range of contexts.&lt;/p&gt;
+
+&lt;p&gt;The rules may provide conflicting guidance, recommending different choices due to the different factors they emphasize. An effective decision balances these emphases, addressing the concerns of every group and setting the foundation for successful collaboration.&lt;/p&gt;
+
+&lt;h2 id=&quot;making-decision-rules-explicit-improves-decisions&quot;&gt;Making decision rules explicit improves decisions&lt;/h2&gt;
+
+&lt;p&gt;The decision rules underly all decisions but are often only tacit. Group members are aware of the differing intensities of feeling amongst their members, differing degrees of involvement, and the like. However, if the rules are not explicitly articulated, such issues will be folded into proposals, shaping what is on offer. A group with unaddressed concerns will only be tepidly enthusiastic for or even undercut implementation of the final decision. We want active collaboration, not mere acquiescence, and that only results when people believe their concerns have been heard and accounted for.&lt;/p&gt;
+
+&lt;p&gt;In North America, the extensive decision rule—majority vote, all participants equal—has acquired such cultural prominence that at first it may be hard to imagine alternatives.  But forcing all decisions according to this rule, to say nothing of the far more restrictive rule of “unanimous consent”, distorts the process. Explicitly articulating the choices and tradeoffs in terms of distinct rules, highlighting their potential conflicts, allows the group to balance the conflicting goals in a decision that addresses everyone’s concerns.&lt;/p&gt;
+
+&lt;h2 id=&quot;implement-decision-rules-within-a-larger-context&quot;&gt;Implement decision rules within a larger context&lt;/h2&gt;
+
+&lt;p&gt;Decision rules are actually implemented as part of a larger process. Tropman describes this process in his Chapter 11, where he recommends a process for leading a group to a high-quality decision. This process is subtle and requires practice. I will summarize that process in the next post.&lt;/p&gt;
+
+&lt;p&gt;As a prerequisite, you need experience recognizing the rules in action. The next several meetings that you attend, observe the basis of the decisions made.  Can you locate claims and concerns as expressions of the underlying rules?  Are the meeting participants aware that there are potentially conflicting criteria or do they force-fit everything into a majority-vote, extensive rule?&lt;/p&gt;
+
+&lt;p&gt;While doing this exercise, be alert to distinguishing decision rules from a more basic level of response, &lt;em&gt;values&lt;/em&gt;.  Whereas decision rules are tied to specific actions, values are deep commitments underlying such choices and assigning them an ethical or moral dimension. Values include such principles as, “Treat people fairly” or “the client comes first”. Tropman discusses values in a separate chapter. Values are important and must be considered when leading a group to a decision but they represent a distinct level from the more applied one of decision rules.&lt;/p&gt;
+
+</content>
+ </entry>
  
  <entry>
    <title>The many and varied audiences for Big Data training</title>
@@ -2384,7 +2430,7 @@ Destructor for T0
 
 &lt;p&gt;The remaining inefficiency in the second idiom is that we construct a sequence of default values that we never need and will overwrite as soon as the collection is ready. What we really want to do is simpler than that: Have the collection allocate all the storage we need and then construct our values directly in that storage.&lt;/p&gt;
 
-&lt;p&gt;This approach became viable in 2011 with the addition of &lt;em&gt;emplace members&lt;/em&gt; to the STL collections (this feature in turn was enabled by the C++ 2011 core language addition of &lt;a href=&quot;http://en.cppreference.com/w/cpp/language/parameter_pack&quot;&gt;template parameter packs&lt;/a&gt;). In particular, the emplace_back() member constructs a value directly after the last value in the collection. If there is allocated space available after the last value, the appended value is simply constructed there, but if the vector is full, the same allocate-copy-deallocate sequence as the first method must be used.&lt;/p&gt;
+&lt;p&gt;This approach became viable in 2011 with the addition of &lt;em&gt;emplace members&lt;/em&gt; to the STL collections (this feature in turn was enabled by the C++ 2011 core language addition of &lt;a href=&quot;http://en.cppreference.com/w/cpp/language/parameter_pack&quot;&gt;template parameter packs&lt;/a&gt;). In particular, the&lt;code class=&quot;highlighter-rouge&quot;&gt; emplace_back()&lt;/code&gt; member constructs a value directly after the last value in the collection. If there is allocated space available after the last value, the appended value is simply constructed there, but if the vector is full, the same allocate-copy-deallocate sequence as the first method must be used.&lt;/p&gt;
 
 &lt;p&gt;This suggests the following pattern:&lt;/p&gt;
 
