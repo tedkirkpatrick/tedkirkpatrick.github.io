@@ -4,13 +4,41 @@
  <title>All my marbles in one place</title>
  <link href="http://localhost:4000/atom.xml" rel="self"/>
  <link href="http://localhost:4000/"/>
- <updated>2018-08-20T14:11:32-07:00</updated>
+ <updated>2018-08-22T20:31:36-07:00</updated>
  <id>http://localhost:4000</id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Attributing causality has important practical consequences</title>
+   <link href="http://localhost:4000/2018/08/22/attributing-causality-has-important-consequences/"/>
+   <updated>2018-08-22T00:00:00-07:00</updated>
+   <id>http://localhost:4000/2018/08/22/attributing-causality-has-important-consequences</id>
+   <content type="html">&lt;p&gt;Yesterday Matthew Zeitlin tweeted:&lt;/p&gt;
+
+&lt;blockquote class=&quot;twitter-tweet&quot; data-lang=&quot;en&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;If you uncover an interesting correlation, hoards of wonks and twitter pedants will bray that all you have is a correlation, but if you do the work to &amp;quot;show&amp;quot; causation, those same people will bury you in little detailed complaints about how you did it&lt;/p&gt;&amp;mdash; Matthew Zeitlin (@MattZeitlin) &lt;a href=&quot;https://twitter.com/MattZeitlin/status/1032064399203287040?ref_src=twsrc%5Etfw&quot;&gt;August 22, 2018&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async=&quot;&quot; src=&quot;https://platform.twitter.com/widgets.js&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;Later in that thread, Zeitlin adds,&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;people always say judea pearl has figured this stuff out but i don’t think i’m smart enough for him.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I agree that Pearl’s &lt;a href=&quot;http://bayes.cs.ucla.edu/BOOK-2K/&quot;&gt;Causality&lt;/a&gt; is a dense read, filled with such concepts as &lt;a href=&quot;http://bayes.cs.ucla.edu/BOOK-2K/d-sep.html&quot;&gt;d-separation&lt;/a&gt;. However, as important as the book’s technical contributions are, equally important is Pearl’s discussion of &lt;em&gt;why causality is important&lt;/em&gt;.  This explanation is simple, understandable without the underlying mathematics of Bayesian networks, and eminently practical.&lt;/p&gt;
+
+&lt;p&gt;Pearl points out that by establishing causality, we &lt;strong&gt;increase our control over the world&lt;/strong&gt;. From his perspective, the distinction between a correlative and a causal result is that the causal result claims that by changing input &lt;em&gt;X&lt;/em&gt;, we modify the expected outcome &lt;em&gt;Y&lt;/em&gt;.  For example, &lt;a href=&quot;https://www.cdc.gov/tobacco/campaign/tips/diseases/heart-disease-stroke.html&quot;&gt;both strokes and smoking may be correlated with heart disease&lt;/a&gt; but we can only reduce risk of heart disease by reducing smoking, because smoking’s relationship with heart disease is causal whereas strokes are only correlated with it. (Reducing smoking also reduces risk of stroke, as smoking is a common cause of both outcomes.)&lt;/p&gt;
+
+&lt;p&gt;There’s some important qualifications.  Causal relationship are often determined statistically, so they do not guarantee that the desired outcome will be achieved.  There are frequently multiple causes for an outcome, some of which may be currently unknown, potentially interacting in nonlinear ways. A causality argumenent only states that on average, we expect to have a better outcome by modifying the cause.  If we can improve our expected outcome enough via a sufficiently cheap change in the cause, it’s worth a try.&lt;/p&gt;
+
+&lt;p&gt;Some writers argue that the distinction between correlation and causation is irrelevant.  I am insufficiently familiar with the philosophy of causation to join that debate but I think Pearl has emphasized the key practical reason for distinguishing them and for putting in the extra effort to demonstrate causality.  We study the world not just for the fascination we gain from determining correlations, but also to locate causes and their effects, to improve our lives and those of others.&lt;/p&gt;
+
+&lt;p&gt;Returning to Zeitlin’s main point, demonstrations of causality are multifaceted, with data analysis forming only one part. They represent some of the most useful knowledge that we can have. Attacking such arguments through a focus on small details is both missing the point and, if pursued consistently, arguing in bad faith.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Don't let your babies grow up to be microbenchmarkers!</title>
