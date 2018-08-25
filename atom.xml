@@ -4,13 +4,44 @@
  <title>All my marbles in one place</title>
  <link href="http://localhost:4000/atom.xml" rel="self"/>
  <link href="http://localhost:4000/"/>
- <updated>2018-08-22T20:31:36-07:00</updated>
+ <updated>2018-08-24T17:06:04-07:00</updated>
  <id>http://localhost:4000</id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Decision crystallization: Form emerging from the solution</title>
+   <link href="http://localhost:4000/2018/08/24/decision-crystallization/"/>
+   <updated>2018-08-24T00:00:00-07:00</updated>
+   <id>http://localhost:4000/2018/08/24/decision-crystallization</id>
+   <content type="html">&lt;p&gt;&lt;em&gt;Second in a series on group decision-making. The first post described &lt;a href=&quot;/2018/08/13/the-best-process-for-group-decisions/&quot;&gt;the rules group use to justify decisions&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Understanding &lt;a href=&quot;/2018/08/13/the-best-process-for-group-decisions/&quot;&gt;decision rules&lt;/a&gt;, the criteria groups use to justify decisions, is the first step to becoming an effective decision leader. The next step is applying this understanding in actual meetings.  This skill is more complex, because it requires attending to many different things in real time, and harder to practice, because you can only perform it in an actual group as it makes a decision.  However, given the low level of effectiveness of typical group decisions, even moderate skill in this process can make a substantial improvement. Your colleagues will notice your contribution.&lt;/p&gt;
+
+&lt;p&gt;Tropman coined the phrase &lt;em&gt;decision crystallization&lt;/em&gt; to describe the skill of leading a group to a great outcome that seems to emerge naturally from the discussion.  But if the outcome is so natural, why is it so rare? Why do so very many meetings circle round indecisively, producing mediocre results?&lt;/p&gt;
+
+&lt;p&gt;The problem arises from the unacknowledged complexity of decisions. Decisions of any import are not single choices but a collection of interconnected choices. To use one of Tropman’s examples, the decision “What shall we serve for dinner at the party?” is in fact a collection of decisions, including aperitif, main course, side dishes, beverage, and dessert.  These choices in turn might be constrained by allergies or dietary restrictions of some guests, when the hosts can begin preparing the food, seasonal availability of ingredients, and other restrictions. Deciding “What to serve for dinner” is in fact a process of making many smaller decisions, which may be mutually constraining. The choice of main dish will restrict appropriate beverages and side dishes. Furthermore, some restrictions will only become apparent during the discussion, as when the hosts realize that a given dish would require them to start cooking earlier than their schedule permits.&lt;/p&gt;
+
+&lt;p&gt;During the meeting, all these distinct choices float about as though in solution.  The group attends to one, then another, in no particular order, identifying barriers and conflicts to some choices, favouring other choices, highlighting their interconnectedness, never settling on any one point, never &lt;em&gt;deciding&lt;/em&gt; anything. The formless discussion frustrates progress.&lt;/p&gt;
+
+&lt;p&gt;Tropman’s term &lt;em&gt;crystallization&lt;/em&gt; perfectly captures how a good decision can appear to a group once it’s been articulated. From a blur of conflicting, unprioritized notions appears a proposal, seemingly fully-formed, one that addresses the concerns of the group, is supported by a majority or even all of the decision rules, and resolves conflicts by making balanced compromises.  Once the group hears such a proposal, they will usually endorse it and enthusiastically implement it.&lt;/p&gt;
+
+&lt;p&gt;The word “hears” is key. Individual points may have been made during the discussion but they would have been lost as the topic shimmied from issue to issue.  The decision has to be spoken aloud, articulated as a package, in the right way, at the right time.  The process is subtle enough that I’ll spread the discussion over the next several posts:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The &lt;em&gt;decision mosaic&lt;/em&gt;—organizing the collection of sub-decisions that comprise the overarching decision at issue.&lt;/li&gt;
+  &lt;li&gt;The &lt;em&gt;determinative element&lt;/em&gt;—selecting the best sub-decision to discuss next.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Decision rounds&lt;/em&gt;—when to propose a choice to address the current decision.&lt;/li&gt;
+  &lt;li&gt;The crystallization process—how to propose a choice that addresses the goals and concerns expressed by the group.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;My next post will describe the decision mosaic and selecting the determinative element.&lt;/p&gt;
+
+</content>
+ </entry>
  
  <entry>
    <title>Attributing causality has important practical consequences</title>
@@ -200,7 +231,9 @@ expectations to a more realistic level.&lt;/p&gt;
    <link href="http://localhost:4000/2018/08/13/the-best-process-for-group-decisions/"/>
    <updated>2018-08-13T00:00:00-07:00</updated>
    <id>http://localhost:4000/2018/08/13/the-best-process-for-group-decisions</id>
-   <content type="html">&lt;p&gt;John E. Tropman’s &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work: Achieving High Quality Group Decisions&lt;/a&gt; is the single most important book I’ve read for developing the skills of effective organizational work. (His more recent book, &lt;a href=&quot;https://www.amazon.com/Effective-Meetings-Improving-Decision-Services-ebook/dp/aB00JFC3XXU/&quot;&gt;Effective Meetings: Improving Group Decision Making&lt;/a&gt;, which I haven’t read, appears to cover much the same territory.)&lt;/p&gt;
+   <content type="html">&lt;p&gt;&lt;em&gt;First post in a series on group decision-making.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;John E. Tropman’s &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work: Achieving High Quality Group Decisions&lt;/a&gt; is the single most important book I’ve read for developing the skills of effective organizational work. (His more recent book, &lt;a href=&quot;https://www.amazon.com/Effective-Meetings-Improving-Decision-Services-ebook/dp/aB00JFC3XXU/&quot;&gt;Effective Meetings: Improving Group Decision Making&lt;/a&gt;, which I haven’t read, appears to cover much the same territory.)&lt;/p&gt;
 
 &lt;p&gt;To benefit from &lt;em&gt;Making Meetings Work&lt;/em&gt;, you have to apply sustained effort. Although simply reading through it once and then shelving it might nudge you towards slightly more effective meeting habits, the big gains accrue from practice.&lt;/p&gt;
 
@@ -238,6 +271,7 @@ expectations to a more realistic level.&lt;/p&gt;
 
 &lt;p&gt;While doing this exercise, be alert to distinguishing decision rules from a more basic level of response, &lt;em&gt;values&lt;/em&gt;.  Whereas decision rules are tied to specific actions, values are deep commitments underlying such choices and assigning them an ethical or moral dimension. Values include such principles as, “Treat people fairly” or “the client comes first”. Tropman discusses values in a separate chapter. Values are important and must be considered when leading a group to a decision but they represent a distinct level from the more applied one of decision rules.&lt;/p&gt;
 
+&lt;p&gt;In the next post, I will introduce the process by which &lt;a href=&quot;/2018/08/24/decision-crystallization/&quot;&gt;you can lead a group to consensus around a good choice&lt;/a&gt;.&lt;/p&gt;
 </content>
  </entry>
  
