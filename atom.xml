@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2018-09-04T15:54:11-07:00</updated>
+ <updated>2018-09-04T16:22:41-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -19,7 +19,9 @@
    <id>/2018/09/04/disqus-enabled</id>
    <content type="html">&lt;p&gt;I have set up Disqus comments on each post. Google Analytics shows that recent posts are generating some views, so it seemed time to finally turn comments on.&lt;/p&gt;
 
-&lt;p&gt;I hope I’ve set everything up correctly but, as with any technical update, there may be lingering issues.  If you encounter problems, let m know at my &lt;code class=&quot;highlighter-rouge&quot;&gt;ted@kirkpatricktech.com&lt;/code&gt; or in the comments.&lt;/p&gt;
+&lt;p&gt;I hope I’ve set everything up correctly but, as with any technical
+update, there may be lingering issues.  If you encounter problems, let
+me know at &lt;code class=&quot;highlighter-rouge&quot;&gt;ted@kirkpatricktech.com&lt;/code&gt; or in the comments.&lt;/p&gt;
 </content>
  </entry>
  
