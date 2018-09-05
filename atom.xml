@@ -4,13 +4,142 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2018-09-04T16:22:41-07:00</updated>
+ <updated>2018-09-05T16:00:47-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Discussion rounds and decision crystallization</title>
+   <link href="/2018/09/05/discussion-rounds-and-decision-crystallization/"/>
+   <updated>2018-09-05T00:00:00-07:00</updated>
+   <id>/2018/09/05/discussion-rounds-and-decision-crystallization</id>
+   <content type="html">&lt;p&gt;&lt;em&gt;Fourth in a series on group decision-making, based on Ch. 10–11 of &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The previous post
+showed &lt;a href=&quot;/2018/08/29/the-decision-mosaic-every-piece-in-place/&quot;&gt;how to pick the next decision element to discuss&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Guiding the group to consider the determinative element, the element upon which most other choices depend, is only the first step. You must then guide them to a decision through the process of &lt;em&gt;decision crystallization&lt;/em&gt;.  This doesn’t mean “guiding them to a predetermined outcome you have decided is best” nor “guiding them to the outcome benefitting you the most”.  Leading a discussion is ultimately an act of humility: You set aside your personal goals for the broader outcome of the greatest benefit to the group overall. So long as the group perceives your interventions as honest efforts to facilitate discussion, rather than a ploy to herd everyone into agreeing with you, they will appreciate your efforts.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-to-listen-for&quot;&gt;What to listen for&lt;/h2&gt;
+
+&lt;p&gt;You will spend a lot of time listening, with an intensity of focus that may be unfamiliar. You’re no longer listening for just for content, you’re listening for &lt;em&gt;consensus&lt;/em&gt;. Is the discussion converging and what is the direction of that convergence?  Listen for these indicators:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Degree of agreement on the options under consideration (extensive decision rule)&lt;/li&gt;
+  &lt;li&gt;Intensity of feeling for each option (intensive decision rule)&lt;/li&gt;
+  &lt;li&gt;Contraindications of options by experts or management (expertise and power decision rules)&lt;/li&gt;
+  &lt;li&gt;Repetition (indicating the discussion is playing out)&lt;/li&gt;
+  &lt;li&gt;Focus (gently returning discussion to the element under consideration if discussion drifts)&lt;/li&gt;
+  &lt;li&gt;Revealed dependencies (Has the discussion uncovered incompatibilities with decisions on prior elements? Should you redirect discussion to re-open a previously-decided element?)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The required focus is another reason why you will say less and listen more.&lt;/p&gt;
+
+&lt;p&gt;Absent a specific kind of prompt, these discussions can run without ever concluding. You will have to instigate the process by which they crystallize into a decision.&lt;/p&gt;
+
+&lt;h2 id=&quot;rounds-of-discussion&quot;&gt;Rounds of discussion&lt;/h2&gt;
+
+&lt;p&gt;Discussion typically proceeds in &lt;em&gt;rounds&lt;/em&gt;, a sequence of comments by everyone who wishes to contribute. In some contexts, this may be a formal protocol where every member is allotted a chance to speak, while in other cases members may speak and respond in a free flow. Either way, the discussion leader should take care that everyone has had a real opportunity to contribute, no one has dominated, and no one has been shut out.&lt;/p&gt;
+
+&lt;p&gt;At some point, there will be a pause.  The group tacitly agrees that there is nothing more to say about this element. Someone may even ask, “Does anyone have anything more to say?” This is the moment when a decision is imminent, but only if a crystallizing prompt is provided. These moments are not arbitrary. The group is waiting for something to happen. If a decision is not explicitly initiated, someone will simply restart discussion. This new discussion is unlikely to reveal anything new, so the group will simply rehash what has already been said.&lt;/p&gt;
+
+&lt;h3 id=&quot;crystallization&quot;&gt;Crystallization&lt;/h3&gt;
+
+&lt;p&gt;Tropman provides a template for a crystallizing prompt, which proceeds in four steps:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;em&gt;Summative reflection&lt;/em&gt;: A neutral summary of the discussion so far.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Action hypothesis&lt;/em&gt;: Propose a choice for this decision.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Action legitimization&lt;/em&gt;: Support the choice by appeal to the decision rules.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Discussion refocus&lt;/em&gt;: If the group commits to the proposed choice, suggest the next determinative element in the sequence.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Once again, the technical language is simply for your use, helping you formulate what to say. The statement that actually initiates the crystallization is much less formal, more fluid.  For example, suppose the decision at hand is setting the latency Service Level Objectives (SLOs) for a service. Seen as a mosaic, the elements of this decision may include setting the 50th percentile, setting the 95th percentile, setting the 99th percentile, and  choosing between alternative services to call in turn, each with its own published SLOs.&lt;/p&gt;
+
+&lt;p&gt;Let’s assume the initial determinitive element is the 50th percentile, as this characterizes the “typical” performance of this service and only once this level has been specified can the group move on to bound the upper limits via higher percentiles.  At the end of the discussion round, you could say something like,&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;em&gt;Neutral summary:&lt;/em&gt; The group is evenly split between proposals for 10 ms and 20 ms as median latency.
+&lt;em&gt;Action hypothesis:&lt;/em&gt; On balance, it sounds like 
+10 ms has the most support.
+&lt;em&gt;Legitimize the suggestion using the decision rules:&lt;/em&gt; The teams who will call this service are strongly in favour
+of the lower median latency, as it gives
+them more room to do some complex computations &lt;em&gt;(intensity rule)&lt;/em&gt;. The implementation team are are confident they can meet the 10 ms
+value &lt;em&gt;(involvement rule)&lt;/em&gt;. The capacity planners say that we have sufficient capacity to sustain this rate, while
+the instrumentation team says that even at this rate they can provide accurate real-time estimates for our dashboard &lt;em&gt;(expertise rule)&lt;/em&gt;.
+Management has encouraged us to make it as fast as possible because they are emphasizing low latency as a
+differentiating factor for our product &lt;em&gt;(power rule)&lt;/em&gt;.  There are no strong arguments against it &lt;em&gt;(extensive rule)&lt;/em&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;At this point, the group must decide whether or not to commit to the proposed choice. They &lt;em&gt;will&lt;/em&gt; decide, because they have a clear question with a clear answer, justified using points they made in the discussion. The sample proposal above, supported by all the decision rules, is very likely to be accepted. In other cases, the decision rules will contradict each other.  Tropman suggests that a proposal supported by three or more rules has a high likelihood of acceptance, while one supported by less than three rules is unlikely to be accepted.&lt;/p&gt;
+
+&lt;h3 id=&quot;proposing-the-choice-and-reading-the-groups-response&quot;&gt;Proposing the choice and reading the group’s response&lt;/h3&gt;
+
+&lt;p&gt;Some details about crystallization:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;em&gt;Proposing the choice:&lt;/em&gt; It helps to suggest the proposed action tentatively, emphasizing its basis
+in the group’s discussion:&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;“We might want to … “&lt;/li&gt;
+      &lt;li&gt;“It seems … “&lt;/li&gt;
+      &lt;li&gt;“Based on this discussion, it looks like … “&lt;/li&gt;
+      &lt;li&gt;“How about …”&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;By contrast, stating the proposal formally or definitively, such as “I propose that we vote on … “,
+risks engaging factional responses ungrounded in the proposal’s suitability.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;em&gt;Reading the group’s response:&lt;/em&gt; How do you actually make the decision? Long habit suggests taking a vote.
+In many formal contexts, a vote is required. But note that apart from meetings bound by formal legal requirements
+such as parliamentary debates or board meetings, voting is only required for the the overall decision.
+For component elements of that decision, less formal options are available and often preferred.&lt;/p&gt;
+
+    &lt;p&gt;If the group is small, the decision is typically apparent from their immediate responses.
+A proposal will be accepted via
+nods or brief assents, rejected via grimaces, interjections (“Hold on!”, “Ewww!”), or strongly-voiced complaints. So
+long as everyone can clearly agree on the tone of the room, you can consider the decision made.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;if-the-group-does-not-accept-the-proposal&quot;&gt;If the group does not accept the proposal&lt;/h3&gt;
+
+&lt;p&gt;What should you do if the group rejects the proposal? Although it can feel personally invalidating for the group to decline the proposal, understand that their refusal is not personal and it represents real progress.  First, you may have voiced the proposal but it was on behalf of the group, setting out a clear idea for everyone to consider. They have rejected &lt;em&gt;their&lt;/em&gt; idea, not yours.  Second, the group has made progress: They have found a crucial lack, something that they will not compromise away. They may not know just what that lack is but it was there and formed the basis of their refusal.&lt;/p&gt;
+
+&lt;p&gt;The group should now be led through another discussion round, with the goal of uncovering new possibilities rather than rearguing previous points. Suggest as a guideline that no one should repropose options that received strong consideration in the last round. Depending on circumstances, the group might work to articulate what was lacking in the declined proposal and identify fixes. Or the group could simply free-associate new possibilities. Either way, the focus of the new round ought to be suggesting options that have not yet been considered.&lt;/p&gt;
+
+&lt;p&gt;The round continues until it too ends, when you can start a new crystallization step.  The round should have identified some new options from which you can select and make another proposal.&lt;/p&gt;
+
+&lt;h3 id=&quot;if-the-group-accepts-the-proposal&quot;&gt;If the group accepts the proposal&lt;/h3&gt;
+
+&lt;p&gt;If the group accepts the proposal, the current element has found its place in the decision mosaic and you can refocus the group.
+This simply requires selecting the next determinative element and setting it before the group, perhaps with a brief justication for
+why this ought to be the next item:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Now let’s consider the 95th percentile. This will help us bound the higher ranges of performance.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;learning-and-applying-this-process&quot;&gt;Learning and applying this process&lt;/h2&gt;
+
+&lt;p&gt;This post has presented a lot of detail, yet there is more to say about decision crystallization. The practice of effective group decision-making is subtle and not obvious, as evidenced by the preponderance of ineffective meetings yielding bad decisions. In the next post, I will suggest ways to learn this process, while in the post after that I’ll describe the final step of crafting the individual elements of the decision into a complete, coherent mosaic.&lt;/p&gt;
+
+&lt;h2 id=&quot;ps-for-what-its-worth-&quot;&gt;PS: For what it’s worth …&lt;/h2&gt;
+
+&lt;p&gt;While writing this post, a meme crossed my feeds, suggesting that you pick up the nearest book to your computer, and select a random sentence from p. 45. This will supposedly summarize your love life. As I am busy with these posts, the book nearest to hand was Tropman. Here is the result:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;In the executive summary technique, the full report is not sent out, except by request.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Make of this what you will …&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Disqus comments enabled</title>
@@ -215,9 +344,10 @@ followed?&lt;/p&gt;
 &lt;p&gt;As you become more comfortable identifying decision elements,
 organizing them into the larger mosaic, and choosing the one that
 influences most of the others, you will be able to identify them in
-the maelstrom of an actual meeting.  With that skill, you can begin to
-lead the group to selecting and deciding the elements in efficient
-sequence.  That is the subject of the next post.&lt;/p&gt;
+the maelstrom of an actual meeting.  In the next post, I will describe
+how to
+lead the group to &lt;a href=&quot;/2018/09/05/discussion-rounds-and-decision-crystallization/&quot;&gt;selecting and deciding the elements in efficient
+sequence&lt;/a&gt;.&lt;/p&gt;
 </content>
  </entry>
  
