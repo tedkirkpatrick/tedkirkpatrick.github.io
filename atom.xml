@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2018-09-06T15:57:39-07:00</updated>
+ <updated>2018-09-14T14:40:25-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -137,7 +137,7 @@ why this ought to be the next item:&lt;/p&gt;
   &lt;p&gt;In the executive summary technique, the full report is not sent out, except by request.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;Make of this what you will …&lt;/p&gt;
+&lt;p&gt;Make of this what you will.&lt;/p&gt;
 </content>
  </entry>
  
@@ -159,7 +159,10 @@ me know at &lt;code class=&quot;highlighter-rouge&quot;&gt;ted@kirkpatricktech.c
    <link href="/2018/08/29/the-decision-mosaic-every-piece-in-place/"/>
    <updated>2018-08-29T00:00:00-07:00</updated>
    <id>/2018/08/29/the-decision-mosaic-every-piece-in-place</id>
-   <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on group decision-making. The previous post
+   <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on group decision-making, based on Ch. 10–11
+of
+&lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The
+previous post
 &lt;a href=&quot;/2018/08/24/decision-crystallization/&quot;&gt;introduced decision crystallization&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;As
@@ -199,6 +202,8 @@ set by external authorities or circumstances. You will want
 to ensure at the outset that everyone understands the bounds
 circumscribing the group’s choices.&lt;/p&gt;
 
+&lt;h3 id=&quot;example-setting-a-latency-objective&quot;&gt;Example: Setting a latency objective&lt;/h3&gt;
+
 &lt;p&gt;As the project continues, the constitutive elements of the decisions
 and their interdependencies will change. For example, when designing a
 microservice, one of the first decisions will be setting its
@@ -233,6 +238,8 @@ also contributes to efficient decision-making, as it prevents the
 group from committing to decisions on other elements that might be
 overturned when the determinative one is decided later, once full information
 is available.&lt;/p&gt;
+
+&lt;h3 id=&quot;decision-rules-aid-setting-a-determinative-element&quot;&gt;Decision rules aid setting a determinative element&lt;/h3&gt;
 
 &lt;p&gt;The &lt;a href=&quot;2018/08/13/the-best-process-for-group-decisions/&quot;&gt;decision rules&lt;/a&gt;
 may be used to select the determinative element. If you know that one
@@ -269,21 +276,23 @@ stated. If you propose to focus on a specific element of the decision,
 group members will typically be grateful and more importantly, take
 your suggestion and apply themselves to that focus.&lt;/p&gt;
 
+&lt;h3 id=&quot;the-decision-rules-can-aid-setting-a-determinative-element&quot;&gt;The decision rules can aid setting a determinative element&lt;/h3&gt;
+
 &lt;p&gt;You can introduce the focus informally, with something like, “Our
 capacity planning and choice of technology stack all seem affected by
 the service’s latency objectives, so how about we focus on setting those
 percentiles first?”  There is no need to use the nomenclature described here. The
-notion of the determinative element within a decision mosaic is most
-useful for identifying what you, as decision leader, need to identify
+notions of “determinative element” within a “decision mosaic” are
+useful for identifying the items you, as decision leader, need to identify
 whereas simple descriptive language is enough to set a direction for
 the group.&lt;/p&gt;
 
-&lt;h2 id=&quot;once-the-determinative-element-is-decided&quot;&gt;Once the determinative element is decided&lt;/h2&gt;
+&lt;h2 id=&quot;from-determinative-element-to-decision&quot;&gt;From determinative element to decision&lt;/h2&gt;
 
 &lt;p&gt;Choosing a determinative element and setting it as the group’s focus
 is only the first step. You also need to know how to lead the group to
 converge on a decision for that element and move on to the next
-determinative element.  That will be the subject of the next post.&lt;/p&gt;
+determinative element.  That will be the subject of the &lt;a href=&quot;/2018/09/05/discussion-rounds-and-decision-crystallization/&quot;&gt;next post&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h2 id=&quot;appropriate-preparation-improves-the-process&quot;&gt;Appropriate preparation improves the process&lt;/h2&gt;
 
@@ -356,15 +365,27 @@ sequence&lt;/a&gt;.&lt;/p&gt;
    <link href="/2018/08/24/decision-crystallization/"/>
    <updated>2018-08-24T00:00:00-07:00</updated>
    <id>/2018/08/24/decision-crystallization</id>
-   <content type="html">&lt;p&gt;&lt;em&gt;Second in a series on group decision-making. The first post described &lt;a href=&quot;/2018/08/13/the-best-process-for-group-decisions/&quot;&gt;the rules group use to justify decisions&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+   <content type="html">&lt;p&gt;&lt;em&gt;Second in a series on group decision-making, based on Ch. 10–11
+of
+&lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;.
+The first post described
+&lt;a href=&quot;/2018/08/13/the-best-process-for-group-decisions/&quot;&gt;the rules group use to justify decisions&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Understanding &lt;a href=&quot;/2018/08/13/the-best-process-for-group-decisions/&quot;&gt;decision rules&lt;/a&gt;, the criteria groups use to justify decisions, is the first step to becoming an effective decision leader. The next step is applying this understanding in actual meetings.  This skill is more complex, because it requires attending to many different things in real time, and harder to practice, because you can only perform it in an actual group as it makes a decision.  However, given the low level of effectiveness of typical group decisions, even moderate skill in this process can make a substantial improvement. Your colleagues will notice your contribution.&lt;/p&gt;
 
-&lt;p&gt;Tropman coined the phrase &lt;em&gt;decision crystallization&lt;/em&gt; to describe the skill of leading a group to a great outcome that seems to emerge naturally from the discussion.  But if the outcome is so natural, why is it so rare? Why do so very many meetings circle round indecisively, producing mediocre results?&lt;/p&gt;
+&lt;p&gt;Tropman coined the phrase &lt;em&gt;decision crystallization&lt;/em&gt; to describe the
+skill of leading a group to a great outcome that seems to emerge
+naturally from the discussion.  But if the outcome is so natural, why
+is it so rare? Why do so very many meetings circle round indecisively,
+producing mediocre results?&lt;/p&gt;
+
+&lt;h2 id=&quot;decisions-are-collections-of-interconnected-choices&quot;&gt;Decisions are collections of interconnected choices&lt;/h2&gt;
 
 &lt;p&gt;The problem arises from the unacknowledged complexity of decisions. Decisions of any import are not single choices but a collection of interconnected choices. To use one of Tropman’s examples, the decision “What shall we serve for dinner at the party?” is in fact a collection of decisions, including aperitif, main course, side dishes, beverage, and dessert.  These choices in turn might be constrained by allergies or dietary restrictions of some guests, when the hosts can begin preparing the food, seasonal availability of ingredients, and other restrictions. Deciding “What to serve for dinner” is in fact a process of making many smaller decisions, which may be mutually constraining. The choice of main dish will restrict appropriate beverages and side dishes. Furthermore, some restrictions will only become apparent during the discussion, as when the hosts realize that a given dish would require them to start cooking earlier than their schedule permits.&lt;/p&gt;
 
 &lt;p&gt;During the meeting, all these distinct choices float about as though in solution.  The group attends to one, then another, in no particular order, identifying barriers and conflicts to some choices, favouring other choices, highlighting their interconnectedness, never settling on any one point, never &lt;em&gt;deciding&lt;/em&gt; anything. The formless discussion frustrates progress.&lt;/p&gt;
+
+&lt;h2 id=&quot;crystallizing-a-decision-from-the-chaos&quot;&gt;Crystallizing a decision from the chaos&lt;/h2&gt;
 
 &lt;p&gt;Tropman’s term &lt;em&gt;crystallization&lt;/em&gt; perfectly captures how a good decision can appear to a group once it’s been articulated. From a blur of conflicting, unprioritized notions appears a proposal, seemingly fully-formed, one that addresses the concerns of the group, is supported by a majority or even all of the decision rules, and resolves conflicts by making balanced compromises.  Once the group hears such a proposal, they will usually endorse it and enthusiastically implement it.&lt;/p&gt;
 
