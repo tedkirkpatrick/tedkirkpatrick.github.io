@@ -210,6 +210,34 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="/2017/03/21/the-limits-of-list-comprehensions/">
+        The limits of list comprehensions
+      </a>
+    </h1>
+    
+    <span class="post-date">21 Mar 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>,
+        
+      
+        
+        <a href="/tag/Python">Python</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>I’ve spent my recent posts unfavourably comparing the STL design of containers/iterators/algorithms with Python list comprehensions and their close relatives in Haskell.  This is an unfairly restrictive way to view the STL design, which addresses a wider range of use cases than the ones addressed by list comprehensions.  But it is also unfair in that it ignores the limitations of list comprehensions themselves, limitations avoided by the more general structure provided by the STL.  In this post, I’ll start from the other direction, considering the inherent limitations of Python list comprehensions. This in turn leads to an idiom in the STL that in fact provides virtually all the functionality of basic list comprehensions, with only slightly more complex syntax.</p>
+
+ <a href="/2017/03/21/the-limits-of-list-comprehensions/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="/2017/03/09/a-simpler-fourth-idiom-for-appending/">
         A simpler, fourth idiom for appending
       </a>
@@ -304,30 +332,6 @@
     <p>The story so far:</p>
 
  <a href="/2017/03/01/the-genius-insight-behind-iterators/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2017/02/25/lambdas-typical-use-cases/">
-        Lambdas: Typical use cases
-      </a>
-    </h1>
-    
-    <span class="post-date">25 Feb 2017
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/C++">C++</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>My last post, highlighting the differences between C++ lambdas and the lambdas in languages based upon functional programs, went more deeply into the weeds than I had intended. I realized too late that it cried out for examples.  The rules for declaring free variables (the member variables of the anonymous class) in C++ lambdas can seem contorted but most uses of them fall into one of a few simple types.  In this post, I want to present three simple use cases of C++ lambdas, each demonstrating a different way to use free variables.</p>
-
- <a href="/2017/02/25/lambdas-typical-use-cases/">more ...</a>
   </div>
   
 </div>
