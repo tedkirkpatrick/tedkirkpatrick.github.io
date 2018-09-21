@@ -210,6 +210,30 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="/2017/05/24/the-elegant-machine-code-for-char-const/">
+        The elegant machine code for char const *
+      </a>
+    </h1>
+    
+    <span class="post-date">24 May 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>Unique strings—null-terminated strings uniquely identified by their <code>char const *</code>—are the simplest type considered in this series of posts. Constructing, copying, moving, and assigning these strings are trivial operations on a single pointer. No destructor code is required.</p>
+
+ <a href="/2017/05/24/the-elegant-machine-code-for-char-const/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/">
         Passing std::string by-value noticeably slows the idioms
       </a>
@@ -303,36 +327,6 @@ loop</a> also highlighted the substantial contribution that copying values made 
     <p>In my <a href="/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/">last post</a>, I promised to consider the machine code generated from the STL idiom equivalent to a basic Python list comprehension. As I proceeded, the project expanded to a broader analysis of the idiom’s performance. I am shocked at how much effort this project took.  I have spent much of the last five weeks generating and reading the output from g++ 6.2.  So. Many. Alternatives.  In this post, I’ll describe my baseline for comparison and the criteria I’ll use. In future posts, I’ll present the results.</p>
 
  <a href="/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/">
-        A single STL statement equivalent to the basic Python list comprehension
-      </a>
-    </h1>
-    
-    <span class="post-date">26 Mar 2017
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/C++">C++</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>In <a href="/2017/03/21/the-limits-of-list-comprehensions/">the last post</a>, I described the structure of the basic Python list comprehension</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>[expression1(var) for var in expression2 if condition(var)]
-</code></pre>
-</div>
-
-<p>and lamented that all the straightforward translations to the STL algorithms required two statements, one for the filter and one for the computation.</p>
-
- <a href="/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/">more ...</a>
   </div>
   
 </div>
