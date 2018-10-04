@@ -4,13 +4,175 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2018-09-26T12:31:56-07:00</updated>
+ <updated>2018-10-03T17:55:56-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Myth-spotting</title>
+   <link href="/2018/10/03/myth-spotting/"/>
+   <updated>2018-10-03T00:00:00-07:00</updated>
+   <id>/2018/10/03/myth-spotting</id>
+   <content type="html">&lt;p&gt;As part of a larger project, I’m reading many articles from the
+management literature. This is a very different kind of writing and
+argument than I’m used to in the technical side of computing. The
+management literature (including the literature on management of
+computing personnel and projects) is also prone to fads, to such a
+degree that Harvard Business Review has an article on
+&lt;a href=&quot;https://hbr.org/2002/10/spotting-management-fads&quot;&gt;spotting management fads&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In addition to fads, management theory is also prone to myths. Where a
+fad is often closely tied to its major proponent, who typically
+derives a steady consulting revenue from it, myths are more widely
+accepted. Where the instigation of a fad can be precisely traced,
+typically to a publication such as
+&lt;a href=&quot;https://en.wikipedia.org/wiki/The_One_Minute_Manager&quot;&gt;The One-Minute Manager&lt;/a&gt;,
+the source of a myth is impossible to locate. It’s just always seemed
+to be there, a piece of received wisdom, and only on close examination
+does the viewer start to question it: “Everyone accepts it—but has
+any one &lt;em&gt;demonstrated&lt;/em&gt; it?”&lt;/p&gt;
+
+&lt;h2 id=&quot;an-example-myth&quot;&gt;An example myth&lt;/h2&gt;
+
+&lt;p&gt;An example of a widely-accepted myth is the so-called
+“&lt;a href=&quot;https://en.wikipedia.org/wiki/Yerkes%E2%80%93Dodson_law&quot;&gt;Yerkes-Dodson Law&lt;/a&gt;”.
+I say so-called because neither Yerkes nor Dodson codified it into a
+law. As Michael Corbett recounts in his excellent paper,
+&lt;a href=&quot;https://www.tandfonline.com/doi/abs/10.1080/14759551.2013.815619&quot;&gt;“Cold Comfort Firm: Lean Organisation and the Empirical Mirage of the Comfort Zone”&lt;/a&gt;
+(whose broader argument I will return to in a later post), their
+experiments were published in 1908 but it was only in 1957 that
+Broadhurst published a paper codifying their results as a broader
+“law”. The original data from Yerkes and Dodson in fact
+contradicts the typical presentation as a U-shaped graph (contrast the
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Yerkes%E2%80%93Dodson_law&quot;&gt;“Original” and “Hebbian” versions&lt;/a&gt;
+of the graph on Wikipedia).&lt;/p&gt;
+
+&lt;p&gt;Yet despite this longstanding inaccuracy, management theories, such as
+performance management, continue to base their recommendations on
+Yerkes and Dodson’s “law” and its supposed support for a
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Comfort_zone&quot;&gt;“comfort zone”&lt;/a&gt;. What is
+it about such myths that ensures their persistence, even in the face
+of well-grounded contradictory evidence, and is there anything about
+the structure of such claims that suggests it might be a myth?&lt;/p&gt;
+
+&lt;h2 id=&quot;why-do-we-want-to-believe-myths&quot;&gt;Why do we want to believe myths?&lt;/h2&gt;
+
+&lt;p&gt;Myths persist because they serve a need: They help people navigate
+complex questions by providing easy answers that appear on their face
+to be valid. When first told the typical (mis)presentation of the
+Yerkes-Dodson results, that moderate stress encourages highest
+performance, while too little and too much stress reduce performance,
+it makes sense. We have typically had experiences where the right
+stakes—neither trivial nor life-threatening but the possibility of
+meaningful gains—improved our focus. We have also probably had days
+where we weren’t motivated to budge from the couch and others where
+the prospect of failure shrank our creativity or even froze us
+outright.&lt;/p&gt;
+
+&lt;p&gt;The problem with a myth is that it only &lt;em&gt;conforms&lt;/em&gt; to experience but it does
+not actually &lt;em&gt;explain&lt;/em&gt; it. The myth lays out a pattern into which we
+can place a few experiences selected to match. The cycle is quick and
+subtle:  The myth provides a pattern, we locate a few experiences
+within that pattern, which we then interpret as validating the pattern
+set out by the myth.&lt;/p&gt;
+
+&lt;p&gt;This approach differs from how we interpret actual, well-demonstrated
+results in social psychology, such as the
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Fundamental_attribution_error&quot;&gt;fundamental attribution error&lt;/a&gt;.
+In those cases, the original supporting evidence is a broad series of
+experiments, covering a wide range of circumstances. When we then hear
+of the principle and organize some of our own experiences according to
+the pattern, we are &lt;em&gt;sense-making&lt;/em&gt;, integrating the principle into our
+experience, testing it out. Although we may be testing whether it is
+appropriate to our life and how it may fit with our established
+principles and values, we are not validating it. The validation
+preceded our learning about the result, during the period of testing
+in the literature.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-marks-of-a-myth&quot;&gt;The marks of a myth&lt;/h2&gt;
+
+&lt;p&gt;Superficially, both well-grounded results and myths will appear to be
+supported by the literature. The definitive test is to do a detailed
+review of the primary literature but this is impractical: We do not have
+time to track down the sources of every claim, however
+widely-believed. On the other hand, brute contrarianism, the automatic
+gainsaying of all received knowledge, is a dead end as well. Are there
+strong surface indicators of a myth that might warn us not to take a
+claim as stated?&lt;/p&gt;
+
+&lt;p&gt;I believe such markers exist. This post is a draft of my approaches to
+testing a broad, widely-repeated principle to assess the likelihood
+that it can guide successful action or is just a well-meaning
+platitude.&lt;/p&gt;
+
+&lt;h2 id=&quot;mark-1-broad-vague-terms&quot;&gt;Mark 1: Broad, vague terms&lt;/h2&gt;
+
+&lt;p&gt;Myths traffic in broad, vague terms. In fact, myths probably require
+terms that sweep the horizon, encompassing the largest possible range.
+This provides an essential advantage: The myth appears to apply to any
+situation, all depending upon how the viewer interprets its key terms.&lt;/p&gt;
+
+&lt;p&gt;Consider the Yerkes-Dodson “law”. Although it is frequently described
+in the management literature as the effect of changes in “stress” on
+“performance”, Yerkes and Dodson’s original work used the more
+technical psychological concept of
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Arousal&quot;&gt;arousal&lt;/a&gt;, which has
+measurable indirect correlates in heart rate and blood pressure, as
+well as more direct correlates in activation of the ascending
+reticular activating system. In actual fact, Yerkes and Dodson did not
+measure any correlates at all, instead choosing to vary the external
+stimulus, an electrical shock.&lt;/p&gt;
+
+&lt;p&gt;Varying the external stimulus was an entirely acceptable choice for
+Yerkes and Dodson, given their goals and the technology of the time.
+The problem enters when this experimental operationalization is
+glossed as “stress” by those who want to apply it to management
+theory. Although there is face value in associating greater “stress”
+with an increase in electrical shock, the actual relationship is
+complex. In commmon use, “stress” refers to a complex mix of
+physiological and psychological characteristics. The measurements
+recorded by Yerkes and Dodson provide no way to assess the level of
+“stress” experienced by the mice in their experiments. Perhaps it was
+a linear relationship, perhaps logarithmic, perhaps quadratic, perhaps
+its form varied piecewise over several distinct ranges. There is no
+way to know. This ambiguity works to the advantage of the myth-makers,
+as the listener interprets the terms within their existing biases.&lt;/p&gt;
+
+&lt;h2 id=&quot;mark-2-conflating-description-and-judgement&quot;&gt;Mark 2: Conflating description and judgement&lt;/h2&gt;
+
+&lt;p&gt;If the first part of a myth is framing the relationships between
+variables denoted by broad terms, the second part exploits the connotations
+of those terms.&lt;/p&gt;
+
+&lt;p&gt;Mythmakers not only prefer terms sufficiently vague to be broadly
+applied, they also prefer to use those terms in a manner that
+conflates description and judgement. Consider the term “stress”. On
+the one hand, that term is descriptive, characterizing a form of
+experience, one that can even be operationalized as measurable
+correlates. But it also, especially in contemporary usage, has an
+emotional valence, a connotation of undesirability. Stress is
+something to avoid, a situation to minimize or from which to be rescued,
+and in sufficient quantity is even a risk to your health.&lt;/p&gt;
+
+&lt;p&gt;To a management myth-maker, this conflation of description and
+judgement is not a problem but a &lt;em&gt;resource&lt;/em&gt;. The descriptive element
+implies an objective, measurable, “scientific” aspect, while the
+unpleasant connotation gets the listener’s attention. “We’re talking
+about &lt;em&gt;stress&lt;/em&gt; after all, and who wants too much of that?”. Better
+still if it can be exploited for
+&lt;a href=&quot;http://www.slate.com/blogs/browbeat/2009/10/22/the_slate_pitch_twitter_meme.html&quot;&gt;contrarian spin&lt;/a&gt;,
+such as “Stress can be a good for you—here’s why!”.&lt;/p&gt;
+
+&lt;p&gt;Combining denotation and connotation serves another purpose for the
+mythmaker as well: It reduces a complex relationship to a single
+dimension.  But this post is already long enough, so I will save that
+part for the next post.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>The vision: A culture of effective meetings</title>
