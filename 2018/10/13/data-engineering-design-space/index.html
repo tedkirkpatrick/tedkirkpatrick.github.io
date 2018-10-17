@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
+  <meta name="author" content="Arthur E. Kirkpatrick">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      The data engineering design space &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66576928-4', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- Begin Jekyll SEO tag v2.2.3 -->
+<meta property="og:title" content="The data engineering design space" />
+<meta name="author" content="Ted Kirkpatrick" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I will teach a course on Data Engineering in Spring 2019. The course will be the second semester of a professional graduate program in Big Data." />
+<meta property="og:description" content="I will teach a course on Data Engineering in Spring 2019. The course will be the second semester of a professional graduate program in Big Data." />
+<meta property="og:site_name" content="All my marbles in one place" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-10-13T00:00:00-07:00" />
+<script type="application/ld+json">
+{"@context":"http://schema.org","@type":"BlogPosting","headline":"The data engineering design space","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2018-10-13T00:00:00-07:00","dateModified":"2018-10-13T00:00:00-07:00","description":"I will teach a course on Data Engineering in Spring 2019. The course will be the second semester of a professional graduate program in Big Data.","mainEntityOfPage":{"@type":"WebPage","@id":"/2018/10/13/data-engineering-design-space/"},"url":"/2018/10/13/data-engineering-design-space/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/comment-policy/">Comment policy</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	   
+	    <a href="/tag/Python/">Python</a>,
+	  
+        
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
+	   
+	    <a href="/tag/Soft skills/">Soft skills</a>,
+	  
+        
+	   
+	    <a href="/tag/Statistics/">Statistics</a>,
+	  
+        
+	   
+	    <a href="/tag/Experimental design/">Experimental design</a>,
+	  
+        
+	   
+	    <a href="/tag/Rhetoric/">Rhetoric</a>,
+	  
+        
+	  	    
+            <a href="/tag/Admin/">Admin</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2018. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">The data engineering design space</h1>
+  <span class="post-date">13 Oct 2018
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/Course design">Course design</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>I will teach a course on Data Engineering in
+Spring 2019. The course will be the second semester of a
+professional graduate program in Big Data.</p>
+
+<h2 id="student-background">Student background</h2>
+
+<dl>
+  <dt>Program entry requirements</dt>
+  <dd>Bachelor’s degree in CS or related field.</dd>
+  <dt>Courses students took in prior semesters</dt>
+  <dd>In their first semester, students will already have taken a course
+on machine learning and a lab introducing them to technologies of
+large-scale data analysis, including HDFS, Hadoop, Spark, Cassandra,
+and HBase. Some may have taken electives in visualization or natural
+language processing.</dd>
+  <dt>Courses students take concurrently</dt>
+  <dd>Concurrently with the data engineering course, they will be taking a
+second lab, focussed on applied statistical analysis and machine
+learning. They will also be taking an algorithms course including
+Paxos and the Gilbert/Lynch CAP Theorem.</dd>
+</dl>
+
+<p>Many students will be entering the course straight from their first
+semester. A few will be taking it in their last semester, after
+completing an eight-month paid internship in a big data-related role.
+For this last group, this would be an elective in their final
+semester.</p>
+
+<h2 id="data-engineering-from-data-model-to-cloud-ready-data-service">Data engineering: From data model to cloud-ready data service</h2>
+
+<p>Data engineering is the practice of transforming a proof of concept data
+science model into a production-quality service. Amongst other things,
+this may include:</p>
+
+<ul>
+  <li>Hardening the system against failure</li>
+  <li>Making the model more efficient</li>
+  <li>Parallelizing a single-process model</li>
+  <li>Reimplementing the model in a language more suited to
+production environments</li>
+  <li>Automating the handling of exceptional cases such as data in the
+wrong format</li>
+  <li>Adding instrumentation to monitor system performance, input data
+drift, gray failures, and other issues</li>
+  <li>Automating deployment of revisions, including backout in the case of failure</li>
+  <li>Adding admission controls and feature switches for restarting after failure</li>
+  <li>Working with the data centre scheduler and orchestration services to
+ensure that the service is compatible with any services
+co-tenant on its instance and with the data center as a whole</li>
+</ul>
+
+<p>Most of these practices are central to any component of
+service-oriented architectures running in a large data
+centre. Although these data centres may be hosted in a variety of
+ways—by a commercial service, on-premise, or hybrid—I will
+group thm under the single term, “cloud”.</p>
+
+<p>The one-sentence summary of all these improvements is <strong>making a data model
+cloud-ready</strong>.</p>
+
+<h2 id="approach">Approach</h2>
+
+<p>Given the lengthy topic list that follows, the course can only provide
+a broad survey, not deep understanding. The importance of these topics
+extends beyond data engineering. If the students become comfortable
+with these concepts, they will be prepared for a broad range of roles
+in cloud computing, well beyond services for data analysis.</p>
+
+<h2 id="the-design-space-of-cloud-services">The design space of cloud services</h2>
+
+<p>I have taught cloud computing to undergraduates three times.  Every
+time I regretted not setting out clear definitions of the foundational
+properties characterizing such systems. Beyond giving students a
+language to discuss the topics, this establishes the <em>design space</em>
+for course discussions and within which to evaluate designs. These
+properties are also the measures of system success.</p>
+
+<p>These properties can be applied to the system as a whole; many also
+characterize system components.</p>
+
+<h2 id="metrics---measured-properties-of-the-system">Metrics—measured properties of the system</h2>
+
+<p>Metrics are measurable properties of the system. They reflect the
+match between system architecture and use.</p>
+
+<p>In addition to learning the following concepts, students need to become familiar
+with representing the distributions of metrics via key percentiles
+(50th, 75th, 90th, …). Students also need to understand the impact
+of “long tail” high percentiles, such as the 99th, on aggregate system
+performance.</p>
+
+<p>Metrics can be part of <a href="#objectives">objectives</a>.</p>
+
+<h3 id="system-performance-metrics">System performance metrics</h3>
+
+<p>These metrics characterize the system itself, running on a
+representative workload:</p>
+
+<ul>
+  <li>Latency</li>
+  <li>Throughput</li>
+  <li>Scalability</li>
+  <li>Availability</li>
+</ul>
+
+<h3 id="data-centre-fabric-metrics">Data centre fabric metrics</h3>
+
+<p>These metrics characterize the design of the data centre</p>
+
+<ul>
+  <li>Processor performance</li>
+  <li>Clock variability</li>
+  <li>Bisection bandwidth</li>
+  <li>Likelihood of component failures</li>
+</ul>
+
+<h3 id="inter-data-centre-round-trip-metrics">Inter-data centre round trip metrics</h3>
+
+<p>For systems running on multiple data centres, perhaps in different
+continents, we need to consider the round trip times:</p>
+
+<ul>
+  <li>Between availability zones in one region</li>
+  <li>Between regions</li>
+</ul>
+
+<h3 id="business-metrics">Business metrics</h3>
+
+<p>As described in
+<a href="https://www.oreilly.com/webops-perf/free/chaos-engineering.csp">Chaos Engineering, pp. 22–23</a>,
+business metrics are specific to your application. They measure how
+successfully the application is serving clients and meeting its
+purpose. The measurement is often indirect, using some metric as a
+proxy for the actually desired indicator, such as “real time customer
+satisfaction”.  For example, Netflix measures the number of times the
+“start” button is pressed per second.  As their service ultimately is
+about streaming video, an unexpected drop in start presses indicates
+the service is not meeting its purpose.</p>
+
+<ul>
+  <li>Specific to application, measuring “service success” or “client
+satisfaction” (often indirectly)</li>
+</ul>
+
+<h2 id="guarantees-and-invariants-inherent-properties-of-the-systems-design">Guarantees and invariants: Inherent properties of the system’s design</h2>
+
+<p>Whereas metrics are measurable attributes of a system that can vary with
+such factors as system load, properties are fundamental to the
+system’s design. For example, the design either replicates durable
+data or it does not.</p>
+
+<h3 id="guarantees-for-durable-data">Guarantees for durable data</h3>
+
+<p>Durable data is stored by the system on behalf of the users, typically
+on disk or solid-state storage. What sort of guarantees does the
+system provide on this data?</p>
+
+<ul>
+  <li>Replication for durability</li>
+  <li>Replication for availability</li>
+  <li>Synchronous vs. asynchronous writes</li>
+  <li>Consistency guarantees</li>
+</ul>
+
+<p>In principle, consistency guarantees can be made for ephemeral data that only
+ever resides in memory but in most cases only eventual consistency
+is provided, minimizing processing cost.</p>
+
+<h3 id="instrumentation">Instrumentation</h3>
+
+<p>How well does the system support monitoring its current state and
+diagnosing problems:</p>
+
+<ul>
+  <li>Logs</li>
+  <li>Dashboards</li>
+  <li>Probes</li>
+</ul>
+
+<h3 id="fault-tolerance">Fault tolerance</h3>
+
+<p>How well does the system tolerate failure of its own components and
+the services and data centre fabric upon which it depends:</p>
+
+<ul>
+  <li>Tolerance of component failures within the system</li>
+  <li>Tolerance of failure of external services upon which this depends</li>
+  <li>Tolerance of larger system failures (availability zone, region,
+transoceanic partition, …)</li>
+</ul>
+
+<p>How well does it support failure, diagnosis, repair, and restart:</p>
+
+<ul>
+  <li>Diagnostic logs</li>
+  <li>Canary deployments</li>
+  <li>Admission control</li>
+  <li>Feature switches</li>
+  <li>Approximate results</li>
+  <li>Other engineering techniques</li>
+</ul>
+
+<h3 id="business-logic-invariants">Business logic invariants</h3>
+
+<p>Business logic invariants are the business property counterparts of
+business metrics:  The guarantees the system makes for entities that
+the system’s clients care about.  For example, banks maintain the
+invariant that if you transfer money between two accounts, the amount
+taken from one equals the amount added to the other.</p>
+
+<p><a href="https://www.researchgate.net/publication/220476881_CAP_Twelve_years_later_How_the_Rules_have_Changed">Eric Brewer notes</a>
+that many business invariants are only implicitly specified for
+single-processor systems, which typically guarantee strong
+consistency.  When consistency guarantees are loosened (see
+“Properties of durable data” above) to migrate the system to a
+distributed implementation, the business invariants need to be
+specified explicitly.</p>
+
+<p>Business invariants often must specify a mitigation procedure, to
+resolve any violations (see the Brewer article cited above). For
+example, what is the process for redressing an error in an account’s
+balance, whether due to system defect or human error?</p>
+
+<h3 id="automated-deployment">Automated deployment</h3>
+
+<p>In addition to readying the initial release for production, the
+service will require automated support for deploying updates.</p>
+
+<h2 id="objectives">Indicators and objectives</h2>
+
+<p>The above metrics, guarantees, and invariants shape the design space of the
+architecture for modern cloud systems.  As such, they are
+direct concerns of the the development and operations staff. In
+addition, they may be exposed to clients as indicators and
+even contractual obligations. 
+As defined in
+<a href="https://landing.google.com/sre/book/chapters/service-level-objectives.html">Site Reliability Engineering, Ch. 4</a>:</p>
+
+<ul>
+  <li>Service Level Indicators (SLI)</li>
+  <li>Service Level Objectives (SLO)</li>
+  <li>Service Level Agreements (SLA)</li>
+</ul>
+
+<h2 id="development-process-metrics">Development process metrics</h2>
+
+<p>The above metrics and properties characterize the system’s design and
+performance. Other metrics characterize the development process:</p>
+
+<ul>
+  <li>Velocity of feature development (<a href="https://www.oreilly.com/webops-perf/free/chaos-engineering.csp">Chaos Engineering, p. 9</a>)</li>
+</ul>
+
+<h2 id="inherent-limitations-of-distributed-systems">Inherent limitations of distributed systems</h2>
+
+<p>Decades of study and practice in distributed systems have yielded
+principles and rules of thumb characterizing all such
+systems. As modern cloud systems are a species of
+distributed system, their designers must account for how these issues
+arise in this context.</p>
+
+<p>Properties of distributed systems that must be accounted for (from
+<a href="http://www.cs.mcgill.ca/~navindra/kde-devel/kwn-18/smli_tr-94-29.ps.gz">Waldo et al., 1994</a>):</p>
+
+<ul>
+  <li>Latency</li>
+  <li>Message-passing architecture (no shared memory)</li>
+  <li>True concurrency</li>
+  <li>Partial failure (process, service, and machine failure)</li>
+</ul>
+
+<p>No common system clock
+(<a href="https://www.microsoft.com/en-us/research/publication/time-clocks-ordering-events-distributed-system/">Lamport, 1978</a>):</p>
+
+<ul>
+  <li>Systems must use some variant of logical clocks, vector clocks, or
+interval clocks</li>
+</ul>
+
+<p><a href="https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing">“The Eight Fallacies of Distributed Computing”</a>
+(rephrased as statements about how distributed systems <strong>actually</strong>
+work):</p>
+
+<ol>
+  <li>The network is unreliable (messages can be out of order or lost, or
+connectivity may be dropped altogether).</li>
+  <li>Latency is non-zero.</li>
+  <li>Bandwidth is finite.</li>
+  <li>The network is insecure.</li>
+  <li>Topology changes.</li>
+  <li>There are multiple administrators.</li>
+  <li>Transport cost is non-zero.</li>
+  <li>The network is heterogenous.</li>
+</ol>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The design space for production cloud-based data services is huge. The
+service architect and implementation team must trade off between many
+conflicting goals and build a service that integrates well with the
+operations of the organization as a whole. This design process turns a
+robust, accurate data model—the kernel of a service but not an
+actual service—into a production service.</p>
+
+
+
+</div>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+this.page.url = "http://kirkpatricktech.com/2018/10/13/data-engineering-design-space/";
+//this.page.identifier = "/2018/10/13/data-engineering-design-space";
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://kirkpatricktech-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
+  </body>
+</html>
