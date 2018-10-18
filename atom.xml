@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2018-10-18T07:19:55-07:00</updated>
+ <updated>2018-10-18T07:30:10-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -22,6 +22,22 @@
  &lt;a href=&quot;/2018/10/13/data-engineering-design-space/&quot;&gt;data engineering design space&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;The draft learning outcomes for the data engineering course.&lt;/p&gt;
+
+&lt;h2 id=&quot;course-summary&quot;&gt;Course summary&lt;/h2&gt;
+
+&lt;p&gt;The one-paragraph course summary, as would be written in the
+university calendar:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Data engineering turns a proof-of-concept data model into an
+efficient, maintainable service well-matched to running in large-scale
+data centres. Such services are resilient against failure of either
+their own instances or a service dependency, deployed in a controlled
+way, suited for co-tenancy with services with different latency goals,
+instrumented to detect performance problems, and compatible with the
+data centre scheduler. Data engineering ensures that the services run
+all night while the operations staff sleep all night.&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;h2 id=&quot;learning-outcomes&quot;&gt;Learning outcomes&lt;/h2&gt;
 
