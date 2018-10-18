@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2018-10-16T20:03:50-07:00</updated>
+ <updated>2018-10-18T07:19:55-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -13,11 +13,100 @@
 
  
  <entry>
+   <title>Draft learning outcomes for data engineering course</title>
+   <link href="/2018/10/18/data-engineering-learning-outcomes/"/>
+   <updated>2018-10-18T00:00:00-07:00</updated>
+   <id>/2018/10/18/data-engineering-learning-outcomes</id>
+   <content type="html">&lt;p&gt;&lt;em&gt;Second in a series about designing a professional master’s course on
+ data engineering.  The first post laid out the
+ &lt;a href=&quot;/2018/10/13/data-engineering-design-space/&quot;&gt;data engineering design space&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;The draft learning outcomes for the data engineering course.&lt;/p&gt;
+
+&lt;h2 id=&quot;learning-outcomes&quot;&gt;Learning outcomes&lt;/h2&gt;
+
+&lt;p&gt;After completing the course, students will be able to:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Design space analysis:&lt;/strong&gt; Analyze the tradeoffs inherent in a
+cloud service design. Situate the design in the overall
+space. Suggest likely impacts of changes that move the design in
+that space.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Service level metrics, indicators, objectives, and agreements:&lt;/strong&gt;
+Describe the difference between each and apply the appropriate
+type to a given design.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Resilience and recovery:&lt;/strong&gt; Estimate the resilience of a design to
+various failures, test a service for resilience, and harden a
+system to make it resilient in the face of failure.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Latency versus consistency:&lt;/strong&gt; Analyze a design’s tradeoffs
+between latency when all replicas are connected versus the
+consistency guarantees when some replicas are partitioned.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Data centre operating systems:&lt;/strong&gt; Differentiate the approaches to
+managing the resources of a data centre (which can be viewed as the
+operating system for a “computer” comprising the entire
+centre). Configure a service to work with one or more of these
+operating systems.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Instrumentation:&lt;/strong&gt; Classify the approaches to instrumenting a
+system. Add instrumentation to a system to make visible a hidden
+aspect of service performance.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Consensus:&lt;/strong&gt; Summarize the need for consensus, particularly for
+service metadata. Differentiate the several algorithms and their
+common implementations. Explain the relationship between the
+consensus problem and consistency guarantees in the event of
+replica failure.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;rationale&quot;&gt;Rationale&lt;/h2&gt;
+
+&lt;p&gt;I consider learning outcomes both essential and unimportant.  On the
+one hand, my thinking about a course is helped enormously when I define
+5–8 broad outcomes for the course.  I generally follow the
+categories of the
+&lt;a href=&quot;http://www.celt.iastate.edu/teaching/effective-teaching-practices/revised-blooms-taxonomy&quot;&gt;Revised Bloom taxonomy&lt;/a&gt;
+for the language of these outcomes. In particular, the Bloom
+categories help me set the difficulty level that I want students
+to master.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, I haven’t found the resulting outcomes
+useful for actually generating assignments and assessments. In
+principle, the assignments and assessments for an outcome should be
+determined by where it falls in the taxonomy.  In practice, I’ve never
+found the categorization to provide much guidance.  I suspect that
+this is typical of the fourth-year and graduate courses that I have
+been teaching, where the material emphasizes integration of
+previously-learned concepts.  Indeed, at course end, I often have
+difficulty relating the &lt;em&gt;actual&lt;/em&gt; content of the course to the outcomes
+I specified at the outset.&lt;/p&gt;
+
+&lt;p&gt;I still consider it worthwhile to develop outcomes but I don’t
+necessarily observe them closely as the actual course unfolds.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>The data engineering design space</title>
    <link href="/2018/10/13/data-engineering-design-space/"/>
    <updated>2018-10-13T00:00:00-07:00</updated>
    <id>/2018/10/13/data-engineering-design-space</id>
-   <content type="html">&lt;p&gt;I will teach a course on Data Engineering in
+   <content type="html">&lt;p&gt;&lt;em&gt;First in a series on designing a course on data engineering.  The
+ next post specifies the
+ &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;learning outcomes&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;I will teach a course on Data Engineering in
 Spring 2019. The course will be the second semester of a
 professional graduate program in Big Data.&lt;/p&gt;
 

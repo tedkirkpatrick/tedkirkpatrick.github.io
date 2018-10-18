@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
+  <meta name="author" content="Arthur E. Kirkpatrick">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Draft learning outcomes for data engineering course &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66576928-4', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- Begin Jekyll SEO tag v2.2.3 -->
+<meta property="og:title" content="Draft learning outcomes for data engineering course" />
+<meta name="author" content="Ted Kirkpatrick" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Second in a series about designing a professional master’s course on data engineering. The first post laid out the data engineering design space." />
+<meta property="og:description" content="Second in a series about designing a professional master’s course on data engineering. The first post laid out the data engineering design space." />
+<meta property="og:site_name" content="All my marbles in one place" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-10-18T00:00:00-07:00" />
+<script type="application/ld+json">
+{"@context":"http://schema.org","@type":"BlogPosting","headline":"Draft learning outcomes for data engineering course","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2018-10-18T00:00:00-07:00","dateModified":"2018-10-18T00:00:00-07:00","description":"Second in a series about designing a professional master’s course on data engineering. The first post laid out the data engineering design space.","mainEntityOfPage":{"@type":"WebPage","@id":"/2018/10/18/data-engineering-learning-outcomes/"},"url":"/2018/10/18/data-engineering-learning-outcomes/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/comment-policy/">Comment policy</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	   
+	    <a href="/tag/Python/">Python</a>,
+	  
+        
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
+	   
+	    <a href="/tag/Big data/">Big data</a>,
+	  
+        
+	   
+	    <a href="/tag/Soft skills/">Soft skills</a>,
+	  
+        
+	   
+	    <a href="/tag/Statistics/">Statistics</a>,
+	  
+        
+	   
+	    <a href="/tag/Experimental design/">Experimental design</a>,
+	  
+        
+	   
+	    <a href="/tag/Rhetoric/">Rhetoric</a>,
+	  
+        
+	  	    
+            <a href="/tag/Admin/">Admin</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2018. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Draft learning outcomes for data engineering course</h1>
+  <span class="post-date">18 Oct 2018
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/Course design">Course design</a>,
+      
+    
+      
+      <a href="/tag/Big data">Big data</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p><em>Second in a series about designing a professional master’s course on
+ data engineering.  The first post laid out the
+ <a href="/2018/10/13/data-engineering-design-space/">data engineering design space</a>.</em></p>
+
+<p>The draft learning outcomes for the data engineering course.</p>
+
+<h2 id="learning-outcomes">Learning outcomes</h2>
+
+<p>After completing the course, students will be able to:</p>
+
+<ol>
+  <li>
+    <p><strong>Design space analysis:</strong> Analyze the tradeoffs inherent in a
+cloud service design. Situate the design in the overall
+space. Suggest likely impacts of changes that move the design in
+that space.</p>
+  </li>
+  <li>
+    <p><strong>Service level metrics, indicators, objectives, and agreements:</strong>
+Describe the difference between each and apply the appropriate
+type to a given design.</p>
+  </li>
+  <li>
+    <p><strong>Resilience and recovery:</strong> Estimate the resilience of a design to
+various failures, test a service for resilience, and harden a
+system to make it resilient in the face of failure.</p>
+  </li>
+  <li>
+    <p><strong>Latency versus consistency:</strong> Analyze a design’s tradeoffs
+between latency when all replicas are connected versus the
+consistency guarantees when some replicas are partitioned.</p>
+  </li>
+  <li>
+    <p><strong>Data centre operating systems:</strong> Differentiate the approaches to
+managing the resources of a data centre (which can be viewed as the
+operating system for a “computer” comprising the entire
+centre). Configure a service to work with one or more of these
+operating systems.</p>
+  </li>
+  <li>
+    <p><strong>Instrumentation:</strong> Classify the approaches to instrumenting a
+system. Add instrumentation to a system to make visible a hidden
+aspect of service performance.</p>
+  </li>
+  <li>
+    <p><strong>Consensus:</strong> Summarize the need for consensus, particularly for
+service metadata. Differentiate the several algorithms and their
+common implementations. Explain the relationship between the
+consensus problem and consistency guarantees in the event of
+replica failure.</p>
+  </li>
+</ol>
+
+<h2 id="rationale">Rationale</h2>
+
+<p>I consider learning outcomes both essential and unimportant.  On the
+one hand, my thinking about a course is helped enormously when I define
+5–8 broad outcomes for the course.  I generally follow the
+categories of the
+<a href="http://www.celt.iastate.edu/teaching/effective-teaching-practices/revised-blooms-taxonomy">Revised Bloom taxonomy</a>
+for the language of these outcomes. In particular, the Bloom
+categories help me set the difficulty level that I want students
+to master.</p>
+
+<p>On the other hand, I haven’t found the resulting outcomes
+useful for actually generating assignments and assessments. In
+principle, the assignments and assessments for an outcome should be
+determined by where it falls in the taxonomy.  In practice, I’ve never
+found the categorization to provide much guidance.  I suspect that
+this is typical of the fourth-year and graduate courses that I have
+been teaching, where the material emphasizes integration of
+previously-learned concepts.  Indeed, at course end, I often have
+difficulty relating the <em>actual</em> content of the course to the outcomes
+I specified at the outset.</p>
+
+<p>I still consider it worthwhile to develop outcomes but I don’t
+necessarily observe them closely as the actual course unfolds.</p>
+
+
+</div>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+this.page.url = "http://kirkpatricktech.com/2018/10/18/data-engineering-learning-outcomes/";
+//this.page.identifier = "/2018/10/18/data-engineering-learning-outcomes";
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://kirkpatricktech-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
+  </body>
+</html>
