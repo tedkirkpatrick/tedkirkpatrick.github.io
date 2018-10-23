@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2018-10-18T07:30:10-07:00</updated>
+ <updated>2018-10-23T15:12:48-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -13,13 +13,206 @@
 
  
  <entry>
+   <title>Minimal OS and networking knowledge for a data engineering course</title>
+   <link href="/2018/10/23/data-engineering-prerequisites/"/>
+   <updated>2018-10-23T00:00:00-07:00</updated>
+   <id>/2018/10/23/data-engineering-prerequisites</id>
+   <content type="html">&lt;p&gt;&lt;em&gt;Third in a series about designing a data engineering course.  The
+ previous post presented
+ &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;draft learning outcomes&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Although the students in this course are expected to have a CS degree
+or equivalent, most of them will have spent several years in
+industry, long enough for the lessons from that degree to have faded.&lt;/p&gt;
+
+&lt;p&gt;Many of the concepts listed in the
+&lt;a href=&quot;2018/10/13/data-engineering-design-space/&quot;&gt;design space&lt;/a&gt; presume
+familiarity with the topics in undergraduate operating systems and
+networking courses.  Some of these topics, such as the basics of TCP,
+are likely to have been kept fresh by use at work. Anyone building a
+simple Web application has to know the basics of IP address and ports.
+Other concepts, especially those concerned with synchronization and
+communication between concurrent processes, will have become
+unfamiliar from lack of use, to the extent students ever understood
+them. Honestly, most students (incuding me!) complete their OS course
+with an incomplete and imperfect understanding of that material.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, other students will enter the course with a strong
+understanding of these concepts and an eagerness to learn the concepts
+more deeply and apply them to data engineering.  These students will
+be bored by repeating material they already know and see time spent on
+them to be a lost opportunity to learn material new to them.  We don’t
+want to bore them, often the most competent and motivated in
+the cohort.&lt;/p&gt;
+
+&lt;p&gt;Which raises the questions:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;What is the OS and networking knowledge that I should consider
+prerequisite to the course and unnecessary to review?  If students
+find this material unfamiliar, I simply point them to outside
+resources as remedial learning.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;What is the minimal OS and networking knowledge that I should
+review in the course and in how much depth depth should I cover
+it?&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;What is the best way to review this material, such that students
+who have forgotten it can pick it up quickly while students who
+already know it will remain interested?&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I’ll begin by simply enumerating the required concepts from each domain.&lt;/p&gt;
+
+&lt;h2 id=&quot;os-concepts&quot;&gt;OS concepts&lt;/h2&gt;
+
+&lt;p&gt;Fortunately, only a subset of concepts from classical operating
+systems that are essential to data engineering:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Process model
+    &lt;ul&gt;
+      &lt;li&gt;Process isolation&lt;/li&gt;
+      &lt;li&gt;Virtual memory&lt;/li&gt;
+      &lt;li&gt;Threads&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Kernel versus applications&lt;/li&gt;
+  &lt;li&gt;Concurrency
+    &lt;ul&gt;
+      &lt;li&gt;Critical section and critical resource&lt;/li&gt;
+      &lt;li&gt;Race conditions&lt;/li&gt;
+      &lt;li&gt;Semaphore&lt;/li&gt;
+      &lt;li&gt;Deadlock&lt;/li&gt;
+      &lt;li&gt;Fairness&lt;/li&gt;
+      &lt;li&gt;Starvation&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Interprocess communication
+    &lt;ul&gt;
+      &lt;li&gt;Shared memory&lt;/li&gt;
+      &lt;li&gt;Message passing&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Scheduler&lt;/li&gt;
+  &lt;li&gt;Priority&lt;/li&gt;
+  &lt;li&gt;Resource allocation&lt;/li&gt;
+  &lt;li&gt;Memory management
+    &lt;ul&gt;
+      &lt;li&gt;Internal versus external fragmentation&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Memory hierarchy
+    &lt;ul&gt;
+      &lt;li&gt;Caching&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Context switching&lt;/li&gt;
+  &lt;li&gt;Asynchronous vs. synchronous calls&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Bear in mind that the students will be familiar with using tools such
+as file systems and even a distributed file system such as HDFS. I am
+listing here OS internals that they need to understand.&lt;/p&gt;
+
+&lt;h3 id=&quot;new-concepts-in-operating-systems&quot;&gt;New concepts in operating systems&lt;/h3&gt;
+
+&lt;p&gt;These concepts may have been touched upon in their undergraduate
+course but they will not have been covered in depth (or never
+even mentioned):&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Virtualization
+    &lt;ul&gt;
+      &lt;li&gt;Virtual machine&lt;/li&gt;
+      &lt;li&gt;Hypervisor&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Container
+    &lt;ul&gt;
+      &lt;li&gt;Leaks in process isolation&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Orchestration&lt;/li&gt;
+  &lt;li&gt;Multi-level scheduler&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;networking-concepts&quot;&gt;Networking concepts&lt;/h2&gt;
+
+&lt;p&gt;The basic concepts from an undergraduate networking course that they
+need to know to do data engineering:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;IP address
+    &lt;ul&gt;
+      &lt;li&gt;Port number&lt;/li&gt;
+      &lt;li&gt;Well-known ports&lt;/li&gt;
+      &lt;li&gt;Loopback address&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;TCP and UDP&lt;/li&gt;
+  &lt;li&gt;Delivery guarantees
+    &lt;ul&gt;
+      &lt;li&gt;None (zero to unlimited copies delivered)&lt;/li&gt;
+      &lt;li&gt;At most once&lt;/li&gt;
+      &lt;li&gt;At least once&lt;/li&gt;
+      &lt;li&gt;Exactly once&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Flow control&lt;/li&gt;
+  &lt;li&gt;Remote procedure calls&lt;/li&gt;
+  &lt;li&gt;Message buffering&lt;/li&gt;
+  &lt;li&gt;Marshalling and serialization&lt;/li&gt;
+  &lt;li&gt;Topology&lt;/li&gt;
+  &lt;li&gt;Distinction between wide-area and local-area networks&lt;/li&gt;
+  &lt;li&gt;Client-server architecture&lt;/li&gt;
+  &lt;li&gt;Message signing&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;new-concepts-in-networking&quot;&gt;New concepts in networking&lt;/h3&gt;
+
+&lt;p&gt;These concepts specifically relate to the current cloud architectures
+of data centres, availability zones, and regions:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Data centre networking
+    &lt;ul&gt;
+      &lt;li&gt;Bisection bandwidth&lt;/li&gt;
+      &lt;li&gt;“Top-of-rack” (usually located in the middle of the rack) switch&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Relative latencies of within-centre, within-region, and
+inter-region round trips&lt;/li&gt;
+  &lt;li&gt;Shuffling (which exercises both the file system and the network)&lt;/li&gt;
+  &lt;li&gt;Idempotent messages&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;topics-intrinsic-to-the-data-engineering-course&quot;&gt;Topics intrinsic to the data engineering course&lt;/h2&gt;
+
+&lt;p&gt;The above lists comprise prerequisite knowledge of other domains.  The
+bulk of the data engineering course will consist of topics specific to
+this domain, such as those listed in the
+&lt;a href=&quot;/2018/10/13/data-engineering-design-space/&quot;&gt;design space post&lt;/a&gt; and
+the
+&lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;learning outcomes post&lt;/a&gt;.&lt;/p&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
    <title>Draft learning outcomes for data engineering course</title>
    <link href="/2018/10/18/data-engineering-learning-outcomes/"/>
    <updated>2018-10-18T00:00:00-07:00</updated>
    <id>/2018/10/18/data-engineering-learning-outcomes</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series about designing a professional master’s course on
  data engineering.  The first post laid out the
- &lt;a href=&quot;/2018/10/13/data-engineering-design-space/&quot;&gt;data engineering design space&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+ &lt;a href=&quot;/2018/10/13/data-engineering-design-space/&quot;&gt;data engineering design space&lt;/a&gt;. The
+ next post lists
+ &lt;a href=&quot;/2018/10/23/data-engineering-prerequisites/&quot;&gt;prerequisite operating system and networking knowledge&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;The draft learning outcomes for the data engineering course.&lt;/p&gt;
 
@@ -397,7 +590,7 @@ arise in this context.&lt;/p&gt;
 (&lt;a href=&quot;https://www.microsoft.com/en-us/research/publication/time-clocks-ordering-events-distributed-system/&quot;&gt;Lamport, 1978&lt;/a&gt;):&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;Systems must use some variant of logical clocks, vector clocks, or
+  &lt;li&gt;Systems must use some variant of &lt;a href=&quot;https://queue.acm.org/detail.cfm?id=2917756&quot;&gt;logical clocks&lt;/a&gt;, vector clocks, or
 interval clocks&lt;/li&gt;
 &lt;/ul&gt;
 
