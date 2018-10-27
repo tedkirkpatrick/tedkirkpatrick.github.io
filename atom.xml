@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2018-10-23T15:12:48-07:00</updated>
+ <updated>2018-10-26T17:41:37-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -13,13 +13,193 @@
 
  
  <entry>
+   <title>Assignments with coding only teach coding</title>
+   <link href="/2018/10/26/assignments-with-coding-only-teach-coding/"/>
+   <updated>2018-10-26T00:00:00-07:00</updated>
+   <id>/2018/10/26/assignments-with-coding-only-teach-coding</id>
+   <content type="html">&lt;p&gt;&lt;em&gt;Fourth in a series on designing a course on data engineering.  The
+ previous post listed the
+ &lt;a href=&quot;/2018/10/23/data-engineering-prerequisites/&quot;&gt;minimal operating system and networking knowlege&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;When designing an upper-division or graduate-level class, we often set
+our learning outcomes to include higher-level concepts characterizing
+systems architecture.  For example, I am designing a course in data
+engineering for a professional master’s program.  This course features
+such concepts as&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Consistency of data in durable storage with multiple instances&lt;/li&gt;
+  &lt;li&gt;Effects of high-percentile (“long tail”) latencies on overall system
+performance&lt;/li&gt;
+  &lt;li&gt;Resiliency testing via injection of anomolous messages&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I begin from
+&lt;a href=&quot;http://www.johnbiggs.com.au/academic/constructive-alignment/&quot;&gt;Biggs’s rule&lt;/a&gt;:
+Learning results from &lt;em&gt;what the learner does&lt;/em&gt;. The activities I ask
+learners to perform should align with the way I expect them to use the
+relevant knowledge after the class; my assessment of learners against
+those outcomes should align with the expected use as well.&lt;/p&gt;
+
+&lt;p&gt;Set aside the issue of assessment for a moment.  The immediate
+question is how shall I design the exercises to best align with the
+desired outcomes?&lt;/p&gt;
+
+&lt;h2 id=&quot;defining-the-outcomes-in-detail&quot;&gt;Defining the outcomes in detail&lt;/h2&gt;
+
+&lt;p&gt;Abstract concepts in a graduate course ought to be expressed via one
+of the higher-level categories of the
+&lt;a href=&quot;http://www.celt.iastate.edu/teaching/effective-teaching-practices/revised-blooms-taxonomy&quot;&gt;cognitive process dimension of the revised Bloom Taxonomy&lt;/a&gt;,
+using verbs such as “analyze”, “evaluate”, or “create”.  As is typical
+with applications of this taxonomy, the level at which to categorize a
+given outcome is sensitive to how we frame it. For example, consider
+the learning outcome of “student will be able to profile the
+distribution of latencies for a microservice”. At first, this might
+seem like “analyze”, with its implication of attribution. But if the
+students are asked to contrast this profile with a specified Service
+Level Objective (SLO), the process is arguably “evaluate”. On further
+consideration, latency profiling requires designing a test plan,
+specifying input distributions, adding metrics, and creating a final
+report—processes more directly fitting “create”.&lt;/p&gt;
+
+&lt;p&gt;The learning outcome could be set as any of the three verbs,
+“Analyze”, “Evaluate”, or “Create”, depending upon the emphasis of the
+instructor.&lt;/p&gt;
+
+&lt;h2 id=&quot;from-learning-what-they-do-&quot;&gt;From learning what they do …&lt;/h2&gt;
+
+&lt;p&gt;Having specified the detailed outcome, we can now create an activity
+whose performance leads the student to that outcome.&lt;/p&gt;
+
+&lt;p&gt;A typical activity will ask the students to build
+something and as part of that assignment, analyze the performance of
+what they build.&lt;/p&gt;
+
+&lt;p&gt;But consider this from the Biggs perspective, that what the student &lt;em&gt;does&lt;/em&gt;
+is what the student &lt;em&gt;learns&lt;/em&gt;.  What are students spending most of
+their time doing?  Programming, of course.  Designing (well, not
+really, but in a perfect course, they would design), coding, testing,
+debugging, coding some more, integrating, and arguing about what to do
+next and which team member needs to contribute more.&lt;/p&gt;
+
+&lt;p&gt;How much time have they spent profiling the latency? Well, they could
+only do that after the system is built and almost reliable—a tiny
+window at the end of a multi-week programming frenzy.  Human
+memory records most clearly the activities upon which the learner spent the
+most time and attention. Given how much more time they spent building
+the system than instrumenting and tuning it, their strongest
+memory will be programming.&lt;/p&gt;
+
+&lt;p&gt;This is reflected in how the students respond to job interviews.  When
+asked to summarize what they did in class (itself a misdirecting
+question, focusing the students on their activities and not on the
+principles nominally guiding those activities), they will reply, “We
+built a distributed system in [language X]” rather than “We measured
+latency and tuned the architecture to achieve our Service
+Objectives”.&lt;/p&gt;
+
+&lt;h2 id=&quot;to-doing-what-we-want-them-to-learn&quot;&gt;… to doing what we want them to learn&lt;/h2&gt;
+
+&lt;p&gt;To increase the mindshare occupied by the intended learning outcome,
+we have to reduce the time spent on less relevant activities and
+increase the time spent on activities directly relevant to the
+outcome. In our example case, we want to reduce the time spent
+programming and increase the time spent reasoning about the
+performance implications of a program’s design. In fact, the key
+metric is not really total time but &lt;em&gt;proportion&lt;/em&gt; of time. In an ideal
+exercise, students would not work particularly long but &lt;em&gt;all&lt;/em&gt; their
+time would be on activities directly achieving the learning outcome.&lt;/p&gt;
+
+&lt;p&gt;Brevity is a desirable property for an exercise.  Long activities,
+especially those the length of a major assignment, engender
+substantial fatigue and stress, which reduce the amount and quality of
+learning. Pushing the real outcome to the end of such an assignment,
+as occurs with an instruction such as, “Measure your system’s
+performance under a sample load and write up your analysis”, means
+that students engage with the most important learning outcomes
+precisely when their fatigue, stress, and deadlines most work against
+effective learning.&lt;/p&gt;
+
+&lt;h2 id=&quot;creating-environments-for-learning-skills-of-analysis&quot;&gt;Creating environments for learning skills of analysis&lt;/h2&gt;
+
+&lt;p&gt;If “program an X and then analyze it” is ineffective for learning the
+analysis skills (and probably isn’t particularly effective at teaching
+them programming skills, either), what sorts of activity are
+effective? Here’s some that I’ve come up with:&lt;/p&gt;
+
+&lt;dl class=&quot;dl-indent&quot;&gt;
+  &lt;dt&gt;Analyze a paper model&lt;/dt&gt;
+  &lt;dd&gt;Provide a paper design, some sample output metrics, and ask them to
+evaluate the system.  This sort of exercise focuses them directly on
+the theory, considering how the pieces fit together, applying
+formulas, and so forth. It might be a good prologue to working with an
+actual system. It has the merit that with some computational support,
+the instructor can give the class several distinct cases, reducing the
+risk of cheating. It is of course the only sort of question you can
+pose on an exam.&lt;/dd&gt;
+  &lt;dt&gt;Analyze an interactive model&lt;/dt&gt;
+  &lt;dd&gt;The instructor can build an interactive model, which the students
+can analyze.  An interactive model can have hidden complexities that
+the student has to tease out, an impossible challenge to create in a
+paper exercise. Every group can be given different parameters,
+reducing the risk of cheating. And the system might even do some
+portion of the assessment automatically.  The primary disadvantage is
+the effort to create the simulation.&lt;/dd&gt;
+  &lt;dt&gt;Analyze a system they have already built&lt;/dt&gt;
+  &lt;dd&gt;In this exercise, the students instrument, analyze, and perhaps tune
+a system they built in another course or earlier in the same course.
+This approach has some inherent interest for students, in that they
+are improving a system in which they have some investment. It also
+reduces system learning for those team members who developed the
+original project. It has the further merit of reducing cheating, as
+every group has their own project. The biggest risk is projects that
+are too buggy or poorly-designed to instrument and get usable results.&lt;/dd&gt;
+  &lt;dt&gt;Analyze a system provided by the instructor&lt;/dt&gt;
+  &lt;dd&gt;In contrast to the approach of students instrumenting their own
+system, in this style the instructor provides a system for them to
+instrument and analyze. This has the advantage that the instructor is
+assured that the system is correct and will yield interesting analyses
+at a level attainable by this class. It also helps the instructor
+grade, as the results will follow one of a few known patterns.  Its
+two disadvantages are the risk of cheating when every group has the
+same project, as well as the effort to create such a system.&lt;/dd&gt;
+  &lt;dt&gt;Analyze a system selected from a public repository&lt;/dt&gt;
+  &lt;dd&gt;Students could be asked to analyze a system selected from
+repositories such as GitHub or BitBucket. This has mostly the same
+advantages and disadvantages of using a system the students had
+previously developed (though the students start with no prior
+experience with the code).  It has the extra disadvantage of requiring
+some gate-keeping by the instructor to ensure the students pick a
+system that is likely to yield an interesting analysis.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h2 id=&quot;so-what-will-i-do&quot;&gt;So what will I do?&lt;/h2&gt;
+
+&lt;p&gt;Programming assignments are not particularly effective or efficient
+ways for students to achieve non-programming learning outcomes.  But
+they are one of the most efficient ways for the &lt;em&gt;instructor to set up
+an exercise&lt;/em&gt;. All the alternatives that I’ve listed above, with the
+possible exception of paper exercises, require significantly more
+pre-class system development by the instructor.  I suspect the
+instructor’s ease of developing programming assignments contributes to
+their persistent use in many courses.&lt;/p&gt;
+
+&lt;p&gt;I haven’t decided how to structure assignments for my upcoming data
+engineering course.  This post has started my thinking about what I
+might do. My time is limited before the course begins in
+January 2019, so I must pick realistic goals.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>Minimal OS and networking knowledge for a data engineering course</title>
    <link href="/2018/10/23/data-engineering-prerequisites/"/>
    <updated>2018-10-23T00:00:00-07:00</updated>
    <id>/2018/10/23/data-engineering-prerequisites</id>
-   <content type="html">&lt;p&gt;&lt;em&gt;Third in a series about designing a data engineering course.  The
+   <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on designing a data engineering course.  The
  previous post presented
- &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;draft learning outcomes&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+ &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;draft learning outcomes&lt;/a&gt;. The
+ next post considers &lt;a href=&quot;/2018/10/26/assignments-with-coding-only-teach-coding/&quot;&gt;what exercises will best achive the learning outcomes&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Although the students in this course are expected to have a CS degree
 or equivalent, most of them will have spent several years in
