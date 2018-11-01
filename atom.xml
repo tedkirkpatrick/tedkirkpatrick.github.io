@@ -4,13 +4,205 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2018-10-26T17:41:37-07:00</updated>
+ <updated>2018-10-31T19:49:20-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Exploring distributed algorithm failures using TLA Toolbox</title>
+   <link href="/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/"/>
+   <updated>2018-10-31T00:00:00-07:00</updated>
+   <id>/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox</id>
+   <content type="html">&lt;p&gt;&lt;em&gt;First in a series on using the TLA Toolbox to explore the failure
+ tolerance of distributed algorithms. The next post has not been written.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;I have wanted to write a series about Leslie Lamport’s
+&lt;a href=&quot;https://lamport.azurewebsites.net/tla/toolbox.html&quot;&gt;TLA Toolbox&lt;/a&gt; for
+some time. For years, I’ve been following the growing use of formal
+and semi-formal methods in software development, including such tools
+as &lt;a href=&quot;https://lamport.azurewebsites.net/tla/toolbox.html&quot;&gt;Alloy&lt;/a&gt;,
+&lt;a href=&quot;https://coq.inria.fr/&quot;&gt;Coq&lt;/a&gt;,
+&lt;a href=&quot;http://spinroot.com/spin/whatispin.html&quot;&gt;Spin&lt;/a&gt;, and
+&lt;a href=&quot;https://isabelle.in.tum.de/&quot;&gt;Isabelle&lt;/a&gt;. And that’s just a taste of
+what’s on offer—consider the tools Byron Cook lists at the end of
+his talk on
+&lt;a href=&quot;http://www0.cs.ucl.ac.uk/staff/b.cook/CAV18_invited.pdf&quot;&gt;formal verification of security at Amazon Web Services&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Of the tools I have explored, the TLA language and the TLC model
+checker represent a fascinating design point:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;simple enough to pick up
+quickly,&lt;/li&gt;
+  &lt;li&gt;focused enough that they do their job well without diluting
+that focus by attempting too much, and&lt;/li&gt;
+  &lt;li&gt;powerful enough to apply to
+questions of interest in a production environment.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Lamport has
+&lt;a href=&quot;https://amturing.acm.org/award_winners/lamport_1205376.cfm&quot;&gt;devoted his career&lt;/a&gt;
+to developing provably correct distributed algorithms and the Toolbox
+distills this experience into executable form. The rest of us, those
+who haven’t won a Turing award, can use the wisdom embedded in these
+tools to approach that level of performance.&lt;/p&gt;
+
+&lt;h2 id=&quot;focusing-on-failure-tolerance-of-distribute-algorithms&quot;&gt;Focusing on failure tolerance of distribute algorithms&lt;/h2&gt;
+
+&lt;p&gt;Despite my interest in the Toolbox, I have held off writing anything
+about it because so much has already been written.  In fact, the
+newcomer is held back by the sheer number of tutorials and references
+available at the Toolbox site alone, let alone the others around the
+Web.  There seemed no point in duplicating what was already so
+well-described elsewhere.&lt;/p&gt;
+
+&lt;p&gt;In recent months however, I have found a novel angle for approaching
+the Toolbox, using it to study the failure tolerance of distributed
+algorithms. This is a slippery topic, yet of growing
+importance. Modern service-oriented designs,
+&lt;a href=&quot;/2018/10/13/data-engineering-design-space/&quot;&gt;running on cloud data centres&lt;/a&gt;,
+are expected to be
+&lt;a href=&quot;https://www.oreilly.com/ideas/chaos-engineering&quot;&gt;resilient in the face of failure&lt;/a&gt;. The
+most basic form of this resilience is that the service must run on
+multiple instances and continue when a subset of those instances
+fails. A necessary condition of a resilient service is that its
+algorithm is designed to be replicated and resilient in the event of
+failure of one or more instances.&lt;/p&gt;
+
+&lt;p&gt;Notably, Lamport has contributed one of the oldest and most famous
+resilient algorithms, Paxos. Opinions vary on how easy Paxos is
+to understand: Lamport
+&lt;a href=&quot;https://www.microsoft.com/en-us/research/publication/paxos-made-simple/&quot;&gt;considers it simple&lt;/a&gt;,
+others see it as at least &lt;a href=&quot;http://paxos.systems/&quot;&gt;moderately complex&lt;/a&gt;,
+while still others emphasize the substantial extra work required to
+&lt;a href=&quot;http://www.scs.stanford.edu/~dm/home/papers/paxos.pdf&quot;&gt;make it practical&lt;/a&gt;
+and
+&lt;a href=&quot;https://ai.google/research/pubs/pub33002&quot;&gt;make it production-ready&lt;/a&gt;. And
+all these articles focus on understanding the cases where at least a
+majority of the instances run without failure.  What of the cases where
+one instance crashes (which the algorithm should handle) or where so many
+instances crash that it cannot proceed?&lt;/p&gt;
+
+&lt;h2 id=&quot;the-benefits-of-model-checking&quot;&gt;The benefits of model checking&lt;/h2&gt;
+
+&lt;p&gt;Model checking can help tackle the challenge of understanding whether
+a distributed algorithm proceeds or fails in the presence of failed
+instances. A model checker lets you explore the behaviours of an
+algorithm. You can, for example:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Ensure that all behaviours up to a certain length conform to a
+requirement or trace out a counterexample behaviour that violates
+the requirement;&lt;/li&gt;
+  &lt;li&gt;Remove a necessary subtlety of the algorithm and demonstrate that
+the simplified algorithm no longer meets a requirement; or&lt;/li&gt;
+  &lt;li&gt;Demonstrate that an algorithm fails a requirement
+outside its original intent (for example, that an algorithm designed
+under an assumption of a perfect network fails when the network
+drops messages).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A model checker run is a superpowered version of a regular test run.
+Where a test run simply demonstrates a single behaviour, a model
+checker run tests all behaviours up to some maximum length. Although
+such runs are less complete than proofs (a proof is valid for all
+behaviours, regardless of length), runs of a model checker are far
+more complete than a single run of the program. With a model checker,
+the designer can see the implications of a change on a wide range
+of behaviours in a short time. The method does not provide 100% confidence in
+your conclusions but it provides far more confidence than mere runs of the
+program could ever provide.&lt;/p&gt;
+
+&lt;h2 id=&quot;and-the-horror-the-horror&quot;&gt;… and the horror, the horror!&lt;/h2&gt;
+
+&lt;p&gt;However useful a model checker can be, I worry that I violate the
+express wishes of the TLA team when I apply their Toolbox to
+investigate failure tolerance, which typically requires
+writing liveness properties in moderately complex formulas of temporal logic. In
+&lt;a href=&quot;https://lamport.azurewebsites.net/tla/book.html&quot;&gt;&lt;em&gt;The TLA Book&lt;/em&gt;&lt;/a&gt;,
+Lamport advocates focusing instead on &lt;em&gt;safety&lt;/em&gt; properties, which can typically
+be written in propositional logic, avoiding liveness properties and the more
+complicated temporal logic they require:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Experience shows that most of the benefit from writing and using a
+specification comes from the safety part … [W]hen looking for
+errors, most of your effort should be devoted to examining the
+safety part … The unbridled use of temporal logic produces
+formulas that are hard to understand. (p. 116)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I am unsure whether Lamport would consider my use of temporal logic in
+the following posts “well-bridled” but I do believe that such formulas
+are more important now that liveness properties have become more
+prominent. It is not enough that a system in production ensure that at
+most one process is in a critical section at a given time (a safety
+property).  The system must also ensure that processes attempting to
+enter that critical section are admitted without undue delay (a
+liveness property). As
+&lt;a href=&quot;https://ai.google/research/pubs/pub40801&quot;&gt;Dean and Barroso&lt;/a&gt; argue,&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Just as fault-tolerant computing aims to create a reliable whole out
+of less reliable parts, we suggest that large online services need
+to create a predictably responsive whole out of less predictable
+parts. [Abstract]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;These guarantees are ultimately probabilistic and as such, they cannot
+be tested by model checking, which is fundamentally logical.  Yet
+model checking can test the logical properties standing as
+&lt;em&gt;prerequisites&lt;/em&gt; to acceptable latency distributions.  An algorithm that
+halts when an instance crashes or becomes partitioned can never
+provide acceptable latencies in the long tail.  The tests described in
+this series are insufficient to guarantee success but their &lt;em&gt;failure&lt;/em&gt;
+guarantees the design will be inadequate in the face of some types of
+failure.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-we-stand-to-learn-and-not-learn&quot;&gt;What we stand to learn and not learn&lt;/h2&gt;
+
+&lt;p&gt;Taking all this together, using TLA to explore a distributed algorithm’s
+responses to failure offers several lessons:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A tool for understanding a slippery property of increasing
+importance in actual systems&lt;/li&gt;
+  &lt;li&gt;Practice at intermediate-level use of the Toolbox, beyond the simple
+cases used in most tutorials&lt;/li&gt;
+  &lt;li&gt;A deeper understanding of model checking more generally.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It is also important to bear in mind what the method will not do:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;It will not consider more complex failure scenarios, such as
+“Byzantine” cases, where a buggy or compromised instance actively
+subverts the system.&lt;/li&gt;
+  &lt;li&gt;It will not consider the distribution of response latencies.&lt;/li&gt;
+  &lt;li&gt;It will not consider probabilistic failures such as a fractional
+loss rate of messages on the network.&lt;/li&gt;
+  &lt;li&gt;The size of the spaces searchable using practical resources
+will be smaller for the more complex temporal formulas required for
+liveness than for the simpler predicate logic formulas commonly used
+for checking safety.&lt;/li&gt;
+  &lt;li&gt;For the sorts of long-running algorithms we will consider, model
+checking can not provide the complete guarantees of a mathematical
+proof.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Despite these limitations, the approach remains useful and fun. I’ll
+start by considering a simpler algorithm than Paxos,
+&lt;a href=&quot;https://www.microsoft.com/en-us/research/publication/time-clocks-ordering-events-distributed-system/&quot;&gt;Lamport’s 1978 distributed mutual exclusion algorithm&lt;/a&gt;. This
+algorithm was designed under an assumption of perfect instances
+running on a perfect network, so it’s a good case for analyzing its
+response to instance failure.  Even this simple algorithm will provide
+fodder for a whole series of posts.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Assignments with coding only teach coding</title>
