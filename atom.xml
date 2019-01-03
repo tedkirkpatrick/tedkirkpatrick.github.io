@@ -4,13 +4,389 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2018-10-31T19:49:20-07:00</updated>
+ <updated>2019-01-03T11:20:51-08:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Distributed algorithms in PlusCal</title>
+   <link href="/2019/01/03/distributed-algorithms-in-pluscal/"/>
+   <updated>2019-01-03T00:00:00-08:00</updated>
+   <id>/2019/01/03/distributed-algorithms-in-pluscal</id>
+   <content type="html">&lt;p&gt;&lt;em&gt;Second in a series on using the TLA Toolbox to explore the failure
+ tolerance of distributed algorithms. The first post
+ &lt;a href=&quot;/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/&quot;&gt;described the context and why the topic is important&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Before describing how to analyze failures in distributed algorithms in
+the TLA Toolbox, I want to provide some backround in the conventions I
+use to represent the algorithms. Although Lamport has provided a
+&lt;a href=&quot;http://lamport.azurewebsites.net/tla/pluscal.html&quot;&gt;good reference for the features of the PlusCal language&lt;/a&gt;,
+there is a lack of material on how to structure the larger scale
+of algorithms. As my purpose in this series is to provide an
+intermediate level tutorial, in this post I want to describe the
+conventions I use to make writing distributed algorithms in PlusCal
+more readable and reliable, while the next post will clarify some
+potentially obscure aspects of PlusCal semantics.  With that
+background out of the way, I can turn to the main topic.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-dialect&quot;&gt;The dialect&lt;/h2&gt;
+
+&lt;p&gt;PlusCal has two dialects, PlusCal-c, which uses syntax similar to C
+(but different enough in the details to be confusing),
+and PlusCal-p, which uses syntax similar to Pascal. I prefer the
+PlusCal-p syntax, as it emphasizes that I am presenting an algorithm
+rather than a bowdlerized C program.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-common-structure-of-many-distributed-algorithms&quot;&gt;The common structure of many distributed algorithms&lt;/h2&gt;
+
+&lt;p&gt;Effective PlusCal is a matter of matching the features of the language
+to the structure of the algorithms that we want to represent.  Many
+distributed algorithms have a common structure, an infinite loop whose
+body is a collection of alternatives, each guarded by a condition:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;while TRUE do
+  either
+    guard1
+      alternative1
+  or
+    guard2
+      alternative2
+  or
+    ...
+  end either
+end while
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Each guard specifies the enabling condition for its associated
+alternative.  In each loop iteration, one of the enabled alternatives
+is chosen to be executed. So long as at least one guard is true,
+enabling its alternative, the loop continues to execute.  The loop may
+also terminate if it executes an alternative that ends with a &lt;code class=&quot;highlighter-rouge&quot;&gt;goto&lt;/code&gt;
+out of the loop.&lt;/p&gt;
+
+&lt;p&gt;If there is an iteration in which every alternative is disabled, the
+algorithm has deadlocked. When checking the algorithm with TLC, you
+can set an option for TLC to check for deadlocks.&lt;/p&gt;
+
+&lt;p&gt;What is the best way to represent this structure in PlusCal?&lt;/p&gt;
+
+&lt;h2 id=&quot;alternatives-actions-and-atomicity&quot;&gt;Alternatives, actions, and atomicity&lt;/h2&gt;
+
+&lt;p&gt;In the above structure, an “alternative” may comprise one or more
+actions. In TLA, &lt;em&gt;action&lt;/em&gt; denotes a single transition in the
+underlying state machine.  In PlusCal code, this would be all the
+statements lying between a guard and the first label following it.  So
+long as the alternative enabled by a guard has no labels, it comprises
+a single TLA action. If the alternative includes labels, then it
+comprises one more TLA action than the number of labels it contains.&lt;/p&gt;
+
+&lt;p&gt;The granularity of an alternative determines its atomicity. If it is
+only a single TLA action, it is &lt;em&gt;atomic&lt;/em&gt;: It executes instantaneously,
+while all other processes are paused. An alternative that includes one
+or more labels, on the other hand, will have its execution
+interspersed with actions by other processes. I will return to this
+point in a moment; for now, I’ll simply state that for distributed
+algorithms, which only communicate through messages, atomicity of
+alternatives in an &lt;code class=&quot;highlighter-rouge&quot;&gt;either&lt;/code&gt; statement is less important than for
+algorithms that communicate through shared memory.&lt;/p&gt;
+
+&lt;h2 id=&quot;guards-in-pluscal&quot;&gt;Guards in PlusCal&lt;/h2&gt;
+
+&lt;p&gt;PlusCal guards can have rich structure. They are constructed from
+three language keywords that define an enabling condition: &lt;code class=&quot;highlighter-rouge&quot;&gt;await&lt;/code&gt;,
+&lt;code class=&quot;highlighter-rouge&quot;&gt;when&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;with&lt;/code&gt;. The &lt;code class=&quot;highlighter-rouge&quot;&gt;await&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;when&lt;/code&gt; keywords are
+interchangeable. In the Lamport algorithm, I chose &lt;code class=&quot;highlighter-rouge&quot;&gt;when&lt;/code&gt; because it
+gave the algorithm a straightforward reading but for other algorithms
+&lt;code class=&quot;highlighter-rouge&quot;&gt;await&lt;/code&gt; might read better.&lt;/p&gt;
+
+&lt;p&gt;Whereas &lt;code class=&quot;highlighter-rouge&quot;&gt;await&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;when&lt;/code&gt; simply establish an enabling condition, the
+&lt;code class=&quot;highlighter-rouge&quot;&gt;with&lt;/code&gt; keyword combines an enabling condition with the operation of
+choosing a value from a set. An expression such as&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;with a \in { ... some set ...}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;is enabled when the set is nonempty. Furthermore, when the set is
+nonempty, a value is nondeterministically chosen and assigned to &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;A guard composed of just one of these keywords is simple enough to
+interpret. For example, in the following snippet,&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;when /\ 1 &amp;lt; b
+     /\ b &amp;lt; 10;
+  \* guarded alternative ...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;the alternative is enabled when &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; is strictly between 1 and 10.&lt;/p&gt;
+
+&lt;p&gt;However, PlusCal allows combining enabling statements and even
+interspersing assignments with guards. Guards can be placed at any
+point in an action, even as the last statement. The evaluation rule
+for actions is:&lt;/p&gt;
+
+&lt;p class=&quot;pull&quot;&gt;An action is enabled if and only if every one of its &lt;code class=&quot;highlighter-rouge&quot;&gt;await&lt;/code&gt;,
+&lt;code class=&quot;highlighter-rouge&quot;&gt;when&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;with&lt;/code&gt; statements is enabled. If even one guard is
+disabled, no statement in the action is executed.&lt;/p&gt;
+
+&lt;p&gt;This rule implies that the evaluation may backtrack when a guard
+depends upon the result of an assignment. Consider this snippet:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;a := b + 1;
+await a &amp;gt; 2;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;If &lt;code class=&quot;highlighter-rouge&quot;&gt;b &amp;lt;= 1&lt;/code&gt;, the action will not be enabled and so &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; will not in fact
+be assigned in the preceding statement.  The action comprising these
+two statements is only executed if the assignment &lt;em&gt;were to have
+resulted&lt;/em&gt; in &lt;code class=&quot;highlighter-rouge&quot;&gt;a &amp;gt; 2&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Another way of viewing this is that the mathematical equalities
+in the TLA underlying PlusCal allow us to rewrite the above
+statements as the equivalent&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;await b &amp;gt; 1;
+a := b + 1;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;moving the guard before the assignment.&lt;/p&gt;
+
+&lt;h2 id=&quot;atomic-actions-and-data-races-in-distributed-algorithms&quot;&gt;Atomic actions and data races in distributed algorithms&lt;/h2&gt;
+
+&lt;p&gt;The second requirement for effective use of PlusCal is knowing when
+and how to ensure atomic actions.  This is directly related to the
+distinction between local and global variables.&lt;/p&gt;
+
+&lt;p&gt;In a completely distributed algorithm, processes only communicate via
+messages. Writing such an algorithm in PlusCal, the system state is
+split, such that&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;the state of the &lt;em&gt;algorithm&lt;/em&gt; is contained in the local variables of its
+processes, and&lt;/li&gt;
+  &lt;li&gt;the state of the &lt;em&gt;network&lt;/em&gt;, the messages in transit, is contained in
+the global variables.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Because process variables are local, you can freely mix references and
+assignments to them, without concern for intervening actions by other
+processes, whereas for global variables, mixing references and
+assignments may introduce race conditions.  The syntactic distinction
+between local and global variables highlights the ones for which
+atomic access is important:&lt;/p&gt;
+
+&lt;p class=&quot;pull&quot;&gt;When writing a message-passing algorithm in PlusCal, the only
+variables for which atomic access matters are the global variables
+representing the network.&lt;/p&gt;
+
+&lt;h3 id=&quot;example-contrasting-local-and-global-variables&quot;&gt;Example contrasting local and global variables&lt;/h3&gt;
+
+&lt;p&gt;For example, consider the following algorithm, which includes one
+global variable and two local variables:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;--algorithm RaceAlgo
+variables
+  \* Global variable
+  glob
+
+process Proc \in 1 .. 2
+variables
+  \* Variables local to process
+  loc1 \in 1 .. 2,
+  loc2
+
+begin
+(* Unaffected by other processes because loc1, loc2 are local ... *)
+L1:
+  loc2 := loc1 + 1;
+L2:
+  loc2 := loc2 + 1;
+
+(* ... but following has race condition because glob is global *)
+L3:
+  glob := loc1 + 1;
+L4:
+  glob := glob + 1;
+
+  print &amp;lt;&amp;lt;self, loc1, loc2, glob&amp;gt;&amp;gt;
+
+end process
+end algorithm
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Running this on TLC, it finds 54 distinct end states. The algorithm is
+symmetric, so there are 6 distinct outcomes, repeated for each
+process:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;loc1&lt;/code&gt;&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;loc2&lt;/code&gt;&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;glob&lt;/code&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;strong&gt;1&lt;/strong&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;strong&gt;3&lt;/strong&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;strong&gt;3&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;3&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;3&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;5&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;2&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;3&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;strong&gt;2&lt;/strong&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;strong&gt;4&lt;/strong&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;strong&gt;4&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;2&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;5&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;In every case, &lt;code class=&quot;highlighter-rouge&quot;&gt;loc2&lt;/code&gt; equals &lt;code class=&quot;highlighter-rouge&quot;&gt;loc1 + 2&lt;/code&gt;, but not necessarily for
+&lt;code class=&quot;highlighter-rouge&quot;&gt;glob&lt;/code&gt;, which can have three different outcomes for each value
+of&lt;code class=&quot;highlighter-rouge&quot;&gt;loc1&lt;/code&gt;. We get &lt;code class=&quot;highlighter-rouge&quot;&gt;glob&lt;/code&gt; equal to &lt;code class=&quot;highlighter-rouge&quot;&gt;loc1 + 2&lt;/code&gt; if the two processes are
+executed sequentially, producing the two highlighted rows: 1, 3, 3 and
+2, 4, 4.  But those aren’t the only outcomes. In addition to them,
+there are four other outcomes for &lt;code class=&quot;highlighter-rouge&quot;&gt;glob&lt;/code&gt;, from executions that
+intermingled execution of the statements at &lt;code class=&quot;highlighter-rouge&quot;&gt;L3&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;L4&lt;/code&gt; by
+Processes 1 and 2.&lt;/p&gt;
+
+&lt;p&gt;As the example demonstrates, we can assign to local variables without
+concern for the presence of labels but when assigning to global
+variables we must be alert to the placement of labels, as those mark
+points where a different process could intervene and update the globals.&lt;/p&gt;
+
+&lt;h2 id=&quot;packaging-network-operations-as-macros&quot;&gt;Packaging network operations as macros&lt;/h2&gt;
+
+&lt;p&gt;Given that global variables represent the network state and are also
+the variables for which we need to ensure atomic access, it would be
+useful to have a way to ensure our network operations are atomic.
+PlusCal macros fulfill this need because they are always atomic, not
+allowed to include a label. Macros also package the slightly unfamiliar
+representation of networks as sets and functions into familiar
+operation names.&lt;/p&gt;
+
+&lt;p&gt;For example, in the Lamport algorithm, the network is represented as a
+function of type &lt;code class=&quot;highlighter-rouge&quot;&gt;Channel&lt;/code&gt;, a mapping from source and
+destination process ids to a &lt;code class=&quot;highlighter-rouge&quot;&gt;Sequence&lt;/code&gt; of &lt;code class=&quot;highlighter-rouge&quot;&gt;Messages&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Channel == [src \in Pid |-&amp;gt; [dst \in Pid |-&amp;gt; Seq(Message)]]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The network itself is a variable &lt;code class=&quot;highlighter-rouge&quot;&gt;channel&lt;/code&gt; of that type, and a
+network broadcast is represented by&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;channel := [channel EXCEPT ![self] =
+             [dst \in Pid |-&amp;gt;
+               IF dst = self THEN channel[self][self]
+                             ELSE Append(channel[self][dst], msg)]]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This is more readably written as the macro call&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Broadcast(msg);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;For a more complex example, consider receiving a message. The
+receiving process must perform three steps in sequence:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Wait for a message of a specified &lt;code class=&quot;highlighter-rouge&quot;&gt;type&lt;/code&gt; to be
+available at the head of the sequence sent from at least one source,&lt;/li&gt;
+  &lt;li&gt;pick the process id of one source when the wait is satisfied, and&lt;/li&gt;
+  &lt;li&gt;remove that message from the sequence, passing the message contents
+&lt;code class=&quot;highlighter-rouge&quot;&gt;src&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;time&lt;/code&gt; to the destination.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The resulting code is subtle:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;with s \in {src \in Pid: /\ Len(channel[src][dst]) &amp;gt; 0
+                         /\ Head(channel[src][dst]).type = type
+           } do
+  src := s;
+  time := Head(channel[src][self]).time;
+  channel := [channel EXCEPT ![src][self] = Tail(channel[src][self])]
+end with
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;It’s far more readable when packaged into a macro call:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Receive(&quot;AckReq&quot;, src, time);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;Receive&lt;/code&gt; macro functions as both a guard and, when the guard is
+enabled and allows the assignments to be executed, updates the global
+state. A message is removed from the network (represented by
+&lt;code class=&quot;highlighter-rouge&quot;&gt;channel&lt;/code&gt;) and its contents, a sender id and logical clock value, are
+assigned to local variables. In the actual algorithm, its call looks like&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;either
+ ...
+or
+  Receive(&quot;AckReq&quot;, src, time); \* Guard; updates src and time
+    clock := Max(clock, time);  \* Update local clock
+    acks := acks \union {src}   \* Record receipt of acknowledgement
+or
+ ...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;I indent the statements following the guard to indicate that their
+execution is controlled by the guard.&lt;/p&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;Effective use of PlusCal for distributed algorithms requires matching
+the language features to the structure of the algorithm. Typically,
+the only actions that have to be atomic are those that reference or
+update global variables. Package global accesses as macros, ensuring
+atomic access. Given that these actions are nearly always network
+operations, the macros also make the operations clearer than the
+underlying TLA expressions.&lt;/p&gt;
+
+&lt;p&gt;Pay attention to the guards enabling the alternative choices in an
+algorithm.  Often these guards will be macros representing network
+operations that wait on a message of a specific type and retrieve the
+message contents when one is received.&lt;/p&gt;
+
+&lt;p&gt;I have found that adopting these conventions makes my algorithms
+clearer and more reliable.  In the next post, I’ll go beneath this
+syntax and explore a subtle point of the semantics of PlusCal.&lt;/p&gt;
+
+</content>
+ </entry>
  
  <entry>
    <title>Exploring distributed algorithm failures using TLA Toolbox</title>

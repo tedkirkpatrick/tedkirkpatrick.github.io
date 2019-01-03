@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
+  <meta name="author" content="Arthur E. Kirkpatrick">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Distributed algorithms in PlusCal &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66576928-4', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- Begin Jekyll SEO tag v2.2.3 -->
+<meta property="og:title" content="Distributed algorithms in PlusCal" />
+<meta name="author" content="Ted Kirkpatrick" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Second in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The first post described the context and why the topic is important." />
+<meta property="og:description" content="Second in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The first post described the context and why the topic is important." />
+<meta property="og:site_name" content="All my marbles in one place" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-01-03T00:00:00-08:00" />
+<script type="application/ld+json">
+{"@context":"http://schema.org","@type":"BlogPosting","headline":"Distributed algorithms in PlusCal","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2019-01-03T00:00:00-08:00","dateModified":"2019-01-03T00:00:00-08:00","description":"Second in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The first post described the context and why the topic is important.","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/01/03/distributed-algorithms-in-pluscal/"},"url":"/2019/01/03/distributed-algorithms-in-pluscal/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/comment-policy/">Comment policy</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	   
+	    <a href="/tag/Python/">Python</a>,
+	  
+        
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
+	   
+	    <a href="/tag/Big data/">Big data</a>,
+	  
+        
+	   
+	    <a href="/tag/Soft skills/">Soft skills</a>,
+	  
+        
+	   
+	    <a href="/tag/Statistics/">Statistics</a>,
+	  
+        
+	   
+	    <a href="/tag/Experimental design/">Experimental design</a>,
+	  
+        
+	   
+	    <a href="/tag/Rhetoric/">Rhetoric</a>,
+	  
+        
+	   
+	    <a href="/tag/Admin/">Admin</a>,
+	  
+        
+	  	    
+            <a href="/tag/Distributed systems/">Distributed systems</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2019. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Distributed algorithms in PlusCal</h1>
+  <span class="post-date">03 Jan 2019
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/Distributed systems">Distributed systems</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p><em>Second in a series on using the TLA Toolbox to explore the failure
+ tolerance of distributed algorithms. The first post
+ <a href="/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/">described the context and why the topic is important</a>.</em></p>
+
+<p>Before describing how to analyze failures in distributed algorithms in
+the TLA Toolbox, I want to provide some backround in the conventions I
+use to represent the algorithms. Although Lamport has provided a
+<a href="http://lamport.azurewebsites.net/tla/pluscal.html">good reference for the features of the PlusCal language</a>,
+there is a lack of material on how to structure the larger scale
+of algorithms. As my purpose in this series is to provide an
+intermediate level tutorial, in this post I want to describe the
+conventions I use to make writing distributed algorithms in PlusCal
+more readable and reliable, while the next post will clarify some
+potentially obscure aspects of PlusCal semantics.  With that
+background out of the way, I can turn to the main topic.</p>
+
+<h2 id="the-dialect">The dialect</h2>
+
+<p>PlusCal has two dialects, PlusCal-c, which uses syntax similar to C
+(but different enough in the details to be confusing),
+and PlusCal-p, which uses syntax similar to Pascal. I prefer the
+PlusCal-p syntax, as it emphasizes that I am presenting an algorithm
+rather than a bowdlerized C program.</p>
+
+<h2 id="the-common-structure-of-many-distributed-algorithms">The common structure of many distributed algorithms</h2>
+
+<p>Effective PlusCal is a matter of matching the features of the language
+to the structure of the algorithms that we want to represent.  Many
+distributed algorithms have a common structure, an infinite loop whose
+body is a collection of alternatives, each guarded by a condition:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>while TRUE do
+  either
+    guard1
+      alternative1
+  or
+    guard2
+      alternative2
+  or
+    ...
+  end either
+end while
+</code></pre>
+</div>
+
+<p>Each guard specifies the enabling condition for its associated
+alternative.  In each loop iteration, one of the enabled alternatives
+is chosen to be executed. So long as at least one guard is true,
+enabling its alternative, the loop continues to execute.  The loop may
+also terminate if it executes an alternative that ends with a <code class="highlighter-rouge">goto</code>
+out of the loop.</p>
+
+<p>If there is an iteration in which every alternative is disabled, the
+algorithm has deadlocked. When checking the algorithm with TLC, you
+can set an option for TLC to check for deadlocks.</p>
+
+<p>What is the best way to represent this structure in PlusCal?</p>
+
+<h2 id="alternatives-actions-and-atomicity">Alternatives, actions, and atomicity</h2>
+
+<p>In the above structure, an “alternative” may comprise one or more
+actions. In TLA, <em>action</em> denotes a single transition in the
+underlying state machine.  In PlusCal code, this would be all the
+statements lying between a guard and the first label following it.  So
+long as the alternative enabled by a guard has no labels, it comprises
+a single TLA action. If the alternative includes labels, then it
+comprises one more TLA action than the number of labels it contains.</p>
+
+<p>The granularity of an alternative determines its atomicity. If it is
+only a single TLA action, it is <em>atomic</em>: It executes instantaneously,
+while all other processes are paused. An alternative that includes one
+or more labels, on the other hand, will have its execution
+interspersed with actions by other processes. I will return to this
+point in a moment; for now, I’ll simply state that for distributed
+algorithms, which only communicate through messages, atomicity of
+alternatives in an <code class="highlighter-rouge">either</code> statement is less important than for
+algorithms that communicate through shared memory.</p>
+
+<h2 id="guards-in-pluscal">Guards in PlusCal</h2>
+
+<p>PlusCal guards can have rich structure. They are constructed from
+three language keywords that define an enabling condition: <code class="highlighter-rouge">await</code>,
+<code class="highlighter-rouge">when</code>, and <code class="highlighter-rouge">with</code>. The <code class="highlighter-rouge">await</code> and <code class="highlighter-rouge">when</code> keywords are
+interchangeable. In the Lamport algorithm, I chose <code class="highlighter-rouge">when</code> because it
+gave the algorithm a straightforward reading but for other algorithms
+<code class="highlighter-rouge">await</code> might read better.</p>
+
+<p>Whereas <code class="highlighter-rouge">await</code> and <code class="highlighter-rouge">when</code> simply establish an enabling condition, the
+<code class="highlighter-rouge">with</code> keyword combines an enabling condition with the operation of
+choosing a value from a set. An expression such as</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>with a \in { ... some set ...}
+</code></pre>
+</div>
+
+<p>is enabled when the set is nonempty. Furthermore, when the set is
+nonempty, a value is nondeterministically chosen and assigned to <code class="highlighter-rouge">a</code>.</p>
+
+<p>A guard composed of just one of these keywords is simple enough to
+interpret. For example, in the following snippet,</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>when /\ 1 &lt; b
+     /\ b &lt; 10;
+  \* guarded alternative ...
+</code></pre>
+</div>
+
+<p>the alternative is enabled when <code class="highlighter-rouge">a</code> is strictly between 1 and 10.</p>
+
+<p>However, PlusCal allows combining enabling statements and even
+interspersing assignments with guards. Guards can be placed at any
+point in an action, even as the last statement. The evaluation rule
+for actions is:</p>
+
+<p class="pull">An action is enabled if and only if every one of its <code class="highlighter-rouge">await</code>,
+<code class="highlighter-rouge">when</code>, and <code class="highlighter-rouge">with</code> statements is enabled. If even one guard is
+disabled, no statement in the action is executed.</p>
+
+<p>This rule implies that the evaluation may backtrack when a guard
+depends upon the result of an assignment. Consider this snippet:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>a := b + 1;
+await a &gt; 2;
+</code></pre>
+</div>
+
+<p>If <code class="highlighter-rouge">b &lt;= 1</code>, the action will not be enabled and so <code class="highlighter-rouge">a</code> will not in fact
+be assigned in the preceding statement.  The action comprising these
+two statements is only executed if the assignment <em>were to have
+resulted</em> in <code class="highlighter-rouge">a &gt; 2</code>.</p>
+
+<p>Another way of viewing this is that the mathematical equalities
+in the TLA underlying PlusCal allow us to rewrite the above
+statements as the equivalent</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>await b &gt; 1;
+a := b + 1;
+</code></pre>
+</div>
+
+<p>moving the guard before the assignment.</p>
+
+<h2 id="atomic-actions-and-data-races-in-distributed-algorithms">Atomic actions and data races in distributed algorithms</h2>
+
+<p>The second requirement for effective use of PlusCal is knowing when
+and how to ensure atomic actions.  This is directly related to the
+distinction between local and global variables.</p>
+
+<p>In a completely distributed algorithm, processes only communicate via
+messages. Writing such an algorithm in PlusCal, the system state is
+split, such that</p>
+
+<ul>
+  <li>the state of the <em>algorithm</em> is contained in the local variables of its
+processes, and</li>
+  <li>the state of the <em>network</em>, the messages in transit, is contained in
+the global variables.</li>
+</ul>
+
+<p>Because process variables are local, you can freely mix references and
+assignments to them, without concern for intervening actions by other
+processes, whereas for global variables, mixing references and
+assignments may introduce race conditions.  The syntactic distinction
+between local and global variables highlights the ones for which
+atomic access is important:</p>
+
+<p class="pull">When writing a message-passing algorithm in PlusCal, the only
+variables for which atomic access matters are the global variables
+representing the network.</p>
+
+<h3 id="example-contrasting-local-and-global-variables">Example contrasting local and global variables</h3>
+
+<p>For example, consider the following algorithm, which includes one
+global variable and two local variables:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>--algorithm RaceAlgo
+variables
+  \* Global variable
+  glob
+
+process Proc \in 1 .. 2
+variables
+  \* Variables local to process
+  loc1 \in 1 .. 2,
+  loc2
+
+begin
+(* Unaffected by other processes because loc1, loc2 are local ... *)
+L1:
+  loc2 := loc1 + 1;
+L2:
+  loc2 := loc2 + 1;
+
+(* ... but following has race condition because glob is global *)
+L3:
+  glob := loc1 + 1;
+L4:
+  glob := glob + 1;
+
+  print &lt;&lt;self, loc1, loc2, glob&gt;&gt;
+
+end process
+end algorithm
+</code></pre>
+</div>
+
+<p>Running this on TLC, it finds 54 distinct end states. The algorithm is
+symmetric, so there are 6 distinct outcomes, repeated for each
+process:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><code class="highlighter-rouge">loc1</code></th>
+      <th style="text-align: center"><code class="highlighter-rouge">loc2</code></th>
+      <th style="text-align: center"><code class="highlighter-rouge">glob</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center"><strong>1</strong></td>
+      <td style="text-align: center"><strong>3</strong></td>
+      <td style="text-align: center"><strong>3</strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">5</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">4</td>
+      <td style="text-align: center">3</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>2</strong></td>
+      <td style="text-align: center"><strong>4</strong></td>
+      <td style="text-align: center"><strong>4</strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">4</td>
+      <td style="text-align: center">5</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>In every case, <code class="highlighter-rouge">loc2</code> equals <code class="highlighter-rouge">loc1 + 2</code>, but not necessarily for
+<code class="highlighter-rouge">glob</code>, which can have three different outcomes for each value
+of<code class="highlighter-rouge">loc1</code>. We get <code class="highlighter-rouge">glob</code> equal to <code class="highlighter-rouge">loc1 + 2</code> if the two processes are
+executed sequentially, producing the two highlighted rows: 1, 3, 3 and
+2, 4, 4.  But those aren’t the only outcomes. In addition to them,
+there are four other outcomes for <code class="highlighter-rouge">glob</code>, from executions that
+intermingled execution of the statements at <code class="highlighter-rouge">L3</code> and <code class="highlighter-rouge">L4</code> by
+Processes 1 and 2.</p>
+
+<p>As the example demonstrates, we can assign to local variables without
+concern for the presence of labels but when assigning to global
+variables we must be alert to the placement of labels, as those mark
+points where a different process could intervene and update the globals.</p>
+
+<h2 id="packaging-network-operations-as-macros">Packaging network operations as macros</h2>
+
+<p>Given that global variables represent the network state and are also
+the variables for which we need to ensure atomic access, it would be
+useful to have a way to ensure our network operations are atomic.
+PlusCal macros fulfill this need because they are always atomic, not
+allowed to include a label. Macros also package the slightly unfamiliar
+representation of networks as sets and functions into familiar
+operation names.</p>
+
+<p>For example, in the Lamport algorithm, the network is represented as a
+function of type <code class="highlighter-rouge">Channel</code>, a mapping from source and
+destination process ids to a <code class="highlighter-rouge">Sequence</code> of <code class="highlighter-rouge">Messages</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Channel == [src \in Pid |-&gt; [dst \in Pid |-&gt; Seq(Message)]]
+</code></pre>
+</div>
+
+<p>The network itself is a variable <code class="highlighter-rouge">channel</code> of that type, and a
+network broadcast is represented by</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>channel := [channel EXCEPT ![self] =
+             [dst \in Pid |-&gt;
+               IF dst = self THEN channel[self][self]
+                             ELSE Append(channel[self][dst], msg)]]
+</code></pre>
+</div>
+
+<p>This is more readably written as the macro call</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Broadcast(msg);
+</code></pre>
+</div>
+
+<p>For a more complex example, consider receiving a message. The
+receiving process must perform three steps in sequence:</p>
+
+<ol>
+  <li>Wait for a message of a specified <code class="highlighter-rouge">type</code> to be
+available at the head of the sequence sent from at least one source,</li>
+  <li>pick the process id of one source when the wait is satisfied, and</li>
+  <li>remove that message from the sequence, passing the message contents
+<code class="highlighter-rouge">src</code> and <code class="highlighter-rouge">time</code> to the destination.</li>
+</ol>
+
+<p>The resulting code is subtle:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>with s \in {src \in Pid: /\ Len(channel[src][dst]) &gt; 0
+                         /\ Head(channel[src][dst]).type = type
+           } do
+  src := s;
+  time := Head(channel[src][self]).time;
+  channel := [channel EXCEPT ![src][self] = Tail(channel[src][self])]
+end with
+</code></pre>
+</div>
+
+<p>It’s far more readable when packaged into a macro call:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Receive("AckReq", src, time);
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">Receive</code> macro functions as both a guard and, when the guard is
+enabled and allows the assignments to be executed, updates the global
+state. A message is removed from the network (represented by
+<code class="highlighter-rouge">channel</code>) and its contents, a sender id and logical clock value, are
+assigned to local variables. In the actual algorithm, its call looks like</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>either
+ ...
+or
+  Receive("AckReq", src, time); \* Guard; updates src and time
+    clock := Max(clock, time);  \* Update local clock
+    acks := acks \union {src}   \* Record receipt of acknowledgement
+or
+ ...
+</code></pre>
+</div>
+
+<p>I indent the statements following the guard to indicate that their
+execution is controlled by the guard.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>Effective use of PlusCal for distributed algorithms requires matching
+the language features to the structure of the algorithm. Typically,
+the only actions that have to be atomic are those that reference or
+update global variables. Package global accesses as macros, ensuring
+atomic access. Given that these actions are nearly always network
+operations, the macros also make the operations clearer than the
+underlying TLA expressions.</p>
+
+<p>Pay attention to the guards enabling the alternative choices in an
+algorithm.  Often these guards will be macros representing network
+operations that wait on a message of a specific type and retrieve the
+message contents when one is received.</p>
+
+<p>I have found that adopting these conventions makes my algorithms
+clearer and more reliable.  In the next post, I’ll go beneath this
+syntax and explore a subtle point of the semantics of PlusCal.</p>
+
+
+
+</div>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+this.page.url = "http://kirkpatricktech.com/2019/01/03/distributed-algorithms-in-pluscal/";
+//this.page.identifier = "/2019/01/03/distributed-algorithms-in-pluscal";
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://kirkpatricktech-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
+  </body>
+</html>
