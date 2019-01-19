@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
+  <meta name="author" content="Arthur E. Kirkpatrick">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Fairness semantics of PlusCal &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66576928-4', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- Begin Jekyll SEO tag v2.2.3 -->
+<meta property="og:title" content="Fairness semantics of PlusCal" />
+<meta name="author" content="Ted Kirkpatrick" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Third in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The second post presented some PlusCal conventions for writing distributed algorithms." />
+<meta property="og:description" content="Third in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The second post presented some PlusCal conventions for writing distributed algorithms." />
+<link rel="canonical" href="http://localhost:4000/2019/01/18/fairness-semantics-of-pluscal/" />
+<meta property="og:url" content="http://localhost:4000/2019/01/18/fairness-semantics-of-pluscal/" />
+<meta property="og:site_name" content="All my marbles in one place" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-01-18T00:00:00-08:00" />
+<script type="application/ld+json">
+{"@context":"http://schema.org","@type":"BlogPosting","headline":"Fairness semantics of PlusCal","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2019-01-18T00:00:00-08:00","dateModified":"2019-01-18T00:00:00-08:00","description":"Third in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The second post presented some PlusCal conventions for writing distributed algorithms.","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2019/01/18/fairness-semantics-of-pluscal/"},"url":"http://localhost:4000/2019/01/18/fairness-semantics-of-pluscal/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/comment-policy/">Comment policy</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	   
+	    <a href="/tag/Python/">Python</a>,
+	  
+        
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
+	   
+	    <a href="/tag/Big data/">Big data</a>,
+	  
+        
+	   
+	    <a href="/tag/Soft skills/">Soft skills</a>,
+	  
+        
+	   
+	    <a href="/tag/Statistics/">Statistics</a>,
+	  
+        
+	   
+	    <a href="/tag/Experimental design/">Experimental design</a>,
+	  
+        
+	   
+	    <a href="/tag/Rhetoric/">Rhetoric</a>,
+	  
+        
+	   
+	    <a href="/tag/Admin/">Admin</a>,
+	  
+        
+	  	    
+            <a href="/tag/Distributed systems/">Distributed systems</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2019. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Fairness semantics of PlusCal</h1>
+  <span class="post-date">18 Jan 2019
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/Distributed systems">Distributed systems</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p><em>Third in a series on using the TLA Toolbox to explore the failure
+ tolerance of distributed algorithms. The second post
+ <a href="/2019/01/03/distributed-algorithms-in-pluscal/">presented some PlusCal conventions for writing distributed algorithms</a>.</em></p>
+
+<p><em>Note:  This post covers an esoteric aspect of PlusCal semantics. I
+ include it here because I need to understand this topic myself before
+ writing the rest of the series. It is not necessary to know this
+ topic before reading the rest of the series, however. On first reading, I suggest
+ moving directly to the next post, returning to this post only when you
+ need these details.</em></p>
+
+<h2 id="the-tla-translation-of-pluscal">The TLA translation of PlusCal</h2>
+
+<p>PlusCal isn’t the native language of the TLA Toolbox. As the name
+implies, TLA is the common notation used by the editor, the TLC model
+checker, and the TLAPS proof checker. In particular, an algorithm in
+PlusCal must be translated to TLA before it can be checked by TLC.
+When checking an algorithm, all of TLC’s reports, including errors,
+traces, and coverage, are presented in terms of the underlying TLA.</p>
+
+<p>Consequently, you can only use TLC effectively if you understand how a
+PlusCal algorithm is represented in TLA. The full explanation is
+beyond the scope of this series. In short, you need to learn both
+PlusCal and TLA, then read the TLA produced by the translation of your
+PlusCal algorithms. The details take some time to learn but the
+translation is straightforward and can be mastered with modest
+practice.</p>
+
+<p>However, there is one subtle point of PlusCal semantics that is not
+straightforward: Its representation of fairness. For many PlusCal use
+cases, you do not need to understand this. If you want to check
+termination or a liveness property in TLC, simply prefix each process
+with the <code class="highlighter-rouge">fair</code> keyword and every transition is asserted to be weakly
+fair.  For typical uses of model checking, this is sufficient.</p>
+
+<p>However, in this series, I will be exploring the consequences of
+algorithms for which only some transitions are fair. This models such
+behaviours as instances that crash while in a critical section.  For
+these use cases, it helps to understand how the TLA produced by the
+translation of an algorithm represented in PlusCal differs from how
+that same algorithm might be represented in “classic” TLA.</p>
+
+<h2 id="a-pluscal-algorithm-and-its-tla-equivalent">A PlusCal algorithm and its TLA equivalent</h2>
+
+<p>As an example of the difference between the two notations, consider
+the following PlusCal algorithm. It doesn’t do anything particularly
+interesting, consisting of a loop with two alternatives.  The loop
+increments <code class="highlighter-rouge">a</code> from 1 to 3 to 4, then terminates:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>--algorithm PlusCalFairnessSemantics
+variable
+  a = 1;
+
+fair process Proc = 1
+begin
+P1: while a &lt;= 3 do
+    either
+      await a = 1;
+        a := a + 2
+    or
+      await a = 3;
+        a := a + 1
+    end either
+  end while
+end process
+end algorithm
+</code></pre>
+</div>
+
+<p>The equivalent version of this algorithm in “classic” TLA would name
+each alternative and provide an explicit termination transition:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>VARIABLES a
+
+vars == &lt;&lt; a &gt;&gt;
+
+Init == a = 1
+
+A1 == /\ a = 1
+      /\ a' = a + 2
+
+A3 == /\ a = 3
+      /\ a' = a + 1
+
+Tm == /\ a &gt; 3
+      /\ UNCHANGED vars
+      
+Next == A1 \/ A3 \/ Tm
+
+Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
+
+Termination == &lt;&gt;([](a &gt; 3))
+</code></pre>
+</div>
+
+<p>In the TLA version, each state of <code class="highlighter-rouge">a</code> is represented by a separate
+named formula, <code class="highlighter-rouge">Init</code>, <code class="highlighter-rouge">A1</code>, <code class="highlighter-rouge">A3</code>, and <code class="highlighter-rouge">Tm</code>, comprising a guard that
+enables the action for a specific value of <code class="highlighter-rouge">a</code> and an equality
+specifying the new value replacing it.  In this version, <em>the
+algorithm is sequenced by the successive values of <code class="highlighter-rouge">a</code></em>.</p>
+
+<p>Now consider the TLA equations produced by the translation of the
+PlusCal algorithm:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>VARIABLES a, pc
+
+vars == &lt;&lt; a, pc &gt;&gt;
+
+ProcSet == {1}
+
+Init == (* Global variables *)
+        /\ a = 1
+        /\ pc = [self \in ProcSet |-&gt; "P1"]
+
+P1 == /\ pc[1] = "P1"
+      /\ IF a &lt;= 3
+            THEN /\ \/ /\ a = 1
+                       /\ a' = a + 2
+                    \/ /\ a = 3
+                       /\ a' = a + 1
+                 /\ pc' = [pc EXCEPT ![1] = "P1"]
+            ELSE /\ pc' = [pc EXCEPT ![1] = "Done"]
+                 /\ a' = a
+
+Proc == P1
+
+Next ==
+  \/ Proc
+  (* Disjunct to prevent deadlock *)
+  \/ /\ (\A self \in ProcSet: pc[self] = "Done")
+     /\ UNCHANGED vars
+
+Spec == /\ Init
+        /\ [][Next]_vars
+        /\ WF_vars(Proc)
+
+Termination ==
+    &lt;&gt;(\A self \in ProcSet: pc[self] = "Done")
+</code></pre>
+</div>
+
+<p>This representation only has two named definitions, <code class="highlighter-rouge">Init</code> and <code class="highlighter-rouge">P1</code>
+and introduces a variable not present in the PlusCal code, <code class="highlighter-rouge">pc</code>.
+Unlike the “classic” TLA version, in the PlusCal translation, <em>the
+algorithm is sequenced by a variable, <code class="highlighter-rouge">pc</code>, whose only purpose is
+sequencing.</em></p>
+
+<p>There is a second difference between the two TLA versions.  In the
+PlusCal translation, the definition of <code class="highlighter-rouge">P1</code> combines the formulas <code class="highlighter-rouge">A1</code>,
+<code class="highlighter-rouge">A3</code>, and <code class="highlighter-rouge">Tm</code> from the “classic” TLA version. Though their structure
+appears different, they are equivalent. After stripping the references to
+<code class="highlighter-rouge">pc</code>, the definition of <code class="highlighter-rouge">P1</code> becomes</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>IF a &lt;= 3
+THEN \/ /\ a = 1
+        /\ a' = a + 2
+     \/ /\ a = 3
+        /\ a' = a + 1
+</code></pre>
+</div>
+
+<p>which, after removing the redundant test, is just</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>\/ /\ a = 1
+   /\ a' = a + 2
+\/ /\ a = 3
+   /\ a' = a + 1
+</code></pre>
+</div>
+
+<p>which in turn is simply <code class="highlighter-rouge">A1 \/ A3</code> from the “classic” version.</p>
+
+<p>So in this case, the PlusCal version is simply the “classic” version,
+annotated with sequencing by the <code class="highlighter-rouge">pc</code> variable.</p>
+
+<h2 id="unfair-transitions-when-pluscal-differs-from-classic">Unfair transitions: When PlusCal differs from “classic”</h2>
+
+<p>Although in the above case “classic” TLA design and PlusCal produce
+equivalent TLA code that differs only in whether sequencing is done
+implicitly (in the “classic” version) or explicitly (in PlusCal), they
+are not equivalent in other cases. When we specify that some transitions are
+unfair, the forms become subtly different.</p>
+
+<p>Suppose we want to indicate that the <code class="highlighter-rouge">A3</code> transition is unfair.  In the
+“classic” version, we do not change the transitions at all but simply
+change the specification so that only <code class="highlighter-rouge">A1</code> and <code class="highlighter-rouge">Tm</code> are marked as fair:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Spec == /\ Init /\ [][Next]_vars
+        /\ WF_vars(A1 \/ Tm)
+</code></pre>
+</div>
+
+<p>The change to the PlusCal code is even smaller: Simply prefix the
+guard with a label suffixed by <code class="highlighter-rouge">-</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>L1:- await a = 3;
+  a := a + 1
+</code></pre>
+</div>
+
+<p>This small change to PlusCal however induces a substantive change in
+its TLA translation:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>P1 == /\ pc[1] = "P1"
+      /\ IF a &lt;= 3
+         THEN /\ \/ /\ a = 1
+                    /\ a' = a + 2
+                    /\ pc' = [pc EXCEPT ![1] = "P1"]
+                 \/ /\ pc' = [pc EXCEPT ![1] = "L1"]
+                    /\ a' = a
+         ELSE /\ pc' = [pc EXCEPT ![1] = "Done"]
+              /\ a' = a
+
+L1 == /\ pc[1] = "L1"
+      /\ a = 3
+      /\ a' = a + 1
+      /\ pc' = [pc EXCEPT ![1] = "P1"]
+
+Proc == P1 \/ L1
+
+Next ==
+  \/ Proc
+  (* Disjunct to prevent deadlock *)
+  \/ /\ (\A self \in ProcSet: pc[self] = "Done")
+     /\ UNCHANGED vars
+
+Spec == /\ Init /\ [][Next]_vars
+        /\ WF_vars((pc[1] # "L1") /\ Proc)
+</code></pre>
+</div>
+
+<p>The code has changed in three ways:</p>
+
+<ol>
+  <li>A new state has been introduced, denoted by <code class="highlighter-rouge">pc = "L1"</code>.</li>
+  <li>A new labelled formula has been created, <code class="highlighter-rouge">L1</code>, which is enabled by
+the new value of <code class="highlighter-rouge">pc</code>.</li>
+  <li>The fairness condition now <em>excludes</em> the new state. Consequently,
+when transition <code class="highlighter-rouge">L1</code> is enabled, it is not guaranteed to ever be
+executed.</li>
+</ol>
+
+<p>Logically, this is equivalent to the “classic” TLA version. In both
+versions, the transition when <code class="highlighter-rouge">a = 3</code> is not guaranteed to be taken
+even if it is enabled infinitely many times. However, they differ in
+their number of states: The PlusCal version introduces an extra state
+to mark the unfair transition, whereas the unfair TLA version has only
+as many states as its fair counterpart.</p>
+
+<p>The size of the state space representing potential executions of the
+algorithm has a direct effect on the time required to model check it.
+This effect is amplified when checking liveness properties, which
+require extra passes over the state space after it has been completely
+generated.  Although in this example, the space has only increased by
+a single state, if the label is placed within a frequently-executed
+loop, the increase could be substantial.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The TLA translation of a PlusCal algorithm differs from how one would
+represent the same algorithm in “classic” TLA. All fair transitions have
+their common conditions merged to create a single labelled transition,
+while any unfair transitions have a new state defined for <code class="highlighter-rouge">pc</code> and the
+transition defined as a separately-labelled transition.</p>
+
+<p>Although this representation appears quite different from the
+distinct, focused definitions used in “classic” TLA, their logic is
+equivalent. They do perform differently in model checking, however.
+The new values of <code class="highlighter-rouge">pc</code> introduced for unfair transitions by the
+PlusCal translation increase the time required by TLC to check the
+model. Given that this choice is built in to the PlusCal translator,
+we cannot remove this problem but it is useful to be aware of its
+impact.</p>
+
+
+</div>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+this.page.url = "http://kirkpatricktech.com/2019/01/18/fairness-semantics-of-pluscal/";
+//this.page.identifier = "/2019/01/18/fairness-semantics-of-pluscal";
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://kirkpatricktech-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
+  </body>
+</html>

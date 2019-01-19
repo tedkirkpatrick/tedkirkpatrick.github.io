@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
  <title>All my marbles in one place</title>
- <link href="/atom.xml" rel="self"/>
- <link href="/"/>
- <updated>2019-01-03T11:20:51-08:00</updated>
- <id></id>
+ <link href="http://localhost:4000/atom.xml" rel="self"/>
+ <link href="http://localhost:4000/"/>
+ <updated>2019-01-18T21:20:07-08:00</updated>
+ <id>http://localhost:4000</id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
@@ -13,13 +13,295 @@
 
  
  <entry>
+   <title>Fairness semantics of PlusCal</title>
+   <link href="http://localhost:4000/2019/01/18/fairness-semantics-of-pluscal/"/>
+   <updated>2019-01-18T00:00:00-08:00</updated>
+   <id>http://localhost:4000/2019/01/18/fairness-semantics-of-pluscal</id>
+   <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on using the TLA Toolbox to explore the failure
+ tolerance of distributed algorithms. The second post
+ &lt;a href=&quot;/2019/01/03/distributed-algorithms-in-pluscal/&quot;&gt;presented some PlusCal conventions for writing distributed algorithms&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Note:  This post covers an esoteric aspect of PlusCal semantics. I
+ include it here because I need to understand this topic myself before
+ writing the rest of the series. It is not necessary to know this
+ topic before reading the rest of the series, however. On first reading, I suggest
+ moving directly to the next post, returning to this post only when you
+ need these details.&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;the-tla-translation-of-pluscal&quot;&gt;The TLA translation of PlusCal&lt;/h2&gt;
+
+&lt;p&gt;PlusCal isn’t the native language of the TLA Toolbox. As the name
+implies, TLA is the common notation used by the editor, the TLC model
+checker, and the TLAPS proof checker. In particular, an algorithm in
+PlusCal must be translated to TLA before it can be checked by TLC.
+When checking an algorithm, all of TLC’s reports, including errors,
+traces, and coverage, are presented in terms of the underlying TLA.&lt;/p&gt;
+
+&lt;p&gt;Consequently, you can only use TLC effectively if you understand how a
+PlusCal algorithm is represented in TLA. The full explanation is
+beyond the scope of this series. In short, you need to learn both
+PlusCal and TLA, then read the TLA produced by the translation of your
+PlusCal algorithms. The details take some time to learn but the
+translation is straightforward and can be mastered with modest
+practice.&lt;/p&gt;
+
+&lt;p&gt;However, there is one subtle point of PlusCal semantics that is not
+straightforward: Its representation of fairness. For many PlusCal use
+cases, you do not need to understand this. If you want to check
+termination or a liveness property in TLC, simply prefix each process
+with the &lt;code class=&quot;highlighter-rouge&quot;&gt;fair&lt;/code&gt; keyword and every transition is asserted to be weakly
+fair.  For typical uses of model checking, this is sufficient.&lt;/p&gt;
+
+&lt;p&gt;However, in this series, I will be exploring the consequences of
+algorithms for which only some transitions are fair. This models such
+behaviours as instances that crash while in a critical section.  For
+these use cases, it helps to understand how the TLA produced by the
+translation of an algorithm represented in PlusCal differs from how
+that same algorithm might be represented in “classic” TLA.&lt;/p&gt;
+
+&lt;h2 id=&quot;a-pluscal-algorithm-and-its-tla-equivalent&quot;&gt;A PlusCal algorithm and its TLA equivalent&lt;/h2&gt;
+
+&lt;p&gt;As an example of the difference between the two notations, consider
+the following PlusCal algorithm. It doesn’t do anything particularly
+interesting, consisting of a loop with two alternatives.  The loop
+increments &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; from 1 to 3 to 4, then terminates:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;--algorithm PlusCalFairnessSemantics
+variable
+  a = 1;
+
+fair process Proc = 1
+begin
+P1: while a &amp;lt;= 3 do
+    either
+      await a = 1;
+        a := a + 2
+    or
+      await a = 3;
+        a := a + 1
+    end either
+  end while
+end process
+end algorithm
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The equivalent version of this algorithm in “classic” TLA would name
+each alternative and provide an explicit termination transition:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;VARIABLES a
+
+vars == &amp;lt;&amp;lt; a &amp;gt;&amp;gt;
+
+Init == a = 1
+
+A1 == /\ a = 1
+      /\ a' = a + 2
+
+A3 == /\ a = 3
+      /\ a' = a + 1
+
+Tm == /\ a &amp;gt; 3
+      /\ UNCHANGED vars
+      
+Next == A1 \/ A3 \/ Tm
+
+Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
+
+Termination == &amp;lt;&amp;gt;([](a &amp;gt; 3))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;In the TLA version, each state of &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; is represented by a separate
+named formula, &lt;code class=&quot;highlighter-rouge&quot;&gt;Init&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;A1&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;A3&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;Tm&lt;/code&gt;, comprising a guard that
+enables the action for a specific value of &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; and an equality
+specifying the new value replacing it.  In this version, &lt;em&gt;the
+algorithm is sequenced by the successive values of &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now consider the TLA equations produced by the translation of the
+PlusCal algorithm:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;VARIABLES a, pc
+
+vars == &amp;lt;&amp;lt; a, pc &amp;gt;&amp;gt;
+
+ProcSet == {1}
+
+Init == (* Global variables *)
+        /\ a = 1
+        /\ pc = [self \in ProcSet |-&amp;gt; &quot;P1&quot;]
+
+P1 == /\ pc[1] = &quot;P1&quot;
+      /\ IF a &amp;lt;= 3
+            THEN /\ \/ /\ a = 1
+                       /\ a' = a + 2
+                    \/ /\ a = 3
+                       /\ a' = a + 1
+                 /\ pc' = [pc EXCEPT ![1] = &quot;P1&quot;]
+            ELSE /\ pc' = [pc EXCEPT ![1] = &quot;Done&quot;]
+                 /\ a' = a
+
+Proc == P1
+
+Next ==
+  \/ Proc
+  (* Disjunct to prevent deadlock *)
+  \/ /\ (\A self \in ProcSet: pc[self] = &quot;Done&quot;)
+     /\ UNCHANGED vars
+
+Spec == /\ Init
+        /\ [][Next]_vars
+        /\ WF_vars(Proc)
+
+Termination ==
+    &amp;lt;&amp;gt;(\A self \in ProcSet: pc[self] = &quot;Done&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This representation only has two named definitions, &lt;code class=&quot;highlighter-rouge&quot;&gt;Init&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;P1&lt;/code&gt;
+and introduces a variable not present in the PlusCal code, &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt;.
+Unlike the “classic” TLA version, in the PlusCal translation, &lt;em&gt;the
+algorithm is sequenced by a variable, &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt;, whose only purpose is
+sequencing.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;There is a second difference between the two TLA versions.  In the
+PlusCal translation, the definition of &lt;code class=&quot;highlighter-rouge&quot;&gt;P1&lt;/code&gt; combines the formulas &lt;code class=&quot;highlighter-rouge&quot;&gt;A1&lt;/code&gt;,
+&lt;code class=&quot;highlighter-rouge&quot;&gt;A3&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;Tm&lt;/code&gt; from the “classic” TLA version. Though their structure
+appears different, they are equivalent. After stripping the references to
+&lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt;, the definition of &lt;code class=&quot;highlighter-rouge&quot;&gt;P1&lt;/code&gt; becomes&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;IF a &amp;lt;= 3
+THEN \/ /\ a = 1
+        /\ a' = a + 2
+     \/ /\ a = 3
+        /\ a' = a + 1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;which, after removing the redundant test, is just&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;\/ /\ a = 1
+   /\ a' = a + 2
+\/ /\ a = 3
+   /\ a' = a + 1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;which in turn is simply &lt;code class=&quot;highlighter-rouge&quot;&gt;A1 \/ A3&lt;/code&gt; from the “classic” version.&lt;/p&gt;
+
+&lt;p&gt;So in this case, the PlusCal version is simply the “classic” version,
+annotated with sequencing by the &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; variable.&lt;/p&gt;
+
+&lt;h2 id=&quot;unfair-transitions-when-pluscal-differs-from-classic&quot;&gt;Unfair transitions: When PlusCal differs from “classic”&lt;/h2&gt;
+
+&lt;p&gt;Although in the above case “classic” TLA design and PlusCal produce
+equivalent TLA code that differs only in whether sequencing is done
+implicitly (in the “classic” version) or explicitly (in PlusCal), they
+are not equivalent in other cases. When we specify that some transitions are
+unfair, the forms become subtly different.&lt;/p&gt;
+
+&lt;p&gt;Suppose we want to indicate that the &lt;code class=&quot;highlighter-rouge&quot;&gt;A3&lt;/code&gt; transition is unfair.  In the
+“classic” version, we do not change the transitions at all but simply
+change the specification so that only &lt;code class=&quot;highlighter-rouge&quot;&gt;A1&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Tm&lt;/code&gt; are marked as fair:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Spec == /\ Init /\ [][Next]_vars
+        /\ WF_vars(A1 \/ Tm)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The change to the PlusCal code is even smaller: Simply prefix the
+guard with a label suffixed by &lt;code class=&quot;highlighter-rouge&quot;&gt;-&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;L1:- await a = 3;
+  a := a + 1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This small change to PlusCal however induces a substantive change in
+its TLA translation:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;P1 == /\ pc[1] = &quot;P1&quot;
+      /\ IF a &amp;lt;= 3
+         THEN /\ \/ /\ a = 1
+                    /\ a' = a + 2
+                    /\ pc' = [pc EXCEPT ![1] = &quot;P1&quot;]
+                 \/ /\ pc' = [pc EXCEPT ![1] = &quot;L1&quot;]
+                    /\ a' = a
+         ELSE /\ pc' = [pc EXCEPT ![1] = &quot;Done&quot;]
+              /\ a' = a
+
+L1 == /\ pc[1] = &quot;L1&quot;
+      /\ a = 3
+      /\ a' = a + 1
+      /\ pc' = [pc EXCEPT ![1] = &quot;P1&quot;]
+
+Proc == P1 \/ L1
+
+Next ==
+  \/ Proc
+  (* Disjunct to prevent deadlock *)
+  \/ /\ (\A self \in ProcSet: pc[self] = &quot;Done&quot;)
+     /\ UNCHANGED vars
+
+Spec == /\ Init /\ [][Next]_vars
+        /\ WF_vars((pc[1] # &quot;L1&quot;) /\ Proc)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The code has changed in three ways:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;A new state has been introduced, denoted by &lt;code class=&quot;highlighter-rouge&quot;&gt;pc = &quot;L1&quot;&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;A new labelled formula has been created, &lt;code class=&quot;highlighter-rouge&quot;&gt;L1&lt;/code&gt;, which is enabled by
+the new value of &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;The fairness condition now &lt;em&gt;excludes&lt;/em&gt; the new state. Consequently,
+when transition &lt;code class=&quot;highlighter-rouge&quot;&gt;L1&lt;/code&gt; is enabled, it is not guaranteed to ever be
+executed.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Logically, this is equivalent to the “classic” TLA version. In both
+versions, the transition when &lt;code class=&quot;highlighter-rouge&quot;&gt;a = 3&lt;/code&gt; is not guaranteed to be taken
+even if it is enabled infinitely many times. However, they differ in
+their number of states: The PlusCal version introduces an extra state
+to mark the unfair transition, whereas the unfair TLA version has only
+as many states as its fair counterpart.&lt;/p&gt;
+
+&lt;p&gt;The size of the state space representing potential executions of the
+algorithm has a direct effect on the time required to model check it.
+This effect is amplified when checking liveness properties, which
+require extra passes over the state space after it has been completely
+generated.  Although in this example, the space has only increased by
+a single state, if the label is placed within a frequently-executed
+loop, the increase could be substantial.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;The TLA translation of a PlusCal algorithm differs from how one would
+represent the same algorithm in “classic” TLA. All fair transitions have
+their common conditions merged to create a single labelled transition,
+while any unfair transitions have a new state defined for &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; and the
+transition defined as a separately-labelled transition.&lt;/p&gt;
+
+&lt;p&gt;Although this representation appears quite different from the
+distinct, focused definitions used in “classic” TLA, their logic is
+equivalent. They do perform differently in model checking, however.
+The new values of &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; introduced for unfair transitions by the
+PlusCal translation increase the time required by TLC to check the
+model. Given that this choice is built in to the PlusCal translator,
+we cannot remove this problem but it is useful to be aware of its
+impact.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>Distributed algorithms in PlusCal</title>
-   <link href="/2019/01/03/distributed-algorithms-in-pluscal/"/>
+   <link href="http://localhost:4000/2019/01/03/distributed-algorithms-in-pluscal/"/>
    <updated>2019-01-03T00:00:00-08:00</updated>
-   <id>/2019/01/03/distributed-algorithms-in-pluscal</id>
+   <id>http://localhost:4000/2019/01/03/distributed-algorithms-in-pluscal</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The first post
- &lt;a href=&quot;/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/&quot;&gt;described the context and why the topic is important&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+ &lt;a href=&quot;/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/&quot;&gt;presented the context and why the topic is important&lt;/a&gt;. The
+ next post describes the &lt;a href=&quot;/2019/01/18/fairness-semantics-of-pluscal/&quot;&gt;semantics of fairness in PlusCal&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
 
 &lt;p&gt;Before describing how to analyze failures in distributed algorithms in
 the TLA Toolbox, I want to provide some backround in the conventions I
@@ -390,9 +672,9 @@ syntax and explore a subtle point of the semantics of PlusCal.&lt;/p&gt;
  
  <entry>
    <title>Exploring distributed algorithm failures using TLA Toolbox</title>
-   <link href="/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/"/>
+   <link href="http://localhost:4000/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/"/>
    <updated>2018-10-31T00:00:00-07:00</updated>
-   <id>/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox</id>
+   <id>http://localhost:4000/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The next post has not been written.&lt;/em&gt;&lt;/p&gt;
 
@@ -582,9 +864,9 @@ fodder for a whole series of posts.&lt;/p&gt;
  
  <entry>
    <title>Assignments with coding only teach coding</title>
-   <link href="/2018/10/26/assignments-with-coding-only-teach-coding/"/>
+   <link href="http://localhost:4000/2018/10/26/assignments-with-coding-only-teach-coding/"/>
    <updated>2018-10-26T00:00:00-07:00</updated>
-   <id>/2018/10/26/assignments-with-coding-only-teach-coding</id>
+   <id>http://localhost:4000/2018/10/26/assignments-with-coding-only-teach-coding</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fourth in a series on designing a course on data engineering.  The
  previous post listed the
  &lt;a href=&quot;/2018/10/23/data-engineering-prerequisites/&quot;&gt;minimal operating system and networking knowlege&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -761,9 +1043,9 @@ January 2019, so I must pick realistic goals.&lt;/p&gt;
  
  <entry>
    <title>Minimal OS and networking knowledge for a data engineering course</title>
-   <link href="/2018/10/23/data-engineering-prerequisites/"/>
+   <link href="http://localhost:4000/2018/10/23/data-engineering-prerequisites/"/>
    <updated>2018-10-23T00:00:00-07:00</updated>
-   <id>/2018/10/23/data-engineering-prerequisites</id>
+   <id>http://localhost:4000/2018/10/23/data-engineering-prerequisites</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on designing a data engineering course.  The
  previous post presented
  &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;draft learning outcomes&lt;/a&gt;. The
@@ -953,9 +1235,9 @@ the
  
  <entry>
    <title>Draft learning outcomes for data engineering course</title>
-   <link href="/2018/10/18/data-engineering-learning-outcomes/"/>
+   <link href="http://localhost:4000/2018/10/18/data-engineering-learning-outcomes/"/>
    <updated>2018-10-18T00:00:00-07:00</updated>
-   <id>/2018/10/18/data-engineering-learning-outcomes</id>
+   <id>http://localhost:4000/2018/10/18/data-engineering-learning-outcomes</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series about designing a professional master’s course on
  data engineering.  The first post laid out the
  &lt;a href=&quot;/2018/10/13/data-engineering-design-space/&quot;&gt;data engineering design space&lt;/a&gt;. The
@@ -1056,9 +1338,9 @@ necessarily observe them closely as the actual course unfolds.&lt;/p&gt;
  
  <entry>
    <title>The data engineering design space</title>
-   <link href="/2018/10/13/data-engineering-design-space/"/>
+   <link href="http://localhost:4000/2018/10/13/data-engineering-design-space/"/>
    <updated>2018-10-13T00:00:00-07:00</updated>
-   <id>/2018/10/13/data-engineering-design-space</id>
+   <id>http://localhost:4000/2018/10/13/data-engineering-design-space</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series on designing a course on data engineering.  The
  next post specifies the
  &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;learning outcomes&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -1372,9 +1654,9 @@ actual service—into a production service.&lt;/p&gt;
  
  <entry>
    <title>Myth-spotting</title>
-   <link href="/2018/10/03/myth-spotting/"/>
+   <link href="http://localhost:4000/2018/10/03/myth-spotting/"/>
    <updated>2018-10-03T00:00:00-07:00</updated>
-   <id>/2018/10/03/myth-spotting</id>
+   <id>http://localhost:4000/2018/10/03/myth-spotting</id>
    <content type="html">&lt;p&gt;As part of a larger project, I’m reading many articles from the
 management literature. This is a very different kind of writing and
 argument than I’m used to in the technical side of computing. The
@@ -1534,9 +1816,9 @@ part for the next post.&lt;/p&gt;
  
  <entry>
    <title>The vision: A culture of effective meetings</title>
-   <link href="/2018/09/26/the-vision-a-culture-of-effective-meetings/"/>
+   <link href="http://localhost:4000/2018/09/26/the-vision-a-culture-of-effective-meetings/"/>
    <updated>2018-09-26T00:00:00-07:00</updated>
-   <id>/2018/09/26/the-vision-a-culture-of-effective-meetings</id>
+   <id>http://localhost:4000/2018/09/26/the-vision-a-culture-of-effective-meetings</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Seventh and final post in a series on group decision-making, based on
 Ch. 10–11 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -1606,9 +1888,9 @@ some distinct differences. Stay tuned!&lt;/p&gt;
  
  <entry>
    <title>Decision sculpting: Stepping back to see the whole mosaic</title>
-   <link href="/2018/09/21/decision-sculpting/"/>
+   <link href="http://localhost:4000/2018/09/21/decision-sculpting/"/>
    <updated>2018-09-21T00:00:00-07:00</updated>
-   <id>/2018/09/21/decision-sculpting</id>
+   <id>http://localhost:4000/2018/09/21/decision-sculpting</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Sixth in a series on group decision-making, based on Ch. 10–11
 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;.
@@ -1693,9 +1975,9 @@ series on the topic of soft skills.&lt;/p&gt;
  
  <entry>
    <title>Three evidence-based books for better teaching</title>
-   <link href="/2018/09/19/three-evidence-based-books-for-better-teaching/"/>
+   <link href="http://localhost:4000/2018/09/19/three-evidence-based-books-for-better-teaching/"/>
    <updated>2018-09-19T00:00:00-07:00</updated>
-   <id>/2018/09/19/three-evidence-based-books-for-better-teaching</id>
+   <id>http://localhost:4000/2018/09/19/three-evidence-based-books-for-better-teaching</id>
    <content type="html">&lt;p&gt;I’ve read many books on effective university education, covering a
 range of topics and perspectives.  An annotated bibliography of them
 all would be a &lt;em&gt;long&lt;/em&gt; post.&lt;/p&gt;
@@ -1887,9 +2169,9 @@ to avoid the traps of myths presented as received wisdom.&lt;/p&gt;
  
  <entry>
    <title>Learning decision crystallization</title>
-   <link href="/2018/09/16/learning-decision-crystallization/"/>
+   <link href="http://localhost:4000/2018/09/16/learning-decision-crystallization/"/>
    <updated>2018-09-16T00:00:00-07:00</updated>
-   <id>/2018/09/16/learning-decision-crystallization</id>
+   <id>http://localhost:4000/2018/09/16/learning-decision-crystallization</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fifth in a series on group decision-making, based on Ch. 10–11 of &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The previous post
 showed &lt;a href=&quot;/2018/09/05/discussion-rounds-and-decision-crystallization/&quot;&gt;how to crystallize a decision out of a round of discussion&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
@@ -2008,9 +2290,9 @@ the final step,
  
  <entry>
    <title>Discussion rounds and decision crystallization</title>
-   <link href="/2018/09/05/discussion-rounds-and-decision-crystallization/"/>
+   <link href="http://localhost:4000/2018/09/05/discussion-rounds-and-decision-crystallization/"/>
    <updated>2018-09-05T00:00:00-07:00</updated>
-   <id>/2018/09/05/discussion-rounds-and-decision-crystallization</id>
+   <id>http://localhost:4000/2018/09/05/discussion-rounds-and-decision-crystallization</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fourth in a series on group decision-making, based on Ch. 10–11 of &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The previous post
 showed &lt;a href=&quot;/2018/08/29/the-decision-mosaic-every-piece-in-place/&quot;&gt;how to pick the next decision element to discuss&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
@@ -2137,9 +2419,9 @@ why this ought to be the next item:&lt;/p&gt;
  
  <entry>
    <title>Disqus comments enabled</title>
-   <link href="/2018/09/04/disqus-enabled/"/>
+   <link href="http://localhost:4000/2018/09/04/disqus-enabled/"/>
    <updated>2018-09-04T00:00:00-07:00</updated>
-   <id>/2018/09/04/disqus-enabled</id>
+   <id>http://localhost:4000/2018/09/04/disqus-enabled</id>
    <content type="html">&lt;p&gt;I have set up Disqus comments on each post. Google Analytics shows that recent posts are generating some views, so it seemed time to finally turn comments on.&lt;/p&gt;
 
 &lt;p&gt;I hope I’ve set everything up correctly but, as with any technical
@@ -2150,9 +2432,9 @@ me know at &lt;code class=&quot;highlighter-rouge&quot;&gt;ted@kirkpatricktech.c
  
  <entry>
    <title>The decision mosaic: Every piece in place</title>
-   <link href="/2018/08/29/the-decision-mosaic-every-piece-in-place/"/>
+   <link href="http://localhost:4000/2018/08/29/the-decision-mosaic-every-piece-in-place/"/>
    <updated>2018-08-29T00:00:00-07:00</updated>
-   <id>/2018/08/29/the-decision-mosaic-every-piece-in-place</id>
+   <id>http://localhost:4000/2018/08/29/the-decision-mosaic-every-piece-in-place</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on group decision-making, based on Ch. 10–11
 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The
@@ -2356,9 +2638,9 @@ sequence&lt;/a&gt;.&lt;/p&gt;
  
  <entry>
    <title>Decision crystallization: Form emerging from solution</title>
-   <link href="/2018/08/24/decision-crystallization/"/>
+   <link href="http://localhost:4000/2018/08/24/decision-crystallization/"/>
    <updated>2018-08-24T00:00:00-07:00</updated>
-   <id>/2018/08/24/decision-crystallization</id>
+   <id>http://localhost:4000/2018/08/24/decision-crystallization</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series on group decision-making, based on Ch. 10–11
 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;.
@@ -2399,9 +2681,9 @@ producing mediocre results?&lt;/p&gt;
  
  <entry>
    <title>Attributing causality has important practical consequences</title>
-   <link href="/2018/08/22/attributing-causality-has-important-consequences/"/>
+   <link href="http://localhost:4000/2018/08/22/attributing-causality-has-important-consequences/"/>
    <updated>2018-08-22T00:00:00-07:00</updated>
-   <id>/2018/08/22/attributing-causality-has-important-consequences</id>
+   <id>http://localhost:4000/2018/08/22/attributing-causality-has-important-consequences</id>
    <content type="html">&lt;p&gt;Yesterday Matthew Zeitlin tweeted:&lt;/p&gt;
 
 &lt;blockquote class=&quot;twitter-tweet&quot; data-lang=&quot;en&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;If you uncover an interesting correlation, hoards of wonks and twitter pedants will bray that all you have is a correlation, but if you do the work to &amp;quot;show&amp;quot; causation, those same people will bury you in little detailed complaints about how you did it&lt;/p&gt;&amp;mdash; Matthew Zeitlin (@MattZeitlin) &lt;a href=&quot;https://twitter.com/MattZeitlin/status/1032064399203287040?ref_src=twsrc%5Etfw&quot;&gt;August 22, 2018&lt;/a&gt;&lt;/blockquote&gt;
@@ -2427,9 +2709,9 @@ producing mediocre results?&lt;/p&gt;
  
  <entry>
    <title>Don't let your babies grow up to be microbenchmarkers!</title>
-   <link href="/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/"/>
+   <link href="http://localhost:4000/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/"/>
    <updated>2018-08-20T00:00:00-07:00</updated>
-   <id>/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers</id>
+   <id>http://localhost:4000/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers</id>
    <content type="html">&lt;p&gt;I never wanted to be a microbenchmarker. I was OK with a modest but
 respectable career choice, such as programming in &lt;a href=&quot;https://en.wikipedia.org/wiki/IBM_RPG_II&quot;&gt;RPG II&lt;/a&gt;
 or &lt;a href=&quot;http://www.computerhistory.org/collections/catalog/102635171&quot;&gt;IBM 1604 assembler&lt;/a&gt;.&lt;/p&gt;
@@ -2582,9 +2864,9 @@ expectations to a more realistic level.&lt;/p&gt;
  
  <entry>
    <title>The best process for effective group decisions</title>
-   <link href="/2018/08/13/the-best-process-for-group-decisions/"/>
+   <link href="http://localhost:4000/2018/08/13/the-best-process-for-group-decisions/"/>
    <updated>2018-08-13T00:00:00-07:00</updated>
-   <id>/2018/08/13/the-best-process-for-group-decisions</id>
+   <id>http://localhost:4000/2018/08/13/the-best-process-for-group-decisions</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First post in a series on group decision-making.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;The series:&lt;/em&gt;&lt;/p&gt;
@@ -2645,9 +2927,9 @@ expectations to a more realistic level.&lt;/p&gt;
  
  <entry>
    <title>The many and varied audiences for Big Data training</title>
-   <link href="/2017/08/13/the-many-and-varied-audiences-for-big-data-training/"/>
+   <link href="http://localhost:4000/2017/08/13/the-many-and-varied-audiences-for-big-data-training/"/>
    <updated>2017-08-13T00:00:00-07:00</updated>
-   <id>/2017/08/13/the-many-and-varied-audiences-for-big-data-training</id>
+   <id>http://localhost:4000/2017/08/13/the-many-and-varied-audiences-for-big-data-training</id>
    <content type="html">&lt;p&gt;There’s a wide range of Big Data training on offer, from full in-person university degree programs (in the North American context, typically Master’s degrees), to certificates from online universities (such as Coursera or EdX), to short professional development courses from for-profit trainers.  A common element of the sales pitches is the presumed universality of the need.  Every discipline and nearly every profession, it is claimed, will benefit from the technologies of Big Data.  Some pitches make an even stronger claim, that incorporating data analysis is now &lt;em&gt;essential&lt;/em&gt; for success.&lt;/p&gt;
 
 &lt;p&gt;These pitches tacitly presume another form of universality: That a small suite of courses will be sufficient to cover all potential audiences. For example, the on-line courses in data analysis from Coursera fall into several distinct categories:&lt;/p&gt;
@@ -2706,9 +2988,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Random access to long string bodies incurs cache misses</title>
-   <link href="/2017/06/29/rand-access-long-cache-misses/"/>
+   <link href="http://localhost:4000/2017/06/29/rand-access-long-cache-misses/"/>
    <updated>2017-06-29T00:00:00-07:00</updated>
-   <id>/2017/06/29/rand-access-long-cache-misses</id>
+   <id>http://localhost:4000/2017/06/29/rand-access-long-cache-misses</id>
    <content type="html">&lt;p&gt;As I &lt;a href=&quot;/2017/06/23/for-long-strings-access-order-determines-performance/&quot;&gt;described in the last post&lt;/a&gt;, shuffling the items in the source vector leaves the string handles in contiguous sequential order while introducing disorder into the sequence of string bodies. The NShuffled “data set” is really a family of 11 related data sets, differing in the fraction of their items that were shuffled.  All sets start with the same vector &lt;code&gt;src&lt;/code&gt; of 50,000 elements, then &lt;code&gt;std::shuffle()&lt;/code&gt; is run on the first &lt;i&gt;N&lt;/i&gt; items in the vector, where &lt;i&gt;N&lt;/i&gt; ranges from 0 (no items shuffled) to 50,000 (all items shuffled) in increments of 5,000. All the data sets will have 37,500 (75% of 50,000) of their source elements copied to the result vector.&lt;/p&gt;
 
 &lt;p&gt;These data sets allow us to correlate the degree of disorder in the string bodies with the execution time of the filter-and-transform algorithm.  More disorder in the string bodies produces more cache misses, slowing performance. I will use the NShuffle data sets to demonstrate this.&lt;/p&gt;
@@ -2829,9 +3111,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>For long strings, access order determines performance</title>
-   <link href="/2017/06/23/for-long-strings-access-order-determines-performance/"/>
+   <link href="http://localhost:4000/2017/06/23/for-long-strings-access-order-determines-performance/"/>
    <updated>2017-06-23T00:00:00-07:00</updated>
-   <id>/2017/06/23/for-long-strings-access-order-determines-performance</id>
+   <id>http://localhost:4000/2017/06/23/for-long-strings-access-order-determines-performance</id>
    <content type="html">&lt;p&gt;In the last post, I described several possible causes of the slowdown for long strings in the by-value version of the idioms.  I concluded the most likely actual cause was the order in which the string bodies are accessed.&lt;/p&gt;
 
 &lt;h2&gt;Structure of long strings in &lt;code&gt;libstdc++&lt;/code&gt;&lt;/h2&gt;
@@ -2923,9 +3205,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Sidling up to the long string slowdown</title>
-   <link href="/2017/06/14/sidling-up-to-the-long-string-slowdown/"/>
+   <link href="http://localhost:4000/2017/06/14/sidling-up-to-the-long-string-slowdown/"/>
    <updated>2017-06-14T00:00:00-07:00</updated>
-   <id>/2017/06/14/sidling-up-to-the-long-string-slowdown</id>
+   <id>http://localhost:4000/2017/06/14/sidling-up-to-the-long-string-slowdown</id>
    <content type="html">&lt;p&gt;In the last post, I highlighted an anomaly in the results for filtering long strings using the by-value implementation of the loop. The usual suspect for such outcomes, heap fragmentation, didn’t seem to apply in this case. What might be the actual source of the problem?&lt;/p&gt;
 
 &lt;p&gt;The slowdown arises only for long strings, which suggests it is related to the heap, as long strings are the only form of string considered in these posts that use the heap. Unique &lt;code&gt;char const *&lt;/code&gt; strings only move pointers, while short strings, &lt;code&gt;std::string&lt;/code&gt; instances less than 16 characters, are stored in the string handle by &lt;code&gt;libstdc++&lt;/code&gt; 6.2. The degree of slowdown correlates well with the number of elements that have been moved in the source vector after it was initially created.  This suggests that the slowdown is related to some measure of the “degree of disorder” in the heap.&lt;/p&gt;
@@ -2957,9 +3239,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Microbenchmarks are highly sensitive to the heap context!</title>
-   <link href="/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"/>
+   <link href="http://localhost:4000/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"/>
    <updated>2017-06-10T00:00:00-07:00</updated>
-   <id>/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context</id>
+   <id>http://localhost:4000/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context</id>
    <content type="html">&lt;p&gt;Over two weeks ago, I posted an article about &lt;a href=&quot;/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/&quot;&gt;by-value parameters in the loop and &lt;code class=&quot;highlighter-rouge&quot;&gt;transform&lt;/code&gt; idioms&lt;/a&gt;. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis.  In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda.&lt;/p&gt;
 
 &lt;h2&gt;The anomaly&lt;/h2&gt;
@@ -3125,9 +3407,9 @@ end:
  
  <entry>
    <title>The elegant machine code for char const *</title>
-   <link href="/2017/05/24/the-elegant-machine-code-for-char-const/"/>
+   <link href="http://localhost:4000/2017/05/24/the-elegant-machine-code-for-char-const/"/>
    <updated>2017-05-24T00:00:00-07:00</updated>
-   <id>/2017/05/24/the-elegant-machine-code-for-char-const</id>
+   <id>http://localhost:4000/2017/05/24/the-elegant-machine-code-for-char-const</id>
    <content type="html">&lt;p&gt;Unique strings—null-terminated strings uniquely identified by their &lt;code&gt;char const *&lt;/code&gt;—are the simplest type considered in this series of posts. Constructing, copying, moving, and assigning these strings are trivial operations on a single pointer. No destructor code is required.&lt;/p&gt;
 
 &lt;p&gt;This simplicity was reflected in the benchmarks. Unique strings were
@@ -3295,9 +3577,9 @@ generated identical code and &lt;a href=&quot;/2017/05/22/passing-stdstring-by-v
  
  <entry>
    <title>Passing std::string by-value noticeably slows the idioms</title>
-   <link href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/"/>
+   <link href="http://localhost:4000/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/"/>
    <updated>2017-05-22T00:00:00-07:00</updated>
-   <id>/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms</id>
+   <id>http://localhost:4000/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms</id>
    <content type="html">&lt;p&gt;The &lt;a href=&quot;/2017/05/19/benchmarking-the-transform-and-loop-idioms/&quot;&gt;benchmarks comparing &lt;code&gt;transform&lt;/code&gt; to a
 loop&lt;/a&gt; also highlighted the substantial contribution that copying values made to their performance. Copying costs become especially noticeable for complex types, such as standard strings too long to fit in the short string optimization.&lt;/p&gt;
 
@@ -3409,9 +3691,9 @@ loop&lt;/a&gt; also highlighted the substantial contribution that copying values
  
  <entry>
    <title>Benchmarking the transform and loop idioms</title>
-   <link href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/"/>
+   <link href="http://localhost:4000/2017/05/19/benchmarking-the-transform-and-loop-idioms/"/>
    <updated>2017-05-19T00:00:00-07:00</updated>
-   <id>/2017/05/19/benchmarking-the-transform-and-loop-idioms</id>
+   <id>http://localhost:4000/2017/05/19/benchmarking-the-transform-and-loop-idioms</id>
    <content type="html">&lt;p&gt;&lt;strong&gt;Update: Mon Aug 20, 2018:&lt;/strong&gt; Also see this &lt;a href=&quot;/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/&quot;&gt;semi-rant about the limitations of microbenchmarkering&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;The last posts compared the machine code generated by &lt;code&gt;transform&lt;/code&gt; and the equivalent idiom using an explicit &lt;code&gt;for&lt;/code&gt; loop and &lt;code&gt;if&lt;/code&gt; statement.  The &lt;code&gt;transform&lt;/code&gt; idiom generated more intermediate copies of the &lt;code&gt;std::string&lt;/code&gt; member than the loop.&lt;/p&gt;
@@ -3835,9 +4117,9 @@ The &lt;code&gt;transform&lt;/code&gt; idiom used &lt;code&gt;push_back()&lt;/co
  
  <entry>
    <title>Analysis of code generated from the transform idiom</title>
-   <link href="/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/"/>
+   <link href="http://localhost:4000/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/"/>
    <updated>2017-05-03T00:00:00-07:00</updated>
-   <id>/2017/05/03/analysis-of-code-generated-from-the-transform-idiom</id>
+   <id>http://localhost:4000/2017/05/03/analysis-of-code-generated-from-the-transform-idiom</id>
    <content type="html">&lt;p&gt;The last post presented the baseline C++ code and its generated machine code. Now it’s time to compare the code generated by the &lt;code class=&quot;highlighter-rouge&quot;&gt;std::transform&lt;/code&gt; idiom and see how well it fares.&lt;/p&gt;
 
 &lt;h2&gt;Removing two inefficiencies&lt;/h2&gt;
@@ -4139,9 +4421,9 @@ in the element at &lt;code class=&quot;highlighter-rouge&quot;&gt;res.end()&lt;/
  
  <entry>
    <title>Performance of the STL idiom for list comprehension: Introduction</title>
-   <link href="/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/"/>
+   <link href="http://localhost:4000/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/"/>
    <updated>2017-05-02T00:00:00-07:00</updated>
-   <id>/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction</id>
+   <id>http://localhost:4000/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction</id>
    <content type="html">&lt;p&gt;In my &lt;a href=&quot;/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/&quot;&gt;last post&lt;/a&gt;, I promised to consider the machine code generated from the STL idiom equivalent to a basic Python list comprehension. As I proceeded, the project expanded to a broader analysis of the idiom’s performance. I am shocked at how much effort this project took.  I have spent much of the last five weeks generating and reading the output from g++ 6.2.  So. Many. Alternatives.  In this post, I’ll describe my baseline for comparison and the criteria I’ll use. In future posts, I’ll present the results.&lt;/p&gt;
 
 &lt;p&gt;All performance analyses are fraught. Conference speakers frequently argue that the gold standard is to run your actual code on your actual data, or as close to actual code and data as you can get. I think this claim is overly strong, but whatever its merits, by design this method by provides no general comparison of two approaches to writing code, only specific results for your context.&lt;/p&gt;
@@ -4348,9 +4630,9 @@ in the element at &lt;code class=&quot;highlighter-rouge&quot;&gt;res.end()&lt;/
  
  <entry>
    <title>A single STL statement equivalent to the basic Python list comprehension</title>
-   <link href="/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/"/>
+   <link href="http://localhost:4000/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/"/>
    <updated>2017-03-26T00:00:00-07:00</updated>
-   <id>/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension</id>
+   <id>http://localhost:4000/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension</id>
    <content type="html">&lt;p&gt;In &lt;a href=&quot;/2017/03/21/the-limits-of-list-comprehensions/&quot;&gt;the last post&lt;/a&gt;, I described the structure of the basic Python list comprehension&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[expression1(var) for var in expression2 if condition(var)]
@@ -4592,9 +4874,9 @@ to building the result vector&lt;/a&gt;, though the reserve/insert-back one used
  
  <entry>
    <title>The limits of list comprehensions</title>
-   <link href="/2017/03/21/the-limits-of-list-comprehensions/"/>
+   <link href="http://localhost:4000/2017/03/21/the-limits-of-list-comprehensions/"/>
    <updated>2017-03-21T00:00:00-07:00</updated>
-   <id>/2017/03/21/the-limits-of-list-comprehensions</id>
+   <id>http://localhost:4000/2017/03/21/the-limits-of-list-comprehensions</id>
    <content type="html">&lt;p&gt;I’ve spent my recent posts unfavourably comparing the STL design of containers/iterators/algorithms with Python list comprehensions and their close relatives in Haskell.  This is an unfairly restrictive way to view the STL design, which addresses a wider range of use cases than the ones addressed by list comprehensions.  But it is also unfair in that it ignores the limitations of list comprehensions themselves, limitations avoided by the more general structure provided by the STL.  In this post, I’ll start from the other direction, considering the inherent limitations of Python list comprehensions. This in turn leads to an idiom in the STL that in fact provides virtually all the functionality of basic list comprehensions, with only slightly more complex syntax.&lt;/p&gt;
 
 &lt;h2&gt;The general and basic forms of Python list comprehensions&lt;/h2&gt;
@@ -4691,9 +4973,9 @@ to building the result vector&lt;/a&gt;, though the reserve/insert-back one used
  
  <entry>
    <title>A simpler, fourth idiom for appending</title>
-   <link href="/2017/03/09/a-simpler-fourth-idiom-for-appending/"/>
+   <link href="http://localhost:4000/2017/03/09/a-simpler-fourth-idiom-for-appending/"/>
    <updated>2017-03-09T00:00:00-08:00</updated>
-   <id>/2017/03/09/a-simpler-fourth-idiom-for-appending</id>
+   <id>http://localhost:4000/2017/03/09/a-simpler-fourth-idiom-for-appending</id>
    <content type="html">&lt;p&gt;This morning, I realized that there is a fourth approach to appending items to a vector that combines &lt;a href=&quot;/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/&quot;&gt;elements of the first and third&lt;/a&gt;.  I’m embarrassed to have missed this one because it is a longstanding, well-understood approach that’s particularly applicable to the kinds of “list comprehension algorithms” I’m considering in this series.&lt;/p&gt;
 
 &lt;p&gt;Reviewing the output of the first method, a large proportion of the extra effort is due to the incremental &lt;em&gt;allocation&lt;/em&gt; of the vector’s data member, where the values are actually stored. In some use cases, this is the best you can do because you do not know in advance how large the result is going to be. However, in the case considered in our examples, we know exactly how many elements the result will have:  exactly as many elements as the source vector.  In such cases, we can pre-allocate a storage block of the right size and then the back insertions simply consist of moving the values into that allocated space, with no reallocations to expand the vector. This was a crucial part of the efficiency of the third idiom, using &lt;code&gt;emplace_back()&lt;/code&gt;.&lt;/p&gt;
@@ -4765,9 +5047,9 @@ Destructor for T0
  
  <entry>
    <title>Three idioms for appending values&mdash;a damaging decision?</title>
-   <link href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"/>
+   <link href="http://localhost:4000/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"/>
    <updated>2017-03-07T00:00:00-08:00</updated>
-   <id>/2017/03/07/three-idioms-for-appending-values-a-damaging-decision</id>
+   <id>http://localhost:4000/2017/03/07/three-idioms-for-appending-values-a-damaging-decision</id>
    <content type="html">&lt;p&gt;&lt;b&gt;Update:&lt;/b&gt; See also the &lt;a href=&quot;/2017/03/09/a-simpler-fourth-idiom-for-appending/&quot;&gt;next post&lt;/a&gt;, which adds a fourth idiom and mitigates some of the criticisms in the conclusion of this post.&lt;/p&gt;
 
 &lt;p&gt;The &lt;a href=&quot;/2017/02/22/iterators-a-failure-case/&quot;&gt;STL code for squaring the positive values&lt;/a&gt;, included the following lines to create the intermediate result &lt;code&gt;t1&lt;/code&gt; containing the positive values of the original list &lt;code&gt;a&lt;/code&gt;:&lt;/p&gt;
@@ -5301,9 +5583,9 @@ Basic constructor for c3[4]
  
  <entry>
    <title>Iterators aren’t the problem, they just enable it</title>
-   <link href="/2017/03/03/iterators-arent-the-problem-they-just-enable-it/"/>
+   <link href="http://localhost:4000/2017/03/03/iterators-arent-the-problem-they-just-enable-it/"/>
    <updated>2017-03-03T00:00:00-08:00</updated>
-   <id>/2017/03/03/iterators-arent-the-problem-they-just-enable-it</id>
+   <id>http://localhost:4000/2017/03/03/iterators-arent-the-problem-they-just-enable-it</id>
    <content type="html">&lt;p&gt;The post presenting the &lt;a href=&quot;/2017/02/22/iterators-a-failure-case/&quot;&gt;failure case for iterators&lt;/a&gt; contrasted this simple Python list comprehension:&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
@@ -5349,9 +5631,9 @@ Basic constructor for c3[4]
  
  <entry>
    <title>The genius insight behind iterators</title>
-   <link href="/2017/03/01/the-genius-insight-behind-iterators/"/>
+   <link href="http://localhost:4000/2017/03/01/the-genius-insight-behind-iterators/"/>
    <updated>2017-03-01T00:00:00-08:00</updated>
-   <id>/2017/03/01/the-genius-insight-behind-iterators</id>
+   <id>http://localhost:4000/2017/03/01/the-genius-insight-behind-iterators</id>
    <content type="html">&lt;p&gt;The story so far:&lt;/p&gt;
 
 &lt;ol&gt;
@@ -5522,9 +5804,9 @@ I’ll return to this below.&lt;/p&gt;
  
  <entry>
    <title>Lambdas: Typical use cases</title>
-   <link href="/2017/02/25/lambdas-typical-use-cases/"/>
+   <link href="http://localhost:4000/2017/02/25/lambdas-typical-use-cases/"/>
    <updated>2017-02-25T00:00:00-08:00</updated>
-   <id>/2017/02/25/lambdas-typical-use-cases</id>
+   <id>http://localhost:4000/2017/02/25/lambdas-typical-use-cases</id>
    <content type="html">&lt;p&gt;My last post, highlighting the differences between C++ lambdas and the lambdas in languages based upon functional programs, went more deeply into the weeds than I had intended. I realized too late that it cried out for examples.  The rules for declaring free variables (the member variables of the anonymous class) in C++ lambdas can seem contorted but most uses of them fall into one of a few simple types.  In this post, I want to present three simple use cases of C++ lambdas, each demonstrating a different way to use free variables.&lt;/p&gt;
 
 &lt;h2&gt;Copy-constructed constant values&lt;/h2&gt;
@@ -5595,9 +5877,9 @@ I’ll return to this below.&lt;/p&gt;
  
  <entry>
    <title>Lambdas: Sweet, sweet syntactic sugar</title>
-   <link href="/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/"/>
+   <link href="http://localhost:4000/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/"/>
    <updated>2017-02-23T00:00:00-08:00</updated>
-   <id>/2017/02/23/lambdas-sweet-sweet-syntactic-sugar</id>
+   <id>http://localhost:4000/2017/02/23/lambdas-sweet-sweet-syntactic-sugar</id>
    <content type="html">&lt;p&gt;&lt;b&gt;Update:&lt;/b&gt; The &lt;a href=&quot;/2017/02/25/lambdas-typical-use-cases/&quot;&gt;next post&lt;/a&gt; provides recipes for common use cases of lambdas.  If parts of this post seem too abstract, you might find the examples in the next post clarify things.&lt;/p&gt;
 
 &lt;p&gt;STL iterators and algorithms really can’t be discussed without also talking about lambdas. Although the STL design predates the introduction of lambdas by almost two decades, the introduction of lambdas in C++ 2011 improved the usability of STL algorithms substantially.  I don’t have statistics but I presume that the STL algorithms now receive substantially more use due to the greater simplicity of passing callbacks as lambdas rather than instances of named classes. Lambdas are purely a matter of convenience—they introduce nothing to the language that you couldn’t do before—but by making common use cases more convenient, they effectively extend the range of use cases where calling a standard algorithm makes sense.&lt;/p&gt;
@@ -5708,9 +5990,9 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
  
  <entry>
    <title>Iterators: A failure case</title>
-   <link href="/2017/02/22/iterators-a-failure-case/"/>
+   <link href="http://localhost:4000/2017/02/22/iterators-a-failure-case/"/>
    <updated>2017-02-22T00:00:00-08:00</updated>
-   <id>/2017/02/22/iterators-a-failure-case</id>
+   <id>http://localhost:4000/2017/02/22/iterators-a-failure-case</id>
    <content type="html">&lt;p&gt;In my first post on iterators, I presented a case where they work well.  In this post, I’ll present a clear failure and begin discussing why the deep structure of the design leads to this failure.&lt;/p&gt;
 
 &lt;p&gt;Consider the simple Python list comprehension:&lt;/p&gt;
@@ -5761,9 +6043,9 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
  
  <entry>
    <title>Iterators: One success story</title>
-   <link href="/2017/02/21/iterators-one-success-story/"/>
+   <link href="http://localhost:4000/2017/02/21/iterators-one-success-story/"/>
    <updated>2017-02-21T00:00:00-08:00</updated>
-   <id>/2017/02/21/iterators-one-success-story</id>
+   <id>http://localhost:4000/2017/02/21/iterators-one-success-story</id>
    <content type="html">
 &lt;p&gt;Iterators intrigue me because they seem to bring to C++ facilities that I’ve found congenial in other languages. I’ve spent some time in Haskell and a lot of time in Python, which both support &lt;a href=&quot;https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions&quot;&gt;list comprehensions&lt;/a&gt;. I’ve also enjoyed the limited amount of C# &lt;a href=&quot;https://msdn.microsoft.com/en-us/library/bb397933.aspx&quot;&gt;Language-Integrated Query (LINQ)&lt;/a&gt; programming that I’ve done.&lt;/p&gt;
 
