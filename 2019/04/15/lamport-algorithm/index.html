@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
+  <meta name="author" content="Arthur E. Kirkpatrick">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Lamport's 1978 mutual exclusion algorithm in PlusCal &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66576928-4', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- Begin Jekyll SEO tag v2.2.3 -->
+<meta property="og:title" content="Lamport’s 1978 mutual exclusion algorithm in PlusCal" />
+<meta name="author" content="Ted Kirkpatrick" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Fourth in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The previous post was a specialized discussion of the fairness semantics of PlusCal. The post preceding that was a general discussion of writing distributed algorithms in PlusCal." />
+<meta property="og:description" content="Fourth in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The previous post was a specialized discussion of the fairness semantics of PlusCal. The post preceding that was a general discussion of writing distributed algorithms in PlusCal." />
+<meta property="og:site_name" content="All my marbles in one place" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-04-15T00:00:00-07:00" />
+<script type="application/ld+json">
+{"@context":"http://schema.org","@type":"BlogPosting","headline":"Lamport’s 1978 mutual exclusion algorithm in PlusCal","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2019-04-15T00:00:00-07:00","dateModified":"2019-04-15T00:00:00-07:00","description":"Fourth in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The previous post was a specialized discussion of the fairness semantics of PlusCal. The post preceding that was a general discussion of writing distributed algorithms in PlusCal.","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/04/15/lamport-algorithm/"},"url":"/2019/04/15/lamport-algorithm/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/comment-policy/">Comment policy</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	   
+	    <a href="/tag/Python/">Python</a>,
+	  
+        
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
+	   
+	    <a href="/tag/Big data/">Big data</a>,
+	  
+        
+	   
+	    <a href="/tag/Soft skills/">Soft skills</a>,
+	  
+        
+	   
+	    <a href="/tag/Statistics/">Statistics</a>,
+	  
+        
+	   
+	    <a href="/tag/Experimental design/">Experimental design</a>,
+	  
+        
+	   
+	    <a href="/tag/Rhetoric/">Rhetoric</a>,
+	  
+        
+	   
+	    <a href="/tag/Admin/">Admin</a>,
+	  
+        
+	  	    
+            <a href="/tag/Distributed systems/">Distributed systems</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2019. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Lamport's 1978 mutual exclusion algorithm in PlusCal</h1>
+  <span class="post-date">15 Apr 2019
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/Distributed systems">Distributed systems</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p><em>Fourth in a series on using the TLA Toolbox to explore the failure
+ tolerance of distributed algorithms. The previous post was a
+ <a href="/2019/01/18/fairness-semantics-of-pluscal/">specialized discussion of the fairness semantics of PlusCal</a>. The
+ post preceding that was a
+ <a href="/2019/01/03/distributed-algorithms-in-pluscal/">general discussion of writing distributed algorithms in PlusCal</a>.</em></p>
+
+<p>The series will be organized around Lamport’s mutual exclusion
+algorithm,
+<a href="https://www.microsoft.com/en-us/research/publication/time-clocks-ordering-events-distributed-system/">described in his 1978 paper</a>.
+This algorithm is not so much a primary contribution of that paper as
+it is a demonstration of the use of the paper’s main contribution,
+logical clocks.  The algorithm is not suited to production use, due to
+its assumption of perfect instances communicating over a perfect
+network.  Yet these assumptions make it ideal for the purposes of this
+series, as we can use TLC to demonstrate how the algorithm fails when
+they are violated.</p>
+
+<p>Stephen Merz contributed a
+<a href="https://github.com/tlaplus/Examples/tree/master/specifications/lamport_mutex">TLA+ version of the algorithm</a>
+to the
+<a href="https://github.com/tlaplus/Examples/">TLA example library</a>. The
+version here is derived from his, rewritten in PlusCal and
+slightly modified.</p>
+
+<p>The algorithm, with the bodies of the <code class="highlighter-rouge">define</code>s and macros elided
+(they are provided in the Appendix), follows:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>--algorithm LogicalClocks
+variables
+  (*--------------------------- Network model----------------------
+    Messages in transit between processes.  Messages are guaranteed
+    to be delivered in the order in which they were sent.
+  *)
+  channel = [source \in Pid |-&gt; [destination \in Pid |-&gt; &lt;&lt;&gt;&gt;]],
+
+  (*--------------------------System Model-------------------------
+    All processes currently in the critical section
+  *)
+  crit = {}
+
+\*-----------------------------Operators---------------------------
+
+define
+  \* Total order of clocks using Pid to break ties
+  LogClockLt(reqs, p, q) == \* ...
+  \* All processes whose head msg to dst is of this type
+  ChanHead(dst, type) == \* ...
+  \* Max of two times
+  Max(a, b) == \* ...
+end define
+
+\*-----------------------------Network operations------------------
+
+\* Wait for a `type` message and return its contents
+macro Receive(type, clock, src, time) begin
+\* ...
+end macro
+
+\* Broadcast a message
+macro Broadcast(clock, msg) begin
+\* ...
+end macro
+
+\* Send a message to a specific process
+macro SendTo(clock, dst, msg) begin
+\* ...
+end macro
+
+\*-----------------------------System model operations------------
+
+macro EnterCritSec() begin
+  crit := crit \union {self}
+end macro
+
+macro ExitCritSec() begin
+  crit := crit \ {self}
+end macro
+
+\*-------------------------------Algorithm------------------------
+
+process Proc \in Pid
+variables
+  \* --- Algorithm state ---
+  \* Logical clock
+  clock = 1,
+  (*
+    The processes that have acknowledged this process's request,
+    if it has one
+  *)
+  acks = {},
+  \* Request times this process has received (including its own)
+  requests = [pid \in Pid |-&gt; 0],
+  \* --- Instrumentation ---
+  \* Number of times this process has entered critical section
+  ownerships = 0,
+  \*--- Temporary variables---untyped, uninitialized
+  time,
+  src
+
+begin \* process
+  loop: while TRUE do
+     either
+     \* --- Manage this process's entry to crit sect ---
+        \* Request ownership
+        when requests[self] = 0;
+          Broadcast(clock, [time |-&gt; clock, type |-&gt; "Request"]);
+          requests := [requests EXCEPT ![self] = clock];
+          acks := {self}
+     or \* Receive acknowledgement of this process's request
+        Receive("AckReq", clock, src, time);
+          clock := Max(clock, time);
+          acks := acks \union {src}          
+     or \* If at head of request queue, take ownership
+        when /\ self \notin crit
+             /\ acks = Pid
+             /\ \A p \in Pid: p # self =&gt;
+                                  LogClockLt(requests, self, p);
+          EnterCritSec();
+          ownerships := ownerships + 1
+     or \* Release ownership
+        when self \in crit;
+          requests := [requests EXCEPT ![self] = 0];
+          ExitCritSec();
+          acks := {};
+          Broadcast(clock, [time |-&gt; clock, type |-&gt; "Release"])
+
+     \* --- Record other process' requests to enter crit sect ---
+     or \* Receive a request and acknowledge receipt
+        Receive("Request", clock, src, time);
+          requests := [requests EXCEPT ![src] = time];
+          clock := Max(clock, time);
+          (*
+            increment clock in msg to reflect addition that will
+            occur at loop's end
+          *)
+      L2: SendTo(clock, src, [time |-&gt; clock+1, type |-&gt; "AckReq"])
+     or \* Receive a release
+        Receive("Release", clock, src, time);
+          clock := Max(clock, time);
+          requests := [requests EXCEPT ![src] = 0];
+     end either;
+     tic: clock := clock + 1
+   end while;
+end process
+
+end algorithm
+</code></pre>
+</div>
+
+<p>The algorithm is written based on conventions for PlusCal I have
+developed:</p>
+
+<ul>
+  <li>Global variables are never accessed directly but only through
+macros</li>
+  <li>Complex, regularly-occurring TLA expressions are given
+named <code class="highlighter-rouge">define</code>s</li>
+  <li>Conventional layout for every alternative</li>
+  <li>Categorization of variables by function</li>
+</ul>
+
+<p>The first two were detailed in an <a href="/2019/01/03/distributed-algorithms-in-pluscal/">earlier post</a>.
+I will describe the last two in more detail next.</p>
+
+<h2 id="conventional-layout-for-every-alternative">Conventional layout for every alternative</h2>
+
+<p>Lamport’s algorithm follows a
+<a href="/2019/01/03/distributed-algorithms-in-pluscal/">common structure for distributed algorithms</a>:
+An infinite loop whose body is a list of alternatives, with each
+alternative comprising a guard followed by updates to process
+variables and messages. To highlight the dependency of the updates on
+the guards, I indent the updates a further two spaces from the
+guards.</p>
+
+<p>The guards built from <code class="highlighter-rouge">when</code> statements are pure expressions that do
+not modify any state. On the other hand, guards using the network
+<code class="highlighter-rouge">Receive</code> macro both wait on a condition and change the global network
+state when that condition is satisfied, removing the frontmost message
+to the process and returning the id of its sender and its sending time
+in the local logical clock as process local variables <code class="highlighter-rouge">src</code> and <code class="highlighter-rouge">time</code>,
+respectively.</p>
+
+<h2 id="categorization-of-variables-according-to-function">Categorization of variables according to function</h2>
+
+<p>My last PlusCal convention is to categorize the global and local
+variables according to distinct functions. I find this makes the
+program more readable and I use the language more effectively.</p>
+
+<p>For global variables:</p>
+
+<dl class="dl-indented">
+  <dt>Network model</dt>
+  <dd>Global variables representing the state of the network.</dd>
+  <dt>System model</dt>
+  <dd>Variables that model the state of the system as a whole, apart from
+the network. These variables are often used to represent parts of
+system state that are implied elsewhere but not directly
+represented. Representing these elements of the state as system
+model variables allows the analyst to write invariants and
+behaviours that check them.
+
+    <p>For example, the global <code class="highlighter-rouge">crit</code> is added to the Lamport algorithm to
+indicate the set of all processes in their critical section. In the
+formal algorithm, this variable is not used but is only
+implied. Making this implied state an explicit global variable
+allows the analyst to represent the important safety property that
+at most one process is ever in the critical section by the simple
+invariant <code class="highlighter-rouge">Cardinality(crit) &lt; 2</code>.</p>
+  </dd>
+</dl>
+
+<p>For local variables:</p>
+
+<dl class="dl-indented">
+  <dt>Algorithm state</dt>
+  <dd>The state of a distributed algorithm is represented in local
+variables (by definition, a distributed algorithm cannot rely on
+global state).</dd>
+  <dt>Instrumentation</dt>
+  <dd>Variables used to analyze and debug the algorithm. In this
+algorithm, <code class="highlighter-rouge">ownerships</code> counts the number of times a given process
+has entered the critical section.</dd>
+  <dt>Temporary variables</dt>
+  <dd>Variables local to individual actions, recording temporary state
+rather than the state of the algorithm.</dd>
+</dl>
+
+<p>A PlusCal program also has <em>runtime variables</em>, implied in the source
+code and made explicit by the PlusCal translator in the resulting TLA
+code:</p>
+
+<dl class="dl-indented">
+  <dt><code class="highlighter-rouge">pc</code></dt>
+  <dd>The program counter, indicating the currently-enabled state.  This
+is present in the translation of any PlusCal program.</dd>
+  <dt><code class="highlighter-rouge">stack</code></dt>
+  <dd>The stack of return states and local variable values. This is only
+present in translations of PlusCal programs that include one or more <code class="highlighter-rouge">procedure</code>s.</dd>
+</dl>
+
+<p>You can use the distinction between algorithm variables versus
+instrumentation and temporary variables to accelerate TLC model
+checking using a view. You only need the variables
+essential to the system and algorithm’s state, together with any
+runtime variables inserted by the PlusCal translator; by not including
+the instrumentation or temporaries in the view, you reduce the size of
+the state space the checker must explore. For this algorithm, the view
+definition includes the network model <code class="highlighter-rouge">channel</code>; the system model
+<code class="highlighter-rouge">crit</code>; the algorithm state <code class="highlighter-rouge">clock</code>, <code class="highlighter-rouge">acks</code>, and <code class="highlighter-rouge">requests</code>; and
+the runtime variable <code class="highlighter-rouge">pc</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>\* Essential variables to be monitored by TLC
+View == &lt;&lt;channel, crit, clock, acks, requests, pc&gt;&gt;
+</code></pre>
+</div>
+
+<h2 id="the-algorithm">The algorithm</h2>
+
+<p>The basics of the algorithm are described in Lamport’s paper, so I
+will not repeat them here. The basic structure is an infinite loop
+with an <code class="highlighter-rouge">either</code> selecting between six alternatives. I have structured
+this version so that the first four alternatives deal with the
+successive stages of a process using the critical section (request
+ownership, receive an acknowledgement that another process has
+received that request, take ownership when it’s this process’s turn,
+release ownership), followed by the two alternatives for processing
+requests from other processes (acknowledge receipt of a request,
+record an ownership release).</p>
+
+<p>All of the alternatives but one are a single, atomic action.  The
+lone exception is the action to record a request from another
+process. Because that action requires both receipt of the request
+message and sending of an acknowledgement message, the <code class="highlighter-rouge">channel</code> variable in the
+network model is updated twice. Consecutive assignments to the same
+variable have to occur in different steps, so the statement sending
+the reply must be prefixed by a label, <code class="highlighter-rouge">L2</code>.</p>
+
+<p>The extra label is an artifact of my use of macros. If the step were
+written instead using basic PlusCal, the two updates to <code class="highlighter-rouge">channel</code>
+could be merged and the step would become atomic. I think the macros
+substantially improve readability of the code, readability that is not
+worth giving up for modest gains in speed of model checking from
+removing the extra state.  Furthermore, as the series proceeds I will
+take advantage of the macros to insert failure testing without
+modifying the text of the algorithm.</p>
+
+<h3 id="instrumentation">Instrumentation</h3>
+
+<p>In addition to the variables essential for the process, 
+this version has some modest instrumentation.  The <code class="highlighter-rouge">Print</code> macro
+displays the current process’s state on the TLC console. The
+<code class="highlighter-rouge">PrintDebug</code> TLA operator specified in the <code class="highlighter-rouge">define</code> statement controls
+whether the macro actually prints. The default is not to print but it
+can be overridden in the TLC console for specific runs.</p>
+
+<p>The process also includes a variable <code class="highlighter-rouge">ownerships</code> that records the number
+of times this process has entered the critical section. This can be
+output via the <code class="highlighter-rouge">Print</code> macro, although none of the current macro calls
+include the variable.</p>
+
+<h3 id="assumptions">Assumptions</h3>
+
+<p>The algorithm assumes an idealized system, in which processes never
+fail and all messages are delivered in order. Although these
+assumptions are fine for its intended use in the original paper, where
+it served as an example of the style of reasohing about distributed
+clocks that Lamport presented, these assumptions make it of only the
+most limited practical use. I cannot imagine many actual
+message-passing environments 
+where no process will ever fail and message delivery is
+perfect. Perhaps some of the MPI-based systems used in the High
+Performance Computing community are that reliable but in the community
+building high-throughput distributed systems for modern datacentres,
+designers are taught to expect
+<a href="https://www.oreilly.com/webops-perf/free/chaos-engineering.csp">processes to fail</a>
+and
+<a href="http://dl.acm.org/citation.cfm?id=2663191.2643130">networks to be unreliable</a>.
+I do not see how any new layer, whether below or above the Lamport
+algorithm, could allow the algorithm to maintain safety in the
+presence of these errors.</p>
+
+<h2 id="testing-the-algorithms-behaviour">Testing the algorithm’s behaviour</h2>
+
+<p>The next step is to run the algorithm in the TLC model checker.  With
+that baseline established, I will begin running the
+algorithm in environments where the assumptions of perfect processes
+and networks are relaxed.  The ways that the algorithm breaks will
+give insights on how the algorithm works.</p>
+
+<h2 id="appendix-defines-and-macros">Appendix: Defines and macros</h2>
+
+<p>Bodies of the <code class="highlighter-rouge">define</code>s and macros:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>define
+  \* Total order of clocks using Pid to break ties
+  LogClockLt(reqs, p, q) ==
+    \/ reqs[q] = 0
+    \/ reqs[p] &lt; reqs[q]
+    \/ reqs[p] = reqs[q] /\ p &lt; q
+  \* All processes whose head msg to dst is of this type
+  ChanHead(dst, type) ==
+    {src \in Pid: /\ Len(channel[src][dst]) &gt; 0
+                  /\ Head(channel[src][dst]).type = type
+    }
+
+  \* Max of two times   
+  Max(a, b) == IF a &lt;= b THEN b ELSE a
+
+  \* Instrumentation control
+  PrintDebug == FALSE
+end define
+
+\*---------------------------Instrumentation Macros------------------
+\* Print if debugging turned on
+macro Print(clock, vars) begin
+  if PrintDebug then
+    print &lt;&lt;self, clock, vars&gt;&gt;
+  end if
+end macro
+
+\*-----------------------------Network operations--------------------
+
+\* Wait for a `type` message and return its contents
+macro Receive(type, clock, src, time) begin
+  with s \in ChanHead(self, type) do
+    src := s;
+    time := Head(channel[src][self]).time;
+    Print(clock, &lt;&lt; &lt;&lt;"Receiving", type&gt;&gt;, src, time&gt;&gt;);
+    channel :=
+	  [channel EXCEPT ![src][self] = Tail(channel[src][self])]
+  end with
+end macro
+
+\* Broadcast a message
+macro Broadcast(clock, msg) begin
+  Print(clock, &lt;&lt;"Broadcasting", msg.type&gt;&gt;);
+  channel :=
+    [channel EXCEPT ![self] =
+      [dst \in Pid |-&gt;
+        IF dst = self THEN channel[self][self]
+                      ELSE Append(channel[self][dst], msg)]]
+end macro
+
+\* Send a message to a specific process
+macro SendTo(clock, dst, msg) begin
+  Print(clock, &lt;&lt;"Sending", dst, msg.type&gt;&gt;);
+  channel :=
+    [channel EXCEPT ![self][dst] = Append(channel[self][dst], msg)]
+end macro
+
+</code></pre>
+</div>
+
+
+</div>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+this.page.url = "http://kirkpatricktech.com/2019/04/15/lamport-algorithm/";
+//this.page.identifier = "/2019/04/15/lamport-algorithm";
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://kirkpatricktech-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
+  </body>
+</html>
