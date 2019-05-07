@@ -4,13 +4,248 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2019-04-15T13:23:18-07:00</updated>
+ <updated>2019-05-07T11:47:31-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Simulation checks of the PlusCal version of Lamport's algorithm</title>
+   <link href="/2019/05/07/simulation-checks-of-pluscal-lamport/"/>
+   <updated>2019-05-07T00:00:00-07:00</updated>
+   <id>/2019/05/07/simulation-checks-of-pluscal-lamport</id>
+   <content type="html">&lt;p&gt;&lt;em&gt;Fifth in a series on using the TLA Toolbox to explore the failure
+ tolerance of distributed algorithms. The previous post was a
+ &lt;a href=&quot;/2019/04/15/lamport-algorithm/&quot;&gt;description of Lamport’s 1978 mutual exclusion algorithm&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;My first step when checking a new algorithm is to run a simulation. In
+this mode, TLC does not exhaustively search the tree but follows a
+single trace up to a maximum depth. The search continues until the
+operator cancels it. The assurances provided by such runs are both
+broader and more provisional than exhaustive searching: Broader
+because I can set simulation traces to proceed much further than those
+in an exhaustive search, but more provisional because there is no
+assurance that the odd, error-prone corner cases will be checked.&lt;/p&gt;
+
+&lt;p&gt;Simulation runs are useful for their capacity to identify simple
+errors due to typos and logical oversights. Exhaustive checks require
+some work to set up; there is no point to spending that effort until
+after I have some assurance that no easily-found mistakes remain.&lt;/p&gt;
+
+&lt;h2 id=&quot;checking-the-pluscal-version-of-lamports-algorithm&quot;&gt;Checking the PlusCal version of Lamport’s algorithm&lt;/h2&gt;
+
+&lt;p&gt;The specification of a model checking run comprises several parts:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The invariants to be checked. These are usually defined in the TLA
+code trailing the TLA translation of the PlusCal.&lt;/li&gt;
+  &lt;li&gt;An optional view, also defined in the trailing TLA code.&lt;/li&gt;
+  &lt;li&gt;The options for the TLC model checker. In the Toolbox, these are
+defined in a series of dialogue box panels. In this series, I
+represent the options in YAML instead.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;invariants-and-views&quot;&gt;Invariants and views&lt;/h3&gt;
+
+&lt;p&gt;The model checker requires that invariants be defined for
+checking.&lt;/p&gt;
+
+&lt;p&gt;For the algorithm to be considered correct, it must maintain two
+invariants. The first ensures the correct types of non-temporary
+variables, the second ensures that at most one process is ever in the
+critical section:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;\* Type invariant
+TypeOK ==
+  \* Globals
+  /\ channel \in [Pid -&amp;gt; [Pid -&amp;gt; Seq(Message)]]
+  /\ crit \in SUBSET Pid
+  \* Locals
+  /\ clock \in [Pid -&amp;gt; ClockVal]
+  /\ requests \in [Pid -&amp;gt; [Pid -&amp;gt; ClockVal]]
+
+\* At most one process owning the resource
+MutualExclusion == Cardinality(crit) &amp;lt; 2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Checking can be accelerated by defining a view that excludes temporary
+variables from the check.  This reduces the state space explored by
+the model checker while ensuring the resulting space covers the
+essential states:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;\* Essential variables to be monitored by TLC
+View == &amp;lt;&amp;lt;channel, crit, clock, acks, requests, pc&amp;gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;parameters-to-the-model-checker&quot;&gt;Parameters to the model checker&lt;/h3&gt;
+
+&lt;p&gt;The TLC parameters defining the actual run are spread across multiple
+dialogue box panels (in the Toolbox) or multiple files (when running
+TLC from the command line). This makes it hard to keep track of them
+all. It also makes it hard to record the parameters for
+reproducing the results.&lt;/p&gt;
+
+&lt;p&gt;I instead define the parameters in a YAML file. Ultimately, I intend
+to write a Python driver that reads such a file, creates the necessary
+configuration files for running the command-line version of TLC, and
+runs the check.  For now, I record the parameters here and enter them
+into the IDE by hand.&lt;/p&gt;
+
+&lt;p&gt;Notes on two YAML syntax features that may be unfamiliar:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt; symbol introduces a running text block. Line boundaries are
+ignored.&lt;/li&gt;
+  &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;|&lt;/code&gt; symbol introduces a preformatted text block. Line boundaries
+are preserved, as they are by the HTML &lt;code class=&quot;highlighter-rouge&quot;&gt;PRE&lt;/code&gt; tag.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;Description&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;no&quot;&gt;Simulation run of PlusCal representation of Lamport 1978.&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;Specification&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;Behavior&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;Temporal-formula&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Spec&lt;/span&gt;
+
+  &lt;span class=&quot;s&quot;&gt;Definition-overrides&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;ClockVal &amp;lt;- Nat&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;Declared-constants&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;N &amp;lt;- 2&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;MaxClock &amp;lt;- 8&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;defaultInitValue &amp;lt;- [model value]&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;Checks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;Deadlock&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;false&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;Invariants&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TypeOK&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Mutex&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;Run-type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;Simulation&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;Max-trace-length&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;120&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;Seed&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;3154741148735185214&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;Run-parameters&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;Workers&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;results-of-the-simulation&quot;&gt;Results of the simulation&lt;/h3&gt;
+
+&lt;p&gt;I ran the simulation for two minutes.  In that time, 19 million states
+were explored (some of which might be duplicates):&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Time (min)&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;States explored&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1:00&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;9,100,140&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;2:00&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;19,242,611&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The invariants
+were preserved in all cases. This does not guarantee correctness
+because we cannot estimate how many states remained unexplored.  It
+does provide confidence that the code has no “obvious” defects.&lt;/p&gt;
+
+&lt;h2 id=&quot;checking-merzs-tla-representation-of-lamports-algorithm&quot;&gt;Checking Merz’s TLA representation of Lamport’s algorithm&lt;/h2&gt;
+
+&lt;p&gt;For comparison, I ran a comparable simulation on &lt;a href=&quot;https://github.com/tlaplus/Examples/tree/master/specifications/lamport_mutex&quot;&gt;Merz’s original TLA
+version&lt;/a&gt; of the algorithm.&lt;/p&gt;
+
+&lt;p&gt;Merz’s safety invariant is slightly different in form but tests the
+same property as mine above:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Mutex == \A p,q \in crit : p = q
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;I used specifications comparable to the ones above for my PlusCal
+version. I inadvertently left the deadlock check on but that had no
+effect on the outcome:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;Model-description&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;no&quot;&gt;Simulation run of Merz's TLA representation of Lamport 1978.&lt;/span&gt;
+  &lt;span class=&quot;no&quot;&gt;See https://github.com/tlaplus/Examples/tree/master/specifications/lamport_mutex&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;Specification&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;Behavior&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;Temporal-formula&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Spec&lt;/span&gt;
+
+  &lt;span class=&quot;s&quot;&gt;Definition-overrides&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;Clock &amp;lt;- 1 .. 130&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;Declared-constants:|&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;N &amp;lt;- 2&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;maxClock &amp;lt;- 8&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;Checks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;Deadlock&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;true&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;Invariants&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TypeOK&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Mutex&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;Run-type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;Simulation&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;Max-trace-length&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;120&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;Seed&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;692067743782335802&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Merz’s simpler TLA representation allowed TLC to check 37% more states
+than for my PlusCal representation, though again a given state may
+well have been counted multiple times:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Time (min)&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;States explored&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;1:00&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;12,898,239&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;2:00&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;26,229,053&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;These simulation runs demonstrated that this PlusCal
+representation of Lamport’s algorith had no basic errors. To increase
+our confidence, we need to run exhaustive checks.  Even those will not
+prove the algorithm’s correctness in a mathematical sense but full
+checks will guarantee that we have checked every state within the
+parameters of the run. With that result, we can begin to address
+the real topic of this series: exploring how the algorithm fails
+when its assumptions are violated.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Lamport's 1978 mutual exclusion algorithm in PlusCal</title>
@@ -21,7 +256,8 @@
  tolerance of distributed algorithms. The previous post was a
  &lt;a href=&quot;/2019/01/18/fairness-semantics-of-pluscal/&quot;&gt;specialized discussion of the fairness semantics of PlusCal&lt;/a&gt;. The
  post preceding that was a
- &lt;a href=&quot;/2019/01/03/distributed-algorithms-in-pluscal/&quot;&gt;general discussion of writing distributed algorithms in PlusCal&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+ &lt;a href=&quot;/2019/01/03/distributed-algorithms-in-pluscal/&quot;&gt;general discussion of writing distributed algorithms in PlusCal&lt;/a&gt;.
+ The next post presents &lt;a href=&quot;/2019/05/07/simulation-checks-of-pluscal-lamport/&quot;&gt;the results of simulation runs&lt;/a&gt; on the algorithm.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;The series will be organized around Lamport’s mutual exclusion
 algorithm,
@@ -44,7 +280,40 @@ slightly modified.&lt;/p&gt;
 &lt;p&gt;The algorithm, with the bodies of the &lt;code class=&quot;highlighter-rouge&quot;&gt;define&lt;/code&gt;s and macros elided
 (they are provided in the Appendix), follows:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;--algorithm LogicalClocks
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;--------------------- MODULE LogicalClocks ------------------------
+
+(*
+  Lamport's mutual exclusion algorithm from &quot;Time, Clocks, and the
+  Ordering of Events in a Distributed System&quot;.
+  
+  The algorithm assumes perfect, in-order message transmission and
+  reliable (i.e., non-Byzantine, non-crashing) processes.
+
+  See also the formalization of the same algorithm by Stephan Merz:
+  github.com/tlaplus/Examples/tree/master/specifications/lamport_mutex
+*)
+
+EXTENDS Naturals, Sequences, FiniteSets, TLC
+
+CONSTANTS N,          \* Number of processes
+          MaxClock    \* Maximum clock value
+
+\* -------------------------- Types -------------------------------
+\* Process identifier
+Pid == 1 .. N
+(*
+  Range of acceptable clock values
+  One more than MaxClock because receiving a message with timestamp
+  MaxClock can push a process's clock to MaxClock+1.
+*)
+ClockVal == 0 .. MaxClock+1
+\* A message (with three subtypes)
+Message == [time: ClockVal, type: {&quot;Request&quot;, &quot;Release&quot;, &quot;AckReq&quot;}]
+\* The 1-1 communication channels between every process
+Channel == [src \in Pid |-&amp;gt; [dst \in Pid |-&amp;gt; Seq(Message)]]
+
+(******************************************************************
+--algorithm LogicalClocks
 variables
   (*--------------------------- Network model----------------------
     Messages in transit between processes.  Messages are guaranteed

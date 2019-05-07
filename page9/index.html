@@ -49,9 +49,9 @@
 <meta name="description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
 <meta property="og:description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
 <meta property="og:site_name" content="All my marbles in one place" />
-<link rel="next" href="/page2">
+<link rel="prev" href="/page8">
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"WebSite","name":"All my marbles in one place","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","url":"/"}</script>
+{"@context":"http://schema.org","@type":"WebPage","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","url":"/page9/"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -71,7 +71,7 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a class="sidebar-nav-item active" href="/">Home</a>
+      <a class="sidebar-nav-item" href="/">Home</a>
 
       
 
@@ -237,146 +237,41 @@
   
   <div class="post">
     <h1 class="post-title">
-      <a href="/2019/05/07/simulation-checks-of-pluscal-lamport/">
-        Simulation checks of the PlusCal version of Lamport's algorithm
+      <a href="/2017/02/21/iterators-one-success-story/">
+        Iterators: One success story
       </a>
     </h1>
     
-    <span class="post-date">07 May 2019
+    <span class="post-date">21 Feb 2017
     
       <span class="tag-block">Tags: 
       
         
-        <a href="/tag/Distributed systems">Distributed systems</a>
+        <a href="/tag/C++">C++</a>
         
       
       </span>
     
     </span>
 
-    <p><em>Fifth in a series on using the TLA Toolbox to explore the failure
- tolerance of distributed algorithms. The previous post was a
- <a href="/2019/04/15/lamport-algorithm/">description of Lamport’s 1978 mutual exclusion algorithm</a>.</em></p>
+    
+<p>Iterators intrigue me because they seem to bring to C++ facilities that I’ve found congenial in other languages. I’ve spent some time in Haskell and a lot of time in Python, which both support <a href="https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions">list comprehensions</a>. I’ve also enjoyed the limited amount of C# <a href="https://msdn.microsoft.com/en-us/library/bb397933.aspx">Language-Integrated Query (LINQ)</a> programming that I’ve done.</p>
 
- <a href="/2019/05/07/simulation-checks-of-pluscal-lamport/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2019/04/15/lamport-algorithm/">
-        Lamport's 1978 mutual exclusion algorithm in PlusCal
-      </a>
-    </h1>
-    
-    <span class="post-date">15 Apr 2019
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Distributed systems">Distributed systems</a>
-        
-      
-      </span>
-    
-    </span>
+<p>Yet when I come to actually use the STL iterators, it feels awkward and requires much more text than achieving comparable results using list comprehensions or LINQ. Some of that may be simple unfamiliarity but that is itself a problem: A good design will allow me to apply patterns I’ve learned in other languages.</p>
 
-    <p><em>Fourth in a series on using the TLA Toolbox to explore the failure
- tolerance of distributed algorithms. The previous post was a
- <a href="/2019/01/18/fairness-semantics-of-pluscal/">specialized discussion of the fairness semantics of PlusCal</a>. The
- post preceding that was a
- <a href="/2019/01/03/distributed-algorithms-in-pluscal/">general discussion of writing distributed algorithms in PlusCal</a>.
- The next post presents <a href="/2019/05/07/simulation-checks-of-pluscal-lamport/">the results of simulation runs</a> on the algorithm.</em></p>
-
- <a href="/2019/04/15/lamport-algorithm/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2019/01/18/fairness-semantics-of-pluscal/">
-        Fairness semantics of PlusCal
-      </a>
-    </h1>
-    
-    <span class="post-date">18 Jan 2019
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Distributed systems">Distributed systems</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p><em>Third in a series on using the TLA Toolbox to explore the failure
- tolerance of distributed algorithms. The second post
- <a href="/2019/01/03/distributed-algorithms-in-pluscal/">presented some PlusCal conventions for writing distributed algorithms</a>. The
- next post presents <a href="/2019/04/15/lamport-algorithm/">Lamport’s (1978) mutual exclusion algorithm in PlusCal</a>.</em></p>
-
- <a href="/2019/01/18/fairness-semantics-of-pluscal/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2019/01/03/distributed-algorithms-in-pluscal/">
-        Distributed algorithms in PlusCal
-      </a>
-    </h1>
-    
-    <span class="post-date">03 Jan 2019
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Distributed systems">Distributed systems</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p><em>Second in a series on using the TLA Toolbox to explore the failure
- tolerance of distributed algorithms. The first post
- <a href="/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/">presented the context and why the topic is important</a>. The
- next post describes the <a href="/2019/01/18/fairness-semantics-of-pluscal/">semantics of fairness in PlusCal</a></em>.</p>
-
- <a href="/2019/01/03/distributed-algorithms-in-pluscal/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/">
-        Exploring distributed algorithm failures using TLA Toolbox
-      </a>
-    </h1>
-    
-    <span class="post-date">31 Oct 2018
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Distributed systems">Distributed systems</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p><em>First in a series on using the TLA Toolbox to explore the failure
- tolerance of distributed algorithms. The next post has not been written.</em></p>
-
- <a href="/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/">more ...</a>
+ <a href="/2017/02/21/iterators-one-success-story/">more ...</a>
   </div>
   
 </div>
 
 <div class="pagination">
   
-    <a class="pagination-item older" href="/page2">Older</a>
+    <span class="pagination-item older">Older</span>
   
   
-    <span class="pagination-item newer">Newer</span>
+    
+      <a class="pagination-item newer" href="/page8">Newer</a>
+    
   
 </div>
     </div>

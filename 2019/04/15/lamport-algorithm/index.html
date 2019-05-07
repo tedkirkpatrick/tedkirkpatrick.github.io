@@ -46,13 +46,13 @@
 <meta property="og:title" content="Lamport’s 1978 mutual exclusion algorithm in PlusCal" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Fourth in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The previous post was a specialized discussion of the fairness semantics of PlusCal. The post preceding that was a general discussion of writing distributed algorithms in PlusCal." />
-<meta property="og:description" content="Fourth in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The previous post was a specialized discussion of the fairness semantics of PlusCal. The post preceding that was a general discussion of writing distributed algorithms in PlusCal." />
+<meta name="description" content="Fourth in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The previous post was a specialized discussion of the fairness semantics of PlusCal. The post preceding that was a general discussion of writing distributed algorithms in PlusCal. The next post presents the results of simulation runs on the algorithm." />
+<meta property="og:description" content="Fourth in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The previous post was a specialized discussion of the fairness semantics of PlusCal. The post preceding that was a general discussion of writing distributed algorithms in PlusCal. The next post presents the results of simulation runs on the algorithm." />
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2019-04-15T00:00:00-07:00" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Lamport’s 1978 mutual exclusion algorithm in PlusCal","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2019-04-15T00:00:00-07:00","dateModified":"2019-04-15T00:00:00-07:00","description":"Fourth in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The previous post was a specialized discussion of the fairness semantics of PlusCal. The post preceding that was a general discussion of writing distributed algorithms in PlusCal.","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/04/15/lamport-algorithm/"},"url":"/2019/04/15/lamport-algorithm/"}</script>
+{"@context":"http://schema.org","@type":"BlogPosting","headline":"Lamport’s 1978 mutual exclusion algorithm in PlusCal","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2019-04-15T00:00:00-07:00","dateModified":"2019-04-15T00:00:00-07:00","description":"Fourth in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The previous post was a specialized discussion of the fairness semantics of PlusCal. The post preceding that was a general discussion of writing distributed algorithms in PlusCal. The next post presents the results of simulation runs on the algorithm.","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/04/15/lamport-algorithm/"},"url":"/2019/04/15/lamport-algorithm/"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -99,6 +99,10 @@
         
           
             <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
           
         
       
@@ -248,7 +252,8 @@
  tolerance of distributed algorithms. The previous post was a
  <a href="/2019/01/18/fairness-semantics-of-pluscal/">specialized discussion of the fairness semantics of PlusCal</a>. The
  post preceding that was a
- <a href="/2019/01/03/distributed-algorithms-in-pluscal/">general discussion of writing distributed algorithms in PlusCal</a>.</em></p>
+ <a href="/2019/01/03/distributed-algorithms-in-pluscal/">general discussion of writing distributed algorithms in PlusCal</a>.
+ The next post presents <a href="/2019/05/07/simulation-checks-of-pluscal-lamport/">the results of simulation runs</a> on the algorithm.</em></p>
 
 <p>The series will be organized around Lamport’s mutual exclusion
 algorithm,
@@ -271,7 +276,40 @@ slightly modified.</p>
 <p>The algorithm, with the bodies of the <code class="highlighter-rouge">define</code>s and macros elided
 (they are provided in the Appendix), follows:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>--algorithm LogicalClocks
+<div class="highlighter-rouge"><pre class="highlight"><code>--------------------- MODULE LogicalClocks ------------------------
+
+(*
+  Lamport's mutual exclusion algorithm from "Time, Clocks, and the
+  Ordering of Events in a Distributed System".
+  
+  The algorithm assumes perfect, in-order message transmission and
+  reliable (i.e., non-Byzantine, non-crashing) processes.
+
+  See also the formalization of the same algorithm by Stephan Merz:
+  github.com/tlaplus/Examples/tree/master/specifications/lamport_mutex
+*)
+
+EXTENDS Naturals, Sequences, FiniteSets, TLC
+
+CONSTANTS N,          \* Number of processes
+          MaxClock    \* Maximum clock value
+
+\* -------------------------- Types -------------------------------
+\* Process identifier
+Pid == 1 .. N
+(*
+  Range of acceptable clock values
+  One more than MaxClock because receiving a message with timestamp
+  MaxClock can push a process's clock to MaxClock+1.
+*)
+ClockVal == 0 .. MaxClock+1
+\* A message (with three subtypes)
+Message == [time: ClockVal, type: {"Request", "Release", "AckReq"}]
+\* The 1-1 communication channels between every process
+Channel == [src \in Pid |-&gt; [dst \in Pid |-&gt; Seq(Message)]]
+
+(******************************************************************
+--algorithm LogicalClocks
 variables
   (*--------------------------- Network model----------------------
     Messages in transit between processes.  Messages are guaranteed
