@@ -238,6 +238,32 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/">
+        Three idioms for appending values&mdash;a damaging decision?
+      </a>
+    </h1>
+    
+    <span class="post-date">07 Mar 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p><b>Update:</b> See also the <a href="/2017/03/09/a-simpler-fourth-idiom-for-appending/">next post</a>, which adds a fourth idiom and mitigates some of the criticisms in the conclusion of this post.</p>
+
+<p>The <a href="/2017/02/22/iterators-a-failure-case/">STL code for squaring the positive values</a>, included the following lines to create the intermediate result <code>t1</code> containing the positive values of the original list <code>a</code>:</p>
+
+ <a href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="/2017/03/03/iterators-arent-the-problem-they-just-enable-it/">
         Iterators aren’t the problem, they just enable it
       </a>
@@ -332,30 +358,6 @@
 <p>STL iterators and algorithms really can’t be discussed without also talking about lambdas. Although the STL design predates the introduction of lambdas by almost two decades, the introduction of lambdas in C++ 2011 improved the usability of STL algorithms substantially.  I don’t have statistics but I presume that the STL algorithms now receive substantially more use due to the greater simplicity of passing callbacks as lambdas rather than instances of named classes. Lambdas are purely a matter of convenience—they introduce nothing to the language that you couldn’t do before—but by making common use cases more convenient, they effectively extend the range of use cases where calling a standard algorithm makes sense.</p>
 
  <a href="/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2017/02/22/iterators-a-failure-case/">
-        Iterators: A failure case
-      </a>
-    </h1>
-    
-    <span class="post-date">22 Feb 2017
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/C++">C++</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>In my first post on iterators, I presented a case where they work well.  In this post, I’ll present a clear failure and begin discussing why the deep structure of the design leads to this failure.</p>
-
- <a href="/2017/02/22/iterators-a-failure-case/">more ...</a>
   </div>
   
 </div>

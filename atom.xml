@@ -4,13 +4,160 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2019-05-10T12:57:04-07:00</updated>
+ <updated>2019-05-29T18:47:21-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Generalized distributed consensus in PlusCal: Introduction</title>
+   <link href="/2019/05/29/distributed-consensus-intro/"/>
+   <updated>2019-05-29T00:00:00-07:00</updated>
+   <id>/2019/05/29/distributed-consensus-intro</id>
+   <content type="html">&lt;p&gt;&lt;em&gt;First in a series describing Howard &amp;amp; Mortier’s generalization of
+distributed consensus, expressed in PlusCal.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;This post begins a new series, which I expect to interleave with the
+&lt;a href=&quot;/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/&quot;&gt;series on failure tolerance&lt;/a&gt;.
+This series is inspired by the recent paper by Heidi Howard and
+Richard Mortier,
+&lt;a href=&quot;https://arxiv.org/abs/1902.06776&quot;&gt;“A Generalized Solution to Distributed Consensus”&lt;/a&gt;,
+which presents selected results from
+&lt;a href=&quot;https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-935.pdf&quot;&gt;Howard’s dissertation&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Distributed consensus is a core problem in distributed systems,
+applied to use cases ranging from
+storing configuration metadata for a replicated, high-availability
+service to ensuring consistency in distributed storage systems.
+Approaches to distributed consensus include the
+&lt;a href=&quot;http://paxos.systems/&quot;&gt;Paxos algorithm&lt;/a&gt;, the
+&lt;a href=&quot;https://distributedalgorithm.wordpress.com/2015/06/20/architecture-of-zab-zookeeper-atomic-broadcast-protocol/&quot;&gt;ZAB protocol&lt;/a&gt;,
+and the &lt;a href=&quot;https://raft.github.io/&quot;&gt;Raft algorithm&lt;/a&gt;. Although these have
+typically been presented as distinct (indeed, Raft was proposed as a
+more understandable alternative to Paxos), Howard treats them
+all as variants of Paxos.&lt;/p&gt;
+
+&lt;p&gt;There is an enormous literature on Paxos. Three
+particularly good starting points are, in order of reading:&lt;/p&gt;
+
+&lt;dl&gt;
+  &lt;dt&gt;&lt;a href=&quot;https://understandingpaxos.wordpress.com/&quot;&gt;Tom Cocagne’s “Understanding Paxos”&lt;/a&gt;&lt;/dt&gt;
+  &lt;dd&gt;The best starting point for those with a focus on the algorithm’s
+application. A gradual introduction to the algorithm, followed by
+discussion of the variants most commonly used in production. Cocagne
+also has a corresponding Python implementations of
+&lt;a href=&quot;https://github.com/cocagne/python-composable-paxos&quot;&gt;the basic algorithm&lt;/a&gt;
+and the more complex but higher-performance
+&lt;a href=&quot;https://github.com/cocagne/multi-paxos-example&quot;&gt;Multi-Paxos variant&lt;/a&gt;. This
+latter code could, with further engineering, serve as a basis for
+production use.
+
+    &lt;p&gt;Cocagne’s description and implementations have one important
+restriction however: They require a fixed configuration of
+replicas. Although his Multi-Paxos code provides for a crashed
+replica to restart and catch up, the only way to bring a &lt;em&gt;new&lt;/em&gt;
+replica into the configuration is to shut them all down and bring up
+a new set including the new replica.  The next paper presents a
+version that accommodates this process.&lt;/p&gt;
+  &lt;/dd&gt;
+  &lt;dt&gt;&lt;a href=&quot;http://paxos.systems/&quot;&gt;Altınbüken and van Renesse’s “Paxos Made Moderately Complex”&lt;/a&gt;&lt;/dt&gt;
+  &lt;dd&gt;An excellent second source, this is an interactive version of the
+authors’
+&lt;a href=&quot;https://dl.acm.org/citation.cfm?id=2673577&quot;&gt;2015 Computing Surveys paper&lt;/a&gt;,
+providing a readable presentation of the most commonly-used
+production variant, Multi-Paxos with reconfiguration. They include a
+Python implementation, although their version is oriented to
+demonstration and classroom use.  In particular, the replicas all
+run in a single process, communicating via a simulated
+network. Unlike Cacogne’s version, this one supports
+&lt;em&gt;reconfiguration&lt;/em&gt;, the capacity to replace failing replicas while
+the algorithm runs.&lt;/dd&gt;
+  &lt;dt&gt;&lt;a href=&quot;https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-935.pdf&quot;&gt;Howard’s dissertation, “Distributed Consensus Revised”&lt;/a&gt;&lt;/dt&gt;
+  &lt;dd&gt;This is a complete, very readable, and systematic introduction to
+Paxos and its variants. The first two chapters present the basic
+algorithm, while the later ones explore variants and
+extensions. Howard’s work extends Paxos, so this paper includes
+variations not described in the first two. The paper also provides
+proofs of all its results, making it the most formal of the
+three. An excellent followup to the the first two, providing a
+rigorous background to the consensus problem. No code is
+provided—all algorithms are presented in pseudocode.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;p&gt;All of these include links to other important papers on the topic,
+providing a view of the major work in the topic.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-goals-of-this-series&quot;&gt;The goals of this series&lt;/h2&gt;
+
+&lt;p&gt;Given the plethora of existing descriptions, why add another? I do not
+aim to present another tutorial—the above three are
+sufficient. My focus instead is supplementing them,
+particularly in light of the new Howard
+and Mortier paper. I want to:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Bring the introductions up to date:&lt;/strong&gt; Howard’s doctoral research significantly extended the range of
+possible algorithms. Her paper with Mortier further extends this work.
+The first two introductions above do not include any of this
+work and even the dissertation is slightly out of date.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Present the algorithms precisely, in machine-evaluable form:&lt;/strong&gt; The dissertation and paper present some algorithms in pseudocode
+and others solely via informal description. In contrast, a PlusCal representation
+is precise and evaluable by a model checker.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Integrate the invariants and algorithms in a common notation:&lt;/strong&gt;
+A key contribution of Howard’s work is the isolation of more basic
+correctness invariants than those
+used in earlier papers. These new
+invariants and their use in proofs are
+presented separately from the algorithms.  Using
+PlusCal, the invariants can instead be
+incorporated directly into the algorithms and model checked.&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Provide examples of model checking the algorithms:&lt;/strong&gt; Testing
+continuously-running services such as consensus is particularly
+difficult. A good test suite should exercise many different
+state sequences of the algorithm. For consensus, those alternate
+sequences arise due to timing differences.&lt;/p&gt;
+
+    &lt;p&gt;Although generating
+alternate timings is hard for an executable program, this is
+easy to for a PlusCal algorithm, using the TLC model checker.  For
+small model configurations, TLC can test every state exhaustively,
+proving correctness of the algorithm for a model of that size. For larger
+configurations, TLC can test randomly-selected state
+sequences. This latter result is less conclusive than an
+exhaustive search but provides more confidence in the algorithm
+than testing an executable version.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;some-limitations-of-using-pluscal&quot;&gt;Some limitations of using PlusCal&lt;/h2&gt;
+
+&lt;p&gt;In addition to the advantages described above, representing the
+algorithms in PlusCal has disadvantages relative to the pseudocode
+used in Howard and Mortier’s paper and Howard’s dissertation:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The PlusCal representation requires a greater level of detail. This
+includes both representing system features such as the network, as
+well as the exact contents of messages.&lt;/li&gt;
+  &lt;li&gt;Given the goal of model-checking the algorithms, the
+PlusCal representation will be influenced by choices that make the
+checking tractable on small hardware. For example, the detailed network
+model that I will present in the initial posts dramatically
+increases checking time, while a simplistic network model, which can be
+checked more quickly, imposes a restatement of the actual
+algorithm. This balance is inherent any time an algorithm is to be
+model checked; I introduce it here because it influences choices
+throughout the series.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;With that introduction, my next post will describe why the distributed
+consensus can be so challenging.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Simulation checks of the PlusCal version of Lamport's algorithm</title>
@@ -125,7 +272,7 @@ are preserved, as they are by the HTML &lt;code class=&quot;highlighter-rouge&qu
   &lt;span class=&quot;s&quot;&gt;Deadlock&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;false&lt;/span&gt;
   &lt;span class=&quot;s&quot;&gt;Invariants&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TypeOK&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Mutex&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;MutualExclusion&lt;/span&gt;
 
 &lt;span class=&quot;s&quot;&gt;Run-type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
   &lt;span class=&quot;s&quot;&gt;Simulation&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;

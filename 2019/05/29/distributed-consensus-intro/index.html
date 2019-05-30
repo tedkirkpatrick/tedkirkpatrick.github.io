@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
+  <meta name="author" content="Arthur E. Kirkpatrick">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Generalized distributed consensus in PlusCal: Introduction &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66576928-4', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- Begin Jekyll SEO tag v2.2.3 -->
+<meta property="og:title" content="Generalized distributed consensus in PlusCal: Introduction" />
+<meta name="author" content="Ted Kirkpatrick" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="First in a series describing Howard &amp; Mortier’s generalization of distributed consensus, expressed in PlusCal." />
+<meta property="og:description" content="First in a series describing Howard &amp; Mortier’s generalization of distributed consensus, expressed in PlusCal." />
+<meta property="og:site_name" content="All my marbles in one place" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-05-29T00:00:00-07:00" />
+<script type="application/ld+json">
+{"@context":"http://schema.org","@type":"BlogPosting","headline":"Generalized distributed consensus in PlusCal: Introduction","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2019-05-29T00:00:00-07:00","dateModified":"2019-05-29T00:00:00-07:00","description":"First in a series describing Howard &amp; Mortier’s generalization of distributed consensus, expressed in PlusCal.","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/05/29/distributed-consensus-intro/"},"url":"/2019/05/29/distributed-consensus-intro/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/comment-policy/">Comment policy</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	   
+	    <a href="/tag/Python/">Python</a>,
+	  
+        
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
+	   
+	    <a href="/tag/Big data/">Big data</a>,
+	  
+        
+	   
+	    <a href="/tag/Soft skills/">Soft skills</a>,
+	  
+        
+	   
+	    <a href="/tag/Statistics/">Statistics</a>,
+	  
+        
+	   
+	    <a href="/tag/Experimental design/">Experimental design</a>,
+	  
+        
+	   
+	    <a href="/tag/Rhetoric/">Rhetoric</a>,
+	  
+        
+	   
+	    <a href="/tag/Admin/">Admin</a>,
+	  
+        
+	  	    
+            <a href="/tag/Distributed systems/">Distributed systems</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2019. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Generalized distributed consensus in PlusCal: Introduction</h1>
+  <span class="post-date">29 May 2019
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/Distributed systems">Distributed systems</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p><em>First in a series describing Howard &amp; Mortier’s generalization of
+distributed consensus, expressed in PlusCal.</em></p>
+
+<p>This post begins a new series, which I expect to interleave with the
+<a href="/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/">series on failure tolerance</a>.
+This series is inspired by the recent paper by Heidi Howard and
+Richard Mortier,
+<a href="https://arxiv.org/abs/1902.06776">“A Generalized Solution to Distributed Consensus”</a>,
+which presents selected results from
+<a href="https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-935.pdf">Howard’s dissertation</a>.</p>
+
+<p>Distributed consensus is a core problem in distributed systems,
+applied to use cases ranging from
+storing configuration metadata for a replicated, high-availability
+service to ensuring consistency in distributed storage systems.
+Approaches to distributed consensus include the
+<a href="http://paxos.systems/">Paxos algorithm</a>, the
+<a href="https://distributedalgorithm.wordpress.com/2015/06/20/architecture-of-zab-zookeeper-atomic-broadcast-protocol/">ZAB protocol</a>,
+and the <a href="https://raft.github.io/">Raft algorithm</a>. Although these have
+typically been presented as distinct (indeed, Raft was proposed as a
+more understandable alternative to Paxos), Howard treats them
+all as variants of Paxos.</p>
+
+<p>There is an enormous literature on Paxos. Three
+particularly good starting points are, in order of reading:</p>
+
+<dl>
+  <dt><a href="https://understandingpaxos.wordpress.com/">Tom Cocagne’s “Understanding Paxos”</a></dt>
+  <dd>The best starting point for those with a focus on the algorithm’s
+application. A gradual introduction to the algorithm, followed by
+discussion of the variants most commonly used in production. Cocagne
+also has a corresponding Python implementations of
+<a href="https://github.com/cocagne/python-composable-paxos">the basic algorithm</a>
+and the more complex but higher-performance
+<a href="https://github.com/cocagne/multi-paxos-example">Multi-Paxos variant</a>. This
+latter code could, with further engineering, serve as a basis for
+production use.
+
+    <p>Cocagne’s description and implementations have one important
+restriction however: They require a fixed configuration of
+replicas. Although his Multi-Paxos code provides for a crashed
+replica to restart and catch up, the only way to bring a <em>new</em>
+replica into the configuration is to shut them all down and bring up
+a new set including the new replica.  The next paper presents a
+version that accommodates this process.</p>
+  </dd>
+  <dt><a href="http://paxos.systems/">Altınbüken and van Renesse’s “Paxos Made Moderately Complex”</a></dt>
+  <dd>An excellent second source, this is an interactive version of the
+authors’
+<a href="https://dl.acm.org/citation.cfm?id=2673577">2015 Computing Surveys paper</a>,
+providing a readable presentation of the most commonly-used
+production variant, Multi-Paxos with reconfiguration. They include a
+Python implementation, although their version is oriented to
+demonstration and classroom use.  In particular, the replicas all
+run in a single process, communicating via a simulated
+network. Unlike Cacogne’s version, this one supports
+<em>reconfiguration</em>, the capacity to replace failing replicas while
+the algorithm runs.</dd>
+  <dt><a href="https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-935.pdf">Howard’s dissertation, “Distributed Consensus Revised”</a></dt>
+  <dd>This is a complete, very readable, and systematic introduction to
+Paxos and its variants. The first two chapters present the basic
+algorithm, while the later ones explore variants and
+extensions. Howard’s work extends Paxos, so this paper includes
+variations not described in the first two. The paper also provides
+proofs of all its results, making it the most formal of the
+three. An excellent followup to the the first two, providing a
+rigorous background to the consensus problem. No code is
+provided—all algorithms are presented in pseudocode.</dd>
+</dl>
+
+<p>All of these include links to other important papers on the topic,
+providing a view of the major work in the topic.</p>
+
+<h2 id="the-goals-of-this-series">The goals of this series</h2>
+
+<p>Given the plethora of existing descriptions, why add another? I do not
+aim to present another tutorial—the above three are
+sufficient. My focus instead is supplementing them,
+particularly in light of the new Howard
+and Mortier paper. I want to:</p>
+
+<ol>
+  <li><strong>Bring the introductions up to date:</strong> Howard’s doctoral research significantly extended the range of
+possible algorithms. Her paper with Mortier further extends this work.
+The first two introductions above do not include any of this
+work and even the dissertation is slightly out of date.</li>
+  <li><strong>Present the algorithms precisely, in machine-evaluable form:</strong> The dissertation and paper present some algorithms in pseudocode
+and others solely via informal description. In contrast, a PlusCal representation
+is precise and evaluable by a model checker.</li>
+  <li><strong>Integrate the invariants and algorithms in a common notation:</strong>
+A key contribution of Howard’s work is the isolation of more basic
+correctness invariants than those
+used in earlier papers. These new
+invariants and their use in proofs are
+presented separately from the algorithms.  Using
+PlusCal, the invariants can instead be
+incorporated directly into the algorithms and model checked.</li>
+  <li>
+    <p><strong>Provide examples of model checking the algorithms:</strong> Testing
+continuously-running services such as consensus is particularly
+difficult. A good test suite should exercise many different
+state sequences of the algorithm. For consensus, those alternate
+sequences arise due to timing differences.</p>
+
+    <p>Although generating
+alternate timings is hard for an executable program, this is
+easy to for a PlusCal algorithm, using the TLC model checker.  For
+small model configurations, TLC can test every state exhaustively,
+proving correctness of the algorithm for a model of that size. For larger
+configurations, TLC can test randomly-selected state
+sequences. This latter result is less conclusive than an
+exhaustive search but provides more confidence in the algorithm
+than testing an executable version.</p>
+  </li>
+</ol>
+
+<h2 id="some-limitations-of-using-pluscal">Some limitations of using PlusCal</h2>
+
+<p>In addition to the advantages described above, representing the
+algorithms in PlusCal has disadvantages relative to the pseudocode
+used in Howard and Mortier’s paper and Howard’s dissertation:</p>
+
+<ol>
+  <li>The PlusCal representation requires a greater level of detail. This
+includes both representing system features such as the network, as
+well as the exact contents of messages.</li>
+  <li>Given the goal of model-checking the algorithms, the
+PlusCal representation will be influenced by choices that make the
+checking tractable on small hardware. For example, the detailed network
+model that I will present in the initial posts dramatically
+increases checking time, while a simplistic network model, which can be
+checked more quickly, imposes a restatement of the actual
+algorithm. This balance is inherent any time an algorithm is to be
+model checked; I introduce it here because it influences choices
+throughout the series.</li>
+</ol>
+
+<p>With that introduction, my next post will describe why the distributed
+consensus can be so challenging.</p>
+
+
+</div>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+this.page.url = "http://kirkpatricktech.com/2019/05/29/distributed-consensus-intro/";
+//this.page.identifier = "/2019/05/29/distributed-consensus-intro";
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://kirkpatricktech-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
+  </body>
+</html>
