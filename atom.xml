@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2019-05-29T18:47:21-07:00</updated>
+ <updated>2019-06-12T14:16:58-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -13,19 +13,413 @@
 
  
  <entry>
+   <title>Why is distributed consensus so hard?</title>
+   <link href="/2019/06/12/why-consensus-is-hard/"/>
+   <updated>2019-06-12T00:00:00-07:00</updated>
+   <id>/2019/06/12/why-consensus-is-hard</id>
+   <content type="html">&lt;p&gt;&lt;em&gt;Second in a series describing Howard &amp;amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry &lt;a href=&quot;/2019/05/29/distributed-consensus-intro/&quot;&gt;introduced the source papers&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;I begin this series on distributed consensus by stepping back from
+the details, considering why the problem seems so hard and
+specifically why literature on the problem is so difficult to read.
+This ultimately results from the breadth of issues that must
+be addressed by any solution. “Distributed consensus” isn’t a single
+problem so much as a class of problems, with related but distinct
+solutions. Before describing the specific focus of
+Howard and Mortier’s paper, I want to set the broader context. This context
+will help readers who want to apply these results to different forms
+of consensus.&lt;/p&gt;
+
+&lt;p&gt;I’d like to acknowledge the strong influence of Tom Cacogne’s
+&lt;a href=&quot;https://understandingpaxos.wordpress.com/&quot;&gt;“Understanding Paxos”&lt;/a&gt; on
+this post, in particular his early sections providing a high-level
+description of Paxos.&lt;/p&gt;
+
+&lt;p&gt;So why is distributed consensus so hard, not just to solve, but to even
+describe?  Turns out there’s a &lt;em&gt;lot&lt;/em&gt; of reasons.&lt;/p&gt;
+
+&lt;h2 id=&quot;you-cant-get-what-you-really-want&quot;&gt;1. You can’t get what you really want&lt;/h2&gt;
+
+&lt;p&gt;The
+&lt;a href=&quot;https://groups.csail.mit.edu/tds/papers/Lynch/jacm85.pdf&quot;&gt;Fischer, Lynch, and Paterson (1985) paper&lt;/a&gt;
+presents a fundamental limitation on distributed consensus
+algorithms: For realistic levels of reliability, no algorithm can be
+guaranteed to complete. In consequence, the algorithms can only make a less
+powerful guarantee: Although processes are not guaranteed to complete,
+any that do will agree on the same value. In the language of
+concurrent programming, the algorithms guarantee &lt;em&gt;safety&lt;/em&gt; but not &lt;em&gt;liveness&lt;/em&gt;.
+Careful reliability engineering can make the probability of completion
+high but never 100%.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-scope-matters&quot;&gt;2. The scope matters&lt;/h2&gt;
+
+&lt;p&gt;Writers assume different scopes for their articles. Some only consider
+the consensus-making processes. Others include the processes that
+consume the consensus results. Still others distinguish between
+processes that request a consensus and those that consume the results.
+Some versions include the option of backup processes whose only role
+is to observe and track the decisions but not participate in making
+them.&lt;/p&gt;
+
+&lt;h2 id=&quot;there-are-many-ways-of-defining-roles&quot;&gt;3. There are many ways of defining roles&lt;/h2&gt;
+
+&lt;p&gt;Paxos is typically described in terms of a collection of a concurrent,
+replicated roles. Each role executes a specific algorithm, typically
+comprising an infinite loop consuming messages from
+the other roles and sending them replies.&lt;/p&gt;
+
+&lt;p&gt;These roles have been defined in many ways. Some particularly common
+roles have been assigned different names, even by the same author at
+different times.  For example, in her dissertation Howard names the two key
+roles Proposer and Acceptor, while her paper with Mortier names those
+same roles Client and Server. Lamport’s
+&lt;a href=&quot;https://lamport.azurewebsites.net/pubs/paxos-simple.pdf&quot;&gt;“Paxos Made Simple”&lt;/a&gt;
+separates Howard’s Proposer (AKA Client) role into distinct Proposer and
+Learner roles.&lt;/p&gt;
+
+&lt;p&gt;The number and names of roles is also affected by the author’s scope.
+Altınbüken and van Renesse’s
+&lt;a href=&quot;http://paxos.systems/&quot;&gt;“Paxos Made Moderately Complex”&lt;/a&gt; expands the
+scope to include Replicas, which consume the consensus results to
+execute a replicated state machine algorithm&lt;/p&gt;
+
+&lt;p&gt;The following table correlates the distinct names several authors have
+used for similar roles:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Paxos_(computer_science)&quot;&gt;Wikipedia&lt;/a&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;a href=&quot;https://understandingpaxos.wordpress.com/&quot;&gt;Cacogne&lt;/a&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;a href=&quot;http://paxos.systems/how.html&quot;&gt;Altınbüken &amp;amp; van Renesse&lt;/a&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;a href=&quot;https://lamport.azurewebsites.net/pubs/lamport-paxos.pdf&quot;&gt;Lamport (1998)&lt;/a&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;a href=&quot;https://lamport.azurewebsites.net/pubs/paxos-simple.pdf&quot;&gt;Lamport (2001)&lt;/a&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;a href=&quot;https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-935.pdf&quot;&gt;Howard&lt;/a&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;a href=&quot;https://arxiv.org/abs/1902.06776&quot;&gt;Howard &amp;amp; Mortier&lt;/a&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Client&lt;/td&gt;
+      &lt;td&gt;—&lt;/td&gt;
+      &lt;td&gt;Client&lt;/td&gt;
+      &lt;td&gt;Citizen&lt;/td&gt;
+      &lt;td&gt;—&lt;/td&gt;
+      &lt;td&gt;—&lt;/td&gt;
+      &lt;td&gt;—&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Proposer&lt;/td&gt;
+      &lt;td&gt;Suggester&lt;/td&gt;
+      &lt;td&gt;Leader (including Commander and Scout)&lt;/td&gt;
+      &lt;td&gt;President&lt;/td&gt;
+      &lt;td&gt;Proposer&lt;/td&gt;
+      &lt;td&gt;Proposer&lt;/td&gt;
+      &lt;td&gt;Client&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Acceptor&lt;/td&gt;
+      &lt;td&gt;Voter&lt;/td&gt;
+      &lt;td&gt;Acceptor&lt;/td&gt;
+      &lt;td&gt;Priest&lt;/td&gt;
+      &lt;td&gt;Acceptor&lt;/td&gt;
+      &lt;td&gt;Acceptor&lt;/td&gt;
+      &lt;td&gt;Server&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Learner&lt;/td&gt;
+      &lt;td&gt;Arbiter&lt;/td&gt;
+      &lt;td&gt;Replica&lt;/td&gt;
+      &lt;td&gt;—&lt;/td&gt;
+      &lt;td&gt;Learner&lt;/td&gt;
+      &lt;td&gt;—&lt;/td&gt;
+      &lt;td&gt;—&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Many of the authors also designate a specific
+Proposer/Suggester/Client as the “Leader”. The Leader designation
+simply indicates priority amongst otherwise identical processes; any
+member of that class may be promoted to Leader if the current one falls short.
+Note also that only one of Altınbüken &amp;amp; van Renesse’s
+“Leader”s is a leader in this sense.&lt;/p&gt;
+
+&lt;p&gt;The correspondences above are not necessarily exact, due to the
+differing ways the authors separate Paxos into
+roles, but they are close.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-fundamental-concepts-have-multiple-names&quot;&gt;4. The fundamental concepts have multiple names&lt;/h2&gt;
+
+&lt;p&gt;Several times, the consensus literature has suffered the fate of defining
+perfectly good terms for basic concepts, only to have the field later
+select those same terms to mean something completely different. For
+example, Lamport’s original Paxos papers defined “instance” to mean a
+single consensual decision. This worked well in the 1990s but in the
+intervening years, “instance” has more commonly come to mean
+individual virtual machines (such as Amazon EC2 instances) or
+individual copies of replicated services. Given that consensus is now
+most often used in environments based on cloud technology or
+replicated services, this formerly straightforward
+nomenclature is now ambiguous.&lt;/p&gt;
+
+&lt;p&gt;Combining these historical redefinitions with the multiplicity of role
+names (Point 3 above), we get a nomenclature that is
+several times larger than the actual number of concepts it describes.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-basic-algorithm-leaves-many-key-decisions-to-implementation&quot;&gt;5. The basic algorithm leaves many key decisions to implementation&lt;/h2&gt;
+
+&lt;p&gt;The basic consensus algorithm makes a single decision, runs on a
+set configuration, and makes no guarantee of ever completing. Actual
+implementations must at the very least include mechanisms ensuring a
+high probability of completion and typically need to account for
+an entire sequence of decisions, potentially executed on a changing
+configuration as replicas fail.  Variants of consensus include more or
+less of these implementation choices.&lt;/p&gt;
+
+&lt;h2 id=&quot;there-are-several-metrics-of-efficiency&quot;&gt;6. There are several metrics of efficiency&lt;/h2&gt;
+
+&lt;p&gt;The metrics for the efficiency of a consensus algorithm typically
+count the number of hops (often counted as round-trips) required to
+complete a single decision, rather than its computation or memory
+requirements. Within this broad definition remains plenty of room for
+variation.&lt;/p&gt;
+
+&lt;p&gt;For example, the scope affects the round trip count. If the scope
+includes the ultimate client (which I will refer to in this series as
+the “service client”), then the count will include the round trip from
+that client to the service endpoint. Including the service client has
+more subtle implications than just concatening an extra trip on the
+count of a more basic algorithm. Some algorithms, such as Lamport’s
+&lt;a href=&quot;http://research.microsoft.com/pubs/64624/tr-2005-112.pdf&quot;&gt;Fast Paxos&lt;/a&gt;,
+are designed to allow the service client to bypass the Leader and
+propose values directly to the Acceptors, reducing the round
+trip count.&lt;/p&gt;
+
+&lt;p&gt;In some use cases, there are different types of round trips, with
+different expected latencies.  For example, trips between regions,
+with their longer geographic distances, are typically much slower than
+trips between datacentres within a region, which in turn are longer
+than trips within a single datacentre. For high availability, services
+that require consensus algorithms may well use a mix of intra- and
+inter-datacentre processes. For these systems, a design might aim to
+minimize the more expensive round trips between datacentres.&lt;/p&gt;
+
+&lt;h3 id=&quot;latency-versus-throughput&quot;&gt;Latency versus throughput&lt;/h3&gt;
+
+&lt;p&gt;Performance analysis of consensus algorithms can emphasize latency or
+throughput. Latency is directly correlated to the number of
+hops on the path of a single request from a service client through
+consensus and back—more hops increases the latency. Throughput, on
+the other hand, is inversely correlated to the number of messages sent
+between participating processes. An algorithm that requires messages
+be sent between every participating process will have lower throughput
+than one that only requires intercommunication between a fraction of
+them, even if both algorithms have the same number of hops in their
+paths and hence the same latency.&lt;/p&gt;
+
+&lt;p&gt;Message throughput is limited by network bandwidth and the concurrent
+traffic on the same links for other services. Where latency’s limiting
+factor, the number of hops, is inherent to the algorithm’s design,
+message throughput can be purchased by increasing network capacity or
+reducing concurrent traffic.&lt;/p&gt;
+
+&lt;p&gt;In organizational terms, latency and throughput are often different
+types of concerns, with latency being a team’s service target and
+network bandwidth being a cost they spend to reach that target.&lt;/p&gt;
+
+&lt;h3 id=&quot;coalesced-roles-improve-latency-and-throughput&quot;&gt;Coalesced roles improve latency and throughput&lt;/h3&gt;
+
+&lt;p&gt;Both the latency and throughput of consensus are improved by
+coalescing the multiple roles onto single processors. For example,
+every role other than “Client” in the Wikipedia column of the above
+table may be coalesced onto multiple threads on a processor or even
+(using asynchronous, nonblocking IO) a single thread. This eliminates
+the messages between roles on that processor but does not reduce the
+diameter or complexity of the algorithm, which arise from the
+requirement to communicate decisions between the designated Leader and
+the Acceptors running on different processors.&lt;/p&gt;
+
+&lt;h3 id=&quot;persistent-writes-may-limit-performance&quot;&gt;Persistent writes may limit performance&lt;/h3&gt;
+
+&lt;p&gt;In addition to message-passing, consensus may be limited by the rate
+of persistent writes. Most practical implementations are designed so
+that when an Acceptor crashes, it restarts and rejoins the
+consensus process. In order to restart, each Acceptor must retain an
+essential part of its state in persistent storage. This typically
+means writing that state before sending any reply to a request
+from the Leader. Cacogne notes (see his
+&lt;a href=&quot;https://understandingpaxos.wordpress.com/&quot;&gt;“Constituent Components”&lt;/a&gt;
+section) that this is “far and away the biggest performance bottleneck
+for most implementations”.&lt;/p&gt;
+
+&lt;p&gt;Most descriptions of consensus algorithms specifically designate the
+portion of the Acceptor state that must be persistently retained for
+implementations that support restarting after a crash.&lt;/p&gt;
+
+&lt;h2 id=&quot;there-are-several-definitions-of-fault-tolerant&quot;&gt;7. There are several definitions of “fault-tolerant”&lt;/h2&gt;
+
+&lt;p&gt;Distributed consensus is typically used for its fault-tolerance.  But
+what kinds of faults must it tolerate?&lt;/p&gt;
+
+&lt;h3 id=&quot;tolerating-crashes&quot;&gt;Tolerating crashes&lt;/h3&gt;
+
+&lt;p&gt;The most basic form of reliability is tolerating crashes. The
+classical consensus algorithms tolerate &lt;em&gt;crash-stop&lt;/em&gt; failure, in which
+a process either runs correctly or it crashes, never to participate
+again. Consensus algorithms are parameterized by &lt;em&gt;f&lt;/em&gt;, the maximum
+number of processes that can crash without preventing consensus from
+progressing.&lt;/p&gt;
+
+&lt;p&gt;A related but independent form of fault tolerance is &lt;em&gt;crash recovery&lt;/em&gt;:
+If a process crashes, it can restart, recover its prior state, and
+rejoin the consensus process. If the recovery is fast enough, the
+other processes may only observe a longer message reply time. Crash
+recovery is not a property of an algorithm, but of its implementation.
+As noted above, the choice to support crash recovery makes throughput
+of persistent storage a potential performance bottleneck.&lt;/p&gt;
+
+&lt;h3 id=&quot;tolerating-network-errors&quot;&gt;Tolerating network errors&lt;/h3&gt;
+
+&lt;p&gt;Modern networks are well-engineered but
+&lt;a href=&quot;https://github.com/aphyr/partitions-post&quot;&gt;outages nonetheless occur&lt;/a&gt;.
+There are several types of errors:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Delayed delivery&lt;/li&gt;
+  &lt;li&gt;Message loss&lt;/li&gt;
+  &lt;li&gt;Out of order delivery&lt;/li&gt;
+  &lt;li&gt;Partition: The cluster is divided into two parts that cannot
+communicate with each other&lt;/li&gt;
+  &lt;li&gt;Duplicate delivery&lt;/li&gt;
+  &lt;li&gt;Forgery: A message purports to
+originate from a process other than its actual sender&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Classical consensus algorithms are designed to tolerate all of these
+but the last. They assume an asynchronous network model, which permits
+arbitrarily long message delivery times, which implies not only
+delays but also subsumes message loss (the message was delayed long
+enough for the prospective recipient to give up) and out of order
+delivery (the message sent later had a shorter delay than the one sent
+earlier). Although tolerance of duplicate delivery may not be
+explicitly specified, widely-used consensus algorithms tolerate them
+as well.&lt;/p&gt;
+
+&lt;p&gt;The final sort of network errors, forged messages, are only
+correctly handled by the Byzantine-tolerant algorithms described next.&lt;/p&gt;
+
+&lt;h3 id=&quot;tolerating-incorrect-or-hijacked-processes&quot;&gt;Tolerating incorrect or hijacked processes&lt;/h3&gt;
+
+&lt;p&gt;The standard definition of fault tolerance does not protect against a
+misbehaving process, which due to a bug or control by malicious
+hackers can violate safety requirements. It also does not protect
+against message forgery.&lt;/p&gt;
+
+&lt;p&gt;Consensus algorithms that perform reliably in the presence of buggy or
+deliberately malicious processes are called &lt;em&gt;Byzantine fault-tolerant&lt;/em&gt;.
+&lt;a href=&quot;https://lamport.azurewebsites.net/tla/byzsimple.pdf&quot;&gt;Byzantine fault-tolerant versions of Paxos&lt;/a&gt;
+have been developed but they have longer latencies, sustain lower
+throughput, and require more processors to achieve a given level of
+availability. Unless specifically stated to be so,
+consensus algorithms are not Byzantine fault-tolerant.&lt;/p&gt;
+
+&lt;h2 id=&quot;there-is-a-tension-between-clarity-and-practicality&quot;&gt;8. There is a tension between clarity and practicality&lt;/h2&gt;
+
+&lt;p&gt;Descriptions of consensus have to trade off between elegant proofs and
+practical algorithms. For example,
+&lt;a href=&quot;https://lamport.azurewebsites.net/pubs/lamport-paxos.pdf&quot;&gt;Lamport’s original paper&lt;/a&gt;
+develops Paxos sequentially:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Mathematicians derived the Synod protocol in a series of steps.
+First, they proved results showing that a protocol satisfying
+certain constraints would guarantee consistency and allow progress.
+A &lt;em&gt;preliminary protocol&lt;/em&gt; was then derived directly from these
+constraints. A restricted version of the preliminary protocol
+provided the &lt;em&gt;basic protocol&lt;/em&gt; that guaranteed consistency, but not
+progress. The complete Synod protocol, satisfying the consistency
+and progress requirements, was obtained by restricting the basic
+protocol. [pp. 136–137; emphasis in original]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In the final step, he extends the Synod protocol into the Parliamentary
+protocol, what we now call Multi-Paxos.&lt;/p&gt;
+
+&lt;p&gt;Such sequential reasoning makes for an elegant proof, with the
+safety invariants driving the development of the algorithm. But it has
+the disadvantage of spreading the logic of the algorithm across
+multiple representations. If your goal is to locate an algorithm
+suitable for production use, you have to work through the sequence
+when what you actually want is the final algorithm, combined with a
+systematic presentation of its invariants.&lt;/p&gt;
+
+&lt;h2 id=&quot;crucial-details-are-left-to-the-implementation&quot;&gt;9. Crucial details are left to the implementation&lt;/h2&gt;
+
+&lt;p&gt;The core purpose of consensus algorithms is ensuring safety: All
+processes that complete should agree on a single value. Ensuring
+liveness, that the processes are very likely to progress to
+completion, is secondary (recall that the FLP Theorem states that no
+algorithm can &lt;em&gt;guarantee&lt;/em&gt; completion in the presence of processes
+crashing). There are multiple approaches for supporting progress, within
+the constraint that they not compromise the invariants upon
+which safety depends.&lt;/p&gt;
+
+&lt;p&gt;This provides useful flexibility for the implementor, who can choose
+methods most appropriate to their use case. But it can make
+descriptions of consensus algorithms incomplete, as a paper may focus
+on the safety guarantees and leave techniques for ensuring
+progress up to the reader.&lt;/p&gt;
+
+&lt;p&gt;When combined with the clarity/practicality tension described above,
+the result can be descriptions that leave the reader far from ready to
+implement a system.&lt;/p&gt;
+
+&lt;p&gt;For the sake of completeness, I note that proponents of the Raft
+variant of distributed consensus argue that it is more understandable
+in part because it
+&lt;a href=&quot;https://container-solutions.com/raft-explained-part-1-the-consenus-problem/&quot;&gt;directly incorporates features that are essential for practical use&lt;/a&gt;.
+As my goal in this series is to represent ideas from
+&lt;a href=&quot;https://arxiv.org/abs/1902.06776&quot;&gt;Howard and Mortier’s paper&lt;/a&gt;, which
+focuses on Paxos, I am not going to enter this debate.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Distributed consensus is a rich, complex topic with a long history.
+For any single paper the authors must make specific choices of emphasis, from the
+scope of functionality, to how the algorithm will be separated into
+roles, to how progress will be ensured (if at all), to which
+performance metrics will be emphasized, to which faults will be
+tolerated, to the number of implementation details described.&lt;/p&gt;
+
+&lt;p&gt;Authors will make different choices, with the result that many papers
+describe similar but not quite the same algorithms. Even papers
+describing the same algorithm may use different terms and roles,
+obscuring their common basis. To best understand a paper, locate the
+authors’ context, the choices they have made on the above topics. This
+will help connect this paper to others on the topic.&lt;/p&gt;
+
+&lt;p&gt;With the broad context of consensus laid out, in the next post I turn
+to the specific goals of Howard and Mortier’s paper.&lt;/p&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
    <title>Generalized distributed consensus in PlusCal: Introduction</title>
    <link href="/2019/05/29/distributed-consensus-intro/"/>
    <updated>2019-05-29T00:00:00-07:00</updated>
    <id>/2019/05/29/distributed-consensus-intro</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series describing Howard &amp;amp; Mortier’s generalization of
-distributed consensus, expressed in PlusCal.&lt;/em&gt;&lt;/p&gt;
+distributed consensus, expressed in PlusCal. The next post describes
+&lt;a href=&quot;/2019/06/12/why-consensus-is-hard/&quot;&gt;why consensus is hard&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;This post begins a new series, which I expect to interleave with the
 &lt;a href=&quot;/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/&quot;&gt;series on failure tolerance&lt;/a&gt;.
 This series is inspired by the recent paper by Heidi Howard and
 Richard Mortier,
 &lt;a href=&quot;https://arxiv.org/abs/1902.06776&quot;&gt;“A Generalized Solution to Distributed Consensus”&lt;/a&gt;,
-which presents selected results from
+which extends results from
 &lt;a href=&quot;https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-935.pdf&quot;&gt;Howard’s dissertation&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Distributed consensus is a core problem in distributed systems,
@@ -154,8 +548,8 @@ model checked; I introduce it here because it influences choices
 throughout the series.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;With that introduction, my next post will describe why the distributed
-consensus can be so challenging.&lt;/p&gt;
+&lt;p&gt;With that introduction, my next post will describe &lt;a href=&quot;/2019/06/12/why-consensus-is-hard/&quot;&gt;why distributed
+consensus can be so challenging&lt;/a&gt;.&lt;/p&gt;
 </content>
  </entry>
  
