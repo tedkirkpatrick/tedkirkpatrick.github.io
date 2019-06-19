@@ -400,13 +400,24 @@ several times larger than the actual number of concepts it describes.</p>
 
 <h2 id="the-basic-algorithm-leaves-many-key-decisions-to-implementation">5. The basic algorithm leaves many key decisions to implementation</h2>
 
-<p>The basic consensus algorithm makes a single decision, runs on a
-set configuration, and makes no guarantee of ever completing. Actual
-implementations must at the very least include mechanisms ensuring a
-high probability of completion and typically need to account for
-an entire sequence of decisions, potentially executed on a changing
-configuration as replicas fail.  Variants of consensus include more or
-less of these implementation choices.</p>
+<p>The basic consensus algorithm makes a single decision (called “instance”, in
+the literature), runs on a fixed
+set of processes, and makes no guarantee of ever completing. Actual
+implementations typically include extensions to:</p>
+
+<ul>
+  <li>ensure a high probability of completion</li>
+  <li>handle a sequence of decisions, typically using slots or epochs</li>
+  <li>reconfigure the set of participating processes as members fail</li>
+  <li>restore the state of processes recovering from a crash and
+initialize the state of
+processes added to the configuration</li>
+  <li>garbage collect counters that would otherwise increase without bound</li>
+  <li>reduce message traffic</li>
+</ul>
+
+<p>Variants of consensus include more or less of these implementation
+choices.</p>
 
 <h2 id="there-are-several-metrics-of-efficiency">6. There are several metrics of efficiency</h2>
 
@@ -585,7 +596,7 @@ suitable for production use, you have to work through the sequence
 when what you actually want is the final algorithm, combined with a
 systematic presentation of its invariants.</p>
 
-<h2 id="crucial-details-are-left-to-the-implementation">9. Crucial details are left to the implementation</h2>
+<h2 id="descriptions-emphasize-safety-but-not-liveness">9. Descriptions emphasize safety but not liveness</h2>
 
 <p>The core purpose of consensus algorithms is ensuring safety: All
 processes that complete should agree on a single value. Ensuring

@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2019-06-12T14:16:58-07:00</updated>
+ <updated>2019-06-19T16:51:29-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -169,13 +169,24 @@ several times larger than the actual number of concepts it describes.&lt;/p&gt;
 
 &lt;h2 id=&quot;the-basic-algorithm-leaves-many-key-decisions-to-implementation&quot;&gt;5. The basic algorithm leaves many key decisions to implementation&lt;/h2&gt;
 
-&lt;p&gt;The basic consensus algorithm makes a single decision, runs on a
-set configuration, and makes no guarantee of ever completing. Actual
-implementations must at the very least include mechanisms ensuring a
-high probability of completion and typically need to account for
-an entire sequence of decisions, potentially executed on a changing
-configuration as replicas fail.  Variants of consensus include more or
-less of these implementation choices.&lt;/p&gt;
+&lt;p&gt;The basic consensus algorithm makes a single decision (called “instance”, in
+the literature), runs on a fixed
+set of processes, and makes no guarantee of ever completing. Actual
+implementations typically include extensions to:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;ensure a high probability of completion&lt;/li&gt;
+  &lt;li&gt;handle a sequence of decisions, typically using slots or epochs&lt;/li&gt;
+  &lt;li&gt;reconfigure the set of participating processes as members fail&lt;/li&gt;
+  &lt;li&gt;restore the state of processes recovering from a crash and
+initialize the state of
+processes added to the configuration&lt;/li&gt;
+  &lt;li&gt;garbage collect counters that would otherwise increase without bound&lt;/li&gt;
+  &lt;li&gt;reduce message traffic&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Variants of consensus include more or less of these implementation
+choices.&lt;/p&gt;
 
 &lt;h2 id=&quot;there-are-several-metrics-of-efficiency&quot;&gt;6. There are several metrics of efficiency&lt;/h2&gt;
 
@@ -354,7 +365,7 @@ suitable for production use, you have to work through the sequence
 when what you actually want is the final algorithm, combined with a
 systematic presentation of its invariants.&lt;/p&gt;
 
-&lt;h2 id=&quot;crucial-details-are-left-to-the-implementation&quot;&gt;9. Crucial details are left to the implementation&lt;/h2&gt;
+&lt;h2 id=&quot;descriptions-emphasize-safety-but-not-liveness&quot;&gt;9. Descriptions emphasize safety but not liveness&lt;/h2&gt;
 
 &lt;p&gt;The core purpose of consensus algorithms is ensuring safety: All
 processes that complete should agree on a single value. Ensuring
