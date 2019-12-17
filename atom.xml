@@ -4,13 +4,309 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2019-06-19T16:51:29-07:00</updated>
+ <updated>2019-12-16T15:59:35-08:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>"Awareness" outcomes as preparation for internships</title>
+   <link href="/2019/12/16/awareness-outcomes/"/>
+   <updated>2019-12-16T00:00:00-08:00</updated>
+   <id>/2019/12/16/awareness-outcomes</id>
+   <content type="html">&lt;h2 id=&quot;note-on-my-posting-gap&quot;&gt;Note on my posting gap&lt;/h2&gt;
+
+&lt;p&gt;Outside activities interrupted my posting here. Where &lt;em&gt;did&lt;/em&gt; those five
+months go? I did generate a lot of potential posts on distributed
+systems, which I’ll discuss in coming posts. This post focusses
+instead on course design, addressing an issue of immediate interest to
+me.&lt;/p&gt;
+
+&lt;h2 id=&quot;disentangling-an-overstuffed-course&quot;&gt;Disentangling an overstuffed course&lt;/h2&gt;
+
+&lt;p&gt;I recently discussed course design with some colleagues developing a
+required course for a professional masters program. They wanted the course
+to address a common concern for such programs: How to increase the
+core CS technical skills of students in a program focused on a
+specialization outside that core. Of particular concern were students
+who do not have undergraduate CS degrees. Although such students bring
+valuable experience from other domains, it is at the cost of lacking
+the skills developed by long-term, broad study of CS. Even students
+who do have such background can benefit from revisiting these topics.&lt;/p&gt;
+
+&lt;p&gt;The range of possible topics for such a course is far too broad to fit
+into a single semester of graduate study but that is the maximum time that
+can be spared from the program.
+In the interest of confidentiality, I am not going to enumerate the
+detailed topic list my colleagues presented. I can say that it
+included many of the topics you would expect on a list of
+“essential knowledge underlying a professional Master’s in CS”.&lt;/p&gt;
+
+&lt;p&gt;Clearly, there was too much material for detailed instruction in all
+topics. We began considering which ones were less important and
+might be cut. For example, given five broad areas of concern, focus on
+only three and not pursue the two others.&lt;/p&gt;
+
+&lt;p&gt;After some discussion, I proposed an alternative approach: Keep at
+least some of the lower-priority topics but define their learning
+outcomes to be &lt;em&gt;awareness&lt;/em&gt; rather than &lt;em&gt;competence&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;if-we-dont-require-competence-are-we-just-tolerating-in-competence&quot;&gt;If we don’t require “competence” are we just tolerating “in-competence”?&lt;/h2&gt;
+
+&lt;p&gt;What do I mean by not setting some measure of “competence” as a
+learning outcome? Am I just setting the tolerance low enough to accept
+“incompetent” performance? I believe that rather than a lowering of
+standards, my proposal adjusts the course outcomes to take
+advantage of two opportunities:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The co-op context of this master’s program, and&lt;/li&gt;
+  &lt;li&gt;Stepping outside the
+limits imposed by frameworks such as the Bloom taxonomies.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I’m not entirely sure what I mean by these statements. This post is
+my attempt to clarify them.&lt;/p&gt;
+
+&lt;h3 id=&quot;building-on-the-benefits-of-co-op&quot;&gt;Building on the benefits of co-op&lt;/h3&gt;
+
+&lt;p&gt;The program under discussion includes a required co-op semester
+between the first and second years. A “co-op” semester, short for
+“co-operative education semester”, is a three- or six-month salaried
+internship at some organization, whether locally in Vancouver or
+elsewhere in Canada or the world. This sort of semester, under various
+names, is common in professional master’s programs. The semester spent
+in a professional work environment is intended to meet several goals:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Students will practice what they have learned in their first year,
+applying their skills to actual production systems.&lt;/li&gt;
+  &lt;li&gt;Students will learn some rather broadly-defined skills of
+“professional practice”.  For this program, such practices include
+project management, data governance, and other practices of
+individual engineers and engineering organizations.&lt;/li&gt;
+  &lt;li&gt;Students will begin a professional network in the organization
+and city of their internship, a network that they can build upon when
+looking for work after graduation.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;These goals are of necessity broad, even to the point of vagueness.
+The actual lessons and their effectiveness will vary widely, depending
+upon the student and the specific internship. But all internships
+provide an important context that is typically impossible in a
+classroom: Students will work on projects that existed before
+their arrival, that will continue after they leave, that are
+integrated with and answerable to the larger goals of an organization,
+and whose success has real consequences for that organization.&lt;/p&gt;
+
+&lt;p&gt;That organizational context seems to be an underexploited
+resource. Although much of what transpires in a student’s co-op
+semester is idiosyncratic and outside the educational institution’s
+control, the project context itself, that students will be stepping
+into a stream already in flow, is consistent. If we can determine the
+parts inherent to that experience and base an educational exercise
+on them, we can offload some of the learning outcomes from the core
+course to the co-op semester.&lt;/p&gt;
+
+&lt;p&gt;Given that the common elements of all co-ops are organizational, with
+wide variation across the technical specifics, these new learning
+outcomes should focus on software engineering project practice rather
+than the technical specializations of the course work. The
+ongoing nature of the project context provides a learning environment
+with distinct advantages over the bounded context of a single
+classroom semester.&lt;/p&gt;
+
+&lt;p&gt;The program under design already uses the complementary natures of
+classroom and co-op experience to provide more rounded learning
+outcomes but these outcomes remain broad. How might we focus them to
+offload some of the software engineering material from the proposed
+core course to the co-op semester?&lt;/p&gt;
+
+&lt;h2 id=&quot;defining-and-assessing-awareness-based-outcomes&quot;&gt;Defining and assessing “awareness”-based outcomes&lt;/h2&gt;
+
+&lt;p&gt;I propose that the core course and the co-op semester be coordinated
+to achieve some combined learning outcomes in software engineering and
+project management. The core course would prepare the students to be
+alert to or aware of selected issues. They would then watch for and
+observe these issues as they arise within the context of their co-op
+projects. At the conclusion of their co-op, they would write a
+structured report, consolidating their observations into insights for
+future practice.&lt;/p&gt;
+
+&lt;p&gt;This design requires that the outcomes for each topic be written in
+complementary pairs. The outcomes for the core course would prepare
+the students to critically observe, while the outcomes for the co-op
+report would specify the ultimate learning goals for the topic.&lt;/p&gt;
+
+&lt;p&gt;Although the co-op outcomes could be written using whatever conventions
+the design team preferred, such as Bloom’s taxonomy, the
+outcomes for the core course seem different, ill-matched to Bloom.
+We are not specifying a degree of understanding so much as a degree
+of &lt;em&gt;preparedness to observe&lt;/em&gt;.  What form might such outcomes take?&lt;/p&gt;
+
+&lt;h3 id=&quot;working-backwards-from-the-ultimate-outcomes&quot;&gt;Working backwards from the ultimate outcomes&lt;/h3&gt;
+
+&lt;p&gt;The learning outcomes for the co-op semester would set the goals for
+the entire sequence. The sequence comprises these distinct activities:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Core course: Do some brief, topic-specific preparation.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Co-op semester: Observe the context of the projects to which they
+contribute.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Followup (either at end of co-op or start of following semester):
+Reflect on their observations, according to a specified structure.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Given the structured reflection to be performed in Step 3, what
+kind of observations in the co-op semester (Step 2) will provide students the
+best material? And to prepare for those observations, what activities
+do students need to perform in the core course (Step 1)?&lt;/p&gt;
+
+&lt;p&gt;For the co-op experience to provide material for deeper insights,
+students should first be prepared to actively observe the practices of
+their organization. Such observation must prepare them to notice
+missing components as well as those that are present.&lt;/p&gt;
+
+&lt;p&gt;Observation is most effective when active, not passive. Students will
+benefit from periodically recording their observations, setting up new
+rounds of questions. On the other hand, given that the primary purpose
+of the co-op is to deliver value to their employer there are
+constraints on what we might expect students to do. Their observations
+should:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Not disrupt their assigned projects.&lt;/li&gt;
+  &lt;li&gt;Not violate confidentiality requirements.&lt;/li&gt;
+  &lt;li&gt;Not intrude on activities of other team members.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;In light of these constraints, individual reflection seems the best
+approach. Students might fill out periodic checklists or
+questionnaires or keep a structured diary. The biggest challenge is
+ensuring some form of oversight so that students do the activities at
+their scheduled time, rather than deferring them until the end of their co-op.&lt;/p&gt;
+
+&lt;h2 id=&quot;example-data-governance-framework&quot;&gt;Example: Data governance framework&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://searchdatamanagement.techtarget.com/definition/data-governance&quot;&gt;Data governance&lt;/a&gt;
+is a topic that is both important to cover and difficult to teach
+within the constraints of a classroom, where lessons can readily devolve to
+recitation of categories and best practices. Although an instructor
+can attempt to provide more direct engagement with the material by
+asking the students to analyze case studies, such exercises suffer
+from the necessity of presenting the entire context in written form
+and lack the urgency of actual stakes.&lt;/p&gt;
+
+&lt;p&gt;By contrast, the co-op semester provides an environment that directly
+complements these restrictions because its context is tacit, requiring the
+learner to draw it out, and its projects have substantive
+consequences.&lt;/p&gt;
+
+&lt;p&gt;Pointing out these differences is nothing new; they form the heart
+of longstanding rationales for internships. In this post I am simply
+considering what specific style of learning outcomes in the preceding
+course will focus the learner’s observations in the co-op semester.&lt;/p&gt;
+
+&lt;h3 id=&quot;data-governance-components&quot;&gt;Data governance components&lt;/h3&gt;
+
+&lt;p&gt;TechTarget’s &lt;a href=&quot;https://searchdatamanagement.techtarget.com/definition/data-governance&quot;&gt;definition
+of a data governance framework&lt;/a&gt; includes several components:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;A data governance framework consists of the rules, processes,
+organizational structures and technologies that are put into place
+as part of a governance program.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The co-op semester provides an opportunity for the learner to practice
+identifying these in an actual organization. This identification is
+subtle, as some components may be named differently from the names
+used in the literature or they may be partial or altogether absent. If
+a student were asked to locate these components in the organization in
+which they worked their co-op semester, the student might just submit
+a rote list of boxes in the organizational chart and policies in the
+manual. The student would miss the deeper issues, such as how policies
+are enforced and extended or what technological checks enforce the
+policies.&lt;/p&gt;
+
+&lt;h3 id=&quot;co-op-activities-to-learn-data-governance&quot;&gt;Co-op activities to learn data governance&lt;/h3&gt;
+
+&lt;p&gt;A simple approach to learning the components of data governance is
+least likely to disrupt a student’s co-op schedule.  We might group
+the learning into three phases, with one activity in each phase:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Early co-op: Checklist or category list, identifying the components
+of the data governance program at the employing organization. The
+student identifies the &lt;em&gt;de jure&lt;/em&gt; structure.&lt;/li&gt;
+  &lt;li&gt;Middle co-op: Short answers to questions about how the components
+work in practice.  The student identifies the &lt;em&gt;de facto&lt;/em&gt; structure.&lt;/li&gt;
+  &lt;li&gt;Post co-op: Group discussion, moderated by an instructor, amongst
+students after they have returned to campus.  The student
+synthesizes the two above, identifying the &lt;em&gt;whole&lt;/em&gt; structure.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;derived-outcomes-for-the-core-course&quot;&gt;Derived outcomes for the core course&lt;/h2&gt;
+
+&lt;p&gt;The activities students will perform during their co-op semester in
+turn drive the outcomes for the core course that precedes it. To
+prepare for co-op activities such as those suggested above, the core
+course outcomes would be straighforward capacities to define and
+recognize the components.&lt;/p&gt;
+
+&lt;p&gt;The actual time spent on data governance in the core course would
+therefore be small, such as readings of basic governance structure and
+a few activities practicing with the checklists and questionnaires
+that they will use in the co-op.&lt;/p&gt;
+
+&lt;p&gt;Do these outcomes fit well within the Bloom taxonomy?  On the one
+hand, the taxonomy is broad enough that anything can be pressed into
+its structure. On the other hand, these outcomes have a distinct quality
+resulting from the process that produced them. Rather than defining
+outcomes in terms of actions students might take in their ultimate
+career, we defined them in terms of the &lt;em&gt;learning activities&lt;/em&gt;
+students would perform in the next course. The core course merely
+prepares the students for the actual learning that will occur in the
+co-op.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Process-oriented topics such as professional practice are ill-matched
+to classroom courses. They can consume undue time for too little
+benefit. Programs that require a co-op or internship experience might
+have better results while consuming less class time by adding
+structured activities to the co-op instead of the classroom. The
+students would prepare for these activities in a core course before
+they begin co-op and reflect on their experience in another course upon
+their return. The key point is to define multi-step learning
+outcomes, with the actual outcomes defined for the co-op, while the
+core course defines outcomes in terms of preparation to learn.&lt;/p&gt;
+
+&lt;p&gt;There are administrative issues that I have not addressed here. The
+co-op semesters already have some activities defined by the co-op
+department. Adding new activities must be done in cooperation with
+that department. The proposed activities further require that someone
+review student assignments to ensure timely submission and sincere
+attempts. Finally, scheduling a joint return discussion may be
+difficult if the students do not all have a common required course upon
+return.&lt;/p&gt;
+
+&lt;p&gt;These administrative issues will need careful consideration and
+resolving them may require modifying the proposed structure. Those
+efforts seem warranted however, as the alternative appproach of
+stuffing everything into a single core course is certain to be less
+effective.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Why is distributed consensus so hard?</title>

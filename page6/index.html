@@ -238,6 +238,30 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="/2017/06/29/rand-access-long-cache-misses/">
+        Random access to long string bodies incurs cache misses
+      </a>
+    </h1>
+    
+    <span class="post-date">29 Jun 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>As I <a href="/2017/06/23/for-long-strings-access-order-determines-performance/">described in the last post</a>, shuffling the items in the source vector leaves the string handles in contiguous sequential order while introducing disorder into the sequence of string bodies. The NShuffled “data set” is really a family of 11 related data sets, differing in the fraction of their items that were shuffled.  All sets start with the same vector <code>src</code> of 50,000 elements, then <code>std::shuffle()</code> is run on the first <i>N</i> items in the vector, where <i>N</i> ranges from 0 (no items shuffled) to 50,000 (all items shuffled) in increments of 5,000. All the data sets will have 37,500 (75% of 50,000) of their source elements copied to the result vector.</p>
+
+ <a href="/2017/06/29/rand-access-long-cache-misses/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="/2017/06/23/for-long-strings-access-order-determines-performance/">
         For long strings, access order determines performance
       </a>
@@ -330,31 +354,6 @@
     <p>Unique strings—null-terminated strings uniquely identified by their <code>char const *</code>—are the simplest type considered in this series of posts. Constructing, copying, moving, and assigning these strings are trivial operations on a single pointer. No destructor code is required.</p>
 
  <a href="/2017/05/24/the-elegant-machine-code-for-char-const/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/">
-        Passing std::string by-value noticeably slows the idioms
-      </a>
-    </h1>
-    
-    <span class="post-date">22 May 2017
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/C++">C++</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>The <a href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/">benchmarks comparing <code>transform</code> to a
-loop</a> also highlighted the substantial contribution that copying values made to their performance. Copying costs become especially noticeable for complex types, such as standard strings too long to fit in the short string optimization.</p>
-
- <a href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/">more ...</a>
   </div>
   
 </div>
