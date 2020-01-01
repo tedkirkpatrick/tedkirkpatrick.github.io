@@ -4,13 +4,495 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2019-12-16T15:59:35-08:00</updated>
+ <updated>2019-12-31T18:08:35-08:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>The service design space (2020 Edition)</title>
+   <link href="/2019/12/31/design-space-2020/"/>
+   <updated>2019-12-31T00:00:00-08:00</updated>
+   <id>/2019/12/31/design-space-2020</id>
+   <content type="html">&lt;p&gt;&lt;em&gt;Post in an ongoing series on the issues constraining service design
+ for datacentres. A previous post presented 2019’s
+ version,
+ &lt;a href=&quot;/2018/10/13/data-engineering-design-space/&quot;&gt;a design space for data engineering&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Starting January 2020, I will teach a course on service design for
+datacentres. The roster indicates that nearly all students will be in
+a professional master’s program. Most will be in their second semester
+of a program in Big Data, some will be in their fifth semester
+(including a two-semester paid internship), with a few in other
+programs.&lt;/p&gt;
+
+&lt;p&gt;This will be a revision of the course that I taught in
+Spring 2019. I was generally satisfied with that version and do
+not want to mess it up through excessive
+revision. &lt;a href=&quot;https://robertgreiner.com/the-second-system-effect/&quot;&gt;“Second System Effect”&lt;/a&gt;
+is as much an issue in course design as it is in system design.&lt;/p&gt;
+
+&lt;h2 id=&quot;defining-the-course-focus-as-service-design-for-datacentres&quot;&gt;Defining the course focus as “service design for datacentres”&lt;/h2&gt;
+
+&lt;p&gt;I want this course to provide students with the essential skills for
+designing and analyzing service-based architectures that will run in
+contemporary datacentre environments. This goal is broad, encompassing
+both practice using exemplary technologies and the underlying principles.&lt;/p&gt;
+
+&lt;p&gt;I have taught variations of this topic since 2014.  Each year, I have
+struggled to define a succinct characterization. There doesn’t seem to
+be an accepted term for this material in either the academic or
+industrial literatures. Most troubling, I have not found a phrase that
+both appeals to students and accurately indicates what they are going
+to learn.&lt;/p&gt;
+
+&lt;p&gt;Calling it &lt;strong&gt;“cloud computing”&lt;/strong&gt; sets the wrong expectation. Cloud
+computing typically refers to managed services offered by such
+providers as Alibaba, Amazon, Google, or Microsoft. These services are
+often categorized according to the
+&lt;a href=&quot;https://www.bmc.com/blogs/saas-vs-paas-vs-iaas-whats-the-difference-and-how-to-choose/&quot;&gt;Infrastructure-as-a-service (IaaS), Platform-as-a-Service (PaaS), and Application-as-a-Service (AaaS) model&lt;/a&gt;. A
+cloud computing course would emphasize that designers should first
+consider all the managed service offerings from their chosen provider,
+as well as aftermarket providers, before designing a custom
+solution. Why build and operate a data store in-house when DynamoDB,
+BigTable, or Azure Store could meet your needs?  By contrast, this
+course is concerned with how you connect services together and how you
+will know when you need to purpose-build your own.&lt;/p&gt;
+
+&lt;p&gt;Calling it &lt;strong&gt;“distributed systems”&lt;/strong&gt; misleads in a different way. Such
+courses focus on the design of distributed systems in general, often
+with a focus on the correctness and complexity of distributed
+algorithms. Nancy Lynch’s 1996
+&lt;a href=&quot;https://groups.csail.mit.edu/tds/distalgs.html&quot;&gt;&lt;em&gt;Distributed Algorithms&lt;/em&gt;&lt;/a&gt;
+is a common text. This theory provides the essential underpinning of
+the material I want to teach but it would take an entire semester to
+cover in its own right and the material is not of strong interest to
+students in a professional master’s program. This course focuses
+instead on the implications of the above theoretical results for actual
+system design.&lt;/p&gt;
+
+&lt;p&gt;Last year, I attempted to make the material relevant to Big Data
+students by framing it in terms of &lt;strong&gt;“data engineering”&lt;/strong&gt;. This now
+seems incomplete to me.  Although descriptions of data engineering
+include core concepts from this course:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Most of the issues that you’ll run into will be around reliability
+and distributed systems. … you’ll need a system that can
+automatically scale your server count up and down … data engineering is about learning to deal with scale and efficiency.&lt;br /&gt;
+—&lt;cite&gt;&lt;small&gt;&lt;a href=&quot;https://www.dataquest.io/blog/what-is-a-data-engineer/&quot;&gt;What is a Data Engineer?&lt;/a&gt;&lt;/small&gt;&lt;/cite&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;[Data engineers] need some understanding of distributed systems in general and
+how they are different from traditional storage and processing
+systems.&lt;br /&gt;
+—&lt;cite&gt;&lt;small&gt;&lt;a href=&quot;https://www.oreilly.com/ideas/data-engineering-a-quick-and-simple-definition&quot;&gt;Data Engineering: A Quick and Simple Definition&lt;/a&gt;&lt;/small&gt;&lt;/cite&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;the descriptions also list many other topics:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;A good data engineer has extensive knowledge on databases and best
+engineering practices. These include … building
+human-fault-tolerant pipelines, …
+knowledge of database administration, maintaining data cleaning,
+and ensuring a deterministic pipeline.&lt;br /&gt;
+—&lt;cite&gt;&lt;small&gt;&lt;a href=&quot;https://blog.insightdatascience.com/data-science-vs-data-engineering-62da7678adaa&quot;&gt;Data Science vs. Data Engineering&lt;/a&gt;&lt;/small&gt;&lt;/cite&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I would now say that this course is more about the infrastructure
+underlying data engineering than data engineering itself.&lt;/p&gt;
+
+&lt;p&gt;Ultimately, I am left with the phrase, &lt;strong&gt;“service design for
+datacentres”&lt;/strong&gt;. It has the merit of precisely specifying the course
+focus but the oh-so-considerable demerit of being opaque to everyone
+else, both prospective students and fellow faculty.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-topic-phrase-comprises-theory-and-practice&quot;&gt;The topic phrase comprises theory and practice&lt;/h3&gt;
+
+&lt;p&gt;So what does “service design for datacentres” imply? Broadly, it is
+the design of services intended to run on a network of large-scale
+datacentres. A high proportion of modern software involves the
+design of such services, from edge computing in embedded devices, to
+middleware that processes and stores the data relayed from the edge,
+to the interfaces by which end users interact with that data and
+administrators manage the services. In the near future, it is likely
+that virtually every program written will provide a service interface
+to other programs and call other programs through their service
+interface, all mediated by networks.&lt;/p&gt;
+
+&lt;p&gt;Most of these programs will
+run inside large datacentres. This execution context has major
+constraints for the architecture running upon it:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A service will scale by adding or removing replicas&lt;/li&gt;
+  &lt;li&gt;A service will need to tolerate failures of services it calls&lt;/li&gt;
+  &lt;li&gt;A service will need to be able provide degraded or approximate
+service to its callers when it
+fails partially&lt;/li&gt;
+  &lt;li&gt;A service will have performance objectives, the most important of
+which will typically specify permissible latencies&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;service-interface-but-not-necessarily-micro-service&quot;&gt;Service interface but not necessarily &lt;em&gt;micro&lt;/em&gt;-service&lt;/h3&gt;
+
+&lt;p&gt;This does not necessarily imply a microservice architecture. Although
+that is an important design choice in contemporary systems, and one
+that will be covered in the course, it is ultimately an internal
+choice, one of several defensible designs for a given application. The
+key points that will characterize virtually all designs are that they
+expose their functionality through a service-based interface, hide
+their internal decisions behind that interface, and communicate over
+a network. The granularity of those components is an implementation choice.&lt;/p&gt;
+
+&lt;h2 id=&quot;student-background&quot;&gt;Student background&lt;/h2&gt;
+
+&lt;p&gt;Most of the students will fit the following profile:&lt;/p&gt;
+
+&lt;dl&gt;
+  &lt;dt&gt;Program entry requirements&lt;/dt&gt;
+  &lt;dd&gt;Bachelor’s degree in CS or related field.&lt;/dd&gt;
+  &lt;dt&gt;Courses students took in prior semesters&lt;/dt&gt;
+  &lt;dd&gt;In their first semester, students will already have taken a course
+on machine learning and a lab introducing them to technologies of
+large-scale data analysis, including HDFS, Hadoop, Spark, Cassandra,
+and HBase. Some may have taken electives in visualization or natural
+language processing.
+
+    &lt;p&gt;Students taking the course in their second year will have at least
+two academic semesters and a two-semester internship behind them.
+This group will have taken a range of electives in their second semester.&lt;/p&gt;
+  &lt;/dd&gt;
+  &lt;dt&gt;Courses students take concurrently&lt;/dt&gt;
+  &lt;dd&gt;Concurrently with the data engineering course, they will be taking a
+second lab, focussed on applied statistical analysis and machine
+learning. They will also be taking an algorithms course including
+Paxos and the Gilbert/Lynch CAP Theorem.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h2 id=&quot;approach&quot;&gt;Approach&lt;/h2&gt;
+
+&lt;p&gt;Given the lengthy topic list that follows, the course can only provide
+a broad survey, not deep understanding but if the students become
+comfortable with these concepts, they will be prepared for a broad
+range of roles in modern computing environments.&lt;/p&gt;
+
+&lt;p&gt;The course runs on two tracks:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A tool-based track, introducing  a specific
+implementation approach, running
+&lt;a href=&quot;https://www.openshift.com/&quot;&gt;Docker&lt;/a&gt; containers on the
+&lt;a href=&quot;https://www.openshift.com/&quot;&gt;OpenShift&lt;/a&gt; distribution of
+&lt;a href=&quot;https://kubernetes.io/&quot;&gt;Kubernetes&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;The principles of designing distributed, resilient services for a
+datacentre environment.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The tools track is neither in-depth nor exhaustive. It simply
+introduces one very large suite of components that is widely used for
+implementing services on a datacentre. It is far from the only
+approach but the widespread use of Docker and Kubernetes means that
+there is a good likelihood that students will be able to immediately
+apply their course experiences in their internships that immediately
+follow this course.&lt;/p&gt;
+
+&lt;p&gt;The design principles are organized into the following design space.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-design-space-of-cloud-services&quot;&gt;The design space of cloud services&lt;/h2&gt;
+
+&lt;p&gt;Designs can be analyzed according to a variety of criteria. Taken
+together, these criteria establish a &lt;em&gt;design space&lt;/em&gt; within which to
+evaluate and contrast designs. These properties also establish
+measures of system success.&lt;/p&gt;
+
+&lt;p&gt;These properties can be applied to the system as a whole; many also
+characterize system components.&lt;/p&gt;
+
+&lt;h2 id=&quot;metrics---measured-properties-of-the-system&quot;&gt;Metrics—measured properties of the system&lt;/h2&gt;
+
+&lt;p&gt;Metrics are measurable properties of the system. They reflect the
+match between system architecture and use.&lt;/p&gt;
+
+&lt;p&gt;In addition to learning the following concepts, students need to become familiar
+with representing the distributions of metrics via key percentiles
+(50th, 75th, 90th, …). Students also need to understand the impact
+of “long tail” high percentiles, such as the 99th, on aggregate system
+performance.&lt;/p&gt;
+
+&lt;p&gt;Metrics can be part of &lt;a href=&quot;#objectives&quot;&gt;objectives&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;system-performance-metrics&quot;&gt;System performance metrics&lt;/h3&gt;
+
+&lt;p&gt;These metrics characterize the system itself, running on a
+representative workload:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Latency&lt;/li&gt;
+  &lt;li&gt;Throughput&lt;/li&gt;
+  &lt;li&gt;Scalability&lt;/li&gt;
+  &lt;li&gt;Availability&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;data-centre-fabric-metrics&quot;&gt;Data centre fabric metrics&lt;/h3&gt;
+
+&lt;p&gt;These metrics characterize the design of the data centre:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Processor performance&lt;/li&gt;
+  &lt;li&gt;Clock variability&lt;/li&gt;
+  &lt;li&gt;Bisection bandwidth&lt;/li&gt;
+  &lt;li&gt;Likelihood of component failures&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;inter-data-centre-round-trip-metrics&quot;&gt;Inter-data centre round trip metrics&lt;/h3&gt;
+
+&lt;p&gt;For systems running on multiple data centres, perhaps in different
+continents, we need to consider the round trip times:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Between availability zones in one region&lt;/li&gt;
+  &lt;li&gt;Between regions&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;business-metrics&quot;&gt;Business metrics&lt;/h3&gt;
+
+&lt;p&gt;As described in
+&lt;a href=&quot;https://www.oreilly.com/webops-perf/free/chaos-engineering.csp&quot;&gt;Chaos Engineering, pp. 22–23&lt;/a&gt;,
+business metrics are specific to your application. They measure how
+successfully the application is serving clients and meeting its
+purpose. The measurement is often indirect, using some metric as a
+proxy for the actually desired indicator, such as “real time customer
+satisfaction”.  For example, Netflix measures the number of times the
+“start” button is pressed per second.  As their service ultimately is
+about streaming video, an unexpected drop in start presses indicates
+the service is not meeting its purpose.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Specific to application, measuring “service success” or “client
+satisfaction” (often indirectly)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;guarantees-and-invariants-inherent-properties-of-the-systems-design&quot;&gt;Guarantees and invariants: Inherent properties of the system’s design&lt;/h2&gt;
+
+&lt;p&gt;Whereas metrics are measurable attributes of a system that can vary with
+such factors as system load, properties are fundamental to the
+system’s design. For example, the design either replicates durable
+data or it does not.&lt;/p&gt;
+
+&lt;h3 id=&quot;data-durability&quot;&gt;Data durability&lt;/h3&gt;
+
+&lt;p&gt;Durable data is stored by the system on behalf of the users, typically
+on disk or solid-state storage. What sort of guarantees does the
+system provide on this data?&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Replication for durability&lt;/li&gt;
+  &lt;li&gt;Replication for availability&lt;/li&gt;
+  &lt;li&gt;Synchronous vs. asynchronous writes&lt;/li&gt;
+  &lt;li&gt;Consistency guarantees&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In principle, consistency guarantees can be made for ephemeral data that only
+ever resides in memory but in most cases only eventual consistency
+is provided, minimizing processing cost.&lt;/p&gt;
+
+&lt;h3 id=&quot;data-security-and-privacy&quot;&gt;Data security and privacy&lt;/h3&gt;
+
+&lt;p&gt;When a service stores data, the designers must consider what
+techniques they will adopt to ensure its security and
+privacy. Although these concepts are related and partially overlap, it
+is useful to distinguish techniques for each:&lt;/p&gt;
+
+&lt;dl&gt;
+  &lt;dt&gt;Security&lt;/dt&gt;
+  &lt;dd&gt;Techniques that ensure that data will only be accessed by
+authorized individuals and services.&lt;/dd&gt;
+  &lt;dt&gt;Privacy&lt;/dt&gt;
+  &lt;dd&gt;Techniques that ensure that that data will only be used for
+the purposes for which it was granted to the storing service.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;p&gt;For example, if you provide your address to a service for them to ship
+you a product, the service’s &lt;em&gt;security guarantees&lt;/em&gt; would ensure that only
+employees in the shipping department could see that address, while
+their &lt;em&gt;privacy guarantees&lt;/em&gt; would ensure that the employees who can see your
+address would only use it to ship the product, not to send harassing
+mail.&lt;/p&gt;
+
+&lt;p&gt;Security and privacy methods include both technical choices and
+organizational policy. Ultimately, while the technology can guarantee
+that the data will be processed according to rules such as “all
+records on persistent storage will be encrypted”, and the policies can
+limit access, perfect security and privacy are ideals that can ony be
+approached, never achieved. A design establishes barriers to misuse
+but sufficiently dedicated individuals with sufficient resources will
+always be able to circumvent those barriers.&lt;/p&gt;
+
+&lt;h4 id=&quot;data-security-techniques&quot;&gt;Data security techniques&lt;/h4&gt;
+
+&lt;p&gt;Security techniques include:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Encryption, at rest and in transit&lt;/li&gt;
+  &lt;li&gt;Key management&lt;/li&gt;
+  &lt;li&gt;Key revocation&lt;/li&gt;
+  &lt;li&gt;Access roles and rules&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;data-privacy-techniques&quot;&gt;Data privacy techniques&lt;/h4&gt;
+
+&lt;p&gt;Privacy techniques include:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Differential privacy&lt;/li&gt;
+  &lt;li&gt;Cell size&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;instrumentation&quot;&gt;Instrumentation&lt;/h3&gt;
+
+&lt;p&gt;How well does the system support monitoring its current state and
+diagnosing problems:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Logs&lt;/li&gt;
+  &lt;li&gt;Traces&lt;/li&gt;
+  &lt;li&gt;Dashboards&lt;/li&gt;
+  &lt;li&gt;Probes&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;fault-tolerance&quot;&gt;Fault tolerance&lt;/h3&gt;
+
+&lt;p&gt;How well does the system tolerate failure of its own components and
+the services and data centre fabric upon which it depends:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Tolerance of component failures within the system&lt;/li&gt;
+  &lt;li&gt;Tolerance of failure of external services upon which this depends&lt;/li&gt;
+  &lt;li&gt;Tolerance of larger system failures (availability zone, region,
+transoceanic partition, …)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;How well does it support failure, diagnosis, repair, and restart:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Diagnostic logs&lt;/li&gt;
+  &lt;li&gt;Canary deployments&lt;/li&gt;
+  &lt;li&gt;Admission control&lt;/li&gt;
+  &lt;li&gt;Feature switches&lt;/li&gt;
+  &lt;li&gt;Approximate results&lt;/li&gt;
+  &lt;li&gt;Other engineering techniques&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;business-logic-invariants&quot;&gt;Business logic invariants&lt;/h3&gt;
+
+&lt;p&gt;Business logic invariants are the business property counterparts to
+business metrics:  The guarantees the system makes for entities that
+the system’s clients care about.  For example, banks maintain the
+invariant that if you transfer money between two accounts, the amount
+taken from one equals the amount added to the other.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.researchgate.net/publication/220476881_CAP_Twelve_years_later_How_the_Rules_have_Changed&quot;&gt;Eric Brewer notes&lt;/a&gt;
+that many business invariants are only implicitly specified for
+single-processor systems, which typically guarantee strong
+consistency.  When consistency guarantees are loosened (see
+“Properties of durable data” above) to migrate the system to a
+distributed implementation, the business invariants need to be
+specified explicitly.&lt;/p&gt;
+
+&lt;p&gt;Business invariants often must specify a mitigation procedure, to
+resolve any violations (see the Brewer article cited above). For
+example, what is the process for redressing an error in an account’s
+balance, whether due to system defect or human error?&lt;/p&gt;
+
+&lt;h3 id=&quot;automated-deployment&quot;&gt;Automated deployment&lt;/h3&gt;
+
+&lt;p&gt;In addition to readying the initial release for production, the
+service will require automated support for deploying updates.&lt;/p&gt;
+
+&lt;h2 id=&quot;objectives&quot;&gt;Indicators and objectives&lt;/h2&gt;
+
+&lt;p&gt;The above metrics, guarantees, and invariants shape the design space of the
+architecture for modern cloud systems.  As such, they are
+direct concerns of the the development and operations staff. In
+addition, they may be exposed to clients as indicators and
+even contractual obligations. 
+As defined in
+&lt;a href=&quot;https://landing.google.com/sre/book/chapters/service-level-objectives.html&quot;&gt;Site Reliability Engineering, Ch. 4&lt;/a&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Service Level Indicators (SLI)&lt;/li&gt;
+  &lt;li&gt;Service Level Objectives (SLO)&lt;/li&gt;
+  &lt;li&gt;Service Level Agreements (SLA)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;development-process-metrics&quot;&gt;Development process metrics&lt;/h2&gt;
+
+&lt;p&gt;The above metrics and properties characterize the system’s design and
+performance. Other metrics characterize the development process:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Velocity of feature development (&lt;a href=&quot;https://www.oreilly.com/webops-perf/free/chaos-engineering.csp&quot;&gt;Chaos Engineering, p. 9&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;inherent-limitations-of-distributed-systems&quot;&gt;Inherent limitations of distributed systems&lt;/h2&gt;
+
+&lt;p&gt;Decades of study and practice in distributed systems have yielded
+principles and rules of thumb characterizing all such
+systems. As modern cloud systems are a species of
+distributed system, their designers must account for how these issues
+arise in this context.&lt;/p&gt;
+
+&lt;p&gt;Properties of distributed systems that must be accounted for (from
+&lt;a href=&quot;http://www.cs.mcgill.ca/~navindra/kde-devel/kwn-18/smli_tr-94-29.ps.gz&quot;&gt;Waldo et al., 1994&lt;/a&gt;):&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Latency&lt;/li&gt;
+  &lt;li&gt;Message-passing architecture (no shared memory)&lt;/li&gt;
+  &lt;li&gt;True concurrency&lt;/li&gt;
+  &lt;li&gt;Partial failure (process, service, and machine failure)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;No common system clock
+(&lt;a href=&quot;https://www.microsoft.com/en-us/research/publication/time-clocks-ordering-events-distributed-system/&quot;&gt;Lamport, 1978&lt;/a&gt;):&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Systems must use some variant of &lt;a href=&quot;https://queue.acm.org/detail.cfm?id=2917756&quot;&gt;logical clocks&lt;/a&gt;, vector clocks, or
+interval clocks&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing&quot;&gt;“The Eight Fallacies of Distributed Computing”&lt;/a&gt;
+(rephrased below as statements about how distributed systems &lt;strong&gt;actually&lt;/strong&gt;
+work):&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The network is unreliable (messages can be out of order or lost, or
+connectivity may be dropped altogether).&lt;/li&gt;
+  &lt;li&gt;Latency is non-zero.&lt;/li&gt;
+  &lt;li&gt;Bandwidth is finite.&lt;/li&gt;
+  &lt;li&gt;The network is insecure.&lt;/li&gt;
+  &lt;li&gt;Topology changes.&lt;/li&gt;
+  &lt;li&gt;There are multiple administrators.&lt;/li&gt;
+  &lt;li&gt;Transport cost is non-zero.&lt;/li&gt;
+  &lt;li&gt;The network is heterogenous.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;The design space for production cloud-based data services is huge. The
+service architect and implementation team must trade off between many
+conflicting goals and build a service that integrates well with the
+operations of the organization as a whole. This design process turns a
+robust, accurate data model—the kernel of a service but not an
+actual service—into a production service.&lt;/p&gt;
+
+</content>
+ </entry>
  
  <entry>
    <title>"Awareness" outcomes as preparation for internships</title>
@@ -2855,13 +3337,14 @@ necessarily observe them closely as the actual course unfolds.&lt;/p&gt;
  </entry>
  
  <entry>
-   <title>The data engineering design space</title>
+   <title>The data engineering design space (2019 Edition)</title>
    <link href="/2018/10/13/data-engineering-design-space/"/>
    <updated>2018-10-13T00:00:00-07:00</updated>
    <id>/2018/10/13/data-engineering-design-space</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series on designing a course on data engineering.  The
  next post specifies the
- &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;learning outcomes&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+ &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;learning outcomes&lt;/a&gt;.
+ There is a version &lt;a href=&quot;/2019/12/31/design-space-2020/&quot;&gt;updated for 2020&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;I will teach a course on Data Engineering in
 Spring 2019. The course will be the second semester of a
@@ -2918,7 +3401,7 @@ co-tenant on its instance and with the data center as a whole&lt;/li&gt;
 service-oriented architectures running in a large data
 centre. Although these data centres may be hosted in a variety of
 ways—by a commercial service, on-premise, or hybrid—I will
-group thm under the single term, “cloud”.&lt;/p&gt;
+group them under the single term, “cloud”.&lt;/p&gt;
 
 &lt;p&gt;The one-sentence summary of all these improvements is &lt;strong&gt;making a data model
 cloud-ready&lt;/strong&gt;.&lt;/p&gt;

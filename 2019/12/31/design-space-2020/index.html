@@ -14,7 +14,7 @@
 
   <title>
     
-      The data engineering design space (2019 Edition) &middot; All my marbles in one place
+      The service design space (2020 Edition) &middot; All my marbles in one place
     
   </title>
 
@@ -43,16 +43,16 @@
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
   <!-- Begin Jekyll SEO tag v2.2.3 -->
-<meta property="og:title" content="The data engineering design space (2019 Edition)" />
+<meta property="og:title" content="The service design space (2020 Edition)" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="First in a series on designing a course on data engineering. The next post specifies the learning outcomes. There is a version updated for 2020." />
-<meta property="og:description" content="First in a series on designing a course on data engineering. The next post specifies the learning outcomes. There is a version updated for 2020." />
+<meta name="description" content="Post in an ongoing series on the issues constraining service design for datacentres. A previous post presented 2019’s version, a design space for data engineering." />
+<meta property="og:description" content="Post in an ongoing series on the issues constraining service design for datacentres. A previous post presented 2019’s version, a design space for data engineering." />
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2018-10-13T00:00:00-07:00" />
+<meta property="article:published_time" content="2019-12-31T00:00:00-08:00" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"The data engineering design space (2019 Edition)","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2018-10-13T00:00:00-07:00","dateModified":"2018-10-13T00:00:00-07:00","description":"First in a series on designing a course on data engineering. The next post specifies the learning outcomes. There is a version updated for 2020.","mainEntityOfPage":{"@type":"WebPage","@id":"/2018/10/13/data-engineering-design-space/"},"url":"/2018/10/13/data-engineering-design-space/"}</script>
+{"@context":"http://schema.org","@type":"BlogPosting","headline":"The service design space (2020 Edition)","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2019-12-31T00:00:00-08:00","dateModified":"2019-12-31T00:00:00-08:00","description":"Post in an ongoing series on the issues constraining service design for datacentres. A previous post presented 2019’s version, a design space for data engineering.","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/12/31/design-space-2020/"},"url":"/2019/12/31/design-space-2020/"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -235,33 +235,155 @@
 
     <div class="content container">
       <div class="post">
-  <h1 class="post-title">The data engineering design space (2019 Edition)</h1>
-  <span class="post-date">13 Oct 2018
+  <h1 class="post-title">The service design space (2020 Edition)</h1>
+  <span class="post-date">31 Dec 2019
   
     <span class="tag-block">Tags: 
     
       
-      <a href="/tag/Course design">Course design</a>,
-      
-    
-      
-      <a href="/tag/Big data">Big data</a>
+      <a href="/tag/Course design">Course design</a>
       
     
     </span>
   
   </span>
   
-  <p><em>First in a series on designing a course on data engineering.  The
- next post specifies the
- <a href="/2018/10/18/data-engineering-learning-outcomes/">learning outcomes</a>.
- There is a version <a href="/2019/12/31/design-space-2020/">updated for 2020</a>.</em></p>
+  <p><em>Post in an ongoing series on the issues constraining service design
+ for datacentres. A previous post presented 2019’s
+ version,
+ <a href="/2018/10/13/data-engineering-design-space/">a design space for data engineering</a>.</em></p>
 
-<p>I will teach a course on Data Engineering in
-Spring 2019. The course will be the second semester of a
-professional graduate program in Big Data.</p>
+<p>Starting January 2020, I will teach a course on service design for
+datacentres. The roster indicates that nearly all students will be in
+a professional master’s program. Most will be in their second semester
+of a program in Big Data, some will be in their fifth semester
+(including a two-semester paid internship), with a few in other
+programs.</p>
+
+<p>This will be a revision of the course that I taught in
+Spring 2019. I was generally satisfied with that version and do
+not want to mess it up through excessive
+revision. <a href="https://robertgreiner.com/the-second-system-effect/">“Second System Effect”</a>
+is as much an issue in course design as it is in system design.</p>
+
+<h2 id="defining-the-course-focus-as-service-design-for-datacentres">Defining the course focus as “service design for datacentres”</h2>
+
+<p>I want this course to provide students with the essential skills for
+designing and analyzing service-based architectures that will run in
+contemporary datacentre environments. This goal is broad, encompassing
+both practice using exemplary technologies and the underlying principles.</p>
+
+<p>I have taught variations of this topic since 2014.  Each year, I have
+struggled to define a succinct characterization. There doesn’t seem to
+be an accepted term for this material in either the academic or
+industrial literatures. Most troubling, I have not found a phrase that
+both appeals to students and accurately indicates what they are going
+to learn.</p>
+
+<p>Calling it <strong>“cloud computing”</strong> sets the wrong expectation. Cloud
+computing typically refers to managed services offered by such
+providers as Alibaba, Amazon, Google, or Microsoft. These services are
+often categorized according to the
+<a href="https://www.bmc.com/blogs/saas-vs-paas-vs-iaas-whats-the-difference-and-how-to-choose/">Infrastructure-as-a-service (IaaS), Platform-as-a-Service (PaaS), and Application-as-a-Service (AaaS) model</a>. A
+cloud computing course would emphasize that designers should first
+consider all the managed service offerings from their chosen provider,
+as well as aftermarket providers, before designing a custom
+solution. Why build and operate a data store in-house when DynamoDB,
+BigTable, or Azure Store could meet your needs?  By contrast, this
+course is concerned with how you connect services together and how you
+will know when you need to purpose-build your own.</p>
+
+<p>Calling it <strong>“distributed systems”</strong> misleads in a different way. Such
+courses focus on the design of distributed systems in general, often
+with a focus on the correctness and complexity of distributed
+algorithms. Nancy Lynch’s 1996
+<a href="https://groups.csail.mit.edu/tds/distalgs.html"><em>Distributed Algorithms</em></a>
+is a common text. This theory provides the essential underpinning of
+the material I want to teach but it would take an entire semester to
+cover in its own right and the material is not of strong interest to
+students in a professional master’s program. This course focuses
+instead on the implications of the above theoretical results for actual
+system design.</p>
+
+<p>Last year, I attempted to make the material relevant to Big Data
+students by framing it in terms of <strong>“data engineering”</strong>. This now
+seems incomplete to me.  Although descriptions of data engineering
+include core concepts from this course:</p>
+
+<blockquote>
+  <p>Most of the issues that you’ll run into will be around reliability
+and distributed systems. … you’ll need a system that can
+automatically scale your server count up and down … data engineering is about learning to deal with scale and efficiency.<br />
+—<cite><small><a href="https://www.dataquest.io/blog/what-is-a-data-engineer/">What is a Data Engineer?</a></small></cite></p>
+</blockquote>
+
+<blockquote>
+  <p>[Data engineers] need some understanding of distributed systems in general and
+how they are different from traditional storage and processing
+systems.<br />
+—<cite><small><a href="https://www.oreilly.com/ideas/data-engineering-a-quick-and-simple-definition">Data Engineering: A Quick and Simple Definition</a></small></cite></p>
+</blockquote>
+
+<p>the descriptions also list many other topics:</p>
+
+<blockquote>
+  <p>A good data engineer has extensive knowledge on databases and best
+engineering practices. These include … building
+human-fault-tolerant pipelines, …
+knowledge of database administration, maintaining data cleaning,
+and ensuring a deterministic pipeline.<br />
+—<cite><small><a href="https://blog.insightdatascience.com/data-science-vs-data-engineering-62da7678adaa">Data Science vs. Data Engineering</a></small></cite></p>
+</blockquote>
+
+<p>I would now say that this course is more about the infrastructure
+underlying data engineering than data engineering itself.</p>
+
+<p>Ultimately, I am left with the phrase, <strong>“service design for
+datacentres”</strong>. It has the merit of precisely specifying the course
+focus but the oh-so-considerable demerit of being opaque to everyone
+else, both prospective students and fellow faculty.</p>
+
+<h3 id="the-topic-phrase-comprises-theory-and-practice">The topic phrase comprises theory and practice</h3>
+
+<p>So what does “service design for datacentres” imply? Broadly, it is
+the design of services intended to run on a network of large-scale
+datacentres. A high proportion of modern software involves the
+design of such services, from edge computing in embedded devices, to
+middleware that processes and stores the data relayed from the edge,
+to the interfaces by which end users interact with that data and
+administrators manage the services. In the near future, it is likely
+that virtually every program written will provide a service interface
+to other programs and call other programs through their service
+interface, all mediated by networks.</p>
+
+<p>Most of these programs will
+run inside large datacentres. This execution context has major
+constraints for the architecture running upon it:</p>
+
+<ul>
+  <li>A service will scale by adding or removing replicas</li>
+  <li>A service will need to tolerate failures of services it calls</li>
+  <li>A service will need to be able provide degraded or approximate
+service to its callers when it
+fails partially</li>
+  <li>A service will have performance objectives, the most important of
+which will typically specify permissible latencies</li>
+</ul>
+
+<h3 id="service-interface-but-not-necessarily-micro-service">Service interface but not necessarily <em>micro</em>-service</h3>
+
+<p>This does not necessarily imply a microservice architecture. Although
+that is an important design choice in contemporary systems, and one
+that will be covered in the course, it is ultimately an internal
+choice, one of several defensible designs for a given application. The
+key points that will characterize virtually all designs are that they
+expose their functionality through a service-based interface, hide
+their internal decisions behind that interface, and communicate over
+a network. The granularity of those components is an implementation choice.</p>
 
 <h2 id="student-background">Student background</h2>
+
+<p>Most of the students will fit the following profile:</p>
 
 <dl>
   <dt>Program entry requirements</dt>
@@ -271,7 +393,12 @@ professional graduate program in Big Data.</p>
 on machine learning and a lab introducing them to technologies of
 large-scale data analysis, including HDFS, Hadoop, Spark, Cassandra,
 and HBase. Some may have taken electives in visualization or natural
-language processing.</dd>
+language processing.
+
+    <p>Students taking the course in their second year will have at least
+two academic semesters and a two-semester internship behind them.
+This group will have taken a range of electives in their second semester.</p>
+  </dd>
   <dt>Courses students take concurrently</dt>
   <dd>Concurrently with the data engineering course, they will be taking a
 second lab, focussed on applied statistical analysis and machine
@@ -279,60 +406,41 @@ learning. They will also be taking an algorithms course including
 Paxos and the Gilbert/Lynch CAP Theorem.</dd>
 </dl>
 
-<p>Many students will be entering the course straight from their first
-semester. A few will be taking it in their last semester, after
-completing an eight-month paid internship in a big data-related role.
-For this last group, this would be an elective in their final
-semester.</p>
-
-<h2 id="data-engineering-from-data-model-to-cloud-ready-data-service">Data engineering: From data model to cloud-ready data service</h2>
-
-<p>Data engineering is the practice of transforming a proof of concept data
-science model into a production-quality service. Amongst other things,
-this may include:</p>
-
-<ul>
-  <li>Hardening the system against failure</li>
-  <li>Making the model more efficient</li>
-  <li>Parallelizing a single-process model</li>
-  <li>Reimplementing the model in a language more suited to
-production environments</li>
-  <li>Automating the handling of exceptional cases such as data in the
-wrong format</li>
-  <li>Adding instrumentation to monitor system performance, input data
-drift, gray failures, and other issues</li>
-  <li>Automating deployment of revisions, including backout in the case of failure</li>
-  <li>Adding admission controls and feature switches for restarting after failure</li>
-  <li>Working with the data centre scheduler and orchestration services to
-ensure that the service is compatible with any services
-co-tenant on its instance and with the data center as a whole</li>
-</ul>
-
-<p>Most of these practices are central to any component of
-service-oriented architectures running in a large data
-centre. Although these data centres may be hosted in a variety of
-ways—by a commercial service, on-premise, or hybrid—I will
-group them under the single term, “cloud”.</p>
-
-<p>The one-sentence summary of all these improvements is <strong>making a data model
-cloud-ready</strong>.</p>
-
 <h2 id="approach">Approach</h2>
 
 <p>Given the lengthy topic list that follows, the course can only provide
-a broad survey, not deep understanding. The importance of these topics
-extends beyond data engineering. If the students become comfortable
-with these concepts, they will be prepared for a broad range of roles
-in cloud computing, well beyond services for data analysis.</p>
+a broad survey, not deep understanding but if the students become
+comfortable with these concepts, they will be prepared for a broad
+range of roles in modern computing environments.</p>
+
+<p>The course runs on two tracks:</p>
+
+<ul>
+  <li>A tool-based track, introducing  a specific
+implementation approach, running
+<a href="https://www.openshift.com/">Docker</a> containers on the
+<a href="https://www.openshift.com/">OpenShift</a> distribution of
+<a href="https://kubernetes.io/">Kubernetes</a>.</li>
+  <li>The principles of designing distributed, resilient services for a
+datacentre environment.</li>
+</ul>
+
+<p>The tools track is neither in-depth nor exhaustive. It simply
+introduces one very large suite of components that is widely used for
+implementing services on a datacentre. It is far from the only
+approach but the widespread use of Docker and Kubernetes means that
+there is a good likelihood that students will be able to immediately
+apply their course experiences in their internships that immediately
+follow this course.</p>
+
+<p>The design principles are organized into the following design space.</p>
 
 <h2 id="the-design-space-of-cloud-services">The design space of cloud services</h2>
 
-<p>I have taught cloud computing to undergraduates three times.  Every
-time I regretted not setting out clear definitions of the foundational
-properties characterizing such systems. Beyond giving students a
-language to discuss the topics, this establishes the <em>design space</em>
-for course discussions and within which to evaluate designs. These
-properties are also the measures of system success.</p>
+<p>Designs can be analyzed according to a variety of criteria. Taken
+together, these criteria establish a <em>design space</em> within which to
+evaluate and contrast designs. These properties also establish
+measures of system success.</p>
 
 <p>These properties can be applied to the system as a whole; many also
 characterize system components.</p>
@@ -364,7 +472,7 @@ representative workload:</p>
 
 <h3 id="data-centre-fabric-metrics">Data centre fabric metrics</h3>
 
-<p>These metrics characterize the design of the data centre</p>
+<p>These metrics characterize the design of the data centre:</p>
 
 <ul>
   <li>Processor performance</li>
@@ -408,7 +516,7 @@ such factors as system load, properties are fundamental to the
 system’s design. For example, the design either replicates durable
 data or it does not.</p>
 
-<h3 id="guarantees-for-durable-data">Guarantees for durable data</h3>
+<h3 id="data-durability">Data durability</h3>
 
 <p>Durable data is stored by the system on behalf of the users, typically
 on disk or solid-state storage. What sort of guarantees does the
@@ -425,6 +533,58 @@ system provide on this data?</p>
 ever resides in memory but in most cases only eventual consistency
 is provided, minimizing processing cost.</p>
 
+<h3 id="data-security-and-privacy">Data security and privacy</h3>
+
+<p>When a service stores data, the designers must consider what
+techniques they will adopt to ensure its security and
+privacy. Although these concepts are related and partially overlap, it
+is useful to distinguish techniques for each:</p>
+
+<dl>
+  <dt>Security</dt>
+  <dd>Techniques that ensure that data will only be accessed by
+authorized individuals and services.</dd>
+  <dt>Privacy</dt>
+  <dd>Techniques that ensure that that data will only be used for
+the purposes for which it was granted to the storing service.</dd>
+</dl>
+
+<p>For example, if you provide your address to a service for them to ship
+you a product, the service’s <em>security guarantees</em> would ensure that only
+employees in the shipping department could see that address, while
+their <em>privacy guarantees</em> would ensure that the employees who can see your
+address would only use it to ship the product, not to send harassing
+mail.</p>
+
+<p>Security and privacy methods include both technical choices and
+organizational policy. Ultimately, while the technology can guarantee
+that the data will be processed according to rules such as “all
+records on persistent storage will be encrypted”, and the policies can
+limit access, perfect security and privacy are ideals that can ony be
+approached, never achieved. A design establishes barriers to misuse
+but sufficiently dedicated individuals with sufficient resources will
+always be able to circumvent those barriers.</p>
+
+<h4 id="data-security-techniques">Data security techniques</h4>
+
+<p>Security techniques include:</p>
+
+<ul>
+  <li>Encryption, at rest and in transit</li>
+  <li>Key management</li>
+  <li>Key revocation</li>
+  <li>Access roles and rules</li>
+</ul>
+
+<h4 id="data-privacy-techniques">Data privacy techniques</h4>
+
+<p>Privacy techniques include:</p>
+
+<ul>
+  <li>Differential privacy</li>
+  <li>Cell size</li>
+</ul>
+
 <h3 id="instrumentation">Instrumentation</h3>
 
 <p>How well does the system support monitoring its current state and
@@ -432,6 +592,7 @@ diagnosing problems:</p>
 
 <ul>
   <li>Logs</li>
+  <li>Traces</li>
   <li>Dashboards</li>
   <li>Probes</li>
 </ul>
@@ -461,7 +622,7 @@ transoceanic partition, …)</li>
 
 <h3 id="business-logic-invariants">Business logic invariants</h3>
 
-<p>Business logic invariants are the business property counterparts of
+<p>Business logic invariants are the business property counterparts to
 business metrics:  The guarantees the system makes for entities that
 the system’s clients care about.  For example, banks maintain the
 invariant that if you transfer money between two accounts, the amount
@@ -537,7 +698,7 @@ interval clocks</li>
 </ul>
 
 <p><a href="https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing">“The Eight Fallacies of Distributed Computing”</a>
-(rephrased as statements about how distributed systems <strong>actually</strong>
+(rephrased below as statements about how distributed systems <strong>actually</strong>
 work):</p>
 
 <ol>
@@ -572,8 +733,8 @@ actual service—into a production service.</p>
 <script>
 
 var disqus_config = function () {
-this.page.url = "http://kirkpatricktech.com/2018/10/13/data-engineering-design-space/";
-//this.page.identifier = "/2018/10/13/data-engineering-design-space";
+this.page.url = "http://kirkpatricktech.com/2019/12/31/design-space-2020/";
+//this.page.identifier = "/2019/12/31/design-space-2020";
 };
 
 (function() { // DON'T EDIT BELOW THIS LINE
