@@ -4,13 +4,267 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2019-12-31T18:08:35-08:00</updated>
+ <updated>2020-01-10T17:34:54-08:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>What genres of readings should be assigned to Prof. MSc. students?</title>
+   <link href="/2020/01/10/readings-in-prof-masters/"/>
+   <updated>2020-01-10T00:00:00-08:00</updated>
+   <id>/2020/01/10/readings-in-prof-masters</id>
+   <content type="html">&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;What sort of materials should students read in a professional MSc.
+course in computing science? Journal articles? Research conference
+papers? Systems-oriented conference papers? Articles from
+practitioner-oriented magazines? Blog posts? Wikipedia entries?
+Ultimately, what is the purpose of the readings?&lt;/p&gt;
+
+&lt;p&gt;I use a broad, eclectic range of sources in such courses. In this
+post, I articulate my rationale for my choices. The outcome driving
+them is preparing the students for the activities and audiences
+that they will perform after graduation.&lt;/p&gt;
+
+&lt;h2 id=&quot;activities-graduates-are-preparing-to-perform&quot;&gt;Activities graduates are preparing to perform&lt;/h2&gt;
+
+&lt;p&gt;I think the essential distinction between the goals of an CS
+undergraduate degree and those of a CS professional MSc. is what each
+strives to develop in their students. Whereas the undergraduate
+degree emphasizes development of &lt;em&gt;professional technique&lt;/em&gt;, the
+graduate degree emphasizes development of &lt;em&gt;professional judgement&lt;/em&gt;.
+Although the majority of such a professional’s time may be spent
+exercising techniques, building and testing systems, the majority of
+their &lt;em&gt;contribution&lt;/em&gt;—the reason they were hired—will result from
+decisions informed by expertise gained through graduate study.&lt;/p&gt;
+
+&lt;h3 id=&quot;activities-exercising-professional-judgement&quot;&gt;Activities exercising professional judgement&lt;/h3&gt;
+
+&lt;p&gt;The activities in which graduates of a CS professional MSc.
+program might exercise judgement include:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Analyzing prospective designs&lt;/li&gt;
+  &lt;li&gt;Assessing the suitability of products (which might well include
+open-source products) for current needs&lt;/li&gt;
+  &lt;li&gt;Diagnosing malfunctions in current systems&lt;/li&gt;
+  &lt;li&gt;Defining requirements and designing systems to address those
+requirements&lt;/li&gt;
+  &lt;li&gt;Documenting the rationale for an existing design&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The key skills are &lt;em&gt;analyzing&lt;/em&gt; and &lt;em&gt;justifying&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;audiences-for-presentations-of-professional-judgement&quot;&gt;Audiences for presentations of professional judgement&lt;/h3&gt;
+
+&lt;p&gt;The results of the above activities will be presented to one or more
+of the following audiences:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Other members of their technical team&lt;/li&gt;
+  &lt;li&gt;Technical specialists outside the team, potentially including
+outside the organization altogether at fora such as conferences&lt;/li&gt;
+  &lt;li&gt;Generalists and specialists in other areas, often including higher
+management at the speaker or writer’s own organization&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The key presentation skills include providing the &lt;em&gt;right level of
+detail&lt;/em&gt; for the audience and &lt;em&gt;addressing the audience’s concerns&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;In addition to the above outward-facing activities, professionals must
+also perform the inward-facing activity of ongoing professional
+development, staying abreast of recent developments in computing.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-readings-will-prepare-students-for-these-activities-and-audiences&quot;&gt;What readings will prepare students for these activities and audiences?&lt;/h2&gt;
+
+&lt;p&gt;The activities and audiences listed above suggest that the most
+appropriate readings will be those focused on the analysis and design
+of actual systems, systems in production rather than the smaller
+research systems used in research to validate a theoretical construct.
+The distinction hinges on the paper scope and intent, not the forum in
+which it was published. Many conferences will feature a mix of
+academic research that elucidates general principles and papers
+describing the design of production systems. Both types can reasonably
+be called “research papers” but only one seems appropriate as readings
+for a professional master’s course.&lt;/p&gt;
+
+&lt;h3 id=&quot;basic-research-is-ill-matched&quot;&gt;Basic research is ill-matched&lt;/h3&gt;
+
+&lt;p&gt;Basic research in the more systems-oriented areas of computing
+science, typically done in universities, most often takes the form of
+proposing a design principle that will improve software quality by
+some metric (latency, reliability, security, and so forth),
+constructing a proof of concept system, and evaluating that system in
+a controlled environment. This work is difficult and requires a team
+of research assistants, often graduate students, to develop the
+software, both the demonstration system and its evaluation
+environment. Such projects can often consume one or more
+programmer-years.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, the research papers produced by such projects are not
+well-matched to preparing students for professional work. The mismatch
+arises on multiple levels:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The &lt;em&gt;audience&lt;/em&gt; for these papers is fellow researchers in the same
+specialist community. Such communities have specific questions of
+interest and specialized practices for answering those questions.&lt;/li&gt;
+  &lt;li&gt;The &lt;em&gt;contribution&lt;/em&gt; of these papers is advancing the scientific and
+engineering principles for system design.&lt;/li&gt;
+  &lt;li&gt;The &lt;em&gt;goal&lt;/em&gt; of these papers is to persuade the audience of
+researchers that the contribution is a substantial and validated
+advancement of the community’s understanding.&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;The &lt;em&gt;structure&lt;/em&gt; of the papers requires a comprehensive survey of prior
+results, both to demonstrate the authors’ membership in the
+community and to justify the novelty of the paper’s
+contribution.&lt;/p&gt;
+
+    &lt;p&gt;The structure also requires a formal evaluation under controlled
+or at least well-measured and documented conditions.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These are in stark contrast to the activities that the
+graduates of a professional master’s program will perform:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Their &lt;em&gt;professional community&lt;/em&gt; is primarily concerned with
+delivering software within constraints of time, budget, and team
+expertise.&lt;/li&gt;
+  &lt;li&gt;Their &lt;em&gt;professional contribution&lt;/em&gt; is meeting the design criteria
+within acceptable tolerances.&lt;/li&gt;
+  &lt;li&gt;Their &lt;em&gt;success critera&lt;/em&gt; are almost exclusively budget and schedule.&lt;/li&gt;
+  &lt;li&gt;The &lt;em&gt;genre&lt;/em&gt; of their proposals and reports is focused on
+presenting decision-makers with a select group of the most viable
+options, often only two or three options. The author has winnowed
+out the obscure, overly risky, or fantastic options. There is no
+requirement of comphrehensiveness. Indeed, the overarching goal is
+the minimization or management of risk.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Some academic research papers break the mold, pursuing a more
+observational approach, such as the University of Toronto team that
+&lt;a href=&quot;https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-yuan.pdf&quot;&gt;categorized the sources of failures&lt;/a&gt;
+in long-running systems. Such efforts aim to characterize the
+strengths and weaknesses of production systems, knowledge that can
+directly inform future practice without any period of adaptation from
+a proof-of-concept study.&lt;/p&gt;
+
+&lt;h3 id=&quot;system-design-reports-are-a-better-match&quot;&gt;System design reports are a better match&lt;/h3&gt;
+
+&lt;p&gt;Conferences such as the
+&lt;a href=&quot;https://www.usenix.org/conferences&quot;&gt;Usenix series&lt;/a&gt; or
+&lt;a href=&quot;https://www.vldb.org/&quot;&gt;VLDB&lt;/a&gt; include many contributions from teams
+building and running production systems.  These papers typically
+include substantial contributions from teams at a large vendor. Some
+examples of papers that I have assigned to the benefit of professional
+graduate students include:&lt;/p&gt;
+
+&lt;dl class=&quot;dl-indented&quot;&gt;
+  &lt;dt&gt;&lt;a href=&quot;http://dl.acm.org.proxy.lib.sfu.ca/citation.cfm?id=1281100.1281103&quot;&gt;Paxos Made Live&lt;/a&gt;&lt;/dt&gt;
+  &lt;dd&gt;The complexities of implementing the Paxos algorithm in a
+high-volume production environment (Google).&lt;/dd&gt;
+  &lt;dt&gt;&lt;a href=&quot;https://www.allthingsdistributed.com/files/p1041-verbitski.pdf&quot;&gt;Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases&lt;/a&gt;&lt;/dt&gt;
+  &lt;dd&gt;Adapting a database design for a managed, high-throughput cloud
+environment (Amazon).&lt;/dd&gt;
+  &lt;dt&gt;&lt;a href=&quot;https://dl.acm.org/citation.cfm?id=3359656&quot;&gt;File Systems Unfit as Distributed Storage Backends: Lessons From 10 Years of Ceph Evolution&lt;/a&gt;&lt;/dt&gt;
+  &lt;dd&gt;The limitations of operating system file stores as backends for a
+distributed file system and the advantages of backends purpose-built
+to support distributed files (Red Hat).&lt;/dd&gt;
+  &lt;dt&gt;&lt;a href=&quot;https://arxiv.org/pdf/1901.04452&quot;&gt;FoundationDB Record Layer: A Multi-Tenant Structured Database&lt;/a&gt;&lt;/dt&gt;
+  &lt;dd&gt;A record layer for a database with a huge number of cotenants (Apple).&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;p&gt;The particular advantage of this genre over reports of principle-driven
+basic research is that the authors are reflecting after implementing a
+full system, with all the complexities of supporting high throughput,
+tolerating faults in both software and hardware, and production
+deployment cycles.  The authors are reporting the most salient
+lessons from the entire process.&lt;/p&gt;
+
+&lt;p&gt;Such processes of development, deployment, measurement, and hardening
+against failure are the processes for which students in a professional
+master’s program are being trained and reading “after-action” reports
+about actual systems focuses and sharpens the students’
+judgement. These papers also exemplify the pinnacle of the writing genre
+the students will perform in their career.&lt;/p&gt;
+
+&lt;p&gt;Reading papers such as these is good preparation for the audiences and
+activities with which the students will professionally engage.&lt;/p&gt;
+
+&lt;h3 id=&quot;blog-posts-and-long-form-discussion-replies-are-also-valuable&quot;&gt;Blog posts and long-form discussion replies are also valuable&lt;/h3&gt;
+
+&lt;p&gt;A third possible reading source is blog posts, which may be published
+on corporate sites such as the
+&lt;a href=&quot;https://aws.amazon.com/blogs/architecture/&quot;&gt;AWS Architecture Blog&lt;/a&gt;,
+personal sites such as this one,
+&lt;a href=&quot;https://pages.github.com/&quot;&gt;GitHub Pages&lt;/a&gt;, or
+&lt;a href=&quot;https://medium.com/&quot;&gt;Medium&lt;/a&gt;. A closely-related format is long-form
+answers on discussion fora such as &lt;a href=&quot;https://www.quora.com/&quot;&gt;Quora&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;As a genre, blog posts are less complete, less authoritative, more
+tentative, and not necessarily as well written as published systems
+papers published in reviwed fora. They are written in a personal voice
+(though this may be tempered when the author writes on behalf of an
+organization) and viewed by both authors and audience not as
+authoritative statements but as a first draft of ideas. The audience
+is typically from the same community as the author and posts have a
+“within-the-family” feel, which can include the sort of nasty
+arguments that arise in families.&lt;/p&gt;
+
+&lt;p&gt;Though these qualities impose a higher interpretative burden on the
+reader in the form of cross-checking claims and accounting for the
+open bias of frankly opinionated writing, posts such as these provide
+information unavailable in other formats. They are timely, specific to
+context, yet paradoxically in the hands of informed authors can also
+provide background and overview lacking in more formal genres that
+emphasize novelty and rigour of contribution over informed
+recommendation.&lt;/p&gt;
+
+&lt;p&gt;This genre is also likely forms in which students will write
+during their careers. Blog posts often serve as an initial form that
+builds an author’s confidence and leads to publishing in more formal contexts.&lt;/p&gt;
+
+&lt;h3 id=&quot;articles-in-the-trade-press-and-vendor-white-papers-orient-students&quot;&gt;Articles in the trade press and vendor white papers orient students&lt;/h3&gt;
+
+&lt;p&gt;Articles in the trade press and white papers by product vendors
+represent another genre, characterized by a tone of hyperbole and the expectation
+of great things to come. Their content can be limited, their charged
+language tiring, but they can be useful for orienting students to
+current industrial concerns, defining terms, and mapping the
+contemporary technical landscape. They can also counterbalance the
+longer-term focus of research articles by revealing the more mundane
+and dated concerns of production systems outside the charmed circles
+of well-funded industrial leaders.&lt;/p&gt;
+
+&lt;h3 id=&quot;discussion-threads-alert-students-to-hot-questions-and-topics&quot;&gt;Discussion threads alert students to “hot” questions and topics&lt;/h3&gt;
+
+&lt;p&gt;Finally, threads in Twitter and Reddit can be limited use. These fora
+may more often promote confusion than clarity but they do have merit
+for pointing students to recent longer articles of interest and
+familiarizing them with current debates.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;There are many sources of readings that can prepare students for
+careers as professionals exercising informed judgement. Of these
+sources, the genre of a classic research paper incrementally advancing
+long-term scientific knowledge, though a staple of academic writing
+and reading, is the most poorly-adapted. Refereed reports of system
+designs and expert opinions in longer unrefereed fora such as blogs
+are a closer match to the reasoning, audience, and concerns to which
+graduates of these programs will devote their time. These genres are
+also the most likely forms in which the graduates will ultimately
+contribute back to their profession. I think such forms should form
+the bulk of the assigned readings for students in professional
+MSc. programs.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>The service design space (2020 Edition)</title>
