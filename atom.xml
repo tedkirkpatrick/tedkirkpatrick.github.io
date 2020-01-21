@@ -4,13 +4,160 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2020-01-16T17:22:12-08:00</updated>
+ <updated>2020-01-21T10:47:47-08:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Figure failures (and successes!)</title>
+   <link href="/2020/01/21/figure-failures/"/>
+   <updated>2020-01-21T00:00:00-08:00</updated>
+   <id>/2020/01/21/figure-failures</id>
+   <content type="html">&lt;p&gt;Well-designed figures are invaluable for presenting technical detail,
+including architectural diagrams, timing diagrams, data visualizations,
+category hierarchies, and many other forms. Yet the simplicity and
+directness of a successful figure belies the complexity of all the
+design decisions underlying it. Those decisions were specific to the
+original context. Pulling a figure from that context and inserting it
+into a very different context such as lecture slides will likely
+fail. This short post lists the many ways that such
+appropriation can fail.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-context-preparing-a-talk&quot;&gt;The context: Preparing a talk&lt;/h2&gt;
+
+&lt;p&gt;The need is common, the situation urgent: I am preparing a lecture
+on a slippery, abstract concept. A figure’s just the thing for giving
+my audience an overview.  But there’s so little time! Preparing a
+figure from scratch will take too long.&lt;/p&gt;
+
+&lt;p&gt;No problem. There’s an enormous library of figures on the Internet
+already.  Just grab the closest one, drop it at the appropriate point
+in the lecture. Problem solved, right?&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, it’s not nearly that simple. A figure that was entirely
+adequate in one context may fail when imported into the context of a
+lecture.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-problems-figure-failures&quot;&gt;The problems: Figure failures&lt;/h2&gt;
+
+&lt;p&gt;Some ways that figures can fail:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Poor representation of material
+    &lt;ul&gt;
+      &lt;li&gt;Poor original design&lt;/li&gt;
+      &lt;li&gt;Simply wrong&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Poor readability
+    &lt;ul&gt;
+      &lt;li&gt;Too small fonts or features&lt;/li&gt;
+      &lt;li&gt;Insufficient contrast&lt;/li&gt;
+      &lt;li&gt;Poor resolution&lt;/li&gt;
+      &lt;li&gt;Too large for display&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Unsuited to this context
+    &lt;ul&gt;
+      &lt;li&gt;Too much detail&lt;/li&gt;
+      &lt;li&gt;Wrong focus, aim, goal for this purpose&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Inconsistent with rest of presentation or course
+    &lt;ul&gt;
+      &lt;li&gt;Inconsistent notation&lt;/li&gt;
+      &lt;li&gt;Inconsistent visual style&lt;/li&gt;
+      &lt;li&gt;Different definition of terms or concepts&lt;/li&gt;
+      &lt;li&gt;Different analytic perspective&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Legally or ethically inappropriate
+    &lt;ul&gt;
+      &lt;li&gt;Copyright misuse / ownership / difficulty of attribution&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Of course, all these problems could also occur in figures created
+expressly for the current presentation, particularly issues of
+representation and readability. Representing concepts in a figure is
+hard, requiring a multitude of choices whose implications might not be
+apparent when they were originally made. Few instructors have training
+in graphic design methods and tools and they often have to create
+course material in very little time. Maintaining consistency from
+class to class and week to week is particularly hard.&lt;/p&gt;
+
+&lt;p&gt;Yet all those problems also arise when choosing a previously-created
+figure and are compounded by the additional issues of context,
+consistency, and ethics.&lt;/p&gt;
+
+&lt;h2 id=&quot;no-easy-solutions&quot;&gt;No easy solutions&lt;/h2&gt;
+
+&lt;p&gt;I see no ready solutions to this dilemma but I think it is beneficial
+to bear these limitations in mind. A figure appropriated from a
+different context may introduce more confusion than clarity in the
+audience. An image that is insufficiently readable may just be a waste
+of time and bore the audience. Be alert to the risks and only use an
+appropriated figure when the benefits likely exceed the risks.&lt;/p&gt;
+
+&lt;p&gt;Simple, hand-drawn figures, photographed with a phone or digitized
+some other way, may be superior to a more visually polished figure
+from another context that risks diluting your message. I am seeing an
+increase of hand-drawn figures in presentations, such as the
+slide figures of Daniel Smith:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/Daniel-Smith-hand-drawn-slide.png&quot; alt=&quot;Hand-drawn slide showing data transfer between Kubernetes client and API Server&quot; /&gt;&lt;br /&gt;
+&lt;small&gt;—Slide 17 from &lt;cite&gt;&lt;a href=&quot;https://static.sched.com/hosted_files/kccnceu18/36/Kubernetes-style%20APIs%20of%20the%20future%20draft%205.pdf&quot;&gt;Kubernetes-style APIs of the Future&lt;/a&gt;&lt;/cite&gt;, Daniel Smith,
+&lt;a href=&quot;https://events19.linuxfoundation.org/events/kubecon-cloudnativecon-europe-2018/&quot;&gt;Kubecon 2018&lt;/a&gt;.&lt;/small&gt;&lt;/p&gt;
+
+&lt;p&gt;Note how &lt;em&gt;simple&lt;/em&gt; Smith’s slide is.&lt;/p&gt;
+
+&lt;p&gt;The increased use of hand-drawn figures has lead in turn to the use of
+machine-rendered figures and fonts that &lt;em&gt;appear&lt;/em&gt; hand-drawn.  For
+example, this figure from
+&lt;a href=&quot;https://www.datadoghq.com/blog/the-power-of-tagged-metrics/&quot;&gt;DataDog’s post on tagged metrics&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/DataDog-hand-drawn-esthetic.png&quot; alt=&quot;Annotated metric from log, identifying tags&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;appears hand-drawn but if you compare occurrences of the same glyph,
+such as ‘M’ or ‘A’, they are identical. It is a machine-rendered font designed
+with a hand-drawn esthetic. This is fine in its own context but it has
+the paradoxical effect of making actual hand-drawn figures appear less
+attractive because they cannot match the regularity of their
+machine-drawn cousins.&lt;/p&gt;
+
+&lt;h2 id=&quot;an-example-of-good-figure-design&quot;&gt;An example of good figure design&lt;/h2&gt;
+
+&lt;p&gt;I’ll end this post with a shout-out to a shining example of the
+benefit of figures drawn expressly to compare and organize the
+concepts of an entire book. Tamara Munzner’s principles of
+visualization design in
+&lt;a href=&quot;https://www.cs.ubc.ca/~tmm/vadbook/&quot;&gt;&lt;em&gt;Visualization Analysis and Design&lt;/em&gt;&lt;/a&gt;
+are organized and illustrated by a marvellous sequence of figures by
+Eamonn Maguire.  For example, Chapter 3 is introduced by this
+visual table:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/Munzner-Visualization-Analysis-and-Design-by-Eamonn-Maguire-fig3-1.png&quot; alt=&quot;Table of Actions (Analyze, Search, and Query) and Targets (All Data, Attributes, Network Data, Spatial Data)&quot; /&gt;&lt;br /&gt;
+—&lt;small&gt;Fig. 3.1 from &lt;cite&gt;&lt;a href=&quot;https://www.cs.ubc.ca/~tmm/vadbook/&quot;&gt;Visualization Analysis and
+Design&lt;/a&gt;&lt;/cite&gt;. Tamara Munzner, with illustrations by Eamonn Maguire. A K
+Peters Visualization Series, CRC Press, 2014. Figure CC BY 4.0 license.&lt;/small&gt;&lt;/p&gt;
+
+&lt;p&gt;Maguire’s figures develop a consistent visual language for the entire
+book and her figures brilliantly illustrate Munzner’s ideas without
+extraneous detail. Maguire’s name is deservedly on the book’s cover.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, most of us have neither the resources to hire an
+excellent illustrator nor Maguire’s skill to do it
+ourselves. Nonetheless, I return to this example again and again for
+inspiration of how powerful purpose-built figures can be. Even if I
+never match this quality, or never even come close, it is worth aiming
+for.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>A class is a story: Fitting content to sessions</title>
