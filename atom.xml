@@ -4,13 +4,282 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2020-01-21T10:47:47-08:00</updated>
+ <updated>2020-01-25T11:07:10-08:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>When are "motivating" images useful in a presentation?</title>
+   <link href="/2020/01/25/motivating-images/"/>
+   <updated>2020-01-25T00:00:00-08:00</updated>
+   <id>/2020/01/25/motivating-images</id>
+   <content type="html">&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; &lt;em&gt;I’m writing this post to clarify my thinking about an issue in
+presentation design. I’m using a stream-of-consciousness format,
+with little editing. You might want to skip this one if
+you are looking for careful, reasoned arguments.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;This post considers the style of figures and images that complement
+the ones I discussed in the
+&lt;a href=&quot;/2020/01/21/figure-failures/&quot;&gt;figure failures&lt;/a&gt; post. Where that post
+considered figures that represent concepts geometrically, this post
+considers images intended to surprise, inspire, and motivate the
+audience. When should I use them? When shouldn’t I use them? Are they
+of any use at all?&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h2 id=&quot;motivating-images&quot;&gt;“Motivating” images&lt;/h2&gt;
+
+&lt;p&gt;Technical blog posts and presentations are rife with humourous
+images. They may be popular memes, funny images, or simply beautiful
+images such as a sunset. I think the originating examples were the
+“Screen Bean” images,&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/Screen-Bean-Stick-Figure-Clip-Art-N2.gif&quot; alt=&quot;Blobby abstract humanoid leaping and clicking its heels&quot; /&gt;&lt;br /&gt;
+&lt;small&gt;Source:
+&lt;cite&gt;&lt;a href=&quot;https://pixy.org/820926/&quot;&gt;Pixy#Org&lt;/a&gt;&lt;/cite&gt;. This version CCO Public Domain
+(according to Pixy#Org).&lt;/small&gt;&lt;/p&gt;
+
+&lt;p&gt;which were
+&lt;a href=&quot;https://www.newyorker.com/magazine/2001/05/28/absolute-powerpoint&quot;&gt;created by Cathleen Belleville&lt;/a&gt;
+for  Microsoft PowerPoint and rapidly became
+ubiquitous.&lt;/p&gt;
+
+&lt;p&gt;A more recent (Fall of 2019) example was the “woman yelling at cat”
+meme:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/Woman-yelling-cat-meme.jpg&quot; alt=&quot;Woman in tears yelling at a cat seated at a dinner table. No, I'm not making this up.&quot; style=&quot;margin-bottom: 0pt;&quot; /&gt;&lt;br /&gt;
+&lt;small&gt;Left to right: &lt;a href=&quot;https://www.oprahmag.com/entertainment/a29739536/cat-meme-taylor-armstrong-explained/&quot;&gt;Taylor Armstrong&lt;/a&gt;, Kyle Richards,
+&lt;a href=&quot;https://www.instagram.com/smudge_lord/?hl=en&quot;&gt;Smudge The Cat&lt;/a&gt;.&lt;/small&gt;&lt;/p&gt;
+
+&lt;p&gt;These images serve serveral rhetorical purposes:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;They draw the audience’s eye. Large changes in the visual field
+are salient, focussing attention on the locale of the change.&lt;/li&gt;
+  &lt;li&gt;They establish a lighthearted mood. This may be particularly
+valuable in a context such as conferences where the audience may be
+hearing many presentations in a short period.&lt;/li&gt;
+  &lt;li&gt;When the images are drawn from a culture shared by both speaker and
+audience, they increase the audience’s trust of the speaker.&lt;/li&gt;
+  &lt;li&gt;They categorize the slide’s speech act in the manner of question or
+explanation marks.&lt;/li&gt;
+  &lt;li&gt;They provide visual variety, in contrast to a wall of text.&lt;/li&gt;
+  &lt;li&gt;They engage neurological channels distinct from the
+language-processing centres, reinforcing the spoken words with
+minimal mental overload.&lt;/li&gt;
+  &lt;li&gt;They enhance emotional impact.&lt;/li&gt;
+  &lt;li&gt;When the audience expects a presentation to have this feature, the
+speaker is meeting community norms and establishing membership
+in that community.&lt;/li&gt;
+  &lt;li&gt;Establish personal style or brand. Some speakers use consistent
+themes for images. After multiple presentations, audiences
+associate that style with the speaker. Such a style sets a tone for
+the talk.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;In short, these images are intended to motivate and
+inspire the audience rather than inform them.&lt;/p&gt;
+
+&lt;p&gt;For this post, I am going to assume the presenter is using a
+slide-based presentation, created by such tools as Microsoft PowerPoint, Apple
+Keynote, or OpenOffice Impress.  I acknowledge other formats—I do
+not use slides in my own presentations—but the presentations I see
+in computing fora are overwhelmingly in the slide style.&lt;/p&gt;
+
+&lt;h2 id=&quot;they-also-pose-risks&quot;&gt;They also pose risks&lt;/h2&gt;
+
+&lt;p&gt;Some items in the above list are guaranteed to occur because they
+exploit basic properties of human perception and cognition. Others are
+socially mediated. As such, they pose risks for the presenter because
+the image may not engender the desired response:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Members of the audience may respond very differently to an image
+than the speaker expected. The audience may find an image dated,
+inappropriate, or mismatched to the occasion.  The Screen Beans were
+widely adopted in part because they removed many cultural
+signifiers and reduced the human form to a basic shape.&lt;/li&gt;
+  &lt;li&gt;The image may distract the audience by suggesting topics wholy
+unrelated to the presentation. This risk is particularly high
+because these images are deliberately selected for their
+visceral impact, which can be far more engaging than the more
+abstruse topics presented by the speaker.&lt;/li&gt;
+  &lt;li&gt;They consume lots of slide space, leaving little room for anything
+else. A talk format such as the canonical TED Talk, with each
+slide featuring an image and single point, may work fine for
+emotional or inspirational presentations but is ill-suited to the
+more detailed, linear arguments of the technical realm.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;my-current-practice&quot;&gt;My current practice&lt;/h2&gt;
+
+&lt;p&gt;In presentations to class, to professional groups, and in my writing
+here, I virtually never use these images. In fact, I didn’t have an
+&lt;code class=&quot;highlighter-rouge&quot;&gt;assets/images&lt;/code&gt; subdirectory until the last post, the first that
+incorporated inline images.&lt;/p&gt;
+
+&lt;p&gt;My presentations invariably fall in the category of detailed technical
+arguments. This is partly because I think that’s where I can best
+contribute but is also because I don’t find the inspirational style
+very interesting. I’m inherently skeptical of presentations at
+technical fora that claim that any single technology or method will
+“change everything”. Yet that claim is depressingly common at
+conferences.  Everyone wants to be a prophet, few want to redesign
+the schedule for cleaning trash from the office. For the same reasons,
+I’ve never found much value in TED Talks.&lt;/p&gt;
+
+&lt;p&gt;People reply to me, “So use diagrams that are technically appropriate
+but also beautiful”. That is certainly possible, as exemplified by
+Eamonn Maguire’s diagrams that I
+&lt;a href=&quot;/2020/01/21/figure-failures/&quot;&gt;highlighted in the previous post&lt;/a&gt;, but
+that same post also emphasized how difficult it is to create a
+representation that is both clear and beautiful under the actual
+conditions in which we create presentations.&lt;/p&gt;
+
+&lt;h2 id=&quot;drawing-the-audiences-attention---but-to-what&quot;&gt;Drawing the audience’s attention—but to what?&lt;/h2&gt;
+
+&lt;p&gt;The size of these images, the screen space they occupy, mitigates the
+attentional benefits from displaying them. When they are displayed,
+the abrupt change in the visual field is sure to get the audience’s
+attention. In fact, those moments are the times when the presenter
+has, however briefly, the attention of almost everyone in the
+audience.&lt;/p&gt;
+
+&lt;p&gt;The image has done its job by pulling the audience away from their
+consideration of their imminent lunch or that attractive person in the
+next row but what is the audience &lt;em&gt;attending to&lt;/em&gt; in that moment?
+Perhaps a vision of a sunset or a meme excerpted from popular
+entertainment, with a key transitional phrase, such as, “We can’t have
+it both ways!”  or “How do we resolve this?” For audience members
+whose minds had drifted from the presentation and were returned by
+the sudden visual change, there is no indication of what “both ways”
+are in conflict or what we need to “resolve”. Punctuation for an empty
+paragraph, vacuous as a row of commas and exclamation points without
+intervening words.&lt;/p&gt;
+
+&lt;p&gt;While the audience puzzle over what they may have missed in the prior
+slides, the speaker moves on to their next point, the grand resolution
+of the dilemma they presented earlier. But the audience members’ minds
+are in overload, assimilating the missing past points, the
+current point, and whatever relevance a picture of a sunset or
+the Jack Nicholson
+&lt;a href=&quot;https://www.youtube.com/watch?v=WDpipB4yehk&quot;&gt;“Here’s Johnny!” moment&lt;/a&gt;
+might have to the actual topic.&lt;/p&gt;
+
+&lt;p&gt;The presenter used the audience’s eyes to get their minds—but the
+power of an image over speech can set those minds off in a direction
+unrelated to the presenter’s spoken argument.&lt;/p&gt;
+
+&lt;h2 id=&quot;other-issues&quot;&gt;Other issues&lt;/h2&gt;
+
+&lt;p&gt;Some thoughts in no particular order.&lt;/p&gt;
+
+&lt;h3 id=&quot;images-can-stale-quickly&quot;&gt;Images can stale quickly&lt;/h3&gt;
+
+&lt;p&gt;It takes time to find the right image and it may not stay current for
+long. Memes and other topical
+references are flimsy—few things have a shelf life as
+short as a pop cultural moment. The image that wow’ed em six months
+ago might be a tired joke today:&lt;/p&gt;
+
+&lt;script type=&quot;text/javascript&quot; src=&quot;https://ssl.gstatic.com/trends_nrtr/2051_RC11/embed_loader.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot;&gt; trends.embed.renderExploreWidget(&quot;TIMESERIES&quot;, {&quot;comparisonItem&quot;:[{&quot;keyword&quot;:&quot;mad queen&quot;,&quot;geo&quot;:&quot;US&quot;,&quot;time&quot;:&quot;2019-01-25 2020-01-25&quot;}],&quot;category&quot;:0,&quot;property&quot;:&quot;&quot;}, {&quot;exploreQuery&quot;:&quot;q=mad%20queen&amp;geo=US&amp;date=today 12-m&quot;,&quot;guestPath&quot;:&quot;https://trends.google.com:443/trends/embed/&quot;}); &lt;/script&gt;
+
+&lt;p&gt;And if you have to think a bit to recover the common referent of “mad
+queen” in the second week of May, 2019—well, that’s the point.&lt;/p&gt;
+
+&lt;h3 id=&quot;gatling-gun-image-sequences&quot;&gt;Gatling-gun image sequences&lt;/h3&gt;
+
+&lt;p&gt;An image-heavy presentation entails a rapid-fire succession of
+disruptions of the primary visual focus. I think the effect will vary
+widely across audience members. On the one hand, such presentations
+will likely have less focused, coherent content, making them
+better-suited to blowsy conference attendees. On the other hand, so
+many interruptions would likely disrupt the audience’s tentative
+understanding of a subtle, serial line of reasoning.&lt;/p&gt;
+
+&lt;h3 id=&quot;pauses-give-time-to-assimilate&quot;&gt;Pauses give time to assimilate&lt;/h3&gt;
+
+&lt;p&gt;One useful role for a slide with an image and simple text is to pause,
+providing an opportunity for the audience to assimilate the material
+so far. Creating such a moment requires a delicate touch. The
+presenter must keep speaking, stay on topic, yet not say anything so
+complex that audience members must spend all their attention on
+understanding the speaker, preventing assimilation. For similar
+reasons, the displayed slide must also be minimally distracting—with
+the definition of “distracting” highly specific to the
+context. Finally, the pause should not go on too long, lest the
+audience’s attention wander.&lt;/p&gt;
+
+&lt;p&gt;Getting such pauses right is part of the performance aspect of
+speaking, requiring in-the-moment decisions.&lt;/p&gt;
+
+&lt;h3 id=&quot;why-speak-rather-than-write&quot;&gt;Why speak rather than write?&lt;/h3&gt;
+
+&lt;p&gt;Ultimately, why do we present ideas orally rather than in writing or
+to complement writing? The entirety of this topic would require
+several books to unpack and has millenia’s worth of analysis by
+writers more qualified than I but I want to consider the localized
+issue of how this broader purpose influences the choice to use
+“motivating” images.&lt;/p&gt;
+
+&lt;p&gt;A partial list of motivations for speaking:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Shared focus and experience&lt;/li&gt;
+  &lt;li&gt;Generate enthusiasm for the written presentation&lt;/li&gt;
+  &lt;li&gt;Create an opportunity for interaction&lt;/li&gt;
+  &lt;li&gt;Adjust presentation of difficult or commonly-misunderstood topics
+in response to audience&lt;/li&gt;
+  &lt;li&gt;Reach audiences who won’t read&lt;/li&gt;
+  &lt;li&gt;The chance to be the focus of attention&lt;/li&gt;
+  &lt;li&gt;Engage the audience through performance&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I am struck by the diversity of these purposes. They emphasize how
+different a spoken argument is from a written one. On balance, I think
+they argue for the use of “motivating” images, as they highlight
+speaking as a performance, which relies on emotional appeal at least
+as much as intellectual rigor.&lt;/p&gt;
+
+&lt;h2 id=&quot;synthesis-matching-performance-to-reach&quot;&gt;Synthesis: Matching performance to reach&lt;/h2&gt;
+
+&lt;p&gt;I could continue writing, expanding my scope of consideration
+indefinitely. This isn’t a question that can really be answered in any
+final way. I think this is enough for now. I’m sure to have
+many &lt;em&gt;esprit d’escalier&lt;/em&gt; moments in the weeks after I press “Publish”.
+I may make this a thread of posts.&lt;/p&gt;
+
+&lt;p&gt;At this point, I suggest this partial synthesis:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Emotionally persuasive methods such as “motivating” images are
+useful so long as they clearly stay within the reach of the original
+argument.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;By “reach” I mean the implications supported by the plain argument if
+it were presented dispassionately on the page without the supporting
+emotional machinery. My complaint against many uses of these
+images—again, my canonical example is TED Talks—is that they
+exploit the emotional content to extend the speaker’s argument far
+beyond any reasonable implication of their original observations. A
+partial solution is framed as a total solution. Everyone leaves
+feeling better because the monster has apparently been slain when in
+fact it has only slowed or shrunk.  These are fine outcomes, more
+important than sweeping claims that ultimately prove vacuous, but they
+lack the sizzle of supposedly complete solutions.&lt;/p&gt;
+
+&lt;p&gt;It is inappropriate to use motivating images to bait and switch the
+audience to accepting an unsupported claim, while they can
+appropriately be used to arouse enthusiasm for a more circumscribed
+but well-grounded result.&lt;/p&gt;
+
+</content>
+ </entry>
  
  <entry>
    <title>Figure failures (and successes!)</title>
@@ -564,7 +833,9 @@ datacentres. The roster indicates that nearly all students will be in
 a professional master’s program. Most will be in their second semester
 of a program in Big Data, some will be in their fifth semester
 (including a two-semester paid internship), with a few in other
-programs.&lt;/p&gt;
+programs. What are the key principles that should structure such a course?&lt;/p&gt;
+
+&lt;!--more--&gt;
 
 &lt;p&gt;This will be a revision of the course that I taught in
 Spring 2019. I was generally satisfied with that version and do
@@ -1036,15 +1307,11 @@ actual service—into a production service.&lt;/p&gt;
    <link href="/2019/12/16/awareness-outcomes/"/>
    <updated>2019-12-16T00:00:00-08:00</updated>
    <id>/2019/12/16/awareness-outcomes</id>
-   <content type="html">&lt;h2 id=&quot;note-on-my-posting-gap&quot;&gt;Note on my posting gap&lt;/h2&gt;
-
-&lt;p&gt;Outside activities interrupted my posting here. Where &lt;em&gt;did&lt;/em&gt; those five
+   <content type="html">&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; &lt;em&gt;Outside activities interrupted my posting here. Where did those five
 months go? I did generate a lot of potential posts on distributed
 systems, which I’ll discuss in coming posts. This post focusses
 instead on course design, addressing an issue of immediate interest to
-me.&lt;/p&gt;
-
-&lt;h2 id=&quot;disentangling-an-overstuffed-course&quot;&gt;Disentangling an overstuffed course&lt;/h2&gt;
+me.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;I recently discussed course design with some colleagues developing a
 required course for a professional masters program. They wanted the course
@@ -1054,7 +1321,13 @@ specialization outside that core. Of particular concern were students
 who do not have undergraduate CS degrees. Although such students bring
 valuable experience from other domains, it is at the cost of lacking
 the skills developed by long-term, broad study of CS. Even students
-who do have such background can benefit from revisiting these topics.&lt;/p&gt;
+who do have such background can benefit from revisiting these
+topics. How can we cover so much material in the limited time of a
+single course?&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h2 id=&quot;disentangling-an-overstuffed-course&quot;&gt;Disentangling an overstuffed course&lt;/h2&gt;
 
 &lt;p&gt;The range of possible topics for such a course is far too broad to fit
 into a single semester of graduate study but that is the maximum time that
