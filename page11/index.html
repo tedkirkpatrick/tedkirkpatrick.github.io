@@ -49,10 +49,9 @@
 <meta name="description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
 <meta property="og:description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
 <meta property="og:site_name" content="All my marbles in one place" />
-<link rel="prev" href="/page7">
-<link rel="next" href="/page9">
+<link rel="prev" href="/page10">
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"WebPage","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","url":"/page8/"}</script>
+{"@context":"http://schema.org","@type":"WebPage","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","url":"/page11/"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -246,12 +245,12 @@
   
   <div class="post">
     <h1 class="post-title">
-      <a href="/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/">
-        Microbenchmarks are highly sensitive to the heap context!
+      <a href="/2017/02/21/iterators-one-success-story/">
+        Iterators: One success story
       </a>
     </h1>
     
-    <span class="post-date">10 Jun 2017
+    <span class="post-date">21 Feb 2017
     
       <span class="tag-block">Tags: 
       
@@ -263,117 +262,23 @@
     
     </span>
 
-    <p>Over two weeks ago, I posted an article about <a href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/">by-value parameters in the loop and <code class="highlighter-rouge">transform</code> idioms</a>. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis.  In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda.</p>
+    
+<p>Iterators intrigue me because they seem to bring to C++ facilities that I’ve found congenial in other languages. I’ve spent some time in Haskell and a lot of time in Python, which both support <a href="https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions">list comprehensions</a>. I’ve also enjoyed the limited amount of C# <a href="https://msdn.microsoft.com/en-us/library/bb397933.aspx">Language-Integrated Query (LINQ)</a> programming that I’ve done.</p>
 
- <a href="/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2017/05/24/the-elegant-machine-code-for-char-const/">
-        The elegant machine code for char const *
-      </a>
-    </h1>
-    
-    <span class="post-date">24 May 2017
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/C++">C++</a>
-        
-      
-      </span>
-    
-    </span>
+<p>Yet when I come to actually use the STL iterators, it feels awkward and requires much more text than achieving comparable results using list comprehensions or LINQ. Some of that may be simple unfamiliarity but that is itself a problem: A good design will allow me to apply patterns I’ve learned in other languages.</p>
 
-    <p>Unique strings—null-terminated strings uniquely identified by their <code>char const *</code>—are the simplest type considered in this series of posts. Constructing, copying, moving, and assigning these strings are trivial operations on a single pointer. No destructor code is required.</p>
-
- <a href="/2017/05/24/the-elegant-machine-code-for-char-const/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/">
-        Passing std::string by-value noticeably slows the idioms
-      </a>
-    </h1>
-    
-    <span class="post-date">22 May 2017
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/C++">C++</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>The <a href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/">benchmarks comparing <code>transform</code> to a
-loop</a> also highlighted the substantial contribution that copying values made to their performance. Copying costs become especially noticeable for complex types, such as standard strings too long to fit in the short string optimization.</p>
-
- <a href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/">
-        Benchmarking the transform and loop idioms
-      </a>
-    </h1>
-    
-    <span class="post-date">19 May 2017
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/C++">C++</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p><strong>Update: Mon Aug 20, 2018:</strong> Also see this <a href="/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/">semi-rant about the limitations of microbenchmarkering</a>.</p>
-
- <a href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/">
-        Analysis of code generated from the transform idiom
-      </a>
-    </h1>
-    
-    <span class="post-date">03 May 2017
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/C++">C++</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>The last post presented the baseline C++ code and its generated machine code. Now it’s time to compare the code generated by the <code class="highlighter-rouge">std::transform</code> idiom and see how well it fares.</p>
-
- <a href="/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/">more ...</a>
+ <a href="/2017/02/21/iterators-one-success-story/">more ...</a>
   </div>
   
 </div>
 
 <div class="pagination">
   
-    <a class="pagination-item older" href="/page9">Older</a>
+    <span class="pagination-item older">Older</span>
   
   
     
-      <a class="pagination-item newer" href="/page7">Newer</a>
+      <a class="pagination-item newer" href="/page10">Newer</a>
     
   
 </div>

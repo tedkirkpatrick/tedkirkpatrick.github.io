@@ -4,13 +4,64 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2020-01-25T11:07:10-08:00</updated>
+ <updated>2020-01-30T17:21:59-08:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>A strategy for more frequent posts</title>
+   <link href="/2020/01/29/increasing-post-frequency/"/>
+   <updated>2020-01-29T00:00:00-08:00</updated>
+   <id>/2020/01/29/increasing-post-frequency</id>
+   <content type="html">&lt;p&gt;I have many incomplete threads on distributed systems. How do I
+balance my desire for complete and correct presentations with the need
+to post more frequently?&lt;/p&gt;
+
+&lt;p&gt;A year ago, I began two threads on distributed systems. The first
+focused on using the TLC model checker (and by extension other model
+checkers) to
+&lt;a href=&quot;/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/&quot;&gt;explore failures of distributed algorithms&lt;/a&gt;. Before
+I could get far with that, I set it aside to begin a second on representing Howard and
+Mortier’s work on generalized distributed consensus in
+&lt;a href=&quot;/2019/05/29/distributed-consensus-intro/&quot;&gt;PlusCal and analyzing it using TLC&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I have a related thread that never got beyond draft stage, guiding
+students through the code for
+&lt;a href=&quot;https://github.com/Tencent/phxpaxos&quot;&gt;TenCent’s implementation of Paxos&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;This spring, teaching distributed systems to professional master’s
+students led me to conceive a fourth thread refocusing attention away
+from CAP and back to the
+&lt;a href=&quot;https://www.the-paper-trail.org/post/2008-08-13-a-brief-tour-of-flp-impossibility/&quot;&gt;Fischer-Lynch-Paterson impossibility result&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;That’s a lot of dangling thread. Each would require many hours and
+many posts. Instead of pursuing any one, I turned instead to writing
+shorter, less dense and more tentative posts about topics of immediate
+interest, particularly teaching, as that is my primary activity for
+the next few months. I wanted to regain the freedom to think aloud,
+which I had to restrain while writing posts that aimed for a more
+complete statement. However many flaws remain in the published
+versions of those posts, I removed many more by repeated passes before
+publishing them. The result satisfied me but the process exhausted me
+and was partly responsible for my five-month absence from posting.&lt;/p&gt;
+
+&lt;p&gt;In coming posts, I aim to balance between these two styles. In
+particular, I will return to those earlier threads but accept some
+less precise expressions, in interest of producing drafts to develop
+the ideas. Once I have collected enough draft sections, I
+may return to do a more polished version, detailed and precise, a more
+final form of those ideas.&lt;/p&gt;
+
+&lt;p&gt;Or maybe not, if I judge the first drafts to be good enough. My
+personally urgent task is to break my current deadlock by relaxing the
+requirement that posts be as close to definitive as I can
+make them and instead accepting imperfections as the price of timeliness.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>When are "motivating" images useful in a presentation?</title>
@@ -1757,7 +1808,7 @@ several times larger than the actual number of concepts it describes.&lt;/p&gt;
 
 &lt;h2 id=&quot;the-basic-algorithm-leaves-many-key-decisions-to-implementation&quot;&gt;5. The basic algorithm leaves many key decisions to implementation&lt;/h2&gt;
 
-&lt;p&gt;The basic consensus algorithm makes a single decision (called “instance”, in
+&lt;p&gt;The basic consensus algorithm makes a single decision (called “instance” in
 the literature), runs on a fixed
 set of processes, and makes no guarantee of ever completing. Actual
 implementations typically include extensions to:&lt;/p&gt;
