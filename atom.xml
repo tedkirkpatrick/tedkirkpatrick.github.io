@@ -4,13 +4,281 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2020-01-30T17:21:59-08:00</updated>
+ <updated>2020-02-11T17:57:09-08:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>"Distributed Systems" are not what they used to be</title>
+   <link href="/2020/02/11/meaning-of-distributed-systems/"/>
+   <updated>2020-02-11T00:00:00-08:00</updated>
+   <id>/2020/02/11/meaning-of-distributed-systems</id>
+   <content type="html">&lt;p&gt;The phrase “distributed systems” has had several meanings over the
+last 50 years, from a mathematical topic to a style of
+engineering practice to a suite of technologies. What can
+we learn from these changes and how do we reconcile these
+perspectives?&lt;/p&gt;
+
+&lt;h2 id=&quot;the-early-days-1970--1995-algorithms&quot;&gt;The early days (1970–1995): Algorithms&lt;/h2&gt;
+
+&lt;p&gt;The initial work on distributed systems had strong overlap with work
+on concurrency and parallism. Indeed, from the perspective of
+algorithm correctness, these topics share much in common. Nor was
+there a widely-agreed definition of the phrase. The earliest
+researchers were mapping this new territory, not altogether sure of
+where they were going or how their maps would ultimately be used.&lt;/p&gt;
+
+&lt;p&gt;Although early work included the implementation of groundbreaking
+systems such as
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Semi-Automatic_Ground_Environment&quot;&gt;SAGE&lt;/a&gt;,
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Sabre_(computer_system)&quot;&gt;Sabre&lt;/a&gt;, and
+&lt;a href=&quot;https://www.livescience.com/20727-internet-history.html&quot;&gt;ARPANet&lt;/a&gt;,
+the work from that era most commonly characterized as
+“distributed systems” is a series of classic papers focussed on
+algorithms and their correctness. The literature, even in its early
+stages, was large and beyond simple summary and I don’t have the
+background to survey it fairly. Instead, I will list a few papers that
+I have found powerful and influential. The list is not particularly
+idiosyncratic, as these papers are also widely cited by others.&lt;/p&gt;
+
+&lt;p&gt;In order of publication:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://lamport.azurewebsites.net/pubs/time-clocks.pdf&quot;&gt;“Time, Clocks, and the Ordering of Events in a Distributed System”&lt;/a&gt;,
+Lamport (1978).&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.microsoft.com/en-us/research/publication/byzantine-generals-problem/&quot;&gt;“The Byzantine Generals Problem”&lt;/a&gt;,
+Lamport, Shostak &amp;amp; Pease (1982).&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.computer.org/csdl/proceedings-article/focs/1983/542800403/12OmNvAAtFD&quot;&gt;“Randomized Byzantine Generals” (abstract only)&lt;/a&gt;,
+Rabin (1983).&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://lamport.azurewebsites.net/pubs/chandy.pdf&quot;&gt;“Distributed Snapshots: Determining Global States of Distributed Systems”&lt;/a&gt;,
+Chandy &amp;amp; Lamport (1985).&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://groups.csail.mit.edu/tds/papers/Lynch/jacm85.pdf&quot;&gt;“Impossibility of Distributed Consensus with One Faulty Process”&lt;/a&gt;,
+Fischer, Lynch &amp;amp; Paterson (1985).&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://pmg.csail.mit.edu/papers/vr.pdf&quot;&gt;“Viewstamped Replication: A New Primary Copy Method to Support Highly-Available Distributed Systems”&lt;/a&gt;,
+Oki &amp;amp; Liskov (1988).&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.cs.utexas.edu/~lorenzo/corsi/cs380d/papers/p225-chandra.pdf&quot;&gt;“Unreliable Failure Detectors for Reliable Distributed Systems”&lt;/a&gt;,
+Chandra &amp;amp; Toueg (1996).&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://lamport.azurewebsites.net/pubs/lamport-paxos.pdf&quot;&gt;“The Part-time Parliament”&lt;/a&gt;,
+Lamport (Published 1998, submitted substantially earlier).&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://pmg.csail.mit.edu/papers/osdi99.pdf&quot;&gt;“Practical Byzantine Fault Tolerance”&lt;/a&gt;, Castro &amp;amp; Liskov (1999).&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;This list is not intended to be complete, sufficient, nor up to date.
+For learning the practical side of distributed systems, Henry Robinson
+(who I wish would resume blogging) has developed a useful starter
+guide,
+&lt;a href=&quot;http://the-paper-trail.org/blog/distributed-systems-theory-for-the-distributed-systems-engineer/&quot;&gt;“Distributed systems theory for the distributed systems engineer”&lt;/a&gt;
+(updated as of 2018).&lt;/p&gt;
+
+&lt;p&gt;The papers can be grouped into categories that highlight their
+distinct contributions:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Papers that prove fundamental limits on distributed algorithms:
+“Time, Clocks, and the Ordering of Events”, “Impossibility of
+Distributed Consensus”, and “Unreliable Failure Detectors”.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Papers presenting fundamental algorithms: “Byzantine Generals
+Problem”, “Distributed Snapshots”, and “Part-Time Parliament”.
+Notably, every one of these was writtten or co-authored by Leslie
+Lamport, who was awarded the &lt;a href=&quot;https://amturing.acm.org/award_winners/lamport_1205376.cfm&quot;&gt;2013 Turing Award&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Papers presenting first implementations solving important problems in
+distributed systems: “Viewstamped Replication” and “Practical
+Byzantine Fault Tolerance”. I think it is significant that both of
+these were Ph.D. projects under the supervision of Barbara Liskov, who
+was awarded the
+&lt;a href=&quot;https://amturing.acm.org/award_winners/liskov_1108679.cfm&quot;&gt;2008 Turing Award&lt;/a&gt;
+for these and other contributions.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;In summary, during this first period, “distributed systems” referred
+to a community concerned with defining fundamental limits, discovering
+fundamental algorithms, and demonstrating the feasibility of these
+methods via first implementations.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-middle-period-1995--2015-engineering-scalable-systems&quot;&gt;The middle period (1995–2015): Engineering scalable systems&lt;/h2&gt;
+
+&lt;p&gt;Where the “early period” lasted roughly 25 years, the “middle period”
+was much shorter, perhaps 10 years, with some overlap of the
+“early period”.
+The literature for this period is even more voluminous and although I
+do believe I have a good knowledge of the key papers, there is neither
+time nor space to provide a bibliography anything close to complete. I
+will instead list a short sample of papers to illustrate the history
+of its development:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://dl.acm.org/doi/book/10.5555/974938&quot;&gt;“A Note on Distributed Computing”&lt;/a&gt;,
+Waldo, Wyant, Wallroth &amp;amp; Kendall (1994).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://people.eecs.berkeley.edu/~brewer/cs262b-2004/PODC-keynote.pdf&quot;&gt;“Towards Robust Distributed Systems”&lt;/a&gt;,
+Brewer (2000).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf&quot;&gt;“MapReduce: Simplified Data Processing on Large Clusters”&lt;/a&gt;,
+Dean &amp;amp; Ghemawat (2004).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://research.google/pubs/pub33002/&quot;&gt;“Paxos Made Live”&lt;/a&gt;, Chandra,
+Griesemer, &amp;amp; Redstone (2007).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.allthingsdistributed.com/2008/12/eventually_consistent.html&quot;&gt;“Eventually Consistent”&lt;/a&gt;,
+Vogels (2008).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.slideshare.net/parallellabs/dean-keynoteladis2009jeffdean&quot;&gt;“Designs, Lessons, and Advice from Building Large Distributed Systems”&lt;/a&gt;,
+Dean (2009).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://research.google/pubs/pub40801/&quot;&gt;“The Tail at Scale”&lt;/a&gt;, Dean
+&amp;amp; Barroso (2013).&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;During this period, attention shifted towards engineering large-scale,
+failure-tolerant systems running in a global network of
+datacentres. The abstract for the Waldo et al. technical report sets
+the tone for the coming ten years:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;These failures
+[to support basic requirements of robustness and reliability] have
+been masked in the past by the small size of the distributed systems
+that have been built. In the enterprise-wide distributed systems
+foreseen in the near future, however, such a masking will be
+impossible.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Eric Brewer’s 2000 talk, a keynote address to the “Principles of
+Distributed Computing” conference, emphasized that his company of the
+time, an early Web search service, was&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;“Based on scalable cluster and parallel distributed computing
+technology”&lt;/li&gt;
+  &lt;li&gt;“But [made] very little use of classic DS [Distributed Systems] research”&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The talk introduced the CAP “Theorem” but twelve years later Brewer emphasized that
+&lt;a href=&quot;https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/&quot;&gt;“its purpose … was to open the minds of designers to a wider range of systems and tradeoffs”&lt;/a&gt;
+rather than to further distributed systems theory.&lt;/p&gt;
+
+&lt;p&gt;The remaining papers sample the development of systems addressing the
+interconnected engineering challenges of&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;failure tolerance,&lt;/li&gt;
+  &lt;li&gt;geolatency—the lag for round-trip communications across long
+distances,&lt;/li&gt;
+  &lt;li&gt;consistency,&lt;/li&gt;
+  &lt;li&gt;high scalability, and&lt;/li&gt;
+  &lt;li&gt;high availability.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The systems in this period were purpose-built by organizations in the
+grip of explosive growth. It is emblematic of the shift that
+&lt;a href=&quot;https://cis.cornell.edu/career-conversation-tushar-chandra&quot;&gt;T. D. Chandra&lt;/a&gt;, first author of the 1996 paper establishing the
+theory of weak failure detectors, is also the lead author of the 2007
+paper on the challenges of implementing the Paxos distributed consensus
+algorithm in production. Theory into practice, indeed.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-contemporary-view-2015--present-cowabunga-kubernetes&quot;&gt;The contemporary view (2015–present): Cowabunga Kubernetes!&lt;/h2&gt;
+
+&lt;p&gt;The current phase is the inexorable next step, where commercial
+organizations package, distribute, and support generalized versions of
+the custom solutions from the previous phase. The experimentation of the
+early days of large-scale datacentres has settled into established
+practice, at least for some common use cases.&lt;/p&gt;
+
+&lt;p&gt;The tool with broadest reach, virtually ubiquitous in both actual
+datacentres and discussions about managing them, is Kubernetes. This
+third-generation orchestration tool, successor to Google’s Omega and
+Borg, manages applications organized around a similarly ubiquitous
+technology, containers. Whereas Kubernetes is the clear market winner
+to the point where it’s hard to even name an alternative, there are
+many contending container technologies, aimed at different but related
+levels of the underlying stack. As of this writing, the CNCF Landscape
+&lt;a href=&quot;https://landscape.cncf.io/category=container-runtime&amp;amp;format=card-mode&amp;amp;grouping=category&quot;&gt;lists 12 container runtimes&lt;/a&gt;,
+including containerd, cri-o, Firecracker, gVisor, and kata. (By the
+way: Do their trademark staffs think they have to pay extra for
+capital letters?)&lt;/p&gt;
+
+&lt;p&gt;The choice of container runtime is mostly a matter for the platform and
+operations staff as, the distinctions between runtimes are near-invisible
+to application developers.&lt;/p&gt;
+
+&lt;p&gt;Contemporary discussions of “distributed systems”
+centre on the practices of architecting systems to run under
+Kubernetes, managing Kubernetes clusters, and cooperating with legacy
+systems that remain outside the cluster. Development work focuses on
+building out those capacities not well-addressed by the current
+release of Kubernetes and related tools.&lt;/p&gt;
+
+&lt;p&gt;It’s a Kubernetes world and we just have to get used to living in it.&lt;/p&gt;
+
+&lt;h2 id=&quot;why-does-this-matter&quot;&gt;Why does this matter?&lt;/h2&gt;
+
+&lt;p&gt;What does this history suggest? On its face, it is a typical
+progression from theory to early production use to commoditization as
+a family of related products. But I think something has been lost in
+the process: an understanding of the inescapable limits mapped by
+the early theoretical papers. There is an easy tendency to focus on
+the technology, with all its details and constant change, and assume
+that it will in turn address those limits.&lt;/p&gt;
+
+&lt;p&gt;That assumption is false. The technology provides mechanisms for
+readily building, deploying, and operating such services but the
+designs remain as bound as ever within the theoretical limits. That is
+what makes these limits &lt;em&gt;fundamental&lt;/em&gt;, after all.&lt;/p&gt;
+
+&lt;p&gt;Engineers often cite Brewer’s CAP Principle as an example of theory
+that is widely-applied. Whether we define CAP in terms of Brewer’s
+original formulation or the two theorems later
+&lt;a href=&quot;https://dl.acm.org/doi/10.1145/564585.564601&quot;&gt;proven by Gilbert and Lynch&lt;/a&gt;,
+I find CAP’s relationship to actual practice odd and will write a
+future post analyzing that (heavily influenced by
+&lt;a href=&quot;https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/&quot;&gt;Brewer’s 2012 reflection&lt;/a&gt;
+and &lt;a href=&quot;http://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf&quot;&gt;Abadi’s PACELC framework&lt;/a&gt;). For this post, I only say that I do not
+see CAP as a fundamental limit that must be explicitly
+addressed by designs. Rather, &lt;a href=&quot;/2019/12/31/design-space-2020/&quot;&gt;current engineering practice&lt;/a&gt; will lead
+the designer to accommodate CAP as a side-benefit.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, I do see the Fischer, Lynch, and Paterson (1985)
+impossibility theorem as fundamental: On realistic distributed systems,
+the latency of any consensus algorithm is unbounded. Unfortunately, the
+theorem provides no constructive procedure to follow because it is
+proved by contradiction. This is typical of impossibility results,
+which essentially state that no how much you tweak your algorithm, it
+will never match your specification. The FLP result is fundamentally
+about reducing your expectations to realistic levels.&lt;/p&gt;
+
+&lt;p&gt;The FLP result constrains the entire system design. When implementing
+a system, it is seductive to see a given problem as a local issue,
+fixable by local changes to the algorithm. But if the problem is in
+fact that you are attempting to circumvent FLP, a local fix simply
+pushes the problem elsewhere. The fix displaces the problem rather
+than solving it.&lt;/p&gt;
+
+&lt;p&gt;The abstraction and totality of this theorem make it easy to miss when
+attending to implementation details. Yet it cannot be ignored. In
+future posts, I want to work out how the limitations that the FLP
+theorem guarantees in systems might appear as localized
+problems and describe how seeing those problems as aspects of FLP can
+produce better solutions.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>A strategy for more frequent posts</title>

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
+  <meta name="author" content="Arthur E. Kirkpatrick">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018, 2019, 2020">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      "Distributed Systems" are not what they used to be &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66576928-4', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- Begin Jekyll SEO tag v2.2.3 -->
+<meta property="og:title" content="“Distributed Systems” are not what they used to be" />
+<meta name="author" content="Ted Kirkpatrick" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The phrase “distributed systems” has had several meanings over the last 50 years, from a mathematical topic to a style of engineering practice to a suite of technologies. What can we learn from these changes and how do we reconcile these perspectives?" />
+<meta property="og:description" content="The phrase “distributed systems” has had several meanings over the last 50 years, from a mathematical topic to a style of engineering practice to a suite of technologies. What can we learn from these changes and how do we reconcile these perspectives?" />
+<meta property="og:site_name" content="All my marbles in one place" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-02-11T00:00:00-08:00" />
+<script type="application/ld+json">
+{"@context":"http://schema.org","@type":"BlogPosting","headline":"“Distributed Systems” are not what they used to be","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2020-02-11T00:00:00-08:00","dateModified":"2020-02-11T00:00:00-08:00","description":"The phrase “distributed systems” has had several meanings over the last 50 years, from a mathematical topic to a style of engineering practice to a suite of technologies. What can we learn from these changes and how do we reconcile these perspectives?","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/02/11/meaning-of-distributed-systems/"},"url":"/2020/02/11/meaning-of-distributed-systems/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/comment-policy/">Comment policy</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	   
+	    <a href="/tag/Python/">Python</a>,
+	  
+        
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
+	   
+	    <a href="/tag/Big data/">Big data</a>,
+	  
+        
+	   
+	    <a href="/tag/Soft skills/">Soft skills</a>,
+	  
+        
+	   
+	    <a href="/tag/Statistics/">Statistics</a>,
+	  
+        
+	   
+	    <a href="/tag/Experimental design/">Experimental design</a>,
+	  
+        
+	   
+	    <a href="/tag/Rhetoric/">Rhetoric</a>,
+	  
+        
+	   
+	    <a href="/tag/Admin/">Admin</a>,
+	  
+        
+	  	    
+            <a href="/tag/Distributed systems/">Distributed systems</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2020. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">"Distributed Systems" are not what they used to be</h1>
+  <span class="post-date">11 Feb 2020
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/Distributed systems">Distributed systems</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>The phrase “distributed systems” has had several meanings over the
+last 50 years, from a mathematical topic to a style of
+engineering practice to a suite of technologies. What can
+we learn from these changes and how do we reconcile these
+perspectives?</p>
+
+<h2 id="the-early-days-1970--1995-algorithms">The early days (1970–1995): Algorithms</h2>
+
+<p>The initial work on distributed systems had strong overlap with work
+on concurrency and parallism. Indeed, from the perspective of
+algorithm correctness, these topics share much in common. Nor was
+there a widely-agreed definition of the phrase. The earliest
+researchers were mapping this new territory, not altogether sure of
+where they were going or how their maps would ultimately be used.</p>
+
+<p>Although early work included the implementation of groundbreaking
+systems such as
+<a href="https://en.wikipedia.org/wiki/Semi-Automatic_Ground_Environment">SAGE</a>,
+<a href="https://en.wikipedia.org/wiki/Sabre_(computer_system)">Sabre</a>, and
+<a href="https://www.livescience.com/20727-internet-history.html">ARPANet</a>,
+the work from that era most commonly characterized as
+“distributed systems” is a series of classic papers focussed on
+algorithms and their correctness. The literature, even in its early
+stages, was large and beyond simple summary and I don’t have the
+background to survey it fairly. Instead, I will list a few papers that
+I have found powerful and influential. The list is not particularly
+idiosyncratic, as these papers are also widely cited by others.</p>
+
+<p>In order of publication:</p>
+
+<ol>
+  <li><a href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf">“Time, Clocks, and the Ordering of Events in a Distributed System”</a>,
+Lamport (1978).</li>
+  <li><a href="https://www.microsoft.com/en-us/research/publication/byzantine-generals-problem/">“The Byzantine Generals Problem”</a>,
+Lamport, Shostak &amp; Pease (1982).</li>
+  <li><a href="https://www.computer.org/csdl/proceedings-article/focs/1983/542800403/12OmNvAAtFD">“Randomized Byzantine Generals” (abstract only)</a>,
+Rabin (1983).</li>
+  <li><a href="https://lamport.azurewebsites.net/pubs/chandy.pdf">“Distributed Snapshots: Determining Global States of Distributed Systems”</a>,
+Chandy &amp; Lamport (1985).</li>
+  <li><a href="https://groups.csail.mit.edu/tds/papers/Lynch/jacm85.pdf">“Impossibility of Distributed Consensus with One Faulty Process”</a>,
+Fischer, Lynch &amp; Paterson (1985).</li>
+  <li><a href="http://pmg.csail.mit.edu/papers/vr.pdf">“Viewstamped Replication: A New Primary Copy Method to Support Highly-Available Distributed Systems”</a>,
+Oki &amp; Liskov (1988).</li>
+  <li><a href="https://www.cs.utexas.edu/~lorenzo/corsi/cs380d/papers/p225-chandra.pdf">“Unreliable Failure Detectors for Reliable Distributed Systems”</a>,
+Chandra &amp; Toueg (1996).</li>
+  <li><a href="https://lamport.azurewebsites.net/pubs/lamport-paxos.pdf">“The Part-time Parliament”</a>,
+Lamport (Published 1998, submitted substantially earlier).</li>
+  <li><a href="http://pmg.csail.mit.edu/papers/osdi99.pdf">“Practical Byzantine Fault Tolerance”</a>, Castro &amp; Liskov (1999).</li>
+</ol>
+
+<p>This list is not intended to be complete, sufficient, nor up to date.
+For learning the practical side of distributed systems, Henry Robinson
+(who I wish would resume blogging) has developed a useful starter
+guide,
+<a href="http://the-paper-trail.org/blog/distributed-systems-theory-for-the-distributed-systems-engineer/">“Distributed systems theory for the distributed systems engineer”</a>
+(updated as of 2018).</p>
+
+<p>The papers can be grouped into categories that highlight their
+distinct contributions:</p>
+
+<ol>
+  <li>
+    <p>Papers that prove fundamental limits on distributed algorithms:
+“Time, Clocks, and the Ordering of Events”, “Impossibility of
+Distributed Consensus”, and “Unreliable Failure Detectors”.</p>
+  </li>
+  <li>
+    <p>Papers presenting fundamental algorithms: “Byzantine Generals
+Problem”, “Distributed Snapshots”, and “Part-Time Parliament”.
+Notably, every one of these was writtten or co-authored by Leslie
+Lamport, who was awarded the <a href="https://amturing.acm.org/award_winners/lamport_1205376.cfm">2013 Turing Award</a>.</p>
+  </li>
+  <li>
+    <p>Papers presenting first implementations solving important problems in
+distributed systems: “Viewstamped Replication” and “Practical
+Byzantine Fault Tolerance”. I think it is significant that both of
+these were Ph.D. projects under the supervision of Barbara Liskov, who
+was awarded the
+<a href="https://amturing.acm.org/award_winners/liskov_1108679.cfm">2008 Turing Award</a>
+for these and other contributions.</p>
+  </li>
+</ol>
+
+<p>In summary, during this first period, “distributed systems” referred
+to a community concerned with defining fundamental limits, discovering
+fundamental algorithms, and demonstrating the feasibility of these
+methods via first implementations.</p>
+
+<h2 id="the-middle-period-1995--2015-engineering-scalable-systems">The middle period (1995–2015): Engineering scalable systems</h2>
+
+<p>Where the “early period” lasted roughly 25 years, the “middle period”
+was much shorter, perhaps 10 years, with some overlap of the
+“early period”.
+The literature for this period is even more voluminous and although I
+do believe I have a good knowledge of the key papers, there is neither
+time nor space to provide a bibliography anything close to complete. I
+will instead list a short sample of papers to illustrate the history
+of its development:</p>
+
+<ol>
+  <li>
+    <p><a href="https://dl.acm.org/doi/book/10.5555/974938">“A Note on Distributed Computing”</a>,
+Waldo, Wyant, Wallroth &amp; Kendall (1994).</p>
+  </li>
+  <li>
+    <p><a href="https://people.eecs.berkeley.edu/~brewer/cs262b-2004/PODC-keynote.pdf">“Towards Robust Distributed Systems”</a>,
+Brewer (2000).</p>
+  </li>
+  <li>
+    <p><a href="https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf">“MapReduce: Simplified Data Processing on Large Clusters”</a>,
+Dean &amp; Ghemawat (2004).</p>
+  </li>
+  <li>
+    <p><a href="https://research.google/pubs/pub33002/">“Paxos Made Live”</a>, Chandra,
+Griesemer, &amp; Redstone (2007).</p>
+  </li>
+  <li>
+    <p><a href="https://www.allthingsdistributed.com/2008/12/eventually_consistent.html">“Eventually Consistent”</a>,
+Vogels (2008).</p>
+  </li>
+  <li>
+    <p><a href="https://www.slideshare.net/parallellabs/dean-keynoteladis2009jeffdean">“Designs, Lessons, and Advice from Building Large Distributed Systems”</a>,
+Dean (2009).</p>
+  </li>
+  <li>
+    <p><a href="https://research.google/pubs/pub40801/">“The Tail at Scale”</a>, Dean
+&amp; Barroso (2013).</p>
+  </li>
+</ol>
+
+<p>During this period, attention shifted towards engineering large-scale,
+failure-tolerant systems running in a global network of
+datacentres. The abstract for the Waldo et al. technical report sets
+the tone for the coming ten years:</p>
+
+<blockquote>
+  <p>These failures
+[to support basic requirements of robustness and reliability] have
+been masked in the past by the small size of the distributed systems
+that have been built. In the enterprise-wide distributed systems
+foreseen in the near future, however, such a masking will be
+impossible.</p>
+</blockquote>
+
+<p>Eric Brewer’s 2000 talk, a keynote address to the “Principles of
+Distributed Computing” conference, emphasized that his company of the
+time, an early Web search service, was</p>
+
+<ol>
+  <li>“Based on scalable cluster and parallel distributed computing
+technology”</li>
+  <li>“But [made] very little use of classic DS [Distributed Systems] research”</li>
+</ol>
+
+<p>The talk introduced the CAP “Theorem” but twelve years later Brewer emphasized that
+<a href="https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/">“its purpose … was to open the minds of designers to a wider range of systems and tradeoffs”</a>
+rather than to further distributed systems theory.</p>
+
+<p>The remaining papers sample the development of systems addressing the
+interconnected engineering challenges of</p>
+
+<ul>
+  <li>failure tolerance,</li>
+  <li>geolatency—the lag for round-trip communications across long
+distances,</li>
+  <li>consistency,</li>
+  <li>high scalability, and</li>
+  <li>high availability.</li>
+</ul>
+
+<p>The systems in this period were purpose-built by organizations in the
+grip of explosive growth. It is emblematic of the shift that
+<a href="https://cis.cornell.edu/career-conversation-tushar-chandra">T. D. Chandra</a>, first author of the 1996 paper establishing the
+theory of weak failure detectors, is also the lead author of the 2007
+paper on the challenges of implementing the Paxos distributed consensus
+algorithm in production. Theory into practice, indeed.</p>
+
+<h2 id="the-contemporary-view-2015--present-cowabunga-kubernetes">The contemporary view (2015–present): Cowabunga Kubernetes!</h2>
+
+<p>The current phase is the inexorable next step, where commercial
+organizations package, distribute, and support generalized versions of
+the custom solutions from the previous phase. The experimentation of the
+early days of large-scale datacentres has settled into established
+practice, at least for some common use cases.</p>
+
+<p>The tool with broadest reach, virtually ubiquitous in both actual
+datacentres and discussions about managing them, is Kubernetes. This
+third-generation orchestration tool, successor to Google’s Omega and
+Borg, manages applications organized around a similarly ubiquitous
+technology, containers. Whereas Kubernetes is the clear market winner
+to the point where it’s hard to even name an alternative, there are
+many contending container technologies, aimed at different but related
+levels of the underlying stack. As of this writing, the CNCF Landscape
+<a href="https://landscape.cncf.io/category=container-runtime&amp;format=card-mode&amp;grouping=category">lists 12 container runtimes</a>,
+including containerd, cri-o, Firecracker, gVisor, and kata. (By the
+way: Do their trademark staffs think they have to pay extra for
+capital letters?)</p>
+
+<p>The choice of container runtime is mostly a matter for the platform and
+operations staff as, the distinctions between runtimes are near-invisible
+to application developers.</p>
+
+<p>Contemporary discussions of “distributed systems”
+centre on the practices of architecting systems to run under
+Kubernetes, managing Kubernetes clusters, and cooperating with legacy
+systems that remain outside the cluster. Development work focuses on
+building out those capacities not well-addressed by the current
+release of Kubernetes and related tools.</p>
+
+<p>It’s a Kubernetes world and we just have to get used to living in it.</p>
+
+<h2 id="why-does-this-matter">Why does this matter?</h2>
+
+<p>What does this history suggest? On its face, it is a typical
+progression from theory to early production use to commoditization as
+a family of related products. But I think something has been lost in
+the process: an understanding of the inescapable limits mapped by
+the early theoretical papers. There is an easy tendency to focus on
+the technology, with all its details and constant change, and assume
+that it will in turn address those limits.</p>
+
+<p>That assumption is false. The technology provides mechanisms for
+readily building, deploying, and operating such services but the
+designs remain as bound as ever within the theoretical limits. That is
+what makes these limits <em>fundamental</em>, after all.</p>
+
+<p>Engineers often cite Brewer’s CAP Principle as an example of theory
+that is widely-applied. Whether we define CAP in terms of Brewer’s
+original formulation or the two theorems later
+<a href="https://dl.acm.org/doi/10.1145/564585.564601">proven by Gilbert and Lynch</a>,
+I find CAP’s relationship to actual practice odd and will write a
+future post analyzing that (heavily influenced by
+<a href="https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/">Brewer’s 2012 reflection</a>
+and <a href="http://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf">Abadi’s PACELC framework</a>). For this post, I only say that I do not
+see CAP as a fundamental limit that must be explicitly
+addressed by designs. Rather, <a href="/2019/12/31/design-space-2020/">current engineering practice</a> will lead
+the designer to accommodate CAP as a side-benefit.</p>
+
+<p>On the other hand, I do see the Fischer, Lynch, and Paterson (1985)
+impossibility theorem as fundamental: On realistic distributed systems,
+the latency of any consensus algorithm is unbounded. Unfortunately, the
+theorem provides no constructive procedure to follow because it is
+proved by contradiction. This is typical of impossibility results,
+which essentially state that no how much you tweak your algorithm, it
+will never match your specification. The FLP result is fundamentally
+about reducing your expectations to realistic levels.</p>
+
+<p>The FLP result constrains the entire system design. When implementing
+a system, it is seductive to see a given problem as a local issue,
+fixable by local changes to the algorithm. But if the problem is in
+fact that you are attempting to circumvent FLP, a local fix simply
+pushes the problem elsewhere. The fix displaces the problem rather
+than solving it.</p>
+
+<p>The abstraction and totality of this theorem make it easy to miss when
+attending to implementation details. Yet it cannot be ignored. In
+future posts, I want to work out how the limitations that the FLP
+theorem guarantees in systems might appear as localized
+problems and describe how seeing those problems as aspects of FLP can
+produce better solutions.</p>
+
+
+</div>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+this.page.url = "http://kirkpatricktech.com/2020/02/11/meaning-of-distributed-systems/";
+//this.page.identifier = "/2020/02/11/meaning-of-distributed-systems";
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://kirkpatricktech-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
+  </body>
+</html>
