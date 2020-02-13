@@ -4,13 +4,100 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2020-02-11T17:57:09-08:00</updated>
+ <updated>2020-02-13T13:12:55-08:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Applying resilient design to my own systems</title>
+   <link href="/2020/02/13/systems-resilience-in-daily-life/"/>
+   <updated>2020-02-13T00:00:00-08:00</updated>
+   <id>/2020/02/13/systems-resilience-in-daily-life</id>
+   <content type="html">&lt;p&gt;When I teach a course in modern distributed systems design, I spend a
+lot of time on topics such as engineering for resilience and
+automating production processes. It turns out that applying those big
+topics in the small matters of my life is a big challenge.&lt;/p&gt;
+
+&lt;h2 id=&quot;some-big-good-ideas&quot;&gt;Some big, good ideas&lt;/h2&gt;
+
+&lt;p&gt;I teach the usual things for such courses, including:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Test your system resilience and recovery procedures by inducing the failures you most fear
+occurring (though Barry O’Reilly advocates &lt;a href=&quot;https://www.se-radio.net/2020/01/episode-396-barry-oreilly-on-antifragile-architecture/&quot;&gt;considering failures that seem impossible&lt;/a&gt;)&lt;/li&gt;
+  &lt;li&gt;Establish build pipelines to automate routine procedures&lt;/li&gt;
+  &lt;li&gt;Monitor system health and performance&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Nothing especially surprising or novel, really.&lt;/p&gt;
+
+&lt;h2 id=&quot;some-local-small-procedures&quot;&gt;Some local, small procedures&lt;/h2&gt;
+
+&lt;p&gt;Within hours of finishing a class, I find myself in a situation in
+which one or more of the above principles apply:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Transferring lecture recordings from my phone to the course server,
+setting the necessary tags, and publishing the page with the links&lt;/li&gt;
+  &lt;li&gt;Maintaining earthquake preparedness in my residence&lt;/li&gt;
+  &lt;li&gt;Resorting to one-time backup passwords when my regular
+authentication methods are unavailable for some important Web site&lt;/li&gt;
+  &lt;li&gt;Configuring regular backups for my laptop&lt;/li&gt;
+  &lt;li&gt;Automating the pipeline for taking a diagram from source form to publication&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;and many other small-scale maintenance tasks.&lt;/p&gt;
+
+&lt;h2 id=&quot;big-ideas-are-ill-fitted-to-small-slots&quot;&gt;Big ideas are ill-fitted to small slots&lt;/h2&gt;
+
+&lt;p&gt;While uploading the backup, signing on to the important site, and all
+those other small things, I hear myself advising my students in class
+earlier that day. Really, shouldn’t I do in my own life the
+things I counselled them to do in their profession?&lt;/p&gt;
+
+&lt;p&gt;Most times though, the fit is awkward or even altogether impractical. The
+reasons vary:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Possible but a lot of work: In the case of uploading lecture audio
+files, I am slowly increasing the automation. By the end of the
+semester, I might have it down to the absolute minimum of three
+clicks and a single command.&lt;/li&gt;
+  &lt;li&gt;Consumer tools lack the customization of production tools: The
+software I use to record lectures on my phone and the software I
+use to draw diagrams restrict my control over the names of files
+they produce. Production tools such as logging libraries allow
+filenames to be customized to a format that supports further
+automated processing whereas the consumer tools require manual filename
+adjustment to match conventions.&lt;/li&gt;
+  &lt;li&gt;Testing a full disaster response is impractical: It’s one thing
+to regularly test that I can restore individual files from backup
+(and I do) but it’s impractical to test a full machine
+restore. Though writing this post did suggest to me that I ought to
+try living an entire day solely using my earthquake preparedness
+supplies. That would probably demonstrate some gaps.&lt;/li&gt;
+  &lt;li&gt;Why seek out inconvenience? The sheer number of items I would have
+to test adds up to considerable effort. Do I want to pursue
+even more disruption in my daily activities?&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;so-i-muddle-through&quot;&gt;So I muddle through&lt;/h2&gt;
+
+&lt;p&gt;The principles of stress-testing and resilience engineering are
+powerful and worth considering but actually applying them to the
+smaller-scale processes of personal life often requires more
+resources, of time, money, space, or computing power, than is
+justified by the benefits. I adopt such principles as seem practical
+and reconsider my choices every so often. Not pursuing these
+principles in every applicable case, however small, is not hypocrisy,
+rather it is acknowledging that the principles apply at larger scales
+than much individual activity.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>"Distributed Systems" are not what they used to be</title>
@@ -304,7 +391,7 @@ students through the code for
 &lt;p&gt;This spring, teaching distributed systems to professional master’s
 students led me to conceive a fourth thread refocusing attention away
 from CAP and back to the
-&lt;a href=&quot;https://www.the-paper-trail.org/post/2008-08-13-a-brief-tour-of-flp-impossibility/&quot;&gt;Fischer-Lynch-Paterson impossibility result&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&quot;https://kirkpatricktech.org/2020/02/11/meaning-of-distributed-systems/&quot;&gt;Fischer-Lynch-Paterson impossibility result&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;That’s a lot of dangling thread. Each would require many hours and
 many posts. Instead of pursuing any one, I turned instead to writing
