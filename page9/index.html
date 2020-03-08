@@ -246,6 +246,31 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/">
+        Passing std::string by-value noticeably slows the idioms
+      </a>
+    </h1>
+    
+    <span class="post-date">22 May 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>The <a href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/">benchmarks comparing <code>transform</code> to a
+loop</a> also highlighted the substantial contribution that copying values made to their performance. Copying costs become especially noticeable for complex types, such as standard strings too long to fit in the short string optimization.</p>
+
+ <a href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/">
         Benchmarking the transform and loop idioms
       </a>
@@ -344,34 +369,6 @@
 <p>and lamented that all the straightforward translations to the STL algorithms required two statements, one for the filter and one for the computation.</p>
 
  <a href="/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2017/03/21/the-limits-of-list-comprehensions/">
-        The limits of list comprehensions
-      </a>
-    </h1>
-    
-    <span class="post-date">21 Mar 2017
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/C++">C++</a>,
-        
-      
-        
-        <a href="/tag/Python">Python</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>I’ve spent my recent posts unfavourably comparing the STL design of containers/iterators/algorithms with Python list comprehensions and their close relatives in Haskell.  This is an unfairly restrictive way to view the STL design, which addresses a wider range of use cases than the ones addressed by list comprehensions.  But it is also unfair in that it ignores the limitations of list comprehensions themselves, limitations avoided by the more general structure provided by the STL.  In this post, I’ll start from the other direction, considering the inherent limitations of Python list comprehensions. This in turn leads to an idiom in the STL that in fact provides virtually all the functionality of basic list comprehensions, with only slightly more complex syntax.</p>
-
- <a href="/2017/03/21/the-limits-of-list-comprehensions/">more ...</a>
   </div>
   
 </div>

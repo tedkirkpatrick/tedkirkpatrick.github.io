@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
+  <meta name="author" content="Arthur E. Kirkpatrick">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018, 2019, 2020">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      How hard is it to implement replicated state machines? &middot; All my marbles in one place
+    
+  </title>
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66576928-4', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- Begin Jekyll SEO tag v2.2.3 -->
+<meta property="og:title" content="How hard is it to implement replicated state machines?" />
+<meta name="author" content="Ted Kirkpatrick" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Note: Over the past eight months, I have been working with the code for TenCent’s Phxpaxos, an open-source implementation of replicated state-machines, with consensus enforced by Paxos. I have learned a lot from studying this code and from comparing it with the more focussed libpaxos, which does not include state machine code. Recently I have isolated several topics well-adapted to the smaller size of blog posts and I will be adding them here. Distributed systems are often made highly available by implementing them as replicated state machines, coordinating their operations via a consensus algorithm such as Paxos. Two popular tutorials from the 1990s describe the basic theory but how hard is it to implement this theory? The code from the Phxpaxos project suggests that the general solution requires more work than it might seem." />
+<meta property="og:description" content="Note: Over the past eight months, I have been working with the code for TenCent’s Phxpaxos, an open-source implementation of replicated state-machines, with consensus enforced by Paxos. I have learned a lot from studying this code and from comparing it with the more focussed libpaxos, which does not include state machine code. Recently I have isolated several topics well-adapted to the smaller size of blog posts and I will be adding them here. Distributed systems are often made highly available by implementing them as replicated state machines, coordinating their operations via a consensus algorithm such as Paxos. Two popular tutorials from the 1990s describe the basic theory but how hard is it to implement this theory? The code from the Phxpaxos project suggests that the general solution requires more work than it might seem." />
+<meta property="og:site_name" content="All my marbles in one place" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-03-08T00:00:00-08:00" />
+<script type="application/ld+json">
+{"@context":"http://schema.org","@type":"BlogPosting","headline":"How hard is it to implement replicated state machines?","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2020-03-08T00:00:00-08:00","dateModified":"2020-03-08T00:00:00-08:00","description":"Note: Over the past eight months, I have been working with the code for TenCent’s Phxpaxos, an open-source implementation of replicated state-machines, with consensus enforced by Paxos. I have learned a lot from studying this code and from comparing it with the more focussed libpaxos, which does not include state machine code. Recently I have isolated several topics well-adapted to the smaller size of blog posts and I will be adding them here. Distributed systems are often made highly available by implementing them as replicated state machines, coordinating their operations via a consensus algorithm such as Paxos. Two popular tutorials from the 1990s describe the basic theory but how hard is it to implement this theory? The code from the Phxpaxos project suggests that the general solution requires more work than it might seem.","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/03/08/difficulty-of-state-machines/"},"url":"/2020/03/08/difficulty-of-state-machines/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/comment-policy/">Comment policy</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	   
+	    <a href="/tag/Python/">Python</a>,
+	  
+        
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
+	   
+	    <a href="/tag/Big data/">Big data</a>,
+	  
+        
+	   
+	    <a href="/tag/Soft skills/">Soft skills</a>,
+	  
+        
+	   
+	    <a href="/tag/Statistics/">Statistics</a>,
+	  
+        
+	   
+	    <a href="/tag/Experimental design/">Experimental design</a>,
+	  
+        
+	   
+	    <a href="/tag/Rhetoric/">Rhetoric</a>,
+	  
+        
+	   
+	    <a href="/tag/Admin/">Admin</a>,
+	  
+        
+	  	    
+            <a href="/tag/Distributed systems/">Distributed systems</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2020. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">How hard is it to implement replicated state machines?</h1>
+  <span class="post-date">08 Mar 2020
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/C++">C++</a>,
+      
+    
+      
+      <a href="/tag/Distributed systems">Distributed systems</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p><em>Note: Over the past eight months, I have been working with the code for
+TenCent’s <a href="https://github.com/Tencent/phxpaxos">Phxpaxos</a>, an
+open-source implementation of replicated state-machines, with
+consensus enforced by Paxos. I have learned a lot from studying this
+code and from comparing it with the more focussed
+<a href="https://bitbucket.org/sciascid/libpaxos/src/master/">libpaxos</a>, which
+does not include state machine code.</em></p>
+
+<p><em>Recently I have isolated several topics well-adapted to the smaller size
+of blog posts and I will be adding them here.</em></p>
+
+<p>Distributed systems are often made highly available by implementing
+them as replicated state machines, coordinating their operations via a
+consensus algorithm such as Paxos. Two popular tutorials from the
+1990s describe the basic theory but how hard is it to implement this
+theory?  The code from the
+<a href="https://github.com/Tencent/phxpaxos">Phxpaxos</a> project suggests that
+the general solution requires more work than it might seem.</p>
+
+<!--more-->
+
+<h2 id="the-complexity-of-replicated-state-machine-implementations">The complexity of replicated state machine implementations</h2>
+
+<p>The basic idea of replicated state machines was first sketched in
+Lamport’s classic 1978 <em>CACM</em> article,
+<a href="https://www.microsoft.com/en-us/research/publication/time-clocks-ordering-events-distributed-system/">“Time, Clocks, and the Ordering of Events in a Distributed System”</a>
+(it’s easy to miss—see the left column of p. 562),
+though many details remained to be developed by others.
+More details are provided in two widely-cited surveys: Fred
+Schneider’s 1990 <em>Computing Surveys</em> article,
+<a href="https://www.cs.cornell.edu/fbs/publications/SMSurvey.pdf">“Implementing Fault-Tolerant Services Using the State Machine Approach: A Tutorial”</a>,
+and Butler Lampson’s 1996 <em>Distributed Algorithms</em> paper,
+<a href="https://www.microsoft.com/en-us/research/publication/how-to-build-a-highly-available-system-using-consensus/">“How to Build Highly Available Systems Using Consensus”</a>.</p>
+
+<p>Schneider’s paper is an extremely general introduction, presuming an
+arbitrary consensus algorithm, written when the theory was
+well-established but few systems were in production.  As such, only a
+small portion of the paper is pertinent to the Phxpaxos implementation.</p>
+
+<p>Lampson’s paper is primarily an introduction to specifying and
+reasoning about replicated state machines.  He develops a notation
+that he then uses to specify Paxos and informally argue for its
+correctness. He says nothing about designing the state machines whose
+sequence of operations will be established by Paxos.</p>
+
+<p>Schneider and Lampson’s scant coverage of the actual implementation of
+state machines implies that it is straightforward, perhaps
+trivial, once consensus is established. Yet the Phxpaxos code base
+implements Paxos in 
+5,184 lines, while implementing state machines in 2,207 lines:</p>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th style="text-align: left">Directory</th>
+      <th style="text-align: left">Excluding / including files</th>
+      <th style="text-align: right">Lines of <code class="highlighter-rouge">.cpp</code>, <code class="highlighter-rouge">.h</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">src/algorithm</code></td>
+      <td style="text-align: left">Excluding <code class="highlighter-rouge">checkpoint_*</code></td>
+      <td style="text-align: right">5184</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Total Paxos</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: right">5184</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">src/sm-base</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: right">553</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">src/checkpoint</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: right">814</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">src/algorithm</code></td>
+      <td style="text-align: left">Including only <code class="highlighter-rouge">checkpoint_*</code></td>
+      <td style="text-align: right">840</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Total state machine</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: right">2207</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The state machine code is 43% of
+the line count for the Paxos code—anything but trivial. Although
+line count is at best a rough indication of complexity, I think for
+this case, comparing proportions of a single project writen by a
+single, small team, it provides a reasonable guide to the relative
+level of effort.</p>
+
+<p>Bear in mind that this code does not implement any particular state
+machine, merely the abstract structure within which a state machine
+will be implemented by inheriting from the abstract
+classes.</p>
+
+<p>What makes the code for a general replicated state machine so complex,
+even when the algorithm for sequencing client requests is handled
+separately? There are several challenges:</p>
+
+<ol>
+  <li>The message lengths are arbitrary.</li>
+  <li>The abstract framework requires substantial boilerplate.</li>
+  <li>The system must provide a general checkpoint mechanism.</li>
+</ol>
+
+<p>Addressing these challenges requires substantial code. This
+implementation effort was not just in service of Phxpaxos’s users. The
+Phxpaxos implementation of Paxos also uses the state machine framework
+to solve two common problems in general Paxos, reconfiguration and
+leader election. These algorithms do not require the full generality
+of the Phxpaxos state machine framework, however. Much of the
+framework is only useful for more complicated cases.</p>
+
+<p>I first describe the implementation complexities before turning to
+the two state machines internal to the library.</p>
+
+<h2 id="arbitrary-message-lengths">Arbitrary message lengths</h2>
+
+<p>In the replicated state machine context, consensus algorithms
+negotiate the “next operation” for the machines to perform. This
+requires passing around the full value of the machine operations. For
+systems such as replicated stores, the values may be large, even
+unbounded. The consensus algorithm must be capable of efficiently
+handling values of a megabyte or more. This complexity is not located
+in the state machine code itself but spread through the consensus
+code.</p>
+
+<p>Phxpaxos provides an option, <code class="highlighter-rouge">Options.bIsLargeValueMode</code>, that when
+set increases the timeouts used when waiting for message
+responses. These longer timeouts are required because longer messages
+take measurably longer to transmit and timeouts appropriate for
+shorter messages would yield too high a level of false positives,
+decisions that a message was lost when it simply required longer
+transmission time.</p>
+
+<h2 id="the-abstract-state-machine-framework">The abstract state machine framework</h2>
+
+<p>Though the framework for abstract state machines does not include any
+actual state machine operations, it requires considerable logic in its
+own right:</p>
+
+<ol>
+  <li>Because the system accepts an arbitrary number of state machines,
+not just one, it requires logic for adding state machines to the
+active list and locating a state machine’s address given its
+identifier, via the state machine factory class,
+<code class="highlighter-rouge">SMFac</code>. Supporting multiple state machines is
+not just an empty generality—as noted above, Phxpaxo’s algorithm
+requires two state machines itself, on top of any defined by the
+user of the library.</li>
+  <li>The state machines require a context data structure <code class="highlighter-rouge">SMCtx</code> for
+carrying any necessary state from the proposing client, through the
+long sequence of asynchronous Paxos messages, to completion of the
+Paxos instance and execution by the state machine, finally
+returning the context, including any result code from the
+operation, to the proposing client.</li>
+  <li>The framework must define method calls for multiple styles of
+operation. State machine operations in Phxpaxos can be executed
+singly or in batch, in active mode or checkpoint mode, requiring
+support of four execution styles.</li>
+  <li>Generalized state machines complicate the Paxos message protocol (defined
+in file <code class="highlighter-rouge">src/comm/commdef.h</code>). The
+basic Multi-Paxos protocol implemented by Phxpaxos (<code class="highlighter-rouge">enum PaxosMsgType</code>) requires 10
+message types. The checkpointing mechanism required to support
+general state machines adds 2 more message types to that protocol
+and introduces a separate protocol of 7 types (enumerated values
+<code class="highlighter-rouge">CheckpointMsgType</code>, <code class="highlighter-rouge">CheckpointSendFileFlag</code>, and
+<code class="highlighter-rouge">CheckpointSendFileAckFlag</code>). These message types and their flags
+must all be handled in the main Paxos logic code in files
+<code class="highlighter-rouge">src/algorithm/instance.cpp</code> and <code class="highlighter-rouge">src/algorithm/learner.cpp</code>. This
+makes the implementation harder to read than that of
+a pure Paxos library such as <code class="highlighter-rouge">libpaxos</code>, which does not include
+state machine code. I explore the complexities of checkpointing in
+more detail below.</li>
+  <li>The framework must provide callbacks to support state machines with
+specialized requirements. Phxpaxos supports three such callbacks:
+    <ol style="list-style-type: lower-latin;">
+<li>
+        <p>A callback executed after a value has been chosen by a Paxos
+   instance and just before it is executed (<code class="highlighter-rouge">StateMachine.BeforePropose</code>). This allows the state
+   machine to update the value to reflect any changes that occurred
+   during the Paxos rounds. This callback is used by the Phxpaxos
+   implementation of a state machine for master election (file
+   <code class="highlighter-rouge">src/master/master_sm.cpp</code>).</p>
+
+        <p>This callback is potentially such a drag on performance of the
+   main loop that it is only enabled when both a system-wide flag
+   (<code class="highlighter-rouge">Options.bOpenChangeValueBeforePropose</code>) is set and a state
+   machine-specific function (<code class="highlighter-rouge">StateMachine.NeedCallBeforePropose</code>)
+   returns <code class="highlighter-rouge">true</code>.</p>
+      </li>
+<li>
+        <p>A callback executed after reconfiguration of Paxos node
+   membership (<code class="highlighter-rouge">Options.pMembershipChangeCallback</code>).</p>
+      </li>
+<li>
+        <p>A callback executed upon election of a new master
+   (<code class="highlighter-rouge">Options.pMasterChangeCallback</code>).</p>
+      </li>
+</ol>
+  </li>
+  <li>The boilerplate state machine logic must account for the Phxpaxos
+“group” feature. This establishes multiple independent Paxos
+clusters running off the same network address, which can be used to
+increase throughput. The <code class="highlighter-rouge">SMFac</code> factory object and concrete
+classes derived from <code class="highlighter-rouge">StateMachine</code> accept a group index and must
+select the appropriate state for the indicated cluster.</li>
+</ol>
+
+<p>Taken together, these represent a substantial code base simply to
+establish the basic framework from which application-specific
+<code class="highlighter-rouge">StateMachine</code> classes are derived. Yet this is only the smaller
+portion of the state machine code. The largest portion 
+implements a feature that only some state machines require and that is
+infrequently executed: checkpoints. I turn to that feature next.</p>
+
+<h2 id="general-checkpointing">General checkpointing</h2>
+
+<p>The single most complex feature required by a general state machine
+framework such as that of Phxpaxos is a mechanism for taking
+checkpoints of a state machine and restoring from them as
+necessary. This is complex code and many state machines do not need
+such a mechanism—neither of the two required for Phxpaxos need
+it—and those that do need checkpoints only use them in the case of
+crashes that require the most extensive form of recovery.</p>
+
+<p>Checkpointing is complex, so complex in fact that I have moved the
+details into one or more separate posts. For this post, I only provide
+an overview.</p>
+
+<h3 id="when-are-checkpoints-used">When are checkpoints used?</h3>
+
+<p>Checkpoints are required in several situations, of which the
+simplest case is bringing a freshly-added node up to date. This
+typically arises when an existing node has crashed or is taken down
+for maintenance and the operators want to maintain the cluster’s
+fault-tolerance by bringing the node count back to its production
+level.</p>
+
+<p>In this situation, checkpoints provide the history required to
+jump-start a fresh machine. The Paxos log may not be a complete system
+history because Phxpaxos garbage collects its logs, culling old values
+no longer necessary for active decisions. Although Paxos does not need
+these older values to proceed, those values are needed to bring fresh
+state machines up to date.</p>
+
+<h3 id="which-state-machines-require-checkpoints">Which state machines require checkpoints?</h3>
+
+<p>The amount of data required to bring a newcomer up to date varies with
+the state machine. In the case of Paxos itself, the newcomer can use
+the most recent value of any active node. If the sender was not the
+most current node, the regular synchronization protocol within Paxos
+will bring both it and the newcomer up to date using the normal Paxos
+messages.  (Phxpaxos message protocols include some shortcuts to
+accelerate this process but the principle applies to basic Paxos as
+well.)</p>
+
+<p>The same principle applies to the two internal state machines of
+Phxpaxos, which record the current leader and current node
+configuration. For these machines as well, the only values that matter
+are the most recent settings. The history of previous leaders and
+configurations is irrelevant.</p>
+
+<p>However for machines with more complex state, the history is
+essential. Consider a key-value store. Each Paxos instance sets a
+single key-value pair. (I will ignore reads as only the write history
+matters in this discussion.) Although for the leader and configuration
+machines the latest instance captures the entire state, for a
+key-value store the instance only captures the most recent write. A
+fresh instance of the key-value store potentially needs the complete
+history, incorporating every write made to the store, to be brought up
+to date. This complete history is provided by a checkpoint.</p>
+
+<p>To support arbitrary state machines, including those that need more
+than the result of the last instance to become up to date, Phxpaxos
+must support checkpoints.</p>
+
+<h3 id="what-checkpointing-requires">What checkpointing requires</h3>
+
+<p>You need the following to record a machine’s state and restore it from
+a checkpoint:</p>
+
+<ol>
+  <li>A way for a node to detect when its current Paxos instance is far behind the
+quorum’s and needs to be sent a checkpoint to bring it up to date. This
+is always the case for fresh nodes added to the cluster but a subtle
+algorithm is required for an active node that has simply
+fallen far behind the others.</li>
+  <li>A way for a node that has determined it needs a checkpoint to request one.</li>
+  <li>A way for a node that has a recent checkpoint to decide to send it
+to the requesting node.</li>
+  <li>A way for several eligible nodes with recent checkpoints to decide
+which will send its checkpoint to the requesting node. Yes, this is
+a consensus algorithm within the larger Paxos consensus.</li>
+  <li>A way for the current node to transmit its checkpoint to the
+requesting node, accounting for potential message loss or
+corruption by the network.</li>
+  <li>A way for the receiving node to reset the state of all its state
+machines to their checkpointed values and then enter the Paxos
+negotiations. Note that this may leave the node slightly behind
+the latest quorum and it will need to use the standard Paxos
+mechanisms for catching up to the quorum.</li>
+  <li>A way to ensure that once a node has completed restoring its state
+machines from a checkpoint, it will be able to catch up to the
+quorum using Paxos mechanisms and not be so far behind that it
+needs a second checkpoint.</li>
+</ol>
+
+<p>It is worth emphasizing that all this is occurring <em>amidst the ongoing
+regular Paxos negotiations</em>.  Although there are no efficiency
+concerns for the node receiving the checkpoint, there must be minimal
+effects on the nodes activly participating in the Paxos cluster,
+especially the one sending the checkpoint.</p>
+
+<p>The subtlety and complexity of the above requirements make it easier
+to see why checkpointing code might be longer and harder to understand
+than might appear at first glance.</p>
+
+<h2 id="solving-two-common-paxos-problems">Solving two common Paxos problems</h2>
+
+<p>The authors of Phxpaxos took advantage of their generalized state
+machine code to solve two problems of generalized Paxos:</p>
+
+<ol>
+  <li>Master election: Phxpaxos uses a state machine <code class="highlighter-rouge">MasterStateMachine</code>
+(defined in <code class="highlighter-rouge">src/master/master_sm.{h,cpp}</code>) to transition from one
+elected master to another.</li>
+  <li>Reconfiguration: Phxpaxos uses a state machine <code class="highlighter-rouge">SystemVSM</code> (defined
+in <code class="highlighter-rouge">src/config/system_v_sm.{h,cpp}</code>) to transition from one
+configuration of nodes to another.</li>
+</ol>
+
+<p>Both of these state machines are “memoryless”, in that their
+most recent instance contains all the history they need to transition
+to their next state, so neither of them requires the checkpoint
+mechanism.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The abstract definition of replicated state machines is simple but a
+production-quality implementation is subtle and complex. The Phxpaoxos
+code, which implements Paxos and provides an abstract framework for
+implementing replicated state machines whose operations are
+coordinated by that Paxos algorithm, spends a third of its code
+implementing the state machine framework.</p>
+
+<p>The state machine framework adds complexity to the Paxos algorithm as
+well as adding new code for the abstract state machine classes. Additionally,
+although not all state machine implementations require checkpointing,
+supporting those that do need checkpoints adds a complicated
+checkpoint protocol to the implementation.</p>
+
+<p>This analysis is not a criticism of the Tencent’s code for
+Phxpaxos. Any implementation of general state machines would require
+this. The complexity, inherent in the algorithms but concealed by the
+abstraction of pseudocode, is revealed when those algorithms are
+implemented in detail.</p>
+
+<p>There have been several alternative designs that aim to manage the
+complexity by factoring the design along different lines:</p>
+
+<ol>
+  <li>Tencent developed a storage layer implementing a version
+of Paxos based on optimistic concurrency. The design is described
+in their <a href="https://www.vldb.org/pvldb/vol10/p1730-lin.pdf">PaxosStore paper</a> and the
+<a href="https://github.com/Tencent/paxosstore">PaxosStore project code</a> is
+open source.  Bear in mind though, that the state machine in
+PaxosStore is a direct implementation of a restricted case and not
+the general-purpose state machines supported by Phxpaxos.</li>
+  <li>The <a href="https://raft.github.io/">Raft consensus algorithm</a> integrates
+the state machine code into the consensus protocol.</li>
+  <li>The
+<a href="http://www.cs.cornell.edu/~taozou/sosp13/tangososp.pdf">Tango Shared Log</a>
+is a new abstraction that supports implementing distributed data structures.</li>
+</ol>
+
+<p>These alternatives may clarify the implementation of replicated state
+machines by aligning the abstraction barriers at different angles but
+the underlying complexity remains. Whichever approach you take to
+implementing state machines, expect to spend considerable time getting
+it correct for the many edge conditions and modes of partial failure.</p>
+
+
+
+</div>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+this.page.url = "http://kirkpatricktech.com/2020/03/08/difficulty-of-state-machines/";
+//this.page.identifier = "/2020/03/08/difficulty-of-state-machines";
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://kirkpatricktech-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
+  </body>
+</html>
