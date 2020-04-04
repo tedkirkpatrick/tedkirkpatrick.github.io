@@ -400,7 +400,7 @@ code.</p>
 <p>Phxpaxos provides an option, <code class="highlighter-rouge">Options.bIsLargeValueMode</code>, that when
 set increases the timeouts used when waiting for message
 responses. These longer timeouts are required because longer messages
-take measurably longer to transmit and timeouts appropriate for
+take measurably longer to transmit. Timeouts appropriate for
 shorter messages would yield too high a level of false positives,
 decisions that a message was lost when it simply required longer
 transmission time.</p>

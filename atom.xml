@@ -4,13 +4,255 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2020-03-08T07:16:15-07:00</updated>
+ <updated>2020-04-03T17:53:46-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Flambloozlement and the student enthusiasm for crunch mode</title>
+   <link href="/2020/04/03/flambloozlement/"/>
+   <updated>2020-04-03T00:00:00-07:00</updated>
+   <id>/2020/04/03/flambloozlement</id>
+   <content type="html">&lt;p&gt;How do students assess the value of what they learn in class? On the
+one hand, years of attending school have made them sophisticated
+judges of teaching effectiveness: They know whether an approach is
+working for their circumstances and purposes—although these
+may diverge far from the instructor’s goals. At the same time, students
+can harbour a curious enthusiasm for a course precisely because it
+overhwelms them.  Why do they respond this way?&lt;/p&gt;
+
+&lt;h2 id=&quot;when-are-students-fond-of-courses-in-which-they-dont-learn&quot;&gt;When are students fond of courses in which they don’t learn?&lt;/h2&gt;
+
+&lt;p&gt;How many times have you heard a student say, with more enthusiasm
+than irony, “That was a great course, though it was so far over my
+head that I only learned a bit of the material”? Or its close
+affiliate, “I considered myself lucky to get out with a C [or even a D]”? If
+they didn’t learn much, why did they consider this a “great course”?&lt;/p&gt;
+
+&lt;p&gt;Sometimes this gap between enthusiasm and benefit arose for
+reasons outside the course: The student was ill-prepared or circumstances
+distracted them.  These aren’t ideal outcomes but they do not indicate
+any failing in the course design or instruction.  The student and the
+instructor would agree that any failure to learn was due to issues in
+the student’s life, not the course.&lt;/p&gt;
+
+&lt;p&gt;But other times the student was prepared and spent enough time on task. In
+fact, these are often cases where the student spent disproportionate
+time on the course, at the expense of other courses, yet they learned
+disappointingly little by both their standards and those of their instructor.&lt;/p&gt;
+
+&lt;p&gt;What’s going on?&lt;/p&gt;
+
+&lt;h3 id=&quot;a-caution-about-generalizing&quot;&gt;A caution about generalizing&lt;/h3&gt;
+
+&lt;p&gt;I’ll say before I proceed that the following notions are my own, based
+solely on anecdotal observation. I don’t recall any discussion of
+quite this phenomenon in the teaching literature, including my
+&lt;a href=&quot;/2018/09/19/three-evidence-based-books-for-better-teaching/&quot;&gt;three favourite books on teaching&lt;/a&gt;.
+Though these books describe related topics, there appears to be a
+specific, distinct motivation and approach to learning in the contexts
+I’m about to describe. I also see some &lt;em&gt;a priori&lt;/em&gt; reasons why students
+might respond this way, so this post is more than a list of
+cherry-picked incidents.&lt;/p&gt;
+
+&lt;p&gt;Given this argument’s informal nature, I will also avoid generalizing
+it outside my experience of computing science classes. I expect
+similar dynamics arise in other disciplines but I will leave their
+description to instructors in those fields.&lt;/p&gt;
+
+&lt;h2 id=&quot;flambloozlement&quot;&gt;Flambloozlement&lt;/h2&gt;
+
+&lt;p&gt;I call this state, in which students are enthusiasts in their own
+overwhelm, &lt;em&gt;flambloozlement&lt;/em&gt;. It’s the sense that there’s a lot of
+material, it’s demanding in just the right way, and therefore it must
+be important. Furthermore, any lack in the student’s accomplishment is
+a mark of the student’s incapacity, not the way the material has been
+presented.&lt;/p&gt;
+
+&lt;p&gt;This is a situation where students are duped into believing that if they
+were &lt;em&gt;only smart enough&lt;/em&gt; they could accomplish the projects in the
+available time.  This in turn induces them to throw themselves into the
+breach, risking body and mind and other course grades, to even get
+close to mastering the material. These beliefs may be
+affirmed at course’s end, when some students are found to have
+succeeded at their final projects. The other students—and the instructor—will
+likely ignore the degree to which the successful students began the
+course already knowing a large fraction of the material.  Their
+success was due more to a second encounter with concepts they had
+already learned than to learning those concepts for the first time.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-common-attributes-of-these-courses&quot;&gt;The common attributes of these courses&lt;/h2&gt;
+
+&lt;p&gt;I have seen students joyously pursue flambloozlement in courses with
+the following attributes:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;They perceive the material as core to their discipline.&lt;/li&gt;
+  &lt;li&gt;The material includes a mass of technical details.&lt;/li&gt;
+  &lt;li&gt;Success in the assignments requires attending to many of these
+details. The exemplar in a computing science course is a large
+final programming assignment. In a pinch, assignments requiring
+extensive work with equations or proofs can induce similar student
+behaviour.&lt;/li&gt;
+  &lt;li&gt;The students perceive a monotonic relationship between hours of
+effort and ultimate grade.&lt;/li&gt;
+  &lt;li&gt;The assignments require little writing or reflection after the fact.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;When performing the assignment, students encounter details in an order entirely independent of
+the systematic development of concepts core to the material.&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I think that last point is the dispositive one, with the preceding
+points setting the context in which flambloozlement flourishes. I also
+want to emphasize the importance of “perceive” in some of the
+statements: Regardless of what the instructor or practitioners in the
+field might argue, the students see the material in this light.&lt;/p&gt;
+
+&lt;h2 id=&quot;a-sample-flambloozling-assignment&quot;&gt;A sample flambloozling assignment&lt;/h2&gt;
+
+&lt;p&gt;Let’s see how this can play out. Imagine an operating system course
+where the instructor assigns a final project with substantial
+programming effort. The conditions for flambloozlement are independent
+of whether the project is individual or group, so long as the effort
+required from any individual student is large enough.  The project
+could be any of the typical ones for such courses, from “extend a small
+operating system”, to “add a device driver”, to “hack the Linux
+kernel”.&lt;/p&gt;
+
+&lt;p&gt;Such assignments have a common characteristic: They require students
+to learn the interfaces of a substantial piece of software and to work
+with professional-quality tools. Although these are desirable outcomes
+in their own right, they are independent of the outcome of learning
+operating system principles and lead students to adopt a &lt;a href=&quot;https://teaching.unsw.edu.au/sites/default/files/upload-files/deep_and_surface_learning.pdf&quot;&gt;shallow
+approach to learning&lt;/a&gt; those principles.&lt;/p&gt;
+
+&lt;p&gt;Consider the students’ experience while working on the assignment. The
+primary experience will be solving many small problems in
+sequence. Most students will have little experience working with
+programs of this complexity. Few programming problems are “simple” for
+programmers whose experience is too low for the software or tools they
+are using. Instead of resolving their immediate dilemma by combining
+familiar parts, the novice is reduced to slapping together pieces that
+vaguely fit, proceeding to their next challenge without understanding
+the solution to the last or even accepting a non-solution that appears
+to be a fix.&lt;/p&gt;
+
+&lt;h3 id=&quot;a-simple-problem-that-derails-a-novice&quot;&gt;A simple problem that derails a novice&lt;/h3&gt;
+
+&lt;p&gt;Many of these problems will have nothing to do with operating systems
+principles. For example, suppose they are using the
+&lt;a href=&quot;https://microk8s.io/&quot;&gt;Microk8s&lt;/a&gt; Kubernetes distribution and wish to
+determine how many &lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet&lt;/code&gt; instances are running locally. They may
+know that the &lt;code class=&quot;highlighter-rouge&quot;&gt;ps -eaf&lt;/code&gt; command will dump the process table.  But if
+they simply type that command they will get a tedious list of hundreds
+of processes—460 on the system that I just tried.&lt;/p&gt;
+
+&lt;p&gt;An experienced programmer would exclude most irrelevant lines via
+piping the output through &lt;code class=&quot;highlighter-rouge&quot;&gt;grep&lt;/code&gt;, producing three extraneous hits in
+addition to the correct one:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ps -ef | grep kubelet
+... The kubelet instance
+... The API server, which included kubelet in its command-line arguments
+... /bin/operator, which also included kubelet in its command-line arguments
+... The &quot;grep kubelet&quot; command
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;or use &lt;code class=&quot;highlighter-rouge&quot;&gt;pgrep&lt;/code&gt; to combine listing and filtering and get just the
+correct line:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ pgrep -a kubelet
+... The kubelet instance
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;But a relative novice, unaccustomed to quick-and-dirty pipelines (the
+first solution) and unaware of esoteric commands that produce more
+precise results (the second solution), is likely to squander tens of
+minutes just plucking the appropriate line out of the 460 produced by
+a simple &lt;code class=&quot;highlighter-rouge&quot;&gt;ps -eaf&lt;/code&gt;. At this point, they have certainly forgotten why
+they even wanted to find this item and will need to reconstruct their logic.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-instructors-goals-are-distant-from-actual-student-experience&quot;&gt;The instructor’s goals are distant from actual student experience&lt;/h2&gt;
+
+&lt;p&gt;The students’ experience of such a programming project is a long
+sequence of this sort of challenges, insignificant to an experienced
+programmer but potentially derailing to a novice, in a distinct
+sequence for every student.  I want to emphasize that the students
+were not stalled by lack of knowledge of the course content, operating
+systems principles. Rather, they were stalled by a lack of general
+programming knowledge.&lt;/p&gt;
+
+&lt;p&gt;Contrast the student experience of leaping over many short-term
+programming hurdles with the experience the instructor intended
+for the students. The instructor likely imagined the students having a
+sequence of consolidations or even epiphanies, as they observed
+operating system principles in action, such as the security provided
+by the separation of user space and kernel space, the cost of context
+switching, the benefit of an abstract file system interface in hiding
+device specifics, and other principles.  In the actual course, the
+students are up into the early morning struggling to diagnose and fix
+the most basic problems.&lt;/p&gt;
+
+&lt;p&gt;To the students, this stream of near-insuperable barriers appears to
+be the point of the course. If they acknowledge the importance of the
+overarching topic they will attach that importance to their many small
+programming successes. Students enrolled in computer science courses
+typically enjoy programming, so they are susceptible to believing that
+programming is the most important lesson of the course when in fact
+these experiences stand in the way of them actually learning the
+primary content.&lt;/p&gt;
+
+&lt;h2 id=&quot;using-the-same-words-with-entirely-different-intentions&quot;&gt;Using the same words with entirely different intentions&lt;/h2&gt;
+
+&lt;p&gt;This combination, where students’ experiences forming the actual
+learning lie in an entirely different realm and level of detail
+from the intended course content, yet both students and instructor
+apparently agree on the importance of the content, is the source of
+the disconnect between student effort, student enthusiasm, and their
+lack of success mastering the actual material. Both groups use the same
+words to mean entirely different things.&lt;/p&gt;
+
+&lt;h2 id=&quot;simply-adding-a-learning-outcome-doesnt-address-the-problem&quot;&gt;Simply adding a learning outcome doesn’t address the problem&lt;/h2&gt;
+
+&lt;p&gt;Many instructors would be puzzled by this critique.  They might
+claim to resolve the dilemma by adding another learning outcome to
+our hypothetical course, something like “developing programming
+skill”.&lt;/p&gt;
+
+&lt;p&gt;This doesn’t solve the problem, it just makes the instructor’s denial
+explicit.  A genuine learning outcome is more than another entry in a
+list. It forms the express basis of a suite of course activities,
+including teaching material and both formative and summative
+student assessment. The learning outcome is demonstrated by the
+dedication of significant course time to its achievement by the
+students.&lt;/p&gt;
+
+&lt;p&gt;If the instructor for our hypothetical operating systems course
+removed a substantial portion of operating systems material to fit in
+lessons on programming, perhaps with emphasis on aspects specific to
+the sort of projects assigned in the course, then an outcome such as
+“improve programming skill” could be legitimately included in the
+course goals. But few, if any, instructors are willing to accept the
+shift of course focus away from operating systems.&lt;/p&gt;
+
+&lt;h2 id=&quot;no-easy-resolution&quot;&gt;No easy resolution&lt;/h2&gt;
+
+&lt;p&gt;Flambloozlement is a reality of course design in a technical field
+such as computing science. Student enthusiasm for a course may have
+little connection to the actual material nor to how well they learned
+that material. Although developing students’ proficiency in the detailed technical
+skills of our field is an important goal, actually achieving that goal
+requires exquisite care to keep the assignment workload
+manageable. Only then will students actually learn the overarching
+principles that form the main learning outcomes of our courses.&lt;/p&gt;
+
+</content>
+ </entry>
  
  <entry>
    <title>How hard is it to implement replicated state machines?</title>
@@ -157,7 +399,7 @@ code.&lt;/p&gt;
 &lt;p&gt;Phxpaxos provides an option, &lt;code class=&quot;highlighter-rouge&quot;&gt;Options.bIsLargeValueMode&lt;/code&gt;, that when
 set increases the timeouts used when waiting for message
 responses. These longer timeouts are required because longer messages
-take measurably longer to transmit and timeouts appropriate for
+take measurably longer to transmit. Timeouts appropriate for
 shorter messages would yield too high a level of false positives,
 decisions that a message was lost when it simply required longer
 transmission time.&lt;/p&gt;
