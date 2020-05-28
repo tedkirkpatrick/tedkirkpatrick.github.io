@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2020-04-03T17:53:46-07:00</updated>
+ <updated>2020-05-27T16:50:23-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -129,8 +129,8 @@ in their own right, they are independent of the outcome of learning
 operating system principles and lead students to adopt a &lt;a href=&quot;https://teaching.unsw.edu.au/sites/default/files/upload-files/deep_and_surface_learning.pdf&quot;&gt;shallow
 approach to learning&lt;/a&gt; those principles.&lt;/p&gt;
 
-&lt;p&gt;Consider the students’ experience while working on the assignment. The
-primary experience will be solving many small problems in
+&lt;p&gt;Consider what the students actually do while working on the
+assignment. They primarily will solve many small problems in
 sequence. Most students will have little experience working with
 programs of this complexity. Few programming problems are “simple” for
 programmers whose experience is too low for the software or tools they
@@ -146,7 +146,7 @@ to be a fix.&lt;/p&gt;
 principles. For example, suppose they are using the
 &lt;a href=&quot;https://microk8s.io/&quot;&gt;Microk8s&lt;/a&gt; Kubernetes distribution and wish to
 determine how many &lt;code class=&quot;highlighter-rouge&quot;&gt;kubelet&lt;/code&gt; instances are running locally. They may
-know that the &lt;code class=&quot;highlighter-rouge&quot;&gt;ps -eaf&lt;/code&gt; command will dump the process table.  But if
+know that the &lt;code class=&quot;highlighter-rouge&quot;&gt;ps -eaf&lt;/code&gt; command will dump the process table.  If
 they simply type that command they will get a tedious list of hundreds
 of processes—460 on the system that I just tried.&lt;/p&gt;
 
@@ -179,8 +179,8 @@ they even wanted to find this item and will need to reconstruct their logic.&lt;
 
 &lt;h2 id=&quot;the-instructors-goals-are-distant-from-actual-student-experience&quot;&gt;The instructor’s goals are distant from actual student experience&lt;/h2&gt;
 
-&lt;p&gt;The students’ experience of such a programming project is a long
-sequence of this sort of challenges, insignificant to an experienced
+&lt;p&gt;The students’ activity during such a programming project is a long
+sequence of this sort of challenges, insignificant to a skilled
 programmer but potentially derailing to a novice, in a distinct
 sequence for every student.  I want to emphasize that the students
 were not stalled by lack of knowledge of the course content, operating
@@ -2655,6 +2655,10 @@ effective.&lt;/p&gt;
    <id>/2019/06/12/why-consensus-is-hard</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series describing Howard &amp;amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry &lt;a href=&quot;/2019/05/29/distributed-consensus-intro/&quot;&gt;introduced the source papers&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
+&lt;p&gt;&lt;em&gt;Updated &lt;strong&gt;May 27, 2020&lt;/strong&gt; to incorporate points from
+  &lt;a href=&quot;https://arxiv.org/abs/2004.05074&quot;&gt;Howard and Mortier (2020)&lt;/a&gt; and
+  &lt;a href=&quot;https://www.sciencedirect.com/science/article/pii/S0304397512009097&quot;&gt;Santos and Schiper (2013)&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
 &lt;p&gt;I begin this series on distributed consensus by stepping back from
 the details, considering why the problem seems so hard and
 specifically why literature on the problem is so difficult to read.
@@ -2666,13 +2670,10 @@ Howard and Mortier’s paper, I want to set the broader context. This context
 will help readers who want to apply these results to different forms
 of consensus.&lt;/p&gt;
 
-&lt;p&gt;I’d like to acknowledge the strong influence of Tom Cacogne’s
-&lt;a href=&quot;https://understandingpaxos.wordpress.com/&quot;&gt;“Understanding Paxos”&lt;/a&gt; on
-this post, in particular his early sections providing a high-level
-description of Paxos.&lt;/p&gt;
-
 &lt;p&gt;So why is distributed consensus so hard, not just to solve, but to even
 describe?  Turns out there’s a &lt;em&gt;lot&lt;/em&gt; of reasons.&lt;/p&gt;
+
+&lt;!--more--&gt;
 
 &lt;h2 id=&quot;you-cant-get-what-you-really-want&quot;&gt;1. You can’t get what you really want&lt;/h2&gt;
 
@@ -2731,7 +2732,8 @@ used for similar roles:&lt;/p&gt;
       &lt;th&gt;&lt;a href=&quot;https://lamport.azurewebsites.net/pubs/lamport-paxos.pdf&quot;&gt;Lamport (1998)&lt;/a&gt;&lt;/th&gt;
       &lt;th&gt;&lt;a href=&quot;https://lamport.azurewebsites.net/pubs/paxos-simple.pdf&quot;&gt;Lamport (2001)&lt;/a&gt;&lt;/th&gt;
       &lt;th&gt;&lt;a href=&quot;https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-935.pdf&quot;&gt;Howard&lt;/a&gt;&lt;/th&gt;
-      &lt;th&gt;&lt;a href=&quot;https://arxiv.org/abs/1902.06776&quot;&gt;Howard &amp;amp; Mortier&lt;/a&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;a href=&quot;https://arxiv.org/abs/1902.06776&quot;&gt;Howard &amp;amp; Mortier (2019)&lt;/a&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;a href=&quot;https://arxiv.org/abs/2004.05074&quot;&gt;Howard &amp;amp; Mortier (2020)&lt;/a&gt;&lt;/th&gt;
     &lt;/tr&gt;
   &lt;/thead&gt;
   &lt;tbody&gt;
@@ -2740,6 +2742,7 @@ used for similar roles:&lt;/p&gt;
       &lt;td&gt;—&lt;/td&gt;
       &lt;td&gt;Client&lt;/td&gt;
       &lt;td&gt;Citizen&lt;/td&gt;
+      &lt;td&gt;—&lt;/td&gt;
       &lt;td&gt;—&lt;/td&gt;
       &lt;td&gt;—&lt;/td&gt;
       &lt;td&gt;—&lt;/td&gt;
@@ -2752,6 +2755,7 @@ used for similar roles:&lt;/p&gt;
       &lt;td&gt;Proposer&lt;/td&gt;
       &lt;td&gt;Proposer&lt;/td&gt;
       &lt;td&gt;Client&lt;/td&gt;
+      &lt;td&gt;Leader&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;Acceptor&lt;/td&gt;
@@ -2761,6 +2765,7 @@ used for similar roles:&lt;/p&gt;
       &lt;td&gt;Acceptor&lt;/td&gt;
       &lt;td&gt;Acceptor&lt;/td&gt;
       &lt;td&gt;Server&lt;/td&gt;
+      &lt;td&gt;Follower&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;Learner&lt;/td&gt;
@@ -2770,6 +2775,7 @@ used for similar roles:&lt;/p&gt;
       &lt;td&gt;Learner&lt;/td&gt;
       &lt;td&gt;—&lt;/td&gt;
       &lt;td&gt;—&lt;/td&gt;
+      &lt;td&gt;—&lt;/td&gt;
     &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
@@ -2777,9 +2783,14 @@ used for similar roles:&lt;/p&gt;
 &lt;p&gt;Many of the authors also designate a specific
 Proposer/Suggester/Client as the “Leader”. The Leader designation
 simply indicates priority amongst otherwise identical processes; any
-member of that class may be promoted to Leader if the current one falls short.
-Note also that only one of Altınbüken &amp;amp; van Renesse’s
-“Leader”s is a leader in this sense.&lt;/p&gt;
+member of that class may be promoted to Leader if the current one
+falls short.
+Howard &amp;amp; Mortier’s (2020)
+reformulation of Paxos using the Raft roles includes a Leader role
+of this type, as well as a Candidate role for Followers striving
+to become Leaders.
+Note however that only one of Altınbüken &amp;amp; van Renesse’s
+“Leader”s is a Leader in this sense.&lt;/p&gt;
 
 &lt;p&gt;The correspondences above are not necessarily exact, due to the
 differing ways the authors separate Paxos into
@@ -2819,6 +2830,8 @@ initialize the state of
 processes added to the configuration&lt;/li&gt;
   &lt;li&gt;garbage collect counters that would otherwise increase without bound&lt;/li&gt;
   &lt;li&gt;reduce message traffic&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.sciencedirect.com/science/article/pii/S0304397512009097&quot;&gt;batch and pipeline&lt;/a&gt; 
+requests for lower latency and higher throughput.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;Variants of consensus include more or less of these implementation
@@ -2903,6 +2916,15 @@ for most implementations”.&lt;/p&gt;
 &lt;p&gt;Most descriptions of consensus algorithms specifically designate the
 portion of the Acceptor state that must be persistently retained for
 implementations that support restarting after a crash.&lt;/p&gt;
+
+&lt;h3 id=&quot;cpu-utilization-may-limit-performance&quot;&gt;CPU utilization may limit performance&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.sciencedirect.com/science/article/pii/S0304397512009097&quot;&gt;Santos and Schiper&lt;/a&gt;
+present data (Fig. 7a, Sect. 5.2.1) that for the combination
+of small request sizes and relatively high-latency networks (such as
+in wide-area networks), the CPU cost of consensus can limit
+performance. However, this case seems rarer than those where the
+latency of the network or persistent storage limits performance.&lt;/p&gt;
 
 &lt;h2 id=&quot;there-are-several-definitions-of-fault-tolerant&quot;&gt;7. There are several definitions of “fault-tolerant”&lt;/h2&gt;
 
@@ -3048,6 +3070,13 @@ will help connect this paper to others on the topic.&lt;/p&gt;
 
 &lt;p&gt;With the broad context of consensus laid out, in the next post I turn
 to the specific goals of Howard and Mortier’s paper.&lt;/p&gt;
+
+&lt;h2 id=&quot;acknowledgements&quot;&gt;Acknowledgements&lt;/h2&gt;
+
+&lt;p&gt;I’d like to acknowledge the strong influence of Tom Cacogne’s
+&lt;a href=&quot;https://understandingpaxos.wordpress.com/&quot;&gt;“Understanding Paxos”&lt;/a&gt; on
+this post, in particular his early sections providing a high-level
+description of Paxos.&lt;/p&gt;
 
 </content>
  </entry>

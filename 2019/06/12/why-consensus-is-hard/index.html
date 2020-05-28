@@ -46,13 +46,13 @@
 <meta property="og:title" content="Why is distributed consensus so hard?" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Second in a series describing Howard &amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry introduced the source papers." />
-<meta property="og:description" content="Second in a series describing Howard &amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry introduced the source papers." />
+<meta name="description" content="Second in a series describing Howard &amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry introduced the source papers. Updated May 27, 2020 to incorporate points from Howard and Mortier (2020) and Santos and Schiper (2013). I begin this series on distributed consensus by stepping back from the details, considering why the problem seems so hard and specifically why literature on the problem is so difficult to read. This ultimately results from the breadth of issues that must be addressed by any solution. “Distributed consensus” isn’t a single problem so much as a class of problems, with related but distinct solutions. Before describing the specific focus of Howard and Mortier’s paper, I want to set the broader context. This context will help readers who want to apply these results to different forms of consensus. So why is distributed consensus so hard, not just to solve, but to even describe? Turns out there’s a lot of reasons." />
+<meta property="og:description" content="Second in a series describing Howard &amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry introduced the source papers. Updated May 27, 2020 to incorporate points from Howard and Mortier (2020) and Santos and Schiper (2013). I begin this series on distributed consensus by stepping back from the details, considering why the problem seems so hard and specifically why literature on the problem is so difficult to read. This ultimately results from the breadth of issues that must be addressed by any solution. “Distributed consensus” isn’t a single problem so much as a class of problems, with related but distinct solutions. Before describing the specific focus of Howard and Mortier’s paper, I want to set the broader context. This context will help readers who want to apply these results to different forms of consensus. So why is distributed consensus so hard, not just to solve, but to even describe? Turns out there’s a lot of reasons." />
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2019-06-12T00:00:00-07:00" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Why is distributed consensus so hard?","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2019-06-12T00:00:00-07:00","dateModified":"2019-06-12T00:00:00-07:00","description":"Second in a series describing Howard &amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry introduced the source papers.","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/06/12/why-consensus-is-hard/"},"url":"/2019/06/12/why-consensus-is-hard/"}</script>
+{"@context":"http://schema.org","@type":"BlogPosting","headline":"Why is distributed consensus so hard?","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2019-06-12T00:00:00-07:00","dateModified":"2019-06-12T00:00:00-07:00","description":"Second in a series describing Howard &amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry introduced the source papers. Updated May 27, 2020 to incorporate points from Howard and Mortier (2020) and Santos and Schiper (2013). I begin this series on distributed consensus by stepping back from the details, considering why the problem seems so hard and specifically why literature on the problem is so difficult to read. This ultimately results from the breadth of issues that must be addressed by any solution. “Distributed consensus” isn’t a single problem so much as a class of problems, with related but distinct solutions. Before describing the specific focus of Howard and Mortier’s paper, I want to set the broader context. This context will help readers who want to apply these results to different forms of consensus. So why is distributed consensus so hard, not just to solve, but to even describe? Turns out there’s a lot of reasons.","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/06/12/why-consensus-is-hard/"},"url":"/2019/06/12/why-consensus-is-hard/"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -258,6 +258,10 @@
   
   <p><em>Second in a series describing Howard &amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry <a href="/2019/05/29/distributed-consensus-intro/">introduced the source papers</a>.</em></p>
 
+<p><em>Updated <strong>May 27, 2020</strong> to incorporate points from
+  <a href="https://arxiv.org/abs/2004.05074">Howard and Mortier (2020)</a> and
+  <a href="https://www.sciencedirect.com/science/article/pii/S0304397512009097">Santos and Schiper (2013)</a>.</em></p>
+
 <p>I begin this series on distributed consensus by stepping back from
 the details, considering why the problem seems so hard and
 specifically why literature on the problem is so difficult to read.
@@ -269,13 +273,10 @@ Howard and Mortier’s paper, I want to set the broader context. This context
 will help readers who want to apply these results to different forms
 of consensus.</p>
 
-<p>I’d like to acknowledge the strong influence of Tom Cacogne’s
-<a href="https://understandingpaxos.wordpress.com/">“Understanding Paxos”</a> on
-this post, in particular his early sections providing a high-level
-description of Paxos.</p>
-
 <p>So why is distributed consensus so hard, not just to solve, but to even
 describe?  Turns out there’s a <em>lot</em> of reasons.</p>
+
+<!--more-->
 
 <h2 id="you-cant-get-what-you-really-want">1. You can’t get what you really want</h2>
 
@@ -334,7 +335,8 @@ used for similar roles:</p>
       <th><a href="https://lamport.azurewebsites.net/pubs/lamport-paxos.pdf">Lamport (1998)</a></th>
       <th><a href="https://lamport.azurewebsites.net/pubs/paxos-simple.pdf">Lamport (2001)</a></th>
       <th><a href="https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-935.pdf">Howard</a></th>
-      <th><a href="https://arxiv.org/abs/1902.06776">Howard &amp; Mortier</a></th>
+      <th><a href="https://arxiv.org/abs/1902.06776">Howard &amp; Mortier (2019)</a></th>
+      <th><a href="https://arxiv.org/abs/2004.05074">Howard &amp; Mortier (2020)</a></th>
     </tr>
   </thead>
   <tbody>
@@ -343,6 +345,7 @@ used for similar roles:</p>
       <td>—</td>
       <td>Client</td>
       <td>Citizen</td>
+      <td>—</td>
       <td>—</td>
       <td>—</td>
       <td>—</td>
@@ -355,6 +358,7 @@ used for similar roles:</p>
       <td>Proposer</td>
       <td>Proposer</td>
       <td>Client</td>
+      <td>Leader</td>
     </tr>
     <tr>
       <td>Acceptor</td>
@@ -364,6 +368,7 @@ used for similar roles:</p>
       <td>Acceptor</td>
       <td>Acceptor</td>
       <td>Server</td>
+      <td>Follower</td>
     </tr>
     <tr>
       <td>Learner</td>
@@ -373,6 +378,7 @@ used for similar roles:</p>
       <td>Learner</td>
       <td>—</td>
       <td>—</td>
+      <td>—</td>
     </tr>
   </tbody>
 </table>
@@ -380,9 +386,14 @@ used for similar roles:</p>
 <p>Many of the authors also designate a specific
 Proposer/Suggester/Client as the “Leader”. The Leader designation
 simply indicates priority amongst otherwise identical processes; any
-member of that class may be promoted to Leader if the current one falls short.
-Note also that only one of Altınbüken &amp; van Renesse’s
-“Leader”s is a leader in this sense.</p>
+member of that class may be promoted to Leader if the current one
+falls short.
+Howard &amp; Mortier’s (2020)
+reformulation of Paxos using the Raft roles includes a Leader role
+of this type, as well as a Candidate role for Followers striving
+to become Leaders.
+Note however that only one of Altınbüken &amp; van Renesse’s
+“Leader”s is a Leader in this sense.</p>
 
 <p>The correspondences above are not necessarily exact, due to the
 differing ways the authors separate Paxos into
@@ -422,6 +433,8 @@ initialize the state of
 processes added to the configuration</li>
   <li>garbage collect counters that would otherwise increase without bound</li>
   <li>reduce message traffic</li>
+  <li><a href="https://www.sciencedirect.com/science/article/pii/S0304397512009097">batch and pipeline</a> 
+requests for lower latency and higher throughput.</li>
 </ul>
 
 <p>Variants of consensus include more or less of these implementation
@@ -506,6 +519,15 @@ for most implementations”.</p>
 <p>Most descriptions of consensus algorithms specifically designate the
 portion of the Acceptor state that must be persistently retained for
 implementations that support restarting after a crash.</p>
+
+<h3 id="cpu-utilization-may-limit-performance">CPU utilization may limit performance</h3>
+
+<p><a href="https://www.sciencedirect.com/science/article/pii/S0304397512009097">Santos and Schiper</a>
+present data (Fig. 7a, Sect. 5.2.1) that for the combination
+of small request sizes and relatively high-latency networks (such as
+in wide-area networks), the CPU cost of consensus can limit
+performance. However, this case seems rarer than those where the
+latency of the network or persistent storage limits performance.</p>
 
 <h2 id="there-are-several-definitions-of-fault-tolerant">7. There are several definitions of “fault-tolerant”</h2>
 
@@ -651,6 +673,13 @@ will help connect this paper to others on the topic.</p>
 
 <p>With the broad context of consensus laid out, in the next post I turn
 to the specific goals of Howard and Mortier’s paper.</p>
+
+<h2 id="acknowledgements">Acknowledgements</h2>
+
+<p>I’d like to acknowledge the strong influence of Tom Cacogne’s
+<a href="https://understandingpaxos.wordpress.com/">“Understanding Paxos”</a> on
+this post, in particular his early sections providing a high-level
+description of Paxos.</p>
 
 
 
