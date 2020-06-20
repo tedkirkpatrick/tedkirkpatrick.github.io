@@ -4,13 +4,200 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2020-05-27T16:50:23-07:00</updated>
+ <updated>2020-06-20T14:11:21-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Guarantees vs. metrics: What the designers intend, what the clients see</title>
+   <link href="/2020/06/20/guarantees-vs-methods/"/>
+   <updated>2020-06-20T00:00:00-07:00</updated>
+   <id>/2020/06/20/guarantees-vs-methods</id>
+   <content type="html">&lt;p&gt;In my
+&lt;a href=&quot;/2019/12/31/design-space-2020/&quot;&gt;distributed systems design space&lt;/a&gt;, I
+distinguish guarantees from metrics. A &lt;em&gt;guarantee&lt;/em&gt; is a property the
+system is designed to ensure in all cases, such as consistency between
+replicas of a data store, or the number of copies written to
+persistent storage before a write result is returned to the client. In
+contrast, a &lt;em&gt;metric&lt;/em&gt; is a measurable quantity of a system, such as
+median latency or annual availability. The guarantee/metric
+distinction arises from the designer’s perspective and clearly
+separates the two categories. But when we consider the categories
+instead from the perspective of the system’s clients, this distinction
+becomes fuzzier. Is it real? Is it valuable?&lt;/p&gt;
+
+&lt;h2 id=&quot;guarantees-express-a-designers-intent-via-software&quot;&gt;Guarantees express a designer’s intent via software&lt;/h2&gt;
+
+&lt;p&gt;When a designer includes a guarantee in a system specification, they
+are committing substantial resources. Guarantees such as consistency
+or multi-copy durability increase algorithm and code complexity, may
+increase latency and reduce throughput, and generally increase the
+system’s lifetime cost. The designer imposes that cost because they
+believe the guarantee is essential to meet user’s expectations for the
+service. The designer chooses consistency across storage replicas when
+they believe that client applications need the closest possible
+behaviour to a single replica and they choose multi-copy durability
+when they believe users have strong expectations that their data will
+be protected against failures of storage media.&lt;/p&gt;
+
+&lt;p&gt;A guarantee is a serious commitment for the system implementors, both
+those building the first version and those maintaining later versions.
+Any violation of the guarantee by the system is considered a defect
+and a fix is scheduled, often with a high priority.&lt;/p&gt;
+
+&lt;p&gt;Marketing for the system, whether for internal or external
+clients, will often include the guarantee. Clients will use
+the system with the expectation that the guarantee is met every
+time. System documentation might even express the guarantee in
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Hoare_logic&quot;&gt;Hoare triples&lt;/a&gt;: If an API
+call meets these preconditions, the following postconditions are
+guaranteed to hold upon return.&lt;/p&gt;
+
+&lt;p&gt;Ultimately, a guarantee is an expression of strong intent by the
+designer, ensured by strenuous implementation efforts and relied upon
+by the system’s clients.&lt;/p&gt;
+
+&lt;h2 id=&quot;clients-only-observe-metrics&quot;&gt;Clients only observe metrics&lt;/h2&gt;
+
+&lt;p&gt;A funny thing happens to the designer’s intent on the way to the
+client: It becomes a metric. The client can only determine the
+designer’s actual success by measuring the number of times the
+guarantee is violated in a given time period. However strongly the
+designer may have stated their intention, however strenuously the
+implementors tested the system, to the client’s eyes the guarantee is
+another metric, an observed rate of deviation from perfect
+implementation.&lt;/p&gt;
+
+&lt;p&gt;Our system guarantees never achieve 100 percent due to several
+factors:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Systems have bugs. No matter how many quality assurance
+techniques we add to our development process, our systems will incorrectly
+handle some obscure or unexpected
+combinations of circumstance.&lt;/li&gt;
+  &lt;li&gt;The imperfect world may not correspond to our perfect
+software. For example, items can be lost in shipment or data may be
+incorrectly entered.  From the client’s perspective, there is no
+sharp line between “the world” and “the software”.  The client
+only sees unmet expectations.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If clients only see metrics, is there any value to distinguishing
+guarantees from metrics? Even though the distinction isn’t sharp,
+I believe it remains valuable for several purposes.&lt;/p&gt;
+
+&lt;h2 id=&quot;distinguishing-endogenous-from-exogenous-threats&quot;&gt;Distinguishing endogenous from exogenous threats&lt;/h2&gt;
+
+&lt;p&gt;Specifying a guarantee makes the team responsible for preventing a
+wider range of events. A specification defines which events are
+endogenous and which are exogenous. An &lt;em&gt;exogenous&lt;/em&gt; event is considered
+outside the system, something that happens to the system. The team
+cannot affect these events’ incidence but is responsible for the
+system responding to them reliably. An &lt;em&gt;endogenous&lt;/em&gt; event, on the
+other hand, is considered under the system’s control, something that
+the system does. The team has complete responsibility for endogenous
+events.&lt;/p&gt;
+
+&lt;p&gt;These different responsibilities become most distinct in the case of
+events that threaten the system’s reliability.  For exogenous threats,
+no matter how obscure or infrequent, the team must ensure the system
+remains in a defined state. This might well include treating the event
+as a more regular one, ignoring it, logging it, or notifying the
+operations staff. The team must harden the system against exogenous
+threats. In contrast, endogenous threats are simply defects. Once one
+is found, the team is responsible for ensuring it never recurs.&lt;/p&gt;
+
+&lt;p&gt;From the designer’s perspective, an event that lowers a metric is an
+exogenous threat. For example, an application-level service probably
+cannot do anything to prevent the failure of a network switch, so the
+only recourse is to handle message loss and periods of
+inaccessibility. Switch failures are exogenous to such systems,
+outside the responsibility of the system designers.&lt;/p&gt;
+
+&lt;p&gt;By contrast, team members see an event that causes the system to
+miss a guarantee as an endogenous threat. Entirely the team’s
+responsibility, it must be fixed.&lt;/p&gt;
+
+&lt;p&gt;The team sees drops in a metric as an unfortunate fact of
+life—networks are unreliable, what can ya do?—but violations of a
+guarantee as shameful. The distinction between metrics and guarantees
+imply very different ownership of threats.  The team works to
+&lt;em&gt;mitigate the impact&lt;/em&gt; of exogenous threats but works to &lt;em&gt;eliminate&lt;/em&gt;
+endogenous threats.  In both cases, their efforts will fall short but
+it is endogenous threats whose incidence they must strive to bring as
+near zero as possible.&lt;/p&gt;
+
+&lt;h2 id=&quot;setting-client-expectations&quot;&gt;Setting client expectations&lt;/h2&gt;
+
+&lt;p&gt;Defining and publishing a guarantee also sets client expectations. A
+database that guarantees a high degree of consistency, such as
+multiple persistent writes for durability, is claiming that client
+data has a high degree of safety. This can be a powerful marketing
+tool.&lt;/p&gt;
+
+&lt;p&gt;A published guarantee also calibrates expectations. Although a system
+with five-way durability (five synchronously-written copies) may
+occasionally lose data, the frequency of such loss will be extremely
+low. For example, Amazon S3, which features five-way durability, has
+&lt;a href=&quot;https://docs.aws.amazon.com/AmazonS3/latest/dev/DataDurability.html&quot;&gt;an SLA of 99.999999999% durability&lt;/a&gt;
+(that’s &lt;em&gt;eleven&lt;/em&gt; “9”s!). Clients can then define their data-protection
+plans on the presumption of a very low risk of data loss.&lt;/p&gt;
+
+&lt;h2 id=&quot;setting-developer-conceptual-models&quot;&gt;Setting developer conceptual models&lt;/h2&gt;
+
+&lt;p&gt;In a related manner, publishing a guarantee provides a conceptual model
+for developers building clients of the system. Developers find
+programming to a strong consistency guarantee &lt;a href=&quot;https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41344.pdf&quot;&gt;far easier than
+programming to a weak one&lt;/a&gt;,
+while strong durability guarantees permit developers to manage the
+very low-probability risk of data loss.&lt;/p&gt;
+
+&lt;p&gt;Stronger models also justify and explain any performance costs
+induced by the guarantee. If a developer knows that every write must
+be persisted to five independent stores, the longer latency is
+justified.&lt;/p&gt;
+
+&lt;p&gt;Expectations and conceptual models address the needs of different
+communities within the client organization.  Marketing and financial
+teams benefit from the expectations while development teams will use
+the conceptual model.&lt;/p&gt;
+
+&lt;h2 id=&quot;setting-organizational-values&quot;&gt;Setting organizational values&lt;/h2&gt;
+
+&lt;p&gt;Where expectations and conceptual models are of use to communities outside
+the development team, guarantees also contribute to the values and
+culture of the team itself. A team building a
+high-consistency database will pride themselves on the quality of
+their technology. Rising to meet a difficult challenge inspires
+developers and engenders &lt;em&gt;esprit de corps&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Paradoxically, the absence of some guarantees can have the same
+effect. For example,
+&lt;a href=&quot;https://cassandra.apache.org/&quot;&gt;Cassandra’s home page&lt;/a&gt; advertises that
+“Highly available asynchronous operations are optimized with features
+like Hinted Handoff and Read Repair”. Starting from an initial stance
+of, “What would performance look like if we did not guarantee
+consistency on all writes?”, the Cassandra community has pursued a
+range of innovations, eventually even including versions of strong
+consistency.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-value-of-distinguishing-guarantees-from-metrics&quot;&gt;The value of distinguishing guarantees from metrics&lt;/h2&gt;
+
+&lt;p&gt;Although a guarantee only differs from a metric in terms of the degree
+rather than the kind of externally visible outcome, the distinction
+is nonetheless important. Stating a guarantee defines what threats are
+endogenous, sets expectations within and outside the development team,
+and forms a key element of the system’s conceptual model. The guarantee/metric
+distinction, despite some fuzziness in its observable effects, is genuinely
+important.&lt;/p&gt;
+
+</content>
+ </entry>
  
  <entry>
    <title>Flambloozlement and the student enthusiasm for crunch mode</title>
