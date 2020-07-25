@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
+  <meta name="author" content="Arthur E. Kirkpatrick">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018, 2019, 2020">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Extending "The Tail at Scale" &middot; All my marbles in one place
+    
+  </title>
+
+    <!-- Asychronously-loaded JavaScript -->
+    
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/tex-chtml.js" integrity="sha384-j9ODZKtRF0+heKS/yKvP7oInOBmXb6YTVeyZsxRqp1u9DTFlO0RE5m34WHkrzPCN" crossorigin="anonymous"></script>
+    
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66576928-4', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- Begin Jekyll SEO tag v2.2.3 -->
+<meta property="og:title" content="Extending “The Tail at Scale”" />
+<meta name="author" content="Ted Kirkpatrick" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In their classic article, “The Tail at Scale”, Dean and Barroso formulate an important principle of service design: Reduce the variance of the latency for low-level services because that has a large impact on the performance of their callers. This effect arises due to the high number of subservices called by a typical main service, making it likely that at least one subservice will have an extremely slow response, holding back the main service. In their article, Dean and Barroso focus on the very largest latencies but extending their argument to smaller but more frequent latencies provides even more insight into service design." />
+<meta property="og:description" content="In their classic article, “The Tail at Scale”, Dean and Barroso formulate an important principle of service design: Reduce the variance of the latency for low-level services because that has a large impact on the performance of their callers. This effect arises due to the high number of subservices called by a typical main service, making it likely that at least one subservice will have an extremely slow response, holding back the main service. In their article, Dean and Barroso focus on the very largest latencies but extending their argument to smaller but more frequent latencies provides even more insight into service design." />
+<link rel="canonical" href="http://localhost:5000/2020/07/24/extending-the-tail-at-scale/" />
+<meta property="og:url" content="http://localhost:5000/2020/07/24/extending-the-tail-at-scale/" />
+<meta property="og:site_name" content="All my marbles in one place" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-24T00:00:00-07:00" />
+<script type="application/ld+json">
+{"@context":"http://schema.org","@type":"BlogPosting","headline":"Extending “The Tail at Scale”","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2020-07-24T00:00:00-07:00","dateModified":"2020-07-24T00:00:00-07:00","description":"In their classic article, “The Tail at Scale”, Dean and Barroso formulate an important principle of service design: Reduce the variance of the latency for low-level services because that has a large impact on the performance of their callers. This effect arises due to the high number of subservices called by a typical main service, making it likely that at least one subservice will have an extremely slow response, holding back the main service. In their article, Dean and Barroso focus on the very largest latencies but extending their argument to smaller but more frequent latencies provides even more insight into service design.","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:5000/2020/07/24/extending-the-tail-at-scale/"},"url":"http://localhost:5000/2020/07/24/extending-the-tail-at-scale/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/comment-policy/">Comment policy</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	   
+	    <a href="/tag/Python/">Python</a>,
+	  
+        
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
+	   
+	    <a href="/tag/Big data/">Big data</a>,
+	  
+        
+	   
+	    <a href="/tag/Soft skills/">Soft skills</a>,
+	  
+        
+	   
+	    <a href="/tag/Statistics/">Statistics</a>,
+	  
+        
+	   
+	    <a href="/tag/Experimental design/">Experimental design</a>,
+	  
+        
+	   
+	    <a href="/tag/Rhetoric/">Rhetoric</a>,
+	  
+        
+	   
+	    <a href="/tag/Admin/">Admin</a>,
+	  
+        
+	  	    
+            <a href="/tag/Distributed systems/">Distributed systems</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2020. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Extending "The Tail at Scale"</h1>
+  <span class="post-date">24 Jul 2020
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/Distributed systems">Distributed systems</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>In their classic article,
+<a href="https://research.google/pubs/pub40801/">“The Tail at Scale”</a>, Dean
+and Barroso formulate an important principle of service design: Reduce
+the variance of the latency for low-level services because that has a
+large impact on the performance of their callers.  This effect arises
+due to the high number of subservices called by a typical main
+service, making it likely that at least one subservice will have an
+extremely slow response, holding back the main service. In their article, Dean and
+Barroso focus on the very largest latencies but extending their
+argument to smaller but more frequent latencies provides even more insight into service
+design.</p>
+
+<h2 id="subservice-latencies-increase-main-service-latency">Subservice latencies increase main service latency</h2>
+
+<p>Let’s begin with some definitions and Dean and Barroso’s basic argument.</p>
+
+<h3 id="describing-latencies">Describing latencies</h3>
+
+<p>Latencies form a distribution, typically one too complex to characterize
+by specifying the parameters of a common distribution such Gaussian or
+log-normal. Instead, a latency distribution is characterized by its
+percentiles. Latency percentiles are a function from a fraction
+\(p \in [0,1)\) to latencies,</p>
+
+<p>\[LP(p) = v, \mbox{such that for any latency}\:l, \;Pr(l \leq v) = p\]</p>
+
+<p>The value of \(LP(p)\) specifies a <em>boundary</em> and can be seen two
+ways: It is the <em>upper</em> bound of fraction \(p\)  of all latencies and
+the <em>lower</em> bound of fraction \(1-p\) of all latencies.</p>
+
+<p>A note about percentiles: Percentiles can be written equivalently as
+either a fraction between 0 and 1 or a real between 0 and 100 %. For
+all formulas in the following, I present “percentiles” in their
+fractional form. Occasionally, for interpreting results, I will
+write them as percents.</p>
+
+<h3 id="the-impact-of-lower-level-services-on-their-caller">The impact of lower-level services on their caller</h3>
+
+<p>Consider the case of a main service that calls multiple instances of a
+subservice in parallel and then waits for them all to complete before
+itself proceeding.
+We want to explore how the latency distribution of subservices
+affects the latencies of the main service. Informally, there clearly is an
+effect: Because the main has to wait for all the subservices to
+complete, slow subservices will slow down the main service. More precisely,
+the slowest subservice will set a lower bound on how quickly the
+main can complete.</p>
+
+<p>At first glance, this doesn’t seem like much of a problem. Just take
+the Service Level Objective (SLO) for the subservices, add time for the
+main to operate on their results, and set the SLO for the
+main.</p>
+
+<p>The problems arise when you decide which percentiles to use when
+computing SLOs for the caller.  How much time should we set aside for
+the subservices to return?
+How about the median, .50 latency percentile,
+\(LP_{sub}(.50)\)?  Let’s say the subservice \(LP_{sub}(.50) =
+100\) ms.  Should we just allocate 100 ms for the group of
+subservice calls?</p>
+
+<p>Unfortunately, the resulting probabilities guarantee that the
+subservice calls will never
+come close to meeting such an SLO. If the main calls just five
+subservices, the probability that they will all return within
+100 ms is just .03 (I’ll explain how I got this value in a
+moment).</p>
+
+<p>The latencies of this simple case, 
+a main service calling subservices whose results it
+must await before proceeding with further processing, are
+counter intuitive. There are two important lessons:</p>
+
+<ol>
+  <li>All it takes is one slow subservice to drag the main down to its
+pace—and the probability of this occurring is surprisingly high.</li>
+  <li>In particular, high-percentile latencies of the subservice will set extremely
+high lower bounds for the extreme latencies—yet such extreme
+latencies will arise far more commonly than their low
+probability might suggest.</li>
+</ol>
+
+<p>Let’s walk though the details to see what causes these effects.</p>
+
+<h2 id="the-basic-model">The basic model</h2>
+
+<p>Dean and Barroso present a combination of a short probabilistic
+analysis and some actual results from a large scale Google
+service. Because I do not manage a global network of datacentres from
+which to present data, I am just going to extend their basic probabilistic
+model. By itself, the model is sufficient to reveal important issues.</p>
+
+<p>The assumptions of the model are straightforward:</p>
+
+<ul>
+  <li>A main service calls multiple subservices in parallel</li>
+  <li>The main service must wait for the results of all subservices
+before it can return its result</li>
+  <li>All the subservices have identical latency distributions,
+with known latency percentiles</li>
+  <li>The latencies of all subservices are completely independent</li>
+</ul>
+
+<p>These assumptions aren’t restrictive. Although actual systems may not
+conform to this model, they will suffer from the issues I describe
+below.  At the end of this post, I’ll consider the effects of relaxing
+these assumptions.</p>
+
+<h2 id="effective-percentile-latency-distribution-of-a-collection-of-subservices">Effective percentile: Latency distribution of a collection of subservices</h2>
+
+<p>Using the basic model, calculating the impact of subservice latencies
+on the main service is straightforward. In the above
+example of a main calling five subservices, the probability that <em>all</em>
+subservices will complete below the \(LP_{sub}(.50)\) boundary is the product of
+the <em>individual</em> probabilities:</p>
+
+<p>\[.50^5 = .03125\]</p>
+
+<p>In effect, the \(LP_{sub}(.50)\) value of an individual service is the \(LP(.03)\) value of
+the latency for five called in parallel.</p>
+
+<p>Generalizing, the probability of all subservices meeting their target can be seen as
+the <em>effective percentile</em> of the subservices taken as a <em>group</em>.
+For the \(p\) percentile of a called service and a caller
+fanout (the number of subservices called) of \(f\),
+the effective percentile of the caller is given by:</p>
+
+<p>\[EP_{service}(p, f) = p^f\]</p>
+
+<p>The effective percentile is a probability. The latency boundary
+associated with this probability is the original \(LP(p)\).  In
+effect, fanning out to \(f\) instances moves the probability of this boundary down from
+\(p\) to the lower \(EP(p, f)\).</p>
+
+<p>The graph presented by Dean and Barroso uses the above computation but
+reports the fraction for which \(LP(p)\) sets the <em>lower</em> bound,
+1-\(EP(p,f)\). For example, the value called out on the lower right
+of their graph (\(LP_{sub}(.9999)\), fanout=2000) is</p>
+
+<p>\[1 - EP(.9999,2000) = .18\]</p>
+
+<h2 id="the-effective-percentile-of-high-percentile-subservice-latencies">The effective percentile of high-percentile subservice latencies</h2>
+
+<p>Dean and Barroso focus on high percentiles such as \(LP(.98)\) or \(LP(.99)\), so
+let’s begin there. High percentile latencies tend to set
+disproportionately large lower bounds for extreme response times. For example, their Table 1
+shows measurements of an actual Google service with \(LP(.50) = 1\) ms but \(LP(.99) = 10\) ms, an order of magnitude higher.
+Statistically, high percentile latencies represent
+samples from a different distribution than the lower-percentile
+values. Calls with high-percentile latencies might have occurred during
+garbage collection or a burst of network contention. The long
+latencies characteristic of high percentiles will in turn increase the
+latency of their caller.</p>
+
+<p>You might take solace in the rarity of these high latencies—after
+all, they only occur 1–2% of the time. But when we call multiple
+instances of a service and wait for all of them to complete, the
+effective percentile is much lower, meaning that the probability of
+a high latency occurring for at least one of the
+subservices is surprisingly high.</p>
+
+<p>The following table demonstrates this point. Each row represents a
+percentile, with each entry showing the minimal fanout necessary to
+reduce the effective percentile to the value in the column header.</p>
+
+<table>
+  <thead>
+    <tr><th style="text-align: right">Subservice</th><th colspan="5">\(EP(p,f)\)</th></tr>
+    <tr>
+      <th style="text-align: right">LP(p)</th>
+      <th style="text-align: right">.95</th>
+      <th style="text-align: right">.90</th>
+      <th style="text-align: right">.80</th>
+      <th style="text-align: right">.75</th>
+      <th style="text-align: right">.50</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: right">.999</td>
+      <td style="text-align: right">51</td>
+      <td style="text-align: right">105</td>
+      <td style="text-align: right">223</td>
+      <td style="text-align: right">287</td>
+      <td style="text-align: right">693</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">.990</td>
+      <td style="text-align: right">5</td>
+      <td style="text-align: right">10</td>
+      <td style="text-align: right">22</td>
+      <td style="text-align: right">29</td>
+      <td style="text-align: right">69</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">.980</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">5</td>
+      <td style="text-align: right">11</td>
+      <td style="text-align: right">14</td>
+      <td style="text-align: right">34</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">.900</td>
+      <td style="text-align: right">-</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">3</td>
+      <td style="text-align: right">6</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>For example, for a service with \(LP(.99) = 10\) ms, if 10
+instances of that service are called, the effective
+percentile is \(EP(.99,10)=.90.\) Viewing this percentile as a lower
+bound, this indicates that in 10% of the executions the
+last response will take <em>at least</em> 10 ms to arrive. If instead 69 instances were
+called, \(EP(.99, 69)=.50\), meaning half of all responses would
+take 10 ms or longer.</p>
+
+<p>This is the main point of the first half of “The Tail at Scale”: When
+you call multiple subservices, the inexorable math of effective
+percentiles makes high latencies far more common.  These high
+latencies in turn increase the latency of the main service because it
+has to wait so long before it can begin its own processing of the
+results.</p>
+
+<p>The rest of their article presents methods for alleviating this
+problem, including ways of making the high percentile latencies less
+extreme and ways of issuing redundant requests to reduce the
+probability that the main service will have to wait for an extreme
+response. I’m not going to repreat Dean and Barroso’s discussion here
+but want to extend their argument to a case they did not address: the
+effective percentiles for lower percentiles such as the median
+(\(LP(.50)\)).</p>
+
+<h2 id="lower-percentiles-drop-even-further-due-to-fanout">Lower percentiles drop even further due to fanout</h2>
+
+<p>In addition to fanout increasing the risk of an extremely slow
+response from a subservice, it also makes the common case slower than
+you would expect. Indeed, this effect on common cases is even more
+pronounced than the one for the rarely-occurring high percentiles.</p>
+
+<p>Consider again the formula for an effective percentile, \(p^f\).
+The exponential of a probability substantially less than 1 approaches
+0 far more quickly than that of a probability close to 1. Revisiting
+the example above, \(EP(.50, 5) = .031\). Considering this as a
+lower bound, it indicates that for 97% of the calls to the 5
+subservices, the response time for the last replica will exceed the
+median for an individual service.</p>
+
+<p>This demonstrates the problem with budgeting the calls to the
+subservices at
+\(LP(.50) = 100\) ms. In all but 3% of the cases, they will require
+more than 100 ms for the slowest response.</p>
+
+<p>This effect of fanout on lower percentiles is shown in the
+following table. For a given subservice percentile, it shows the
+fanout sufficient to bring the effective percentile below 10%:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: right">Percentile \(p\)</th>
+      <th style="text-align: right">Fanout \(f\) for \(EP(p, f) \lt .10\)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: right">.50</td>
+      <td style="text-align: right">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">.60</td>
+      <td style="text-align: right">5</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">.70</td>
+      <td style="text-align: right">7</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">.80</td>
+      <td style="text-align: right">11</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>These results astonished me when I first calculated them. If I call
+as few as 11
+subservices, the odds that they will all respond within their 80th
+percentile latency are under 10%.</p>
+
+<p>The conclusion of these simple calculations is stark:  In a
+microservices architecture, where a main service calls even a moderate
+number of subservices, the variance of the subservice latencies must
+be kept as small as possible if you want reasonable performance from the
+main service.</p>
+
+<h2 id="revisiting-assumptions">Revisiting assumptions</h2>
+
+<p>The above tables assume independent and identical distributions. Although
+these assumptions often do not hold in practice, the probabilities
+for actual systems will typically be as bad as or worse than
+this. Let’s consider relaxing each assumption in turn.</p>
+
+<h3 id="correlated-distributions-are-unlikely-to-improve-performance">Correlated distributions are unlikely to improve performance</h3>
+
+<p>The \(p^f\) formula assumes all latencies are uncorrelated.  In
+practice, latencies may be correlated due to one or more of the
+following causes:</p>
+
+<ol>
+  <li>Shared hardware: For
+example, when a network switch experiences a load surge, all
+replicas served by it will have degraded response.</li>
+  <li>Shared operation sequences:  When two replicas process very similar
+sequences of operations, they have a tendency to begin garbage
+collection around the same time.</li>
+  <li>Anticorrelations due to hot spots: In a sharded storage service,
+if one shard is slow due to receiving a disproportionate share of
+requests, the other shards will be faster due to their lighter
+load.</li>
+  <li>Direct dependency: If one service calls another, the caller’s
+latencies will directly correlate to those of its subservice.</li>
+</ol>
+
+<p>Ultimately, most of these correlations will increase the incidence of high
+latencies rather than reducing them. Anticorrelations will typically
+aggravate the problem rather than mitigate it, as effective percentile
+is determined by the <em>slowest</em> response and anticorrelation implies
+that the slowest reponse is even slower.</p>
+
+<p>The only form of correlated distributions that will mitigate the
+effective percentile effect are positive correlations where the
+reduction in latency of one service predicts a latency reduction of
+all the others.  While such circumstances may be possible in modern
+data centers, they are unlikely. Most of the time, correlated latencies will not
+mitigate effective percentiles and may even aggravate them.</p>
+
+<h3 id="nonidentical-distributions">Nonidentical distributions</h3>
+
+<p>The assumption of identical distribution simplifies the computation
+but different services and even different replicas of the same service
+will typically have different distributions. For distributions that
+are only slightly different, the results will be the same as above. On
+the other hand, if one service has a much larger boundary value for a
+given percentile than the others, that service will dominate the
+latency for that percentile and all higher percentiles.  The designer
+should probably focus on managing the spread of latencies for the slow
+service, reducing its boundary values before managing the latencies
+for the faster services.</p>
+
+<h3 id="calls-in-sequence-rather-than-parallel">Calls in sequence rather than parallel</h3>
+
+<p>This analysis has focused on parallel calls to services but this is
+not essential. The mathematics is the same if the services are called
+in sequence: The odds of one service exceeding its percentile latency
+increase dramatically as more services are called. The effective
+percentile dilemma arises for any type of fanout, sequential or
+parallel.</p>
+
+<h3 id="function-calls-will-have-the-same-effect-as-service-calls">Function calls will have the same effect as service calls</h3>
+
+<p>These effects are extremely general. I presented this analysis in
+terms of microservices but could rephrase it in terms of a main
+routine and the subroutines it calls, with identical results. The
+analysis also applies to a main Web page that loads components from
+many other sources.</p>
+
+<h2 id="quorums-keep-effective-percentiles-high">Quorums keep effective percentiles high</h2>
+
+<p>Quorum-based algorithms, where \(n\) multiple replicas are called and only
+the fastest \(k &lt; n\) responses are required for the computation to
+proceed, avoid the effective percentile trap by pruning the slowest
+responses. The “tied request” and “hedged request” techniques
+described by Dean and Barroso are variants of this approach.</p>
+
+<p>The math for this case is out of the scope of this post but the
+informal logic is straightforward: If you do not wait for the slowest
+response, you will consistently draw from the lower-percentile
+latencies and consequently the extreme latencies associated with high percentiles
+will be even less likely than their percentiles indicate.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The probability of extreme latencies increases when a main service
+calls multiple subservices. The effective percentile of a given
+subservice latency is much lower than the stated percentile when that service is called multiple
+times. Dean and Barroso highlighted this outcome for high-percentile
+latencies, pointing out that the extreme boundary values associated
+with high
+percentiles become common enough to routinely affect performance of
+the caller. Extending this argument to middle percentiles such as the
+median, the effect becomes still more pronounced. If as few as five
+instances of the subservice are called, the 97% of the group of calls
+will feature at least one call that takes longer than the median
+latency of a single call. System designers need to keep the variance
+of lower-level services as low as possible. The effective percentiles
+induced by multiple calls will make latencies longer than the median
+far more common than their single-call percentile would indicate.</p>
+
+
+
+</div>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+this.page.url = "http://kirkpatricktech.com/2020/07/24/extending-the-tail-at-scale/";
+//this.page.identifier = "/2020/07/24/extending-the-tail-at-scale";
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://kirkpatricktech-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
+  </body>
+</html>
