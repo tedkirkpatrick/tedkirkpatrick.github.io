@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2020-07-24T17:20:58-07:00</updated>
+ <updated>2020-09-09T15:28:41-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -13,11 +13,231 @@
 
  
  <entry>
+   <title>The basics of latency percentiles</title>
+   <link href="/2020/09/09/latency-basics/"/>
+   <updated>2020-09-09T00:00:00-07:00</updated>
+   <id>/2020/09/09/latency-basics</id>
+   <content type="html">&lt;p&gt;Designers of distributed systems obsess over service latency. They
+forecast latencies of proposed designs, stress-test the latencies of
+systems under development, equalize latencies of
+replicated services by load balancing, monitor latencies of production
+systems using instrumentation, and commit to latency targets in
+service level objectives and agreements.&lt;/p&gt;
+
+&lt;p&gt;The most commonly-used representation of latency in these scenarios is
+&lt;a href=&quot;https://www.dynatrace.com/news/blog/why-averages-suck-and-percentiles-are-great/&quot;&gt;percentiles&lt;/a&gt;. Percentiles
+are deceptively simple, a function from values between 0 and 1 (or
+equivalently 0% and 100%) to a response time. But the relation between
+percentiles and the distribution they describe is subtle: Formally,
+the percentile function is the inverse of the integral of the
+probability density of the distribution.&lt;/p&gt;
+
+&lt;p&gt;The subtlety of this construction makes
+it easy to miss a step and become confused. Working through the
+basics in detail, gaining a clear understanding of how percentiles relate to
+other representations of latency, provides designers with a straightforward
+approach to reasoning about a fundamental concept in distributed
+systems design.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h2 id=&quot;latency-distributions&quot;&gt;Latency distributions&lt;/h2&gt;
+
+&lt;p&gt;Begin with distributions. The latency distributions of actual services
+do not conform well to any of the widely-studied distributions
+presented in statistical texts. Distributions of latencies are:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Positively skewed, with a heavy tail on the right&lt;/li&gt;
+  &lt;li&gt;Time-varying&lt;/li&gt;
+  &lt;li&gt;Multimodal&lt;/li&gt;
+  &lt;li&gt;Spiky&lt;/li&gt;
+  &lt;li&gt;Bounded below but not above.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;There is an interesting analysis to be done, showing these properties
+as consequences of the underlying mechanisms in our systems. For this
+article, I will simply note that these properties are widely-observed
+in the distributions of actual systems, including
+&lt;a href=&quot;https://www.youtube.com/watch?v=lJ8ydIuPFeU&quot;&gt;Gil Tene’s classic rant&lt;/a&gt;
+and Ben Sigelmen’s argument that
+&lt;a href=&quot;https://lightstep.com/blog/performance-is-a-shape-not-a-number/&quot;&gt;“performance is a shape”&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;representing-latency-by-a-density-function&quot;&gt;Representing latency by a density function&lt;/h2&gt;
+
+&lt;p&gt;Designers typically envision latency as a density function, with
+latency the horizontal axis, beginning at zero and unbounded in the
+positive direction, while the vertical axis is an abstract nonzero
+probability density.&lt;/p&gt;
+
+&lt;p&gt;The density function \(LD(t)\) for latencies has
+the following properties:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;\(LD(t) = 0, \quad t &amp;lt;= 0\)&lt;/li&gt;
+  &lt;li&gt;\(0 &amp;lt; LD(t), \quad t &amp;gt; 0\)&lt;/li&gt;
+  &lt;li&gt;\(\lim_{t\to\infty} LD(t) = 0\quad(LD(t)\) is asymptotic to the
+horizontal axis)&lt;/li&gt;
+  &lt;li&gt;\(\int_0^\infty LD(t) \,\mathrm{d}t = 1\quad\) (the area under
+\(LD(t)\) is 1)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;a-simplified-latency-distribution&quot;&gt;A simplified latency distribution&lt;/h3&gt;
+
+&lt;p&gt;For purposes of this post, I will need an example distribution. I do
+not propose this distribution as representing any
+actual distribution but simply use it to represent some of the
+complexities of actual latencies. Any description of actual latencies
+will have to include these complexities at the least.&lt;/p&gt;
+
+&lt;p&gt;The example distribution is the mixture of two &lt;a href=&quot;https://en.wikipedia.org/wiki/Log-normal_distribution&quot;&gt;lognormal distributions&lt;/a&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;80% a lognormal density for a random variable whose log is a
+Gaussian with mean 0 and standard deviation 1.0&lt;/li&gt;
+  &lt;li&gt;20% a lognormal density for a random variable whose log is a
+Gaussian with mean 5 and standard deviation 0.5.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.lognorm.html#scipy.stats.lognorm&quot;&gt;SciPy&lt;/a&gt; code for this density function is:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stats&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lognorm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pdf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+           &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stats&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lognorm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pdf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;loc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;5.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;and it has the following density function:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/Lognormal-mixture-density.png&quot; alt=&quot;Bimodal density function for mixture of two lognormals&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The resulting mixture matches several properties of actual latency
+distributions:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Bounded below by 0&lt;/li&gt;
+  &lt;li&gt;Asymmetric, with a long positive tail&lt;/li&gt;
+  &lt;li&gt;Multimodal (in this case, bimodal)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The density plot is likely what most designers have in mind when
+imagining the latency distribution of an actual or prospective
+service. How is this related to percentiles, the measure typically
+used to characterize latencies?  The process is indirect, comprising
+several steps, and it’s informative to walk through them in
+detail.&lt;/p&gt;
+
+&lt;h2 id=&quot;step-1-compute-the-cumulative-distribution&quot;&gt;Step 1: Compute the cumulative distribution&lt;/h2&gt;
+
+&lt;p&gt;The first step is computing the cumulative distribution, \(LC(t)\).
+Analytically, this is just the integral of the density:&lt;/p&gt;
+
+&lt;p&gt;\[ LC(t) = \int_0^t LD(x) \,\mathrm{d}x \]&lt;/p&gt;
+
+&lt;p&gt;The cumulative distribution has the same domain as the
+density, a range of [0, 1), and an important additional property: For actual
+latency distributions, it is strictly monotonically
+increasing:&lt;/p&gt;
+
+&lt;p&gt;\[ \forall\: t1, t2, t1 &amp;lt; t2 :\:  LC(t1) &amp;lt; LC(t2) \]&lt;/p&gt;
+
+&lt;p&gt;(Although one can construct distributions whose
+corresponding cumulative function is monotonic but not strict,
+these are extremely rare in practice. If one should arise, there are
+technical solutions to make its cumulative function strictly
+monotonic.) This property is essential for computing the percentile,
+as we will see in the next step.&lt;/p&gt;
+
+&lt;p&gt;For the sample distribution given above, the cumulative distribution
+\(LC(t)\) is:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/Lognormal-mixture-cumulative.png&quot; alt=&quot;Cumulative probability function for mixture of two lognormals&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;step-2-compute-the-inverse-cumulative-distribution&quot;&gt;Step 2: Compute the inverse cumulative distribution&lt;/h2&gt;
+
+&lt;p&gt;The percentile function, \(LP(p)\), is the inverse of the cumulative
+distribution:&lt;/p&gt;
+
+&lt;p&gt;\[ LP(p) = LC(t)^{-1} \]&lt;/p&gt;
+
+&lt;p&gt;The strict monotonicity of \(LC(t)\) we described above ensures that its inverse is
+well-defined. The following diagram illustrates how \(LP(.6)\) is
+computed, drawing a ray from .6 on the range of \(LC(.6)\)
+until it intersects the function, then dropping to 1.95 ms on the domain:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/Inverse-LC.png&quot; alt=&quot;Inverting the cumulative distribution function&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;heights-in-lp-are-areas-under-ld&quot;&gt;Heights in \(LP\) are areas under \(LD\)&lt;/h3&gt;
+
+&lt;p&gt;I think it’s helpful to explicitly show the relationship between the percentile
+\(LP\) and the density \(LD\). As the inverse of the integral, a height in
+\(LP\)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/LC-height.png&quot; alt=&quot;Heights of regions for LP(.6) threshold&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;corresponds to an area under \(LD\):&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/LD-area.png&quot; alt=&quot;Regions under the LD function corresponding to LP(.6) threshold&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Those shapes are deceptive:  I had to run a numeric integration to
+convince myself that the cyan area is in fact 50% larger than the magenta.&lt;/p&gt;
+
+&lt;h2 id=&quot;using-the-tools-computing-effective-percentile-ep&quot;&gt;Using the tools: Computing effective percentile \(EP\)&lt;/h2&gt;
+
+&lt;p&gt;Understanding the detailed construction of \(LP(p)\) helps explain the details of computing
+&lt;a href=&quot;/2020/07/24/extending-the-tail-at-scale/&quot;&gt;effective percentiles&lt;/a&gt;. Consider
+the computation of \(EP(.6, 5)\), the effective percentile
+corresponding to the slowest response of 5 calls to a service with
+\(LP(.6) = 1.95\) ms. The effective percentile is \(EP(.6, 5)
+= .078\). Graphically, the cumulative probability at 1.95 ms is
+dropped from .600 to .078&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/Computing-EC.png&quot; alt=&quot;Dropping an LP down to its corresponding EP&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;producing an effective cumulative distribution \(EC(t, 5)\) (where 5
+is the fanout):&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/Lognormal-mixture-effective-cumulative.png&quot; alt=&quot;Cumulative probability function for mixture of two lognormals---effective probabilities&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This illustrates how the probability of high latencies has increased
+due to five calls to the service. Where the original \(LC(1.95~\mathrm{ms})
+= .6\), now we have to go up to 6.2 ms to get
+\(EC(6.2~\mathrm{ms}, 5~\mathrm{calls}) = .6\):&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/From-LC-to-EC.png&quot; alt=&quot;From LC(.6) to EC(.6, 5)&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Differentiating the cumulative function from time
+\(t\) and fanout \(f\) \(EC(t, f)\) over \(t\) gives us the effective density \(ED(t, f)\):&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/Lognormal-mixture-effective-density.png&quot; alt=&quot;Effective density function for five service calls&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The shape of this density function informs our intuition of the
+effect of multiple calls to a service: We squeezed the left side of
+the density, causing the right side to expand. For example, separating the density
+into regions of .6 and .4 of the total area, we see how the density
+has shifted right compared to the original density function
+\(LD(t)\) shown above:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/LD-area.png&quot; alt=&quot;Regions under the LD(t) function corresponding to LC(.6)&quot; width=&quot;330&quot; style=&quot;margin:0;
+display: inline;&quot; /&gt;
+&lt;img src=&quot;/assets/images/Areas-under-ED.png&quot; alt=&quot;Regions under the ED(t,5) function corresponding to EP(.6, 5) threshold&quot; width=&quot;330&quot; style=&quot;margin:0;display: inline;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;Latency percentiles are simple but subtle. Understanding their
+construction from the original density distribution clarifies
+important concepts such as effective percentiles.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>Extending "The Tail at Scale"</title>
    <link href="/2020/07/24/extending-the-tail-at-scale/"/>
    <updated>2020-07-24T00:00:00-07:00</updated>
    <id>/2020/07/24/extending-the-tail-at-scale</id>
-   <content type="html">&lt;p&gt;In their classic article,
+   <content type="html">&lt;p&gt;&lt;em&gt;A companion post goes into more detail on
+  &lt;a href=&quot;/2020/09/09/latency-basics.html&quot;&gt;constructing the percentile function from a density function&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;In their classic article,
 &lt;a href=&quot;https://research.google/pubs/pub40801/&quot;&gt;“The Tail at Scale”&lt;/a&gt;, Dean
 and Barroso formulate an important principle of service design: Reduce
 the variance of the latency for low-level services because that has a
@@ -28,6 +248,8 @@ extremely slow response, holding back the main service. In their article, Dean a
 Barroso focus on the very largest latencies but extending their
 argument to smaller but more frequent latencies provides even more insight into service
 design.&lt;/p&gt;
+
+&lt;!--more--&gt;
 
 &lt;h2 id=&quot;subservice-latencies-increase-main-service-latency&quot;&gt;Subservice latencies increase main service latency&lt;/h2&gt;
 
