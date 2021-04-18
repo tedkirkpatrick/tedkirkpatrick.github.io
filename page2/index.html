@@ -45,17 +45,20 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Home" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
 <meta property="og:description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
 <meta property="og:site_name" content="All my marbles in one place" />
-<link rel="prev" href="/">
-<link rel="next" href="/page3">
+<link rel="prev" href="/" />
+<link rel="next" href="/page3" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Home" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"WebPage","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","url":"/page2/"}</script>
+{"url":"/page2/","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","@type":"WebPage","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,13 +246,58 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
 
     <div class="content container">
       <div class="posts">
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2020/03/08/difficulty-of-state-machines/">
+        How hard is it to implement replicated state machines?
+      </a>
+    </h1>
+    
+    <span class="post-date">08 Mar 2020
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>,
+        
+      
+        
+        <a href="/tag/Distributed systems">Distributed systems</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p><em>Note: Over the past eight months, I have been working with the code for
+TenCent’s <a href="https://github.com/Tencent/phxpaxos">Phxpaxos</a>, an
+open-source implementation of replicated state-machines, with
+consensus enforced by Paxos. I have learned a lot from studying this
+code and from comparing it with the more focussed
+<a href="https://bitbucket.org/sciascid/libpaxos/src/master/">libpaxos</a>, which
+does not include state machine code.</em></p>
+
+<p><em>Recently I have isolated several topics well-adapted to the smaller size
+of blog posts and I will be adding them here.</em></p>
+
+<p>Distributed systems are often made highly available by implementing
+them as replicated state machines, coordinating their operations via a
+consensus algorithm such as Paxos. Two popular tutorials from the
+1990s describe the basic theory but how hard is it to implement this
+theory?  The code from the
+<a href="https://github.com/Tencent/phxpaxos">Phxpaxos</a> project suggests that
+the general solution requires more work than it might seem.</p>
+
+ <a href="/2020/03/08/difficulty-of-state-machines/">more ...</a>
+  </div>
   
   <div class="post">
     <h1 class="post-title">
@@ -274,7 +322,6 @@
 lot of time on topics such as engineering for resilience and
 automating production processes. It turns out that applying those big
 topics in the small matters of my life is a big challenge.</p>
-
  <a href="/2020/02/13/systems-resilience-in-daily-life/">more ...</a>
   </div>
   
@@ -302,7 +349,6 @@ last 50 years, from a mathematical topic to a style of
 engineering practice to a suite of technologies. What can
 we learn from these changes and how do we reconcile these
 perspectives?</p>
-
  <a href="/2020/02/11/meaning-of-distributed-systems/">more ...</a>
   </div>
   
@@ -328,7 +374,6 @@ perspectives?</p>
     <p>I have many incomplete threads on distributed systems. How do I
 balance my desire for complete and correct presentations with the need
 to post more frequently?</p>
-
  <a href="/2020/01/29/increasing-post-frequency/">more ...</a>
   </div>
   
@@ -365,38 +410,6 @@ audience. When should I use them? When shouldn’t I use them? Are they
 of any use at all?</p>
 
  <a href="/2020/01/25/motivating-images/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2020/01/21/figure-failures/">
-        Figure failures (and successes!)
-      </a>
-    </h1>
-    
-    <span class="post-date">21 Jan 2020
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Course design">Course design</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>Well-designed figures are invaluable for presenting technical detail,
-including architectural diagrams, timing diagrams, data visualizations,
-category hierarchies, and many other forms. Yet the simplicity and
-directness of a successful figure belies the complexity of all the
-design decisions underlying it. Those decisions were specific to the
-original context. Pulling a figure from that context and inserting it
-into a very different context such as lecture slides will likely
-fail. This short post lists the many ways that such
-appropriation can fail.</p>
-
- <a href="/2020/01/21/figure-failures/">more ...</a>
   </div>
   
 </div>

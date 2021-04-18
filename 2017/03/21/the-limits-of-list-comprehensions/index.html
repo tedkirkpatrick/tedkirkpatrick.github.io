@@ -45,7 +45,8 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="The limits of list comprehensions" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
@@ -54,8 +55,10 @@
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-03-21T00:00:00-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="The limits of list comprehensions" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"The limits of list comprehensions","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2017-03-21T00:00:00-07:00","dateModified":"2017-03-21T00:00:00-07:00","description":"I’ve spent my recent posts unfavourably comparing the STL design of containers/iterators/algorithms with Python list comprehensions and their close relatives in Haskell. This is an unfairly restrictive way to view the STL design, which addresses a wider range of use cases than the ones addressed by list comprehensions. But it is also unfair in that it ignores the limitations of list comprehensions themselves, limitations avoided by the more general structure provided by the STL. In this post, I’ll start from the other direction, considering the inherent limitations of Python list comprehensions. This in turn leads to an idiom in the STL that in fact provides virtually all the functionality of basic list comprehensions, with only slightly more complex syntax.","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/03/21/the-limits-of-list-comprehensions/"},"url":"/2017/03/21/the-limits-of-list-comprehensions/"}</script>
+{"url":"/2017/03/21/the-limits-of-list-comprehensions/","headline":"The limits of list comprehensions","dateModified":"2017-03-21T00:00:00-07:00","datePublished":"2017-03-21T00:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/03/21/the-limits-of-list-comprehensions/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"I’ve spent my recent posts unfavourably comparing the STL design of containers/iterators/algorithms with Python list comprehensions and their close relatives in Haskell. This is an unfairly restrictive way to view the STL design, which addresses a wider range of use cases than the ones addressed by list comprehensions. But it is also unfair in that it ignores the limitations of list comprehensions themselves, limitations avoided by the more general structure provided by the STL. In this post, I’ll start from the other direction, considering the inherent limitations of Python list comprehensions. This in turn leads to an idiom in the STL that in fact provides virtually all the functionality of basic list comprehensions, with only slightly more complex syntax.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,7 +246,7 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
@@ -277,12 +280,11 @@
 
 <p>Within those restrictions, the basic Python list comprehension has this structure:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>for each element returned by an iterator
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>for each element returned by an iterator
   if the element passes the filter
     compute a function of the element
     append the computed value to the result list
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>This structure is broadly useful but its element-at-a-time structure has a fundamental limitation:  You have to leave the paradigm whenever you have an operation on two or more values from the iterator.  The classic algorithm requiring such an operation is sorting, which must test pairs of values.</p>
 
@@ -293,21 +295,20 @@
 <p>A far more common use case requires the filtering and computation to be performed in one step, with the sorting done either before or after. For example,  given a list of pairs whose first value is an abbreviation for either a Canadian province or <code>US</code> for the USA and whose second value is an amount, <code>func()</code> filters out the US amounts and returns the squares of the Canadian amounts, sorted by province and squared amount:</p>
 
 <!-- highlight="2,3" -->
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
     <span class="n">a</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lst</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">'US'</span><span class="p">]</span>
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s">'BC'</span><span class="p">,</span><span class="s">'NB'</span><span class="p">,</span><span class="s">'BC'</span><span class="p">,</span><span class="s">'US'</span><span class="p">,</span><span class="s">'NB'</span><span class="p">,</span><span class="s">'BC'</span><span class="p">,</span><span class="s">'BC'</span><span class="p">],</span><span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">)))</span>
     <span class="k">print</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The per-pair processing is handled well by the list comprehension (Line 2), with the sort done (Line 3) on the computed result.  The same effect can be accomplished via the considerably more prolix STL sequence (equivalent code highlighted)</p>
 
 <!-- highlight="29,30,31,32,33,34,35,36,37,38,39" -->
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">using</span> <span class="n">ppair</span> <span class="o">=</span> <span class="n">pair</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">;</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="n">ppair</span> <span class="o">=</span> <span class="n">pair</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">plist</span> <span class="o">=</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">ppair</span><span class="o">&gt;</span><span class="p">;</span>
 
 <span class="n">ostream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="k">const</span> <span class="n">ppair</span><span class="o">&amp;</span> <span class="n">pp</span><span class="p">)</span> <span class="p">{</span>
@@ -324,7 +325,7 @@
   <span class="k">return</span> <span class="n">os</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kt">int</span> <span class="n">main</span> <span class="p">()</span> <span class="p">{</span>
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span> <span class="p">{</span>
   <span class="n">plist</span> <span class="n">src</span> <span class="p">{</span>
     <span class="n">ppair</span><span class="p">{</span><span class="s">"BC"</span><span class="p">,</span> <span class="mi">0</span><span class="p">},</span>
     <span class="n">ppair</span><span class="p">{</span><span class="s">"NB"</span><span class="p">,</span> <span class="mi">1</span><span class="p">},</span>
@@ -349,10 +350,9 @@
 
   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">res</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<p>The STL version uses the <a href="/2017/03/09/a-simpler-fourth-idiom-for-appending/"><code class="highlighter-rouge">reserve/back_inserter</code> approach</a> to building the temporary <code>t1</code> and the result <code>res</code>.</p>
+<p>The STL version uses the <a href="/2017/03/09/a-simpler-fourth-idiom-for-appending/"><code class="language-plaintext highlighter-rouge">reserve/back_inserter</code> approach</a> to building the temporary <code>t1</code> and the result <code>res</code>.</p>
 
 <p>The primary source of the extra length of the STL algorithm is the requirement for separate <code>copy_if</code> and <code>transform</code> steps. This separation is necessitated by the <code>transform</code> algorithm’s requirement that it produce exactly one transformed result for every element in the source.  By contrast, the Python list comprehension’s <code>if</code> filter allows its result to have fewer elements than its source.</p>
 

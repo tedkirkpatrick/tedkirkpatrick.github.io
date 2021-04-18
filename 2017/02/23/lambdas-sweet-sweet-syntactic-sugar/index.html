@@ -45,7 +45,8 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Lambdas: Sweet, sweet syntactic sugar" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
@@ -54,8 +55,10 @@
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-02-23T00:00:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Lambdas: Sweet, sweet syntactic sugar" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Lambdas: Sweet, sweet syntactic sugar","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2017-02-23T00:00:00-08:00","dateModified":"2017-02-23T00:00:00-08:00","description":"Update: The next post provides recipes for common use cases of lambdas. If parts of this post seem too abstract, you might find the examples in the next post clarify things. STL iterators and algorithms really can’t be discussed without also talking about lambdas. Although the STL design predates the introduction of lambdas by almost two decades, the introduction of lambdas in C++ 2011 improved the usability of STL algorithms substantially. I don’t have statistics but I presume that the STL algorithms now receive substantially more use due to the greater simplicity of passing callbacks as lambdas rather than instances of named classes. Lambdas are purely a matter of convenience—they introduce nothing to the language that you couldn’t do before—but by making common use cases more convenient, they effectively extend the range of use cases where calling a standard algorithm makes sense.","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/"},"url":"/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/"}</script>
+{"url":"/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/","headline":"Lambdas: Sweet, sweet syntactic sugar","dateModified":"2017-02-23T00:00:00-08:00","datePublished":"2017-02-23T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"Update: The next post provides recipes for common use cases of lambdas. If parts of this post seem too abstract, you might find the examples in the next post clarify things. STL iterators and algorithms really can’t be discussed without also talking about lambdas. Although the STL design predates the introduction of lambdas by almost two decades, the introduction of lambdas in C++ 2011 improved the usability of STL algorithms substantially. I don’t have statistics but I presume that the STL algorithms now receive substantially more use due to the greater simplicity of passing callbacks as lambdas rather than instances of named classes. Lambdas are purely a matter of convenience—they introduce nothing to the language that you couldn’t do before—but by making common use cases more convenient, they effectively extend the range of use cases where calling a standard algorithm makes sense.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,7 +246,7 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
@@ -277,9 +280,8 @@
 
 <p>Consider the Python lambda expression</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="n">c</span>
-</code></pre>
-</div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="n">c</span>
+</code></pre></div></div>
 
 <p>Variable <code>i</code> is a parameter, while <code>c</code> is a free variable.  Whenever a language permits lambdas—indeed, whenever a language permits defining functions of any sort inside another function—its designers have to make two decisions regarding free variables:</p>
 
@@ -296,7 +298,7 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
 
 <p>Python adopts the same rules, so I’ll illustrate with Python code:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
     <span class="n">l</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="n">c</span>
     <span class="k">return</span> <span class="n">l</span>
 
@@ -304,9 +306,8 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
 <span class="n">a</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="n">res</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">a</span><span class="p">)</span>
 
-<span class="k">print</span> <span class="p">(</span><span class="s">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">res</span><span class="p">)))</span>
-</code></pre>
-</div>
+<span class="k">print</span> <span class="p">(</span><span class="s">", "</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">res</span><span class="p">)))</span>
+</code></pre></div></div>
 
 <p>What value will this print?  It depends upon whether the free <code>c</code> in the lambda expression binds to the parameter <code>c</code> (line 1), whose value is 2, or the global <code>c</code> (line 5), whose value is 1. Python uses Scheme’s notion of “lexically apparent binding”, binding the free <code>c</code> to the parameter <code>c</code> and printing <code>0, 2, 4, 6</code>.</p>
 
@@ -329,7 +330,7 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
 <p>Here’s how the Python functions defined above could be defined in C++:</p>
 
 <!-- highlight="2" -->
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">auto</span> <span class="nf">foo</span> <span class="p">(</span><span class="kt">int</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">auto</span> <span class="nf">foo</span> <span class="p">(</span><span class="kt">int</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span> <span class="o">*</span> <span class="n">c</span><span class="p">;</span> <span class="p">};</span>
 <span class="p">}</span>
 
@@ -342,16 +343,14 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
   <span class="n">copy</span> <span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">res</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">make_ostream_joiner</span><span class="p">(</span><span class="n">cout</span><span class="p">,</span> <span class="s">", "</span><span class="p">));</span>
   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>(The <a href="http://en.cppreference.com/w/cpp/experimental/ostream_joiner"><code>ostream_joiner</code></a> in Line 11 is a C++ 2017 feature that is a close analogue of Python’s <a href="https://docs.python.org/3/library/stdtypes.html#str.join"><code>str.join()</code></a> function.)</p>
 
 <p>Let’s highlight the lambda in Line 2:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span> <span class="o">*</span> <span class="n">c</span><span class="p">;</span> <span class="p">}</span>
-</code></pre>
-</div>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span> <span class="o">*</span> <span class="n">c</span><span class="p">;</span> <span class="p">}</span>
+</code></pre></div></div>
 
 <p>Where the Python lambda uses the rules of Python environments to bind the free <code>c</code> to the parameter <code>c</code>, the C++ lambda prefix <code>[c]</code> specifies that the callable object will have a member variable <code>c</code> with the following properties:</p>
 

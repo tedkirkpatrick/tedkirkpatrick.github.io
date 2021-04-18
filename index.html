@@ -45,16 +45,19 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Home" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
 <meta property="og:description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
 <meta property="og:site_name" content="All my marbles in one place" />
-<link rel="next" href="/page2">
+<link rel="next" href="/page2" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Home" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"WebSite","name":"All my marbles in one place","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","url":"/"}</script>
+{"url":"/","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","name":"All my marbles in one place","@type":"WebSite","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -242,13 +245,46 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
 
     <div class="content container">
       <div class="posts">
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2021/04/18/mentors-not-supervisors/">
+        A manager cannot be a mentor&mdash;but should still give advice
+      </a>
+    </h1>
+    
+    <span class="post-date">18 Apr 2021
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/Soft skills">Soft skills</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>Mentoring. Everyone thinks it’s a great idea and many claim to do it.
+Yet both formal studies and my personal observations suggest that such
+relationships are rarely sustained and often not retrospectively
+valued by the junior participants. To sustain effective mentoring many
+elements must be in place but I believe that an essential requirement
+is this: <em>The mentor cannot have authority over their protege</em>.  The
+mentor’s suggestions must be suggestions, not orders. Without that
+basis, the whole relationship falters. Teaching and supervising are
+distinct roles from mentoring, however much they share elements with
+it.  The advisory nature of mentoring affects every aspect of the
+relationship.</p>
+ <a href="/2021/04/18/mentors-not-supervisors/">more ...</a>
+  </div>
   
   <div class="post">
     <h1 class="post-title">
@@ -362,7 +398,6 @@ distinction arises from the designer’s perspective and clearly
 separates the two categories. But when we consider the categories
 instead from the perspective of the system’s clients, this distinction
 becomes fuzzier. Is it real? Is it valuable?</p>
-
  <a href="/2020/06/20/guarantees-vs-methods/">more ...</a>
   </div>
   
@@ -392,53 +427,7 @@ working for their circumstances and purposes—although these
 may diverge far from the instructor’s goals. At the same time, students
 can harbour a curious enthusiasm for a course precisely because it
 overhwelms them.  Why do they respond this way?</p>
-
  <a href="/2020/04/03/flambloozlement/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2020/03/08/difficulty-of-state-machines/">
-        How hard is it to implement replicated state machines?
-      </a>
-    </h1>
-    
-    <span class="post-date">08 Mar 2020
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/C++">C++</a>,
-        
-      
-        
-        <a href="/tag/Distributed systems">Distributed systems</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p><em>Note: Over the past eight months, I have been working with the code for
-TenCent’s <a href="https://github.com/Tencent/phxpaxos">Phxpaxos</a>, an
-open-source implementation of replicated state-machines, with
-consensus enforced by Paxos. I have learned a lot from studying this
-code and from comparing it with the more focussed
-<a href="https://bitbucket.org/sciascid/libpaxos/src/master/">libpaxos</a>, which
-does not include state machine code.</em></p>
-
-<p><em>Recently I have isolated several topics well-adapted to the smaller size
-of blog posts and I will be adding them here.</em></p>
-
-<p>Distributed systems are often made highly available by implementing
-them as replicated state machines, coordinating their operations via a
-consensus algorithm such as Paxos. Two popular tutorials from the
-1990s describe the basic theory but how hard is it to implement this
-theory?  The code from the
-<a href="https://github.com/Tencent/phxpaxos">Phxpaxos</a> project suggests that
-the general solution requires more work than it might seem.</p>
-
- <a href="/2020/03/08/difficulty-of-state-machines/">more ...</a>
   </div>
   
 </div>

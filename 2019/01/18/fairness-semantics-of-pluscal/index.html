@@ -45,7 +45,8 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Fairness semantics of PlusCal" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
@@ -54,8 +55,10 @@
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2019-01-18T00:00:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Fairness semantics of PlusCal" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Fairness semantics of PlusCal","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2019-01-18T00:00:00-08:00","dateModified":"2019-01-18T00:00:00-08:00","description":"Third in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The second post presented some PlusCal conventions for writing distributed algorithms. The next post presents Lamport’s (1978) mutual exclusion algorithm in PlusCal.","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/01/18/fairness-semantics-of-pluscal/"},"url":"/2019/01/18/fairness-semantics-of-pluscal/"}</script>
+{"url":"/2019/01/18/fairness-semantics-of-pluscal/","headline":"Fairness semantics of PlusCal","dateModified":"2019-01-18T00:00:00-08:00","datePublished":"2019-01-18T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/01/18/fairness-semantics-of-pluscal/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"Third in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The second post presented some PlusCal conventions for writing distributed algorithms. The next post presents Lamport’s (1978) mutual exclusion algorithm in PlusCal.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,7 +246,7 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
@@ -296,7 +299,7 @@ practice.</p>
 straightforward: Its representation of fairness. For many PlusCal use
 cases, you do not need to understand this. If you want to check
 termination or a liveness property in TLC, simply prefix each process
-with the <code class="highlighter-rouge">fair</code> keyword and every transition is asserted to be weakly
+with the <code class="language-plaintext highlighter-rouge">fair</code> keyword and every transition is asserted to be weakly
 fair.  For typical uses of model checking, this is sufficient.</p>
 
 <p>However, in this series, I will be exploring the consequences of
@@ -311,9 +314,9 @@ that same algorithm might be represented in “classic” TLA.</p>
 <p>As an example of the difference between the two notations, consider
 the following PlusCal algorithm. It doesn’t do anything particularly
 interesting, consisting of a loop with two alternatives.  The loop
-increments <code class="highlighter-rouge">a</code> from 1 to 3 to 4, then terminates:</p>
+increments <code class="language-plaintext highlighter-rouge">a</code> from 1 to 3 to 4, then terminates:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>--algorithm PlusCalFairnessSemantics
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--algorithm PlusCalFairnessSemantics
 variable
   a = 1;
 
@@ -330,13 +333,12 @@ P1: while a &lt;= 3 do
   end while
 end process
 end algorithm
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The equivalent version of this algorithm in “classic” TLA would name
 each alternative and provide an explicit termination transition:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>VARIABLES a
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>VARIABLES a
 
 vars == &lt;&lt; a &gt;&gt;
 
@@ -356,19 +358,18 @@ Next == A1 \/ A3 \/ Tm
 Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
 
 Termination == &lt;&gt;([](a &gt; 3))
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<p>In the TLA version, each state of <code class="highlighter-rouge">a</code> is represented by a separate
-named formula, <code class="highlighter-rouge">Init</code>, <code class="highlighter-rouge">A1</code>, <code class="highlighter-rouge">A3</code>, and <code class="highlighter-rouge">Tm</code>, comprising a guard that
-enables the action for a specific value of <code class="highlighter-rouge">a</code> and an equality
+<p>In the TLA version, each state of <code class="language-plaintext highlighter-rouge">a</code> is represented by a separate
+named formula, <code class="language-plaintext highlighter-rouge">Init</code>, <code class="language-plaintext highlighter-rouge">A1</code>, <code class="language-plaintext highlighter-rouge">A3</code>, and <code class="language-plaintext highlighter-rouge">Tm</code>, comprising a guard that
+enables the action for a specific value of <code class="language-plaintext highlighter-rouge">a</code> and an equality
 specifying the new value replacing it.  In this version, <em>the
-algorithm is sequenced by the successive values of <code class="highlighter-rouge">a</code></em>.</p>
+algorithm is sequenced by the successive values of <code class="language-plaintext highlighter-rouge">a</code></em>.</p>
 
 <p>Now consider the TLA equations produced by the translation of the
 PlusCal algorithm:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>VARIABLES a, pc
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>VARIABLES a, pc
 
 vars == &lt;&lt; a, pc &gt;&gt;
 
@@ -402,42 +403,39 @@ Spec == /\ Init
 
 Termination ==
     &lt;&gt;(\A self \in ProcSet: pc[self] = "Done")
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<p>This representation only has two named definitions, <code class="highlighter-rouge">Init</code> and <code class="highlighter-rouge">P1</code>
-and introduces a variable not present in the PlusCal code, <code class="highlighter-rouge">pc</code>.
+<p>This representation only has two named definitions, <code class="language-plaintext highlighter-rouge">Init</code> and <code class="language-plaintext highlighter-rouge">P1</code>
+and introduces a variable not present in the PlusCal code, <code class="language-plaintext highlighter-rouge">pc</code>.
 Unlike the “classic” TLA version, in the PlusCal translation, <em>the
-algorithm is sequenced by a variable, <code class="highlighter-rouge">pc</code>, whose only purpose is
+algorithm is sequenced by a variable, <code class="language-plaintext highlighter-rouge">pc</code>, whose only purpose is
 sequencing.</em></p>
 
 <p>There is a second difference between the two TLA versions.  In the
-PlusCal translation, the definition of <code class="highlighter-rouge">P1</code> combines the formulas <code class="highlighter-rouge">A1</code>,
-<code class="highlighter-rouge">A3</code>, and <code class="highlighter-rouge">Tm</code> from the “classic” TLA version. Though their structure
+PlusCal translation, the definition of <code class="language-plaintext highlighter-rouge">P1</code> combines the formulas <code class="language-plaintext highlighter-rouge">A1</code>,
+<code class="language-plaintext highlighter-rouge">A3</code>, and <code class="language-plaintext highlighter-rouge">Tm</code> from the “classic” TLA version. Though their structure
 appears different, they are equivalent. After stripping the references to
-<code class="highlighter-rouge">pc</code>, the definition of <code class="highlighter-rouge">P1</code> becomes</p>
+<code class="language-plaintext highlighter-rouge">pc</code>, the definition of <code class="language-plaintext highlighter-rouge">P1</code> becomes</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>IF a &lt;= 3
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>IF a &lt;= 3
 THEN \/ /\ a = 1
         /\ a' = a + 2
      \/ /\ a = 3
         /\ a' = a + 1
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>which, after removing the redundant test, is just</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>\/ /\ a = 1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>\/ /\ a = 1
    /\ a' = a + 2
 \/ /\ a = 3
    /\ a' = a + 1
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<p>which in turn is simply <code class="highlighter-rouge">A1 \/ A3</code> from the “classic” version.</p>
+<p>which in turn is simply <code class="language-plaintext highlighter-rouge">A1 \/ A3</code> from the “classic” version.</p>
 
 <p>So in this case, the PlusCal version is simply the “classic” version,
-annotated with sequencing by the <code class="highlighter-rouge">pc</code> variable.</p>
+annotated with sequencing by the <code class="language-plaintext highlighter-rouge">pc</code> variable.</p>
 
 <h2 id="unfair-transitions-when-pluscal-differs-from-classic">Unfair transitions: When PlusCal differs from “classic”</h2>
 
@@ -447,27 +445,25 @@ implicitly (in the “classic” version) or explicitly (in PlusCal), they
 are not equivalent in other cases. When we specify that some transitions are
 unfair, the forms become subtly different.</p>
 
-<p>Suppose we want to indicate that the <code class="highlighter-rouge">A3</code> transition is unfair.  In the
+<p>Suppose we want to indicate that the <code class="language-plaintext highlighter-rouge">A3</code> transition is unfair.  In the
 “classic” version, we do not change the transitions at all but simply
-change the specification so that only <code class="highlighter-rouge">A1</code> and <code class="highlighter-rouge">Tm</code> are marked as fair:</p>
+change the specification so that only <code class="language-plaintext highlighter-rouge">A1</code> and <code class="language-plaintext highlighter-rouge">Tm</code> are marked as fair:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>Spec == /\ Init /\ [][Next]_vars
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Spec == /\ Init /\ [][Next]_vars
         /\ WF_vars(A1 \/ Tm)
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The change to the PlusCal code is even smaller: Simply prefix the
-guard with a label suffixed by <code class="highlighter-rouge">-</code>:</p>
+guard with a label suffixed by <code class="language-plaintext highlighter-rouge">-</code>:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>L1:- await a = 3;
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>L1:- await a = 3;
   a := a + 1
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>This small change to PlusCal however induces a substantive change in
 its TLA translation:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>P1 == /\ pc[1] = "P1"
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>P1 == /\ pc[1] = "P1"
       /\ IF a &lt;= 3
          THEN /\ \/ /\ a = 1
                     /\ a' = a + 2
@@ -492,22 +488,21 @@ Next ==
 
 Spec == /\ Init /\ [][Next]_vars
         /\ WF_vars((pc[1] # "L1") /\ Proc)
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The code has changed in three ways:</p>
 
 <ol>
-  <li>A new state has been introduced, denoted by <code class="highlighter-rouge">pc = "L1"</code>.</li>
-  <li>A new labelled formula has been created, <code class="highlighter-rouge">L1</code>, which is enabled by
-the new value of <code class="highlighter-rouge">pc</code>.</li>
+  <li>A new state has been introduced, denoted by <code class="language-plaintext highlighter-rouge">pc = "L1"</code>.</li>
+  <li>A new labelled formula has been created, <code class="language-plaintext highlighter-rouge">L1</code>, which is enabled by
+the new value of <code class="language-plaintext highlighter-rouge">pc</code>.</li>
   <li>The fairness condition now <em>excludes</em> the new state. Consequently,
-when transition <code class="highlighter-rouge">L1</code> is enabled, it is not guaranteed to ever be
+when transition <code class="language-plaintext highlighter-rouge">L1</code> is enabled, it is not guaranteed to ever be
 executed.</li>
 </ol>
 
 <p>Logically, this is equivalent to the “classic” TLA version. In both
-versions, the transition when <code class="highlighter-rouge">a = 3</code> is not guaranteed to be taken
+versions, the transition when <code class="language-plaintext highlighter-rouge">a = 3</code> is not guaranteed to be taken
 even if it is enabled infinitely many times. However, they differ in
 their number of states: The PlusCal version introduces an extra state
 to mark the unfair transition, whereas the unfair TLA version has only
@@ -526,13 +521,13 @@ loop, the increase could be substantial.</p>
 <p>The TLA translation of a PlusCal algorithm differs from how one would
 represent the same algorithm in “classic” TLA. All fair transitions have
 their common conditions merged to create a single labelled transition,
-while any unfair transitions have a new state defined for <code class="highlighter-rouge">pc</code> and the
+while any unfair transitions have a new state defined for <code class="language-plaintext highlighter-rouge">pc</code> and the
 transition defined as a separately-labelled transition.</p>
 
 <p>Although this representation appears quite different from the
 distinct, focused definitions used in “classic” TLA, their logic is
 equivalent. They do perform differently in model checking, however.
-The new values of <code class="highlighter-rouge">pc</code> introduced for unfair transitions by the
+The new values of <code class="language-plaintext highlighter-rouge">pc</code> introduced for unfair transitions by the
 PlusCal translation increase the time required by TLC to check the
 model. Given that this choice is built in to the PlusCal translator,
 we cannot remove this problem but it is useful to be aware of its

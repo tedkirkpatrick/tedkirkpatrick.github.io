@@ -45,7 +45,8 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="How hard is it to implement replicated state machines?" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
@@ -54,8 +55,10 @@
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-03-08T00:00:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="How hard is it to implement replicated state machines?" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"How hard is it to implement replicated state machines?","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2020-03-08T00:00:00-08:00","dateModified":"2020-03-08T00:00:00-08:00","description":"Note: Over the past eight months, I have been working with the code for TenCent’s Phxpaxos, an open-source implementation of replicated state-machines, with consensus enforced by Paxos. I have learned a lot from studying this code and from comparing it with the more focussed libpaxos, which does not include state machine code. Recently I have isolated several topics well-adapted to the smaller size of blog posts and I will be adding them here. Distributed systems are often made highly available by implementing them as replicated state machines, coordinating their operations via a consensus algorithm such as Paxos. Two popular tutorials from the 1990s describe the basic theory but how hard is it to implement this theory? The code from the Phxpaxos project suggests that the general solution requires more work than it might seem.","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/03/08/difficulty-of-state-machines/"},"url":"/2020/03/08/difficulty-of-state-machines/"}</script>
+{"url":"/2020/03/08/difficulty-of-state-machines/","headline":"How hard is it to implement replicated state machines?","dateModified":"2020-03-08T00:00:00-08:00","datePublished":"2020-03-08T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/03/08/difficulty-of-state-machines/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"Note: Over the past eight months, I have been working with the code for TenCent’s Phxpaxos, an open-source implementation of replicated state-machines, with consensus enforced by Paxos. I have learned a lot from studying this code and from comparing it with the more focussed libpaxos, which does not include state machine code. Recently I have isolated several topics well-adapted to the smaller size of blog posts and I will be adding them here. Distributed systems are often made highly available by implementing them as replicated state machines, coordinating their operations via a consensus algorithm such as Paxos. Two popular tutorials from the 1990s describe the basic theory but how hard is it to implement this theory? The code from the Phxpaxos project suggests that the general solution requires more work than it might seem.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,7 +246,7 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
@@ -323,13 +326,13 @@ implements Paxos in
     <tr>
       <th style="text-align: left">Directory</th>
       <th style="text-align: left">Excluding / including files</th>
-      <th style="text-align: right">Lines of <code class="highlighter-rouge">.cpp</code>, <code class="highlighter-rouge">.h</code></th>
+      <th style="text-align: right">Lines of <code class="language-plaintext highlighter-rouge">.cpp</code>, <code class="language-plaintext highlighter-rouge">.h</code></th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">src/algorithm</code></td>
-      <td style="text-align: left">Excluding <code class="highlighter-rouge">checkpoint_*</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">src/algorithm</code></td>
+      <td style="text-align: left">Excluding <code class="language-plaintext highlighter-rouge">checkpoint_*</code></td>
       <td style="text-align: right">5184</td>
     </tr>
     <tr>
@@ -338,18 +341,18 @@ implements Paxos in
       <td style="text-align: right">5184</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">src/sm-base</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">src/sm-base</code></td>
       <td style="text-align: left"> </td>
       <td style="text-align: right">553</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">src/checkpoint</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">src/checkpoint</code></td>
       <td style="text-align: left"> </td>
       <td style="text-align: right">814</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">src/algorithm</code></td>
-      <td style="text-align: left">Including only <code class="highlighter-rouge">checkpoint_*</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">src/algorithm</code></td>
+      <td style="text-align: left">Including only <code class="language-plaintext highlighter-rouge">checkpoint_*</code></td>
       <td style="text-align: right">840</td>
     </tr>
     <tr>
@@ -404,7 +407,7 @@ handling values of a megabyte or more. This complexity is not located
 in the state machine code itself but spread through the consensus
 code.</p>
 
-<p>Phxpaxos provides an option, <code class="highlighter-rouge">Options.bIsLargeValueMode</code>, that when
+<p>Phxpaxos provides an option, <code class="language-plaintext highlighter-rouge">Options.bIsLargeValueMode</code>, that when
 set increases the timeouts used when waiting for message
 responses. These longer timeouts are required because longer messages
 take measurably longer to transmit. Timeouts appropriate for
@@ -423,11 +426,11 @@ own right:</p>
 not just one, it requires logic for adding state machines to the
 active list and locating a state machine’s address given its
 identifier, via the state machine factory class,
-<code class="highlighter-rouge">SMFac</code>. Supporting multiple state machines is
+<code class="language-plaintext highlighter-rouge">SMFac</code>. Supporting multiple state machines is
 not just an empty generality—as noted above, Phxpaxo’s algorithm
 requires two state machines itself, on top of any defined by the
 user of the library.</li>
-  <li>The state machines require a context data structure <code class="highlighter-rouge">SMCtx</code> for
+  <li>The state machines require a context data structure <code class="language-plaintext highlighter-rouge">SMCtx</code> for
 carrying any necessary state from the proposing client, through the
 long sequence of asynchronous Paxos messages, to completion of the
 Paxos instance and execution by the state machine, finally
@@ -438,17 +441,17 @@ operation. State machine operations in Phxpaxos can be executed
 singly or in batch, in active mode or checkpoint mode, requiring
 support of four execution styles.</li>
   <li>Generalized state machines complicate the Paxos message protocol (defined
-in file <code class="highlighter-rouge">src/comm/commdef.h</code>). The
-basic Multi-Paxos protocol implemented by Phxpaxos (<code class="highlighter-rouge">enum PaxosMsgType</code>) requires 10
+in file <code class="language-plaintext highlighter-rouge">src/comm/commdef.h</code>). The
+basic Multi-Paxos protocol implemented by Phxpaxos (<code class="language-plaintext highlighter-rouge">enum PaxosMsgType</code>) requires 10
 message types. The checkpointing mechanism required to support
 general state machines adds 2 more message types to that protocol
 and introduces a separate protocol of 7 types (enumerated values
-<code class="highlighter-rouge">CheckpointMsgType</code>, <code class="highlighter-rouge">CheckpointSendFileFlag</code>, and
-<code class="highlighter-rouge">CheckpointSendFileAckFlag</code>). These message types and their flags
+<code class="language-plaintext highlighter-rouge">CheckpointMsgType</code>, <code class="language-plaintext highlighter-rouge">CheckpointSendFileFlag</code>, and
+<code class="language-plaintext highlighter-rouge">CheckpointSendFileAckFlag</code>). These message types and their flags
 must all be handled in the main Paxos logic code in files
-<code class="highlighter-rouge">src/algorithm/instance.cpp</code> and <code class="highlighter-rouge">src/algorithm/learner.cpp</code>. This
+<code class="language-plaintext highlighter-rouge">src/algorithm/instance.cpp</code> and <code class="language-plaintext highlighter-rouge">src/algorithm/learner.cpp</code>. This
 makes the implementation harder to read than that of
-a pure Paxos library such as <code class="highlighter-rouge">libpaxos</code>, which does not include
+a pure Paxos library such as <code class="language-plaintext highlighter-rouge">libpaxos</code>, which does not include
 state machine code. I explore the complexities of checkpointing in
 more detail below.</li>
   <li>The framework must provide callbacks to support state machines with
@@ -456,39 +459,39 @@ specialized requirements. Phxpaxos supports three such callbacks:
     <ol style="list-style-type: lower-latin;">
 <li>
         <p>A callback executed after a value has been chosen by a Paxos
-   instance and just before it is executed (<code class="highlighter-rouge">StateMachine.BeforePropose</code>). This allows the state
+   instance and just before it is executed (<code class="language-plaintext highlighter-rouge">StateMachine.BeforePropose</code>). This allows the state
    machine to update the value to reflect any changes that occurred
    during the Paxos rounds. This callback is used by the Phxpaxos
    implementation of a state machine for master election (file
-   <code class="highlighter-rouge">src/master/master_sm.cpp</code>).</p>
+   <code class="language-plaintext highlighter-rouge">src/master/master_sm.cpp</code>).</p>
 
         <p>This callback is potentially such a drag on performance of the
    main loop that it is only enabled when both a system-wide flag
-   (<code class="highlighter-rouge">Options.bOpenChangeValueBeforePropose</code>) is set and a state
-   machine-specific function (<code class="highlighter-rouge">StateMachine.NeedCallBeforePropose</code>)
-   returns <code class="highlighter-rouge">true</code>.</p>
+   (<code class="language-plaintext highlighter-rouge">Options.bOpenChangeValueBeforePropose</code>) is set and a state
+   machine-specific function (<code class="language-plaintext highlighter-rouge">StateMachine.NeedCallBeforePropose</code>)
+   returns <code class="language-plaintext highlighter-rouge">true</code>.</p>
       </li>
 <li>
         <p>A callback executed after reconfiguration of Paxos node
-   membership (<code class="highlighter-rouge">Options.pMembershipChangeCallback</code>).</p>
+   membership (<code class="language-plaintext highlighter-rouge">Options.pMembershipChangeCallback</code>).</p>
       </li>
 <li>
         <p>A callback executed upon election of a new master
-   (<code class="highlighter-rouge">Options.pMasterChangeCallback</code>).</p>
+   (<code class="language-plaintext highlighter-rouge">Options.pMasterChangeCallback</code>).</p>
       </li>
 </ol>
   </li>
   <li>The boilerplate state machine logic must account for the Phxpaxos
 “group” feature. This establishes multiple independent Paxos
 clusters running off the same network address, which can be used to
-increase throughput. The <code class="highlighter-rouge">SMFac</code> factory object and concrete
-classes derived from <code class="highlighter-rouge">StateMachine</code> accept a group index and must
+increase throughput. The <code class="language-plaintext highlighter-rouge">SMFac</code> factory object and concrete
+classes derived from <code class="language-plaintext highlighter-rouge">StateMachine</code> accept a group index and must
 select the appropriate state for the indicated cluster.</li>
 </ol>
 
 <p>Taken together, these represent a substantial code base simply to
 establish the basic framework from which application-specific
-<code class="highlighter-rouge">StateMachine</code> classes are derived. Yet this is only the smaller
+<code class="language-plaintext highlighter-rouge">StateMachine</code> classes are derived. Yet this is only the smaller
 portion of the state machine code. The largest portion 
 implements a feature that only some state machines require and that is
 infrequently executed: checkpoints. I turn to that feature next.</p>
@@ -601,11 +604,11 @@ than might appear at first glance.</p>
 machine code to solve two problems of generalized Paxos:</p>
 
 <ol>
-  <li>Master election: Phxpaxos uses a state machine <code class="highlighter-rouge">MasterStateMachine</code>
-(defined in <code class="highlighter-rouge">src/master/master_sm.{h,cpp}</code>) to transition from one
+  <li>Master election: Phxpaxos uses a state machine <code class="language-plaintext highlighter-rouge">MasterStateMachine</code>
+(defined in <code class="language-plaintext highlighter-rouge">src/master/master_sm.{h,cpp}</code>) to transition from one
 elected master to another.</li>
-  <li>Reconfiguration: Phxpaxos uses a state machine <code class="highlighter-rouge">SystemVSM</code> (defined
-in <code class="highlighter-rouge">src/config/system_v_sm.{h,cpp}</code>) to transition from one
+  <li>Reconfiguration: Phxpaxos uses a state machine <code class="language-plaintext highlighter-rouge">SystemVSM</code> (defined
+in <code class="language-plaintext highlighter-rouge">src/config/system_v_sm.{h,cpp}</code>) to transition from one
 configuration of nodes to another.</li>
 </ol>
 

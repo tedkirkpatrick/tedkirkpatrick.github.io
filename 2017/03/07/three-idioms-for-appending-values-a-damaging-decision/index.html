@@ -45,7 +45,8 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Three idioms for appending values—a damaging decision?" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
@@ -54,8 +55,10 @@
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-03-07T00:00:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Three idioms for appending values—a damaging decision?" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Three idioms for appending values—a damaging decision?","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2017-03-07T00:00:00-08:00","dateModified":"2017-03-07T00:00:00-08:00","description":"Update: See also the next post, which adds a fourth idiom and mitigates some of the criticisms in the conclusion of this post. The STL code for squaring the positive values, included the following lines to create the intermediate result t1 containing the positive values of the original list a:","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"},"url":"/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"}</script>
+{"url":"/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/","headline":"Three idioms for appending values—a damaging decision?","dateModified":"2017-03-07T00:00:00-08:00","datePublished":"2017-03-07T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"Update: See also the next post, which adds a fourth idiom and mitigates some of the criticisms in the conclusion of this post. The STL code for squaring the positive values, included the following lines to create the intermediate result t1 containing the positive values of the original list a:","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,7 +246,7 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
@@ -269,21 +272,19 @@
 
 <!--more-->
 <!-- highlight="1,4" -->
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">t1</span> <span class="p">{};</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">t1</span> <span class="p">{};</span>
 <span class="n">copy_if</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span>
          <span class="n">a</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span>
          <span class="n">back_inserter</span><span class="p">(</span><span class="n">t1</span><span class="p">),</span>
          <span class="p">[](</span><span class="k">auto</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="p">});</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>This is a typical idiom when writing sequences of STL transformations. It declares an empty vector in Line 1 then appends new values to it via a <a href="http://en.cppreference.com/w/cpp/iterator/back_inserter"><code>back_inserter()</code></a> adaptor (Line 4).</p>
 
 <p>As an idiom, this works well. It fits the STL pattern for algorithms</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>algorithm (start, end, sink [, other options])
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>algorithm (start, end, sink [, other options])
+</code></pre></div></div>
 
 <p>that we use in the sequence and the <code>back_inserter()</code> adapter can be applied to a <code>std::vector</code>, <code>std::deque</code>, or <code>std::list</code>. But the idiom also has some problems:  For some kinds of objects, it may waste a lot of CPU time on unnecessary operations. It can also fragment the heap.</p>
 
@@ -324,8 +325,8 @@
 
 <p>To compare the different idioms for appending results, we need to make the above stages visible.  The following class instruments its member functions to print a message whenever an instance is created, assigned, or deleted:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">C</span> <span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">C</span> <span class="p">{</span>
+<span class="nl">public:</span>
   <span class="n">C</span> <span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="o">:</span> <span class="n">m1</span> <span class="p">{</span><span class="n">a</span><span class="p">},</span> <span class="n">m2</span><span class="p">{</span><span class="n">b</span><span class="p">}</span> <span class="p">{</span>
     <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Basic constructor for "</span><span class="p">;</span>
     <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">collection_name</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
@@ -336,9 +337,9 @@
     <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">collection_name</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">" from "</span><span class="p">;</span>
     <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">collection_name</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
   <span class="p">}</span>
-  <span class="c1">// Replace above with this to test with only move constructor
-</span>  <span class="c1">//C (const C&amp; c) = delete;
-</span>
+  <span class="c1">// Replace above with this to test with only move constructor</span>
+  <span class="c1">//C (const C&amp; c) = delete;</span>
+
   <span class="n">C</span> <span class="p">(</span><span class="n">C</span><span class="o">&amp;&amp;</span> <span class="n">c</span><span class="p">)</span> <span class="o">:</span> <span class="n">m1</span> <span class="p">{</span><span class="n">c</span><span class="p">.</span><span class="n">m1</span><span class="p">},</span> <span class="n">m2</span> <span class="p">{</span><span class="n">c</span><span class="p">.</span><span class="n">m2</span><span class="p">}</span> <span class="p">{</span>
     <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Move constructor for "</span><span class="p">;</span>
     <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">collection_name</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">" from "</span><span class="p">;</span>
@@ -380,12 +381,11 @@
 
   <span class="k">friend</span> <span class="n">ostream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="k">const</span> <span class="n">C</span><span class="o">&amp;</span> <span class="n">c</span><span class="p">);</span>
 
-<span class="k">private</span><span class="o">:</span>
+<span class="nl">private:</span>
   <span class="kt">int</span> <span class="n">m1</span> <span class="p">{};</span>
   <span class="kt">int</span> <span class="n">m2</span> <span class="p">{};</span>
 <span class="p">};</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The class simply stores two integers, <code>m1</code> and <code>m2</code>.  Its member functions call instrumentation functions <code>collection_name()</code> and <code>temp_del</code>, which track details of the allocations.  The full code for this post, including instrumentation, is presented in the appendix.</p>
 
@@ -395,15 +395,14 @@
 
 <p>Consider a simple case where we want to use a vector <code>init</code> containing the integers 0 through 4, inclusive, to build a <code>vector</code>, using the <code>back_inserter()</code> approach:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="n">C</span><span class="o">&gt;</span> <span class="n">c1</span> <span class="p">{};</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="n">C</span><span class="o">&gt;</span> <span class="n">c1</span> <span class="p">{};</span>
 <span class="n">transform</span> <span class="p">(</span><span class="n">init</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">init</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">back_inserter</span><span class="p">(</span><span class="n">c1</span><span class="p">),</span>
            <span class="p">[]</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">C</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span> <span class="p">});</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Here is an annotated sequence of the constructions, copies, and destructions required to append the five instances of <code>C</code>:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>New collection c1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>New collection c1
 // Append C(0, 0)
 Basic constructor for T0
 [vector allocates space for C value, c1[0]]
@@ -449,8 +448,7 @@ Destructor for c1[2]''
 Destructor for c1[3]''
 [Space for c1[0]'' to c1[3]'' deallocated]
 Destructor for T0
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Whoa!  That’s a lot of action. Every append requires creating a temporary <code>C</code> value, <code>T0</code>, which is destroyed once the append has completed. The vector allocates four progressively larger blocks (enough for 1 C value, 2 C values, 4 C values, and a final block at least 5 C values large) as its required capacity grows. Each time it expands, it copies the old values into the new block, then destroys the originals and deallocates the old block. For this class, the constructors, copies, and destructors are efficient, but they might require substantial CPU time for larger classes. And for any class size, the allocation / deallocation pairs contribute to memory fragmentation. Can we do better?</p>
 
@@ -458,18 +456,17 @@ Destructor for T0
 
 <p>The first idiom required multiple allocations and deletions because we built the vector an item at a time, expanding as more values were added. Given that the number of items of the result will be exactly the number in <code>init</code>, we could initialize the result vector to its full length and then build the new values there. When we construct the initial vector of five values, however, it will construct default values for every entry. When we build the result, we will be overwriting those default values with an assignment. Here is the code:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="n">C</span><span class="o">&gt;</span> <span class="n">c2</span> <span class="p">(</span><span class="n">init</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="n">C</span><span class="o">&gt;</span> <span class="n">c2</span> <span class="p">(</span><span class="n">init</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
 <span class="k">auto</span> <span class="n">c2_it</span> <span class="o">=</span> <span class="n">c2</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
 <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">in_it</span> <span class="o">=</span> <span class="n">init</span><span class="p">.</span><span class="n">cbegin</span><span class="p">();</span> <span class="n">in_it</span> <span class="o">!=</span> <span class="n">init</span><span class="p">.</span><span class="n">cend</span><span class="p">();</span> <span class="o">++</span><span class="n">in_it</span><span class="p">,</span> <span class="o">++</span><span class="n">c2_it</span><span class="p">)</span>
   <span class="o">*</span><span class="n">c2_it</span> <span class="o">=</span> <span class="n">C</span><span class="p">(</span><span class="o">*</span><span class="n">in_it</span><span class="p">,</span> <span class="o">*</span><span class="n">in_it</span><span class="p">);</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The algorithm needs to maintain two iterators, one each for the source <code>init</code> and the sink <code>c2</code>, so I chose a <code>for</code> loop rather than the <code>std::copy</code> algorithm. With some effort, you could build a custom assign-to-the-end-iterator and use <code>std::copy</code>.</p>
 
 <p>Here’s the resulting operation sequence:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>[Vector allocates space for at least 5 values, c2[0] to c2[4]]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Vector allocates space for at least 5 values, c2[0] to c2[4]]
 Default constructor for c2[0]
 Default constructor for c2[1]
 Default constructor for c2[2]
@@ -501,8 +498,7 @@ Destructor for T0
 Basic constructor for T0
 Move assignment for c2[4] from T0
 Destructor for T0
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>This idiom requires substantially fewer operations on <code>C</code> values and has exactly one allocation, of exactly the required size. Because we’re assigning an <a href="http://en.cppreference.com/w/cpp/language/value_category">r-value</a> in Line 4 and class <code>C</code> includes a <a href="http://en.cppreference.com/w/cpp/language/move_assignment">move assignment </a> member, move assignment is used. For this class whose members are all <code>int</code>s, there is no performance improvement from move assignment, but it might be much more efficient for instances of a class that owns resources such as dynamic memory.</p>
 
@@ -512,35 +508,32 @@ Destructor for T0
 
 <p>The remaining inefficiency in the second idiom is that we construct a sequence of default values that we never need and will overwrite as soon as the collection is ready. What we really want to do is simpler than that: Have the collection allocate all the storage we need and then construct our values directly in that storage.</p>
 
-<p>This approach became viable in 2011 with the addition of <em>emplace members</em> to the STL collections (this feature in turn was enabled by the C++ 2011 core language addition of <a href="http://en.cppreference.com/w/cpp/language/parameter_pack">template parameter packs</a>). In particular, the<code class="highlighter-rouge"> emplace_back()</code> member constructs a value directly after the last value in the collection. If there is allocated space available after the last value, the appended value is simply constructed there, but if the vector is full, the same allocate-copy-deallocate sequence as the first method must be used.</p>
+<p>This approach became viable in 2011 with the addition of <em>emplace members</em> to the STL collections (this feature in turn was enabled by the C++ 2011 core language addition of <a href="http://en.cppreference.com/w/cpp/language/parameter_pack">template parameter packs</a>). In particular, the<code class="language-plaintext highlighter-rouge"> emplace_back()</code> member constructs a value directly after the last value in the collection. If there is allocated space available after the last value, the appended value is simply constructed there, but if the vector is full, the same allocate-copy-deallocate sequence as the first method must be used.</p>
 
 <p>This suggests the following pattern:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>reserve space in the vector sufficient to hold all items
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>reserve space in the vector sufficient to hold all items
 build the items using emplace_back()
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>In C++:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="n">C</span><span class="o">&gt;</span> <span class="n">c3</span> <span class="p">{};</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="n">C</span><span class="o">&gt;</span> <span class="n">c3</span> <span class="p">{};</span>
 <span class="n">c3</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">init</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
 <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">init</span><span class="p">)</span>
   <span class="n">c3</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Once again, rather than build a custom iterator, I have used a <code>for</code> loop to iterate over the source and used <code>emplace_back()</code> in the loop body to append to the sink. Here’s the operations this code produces:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>New collection c3
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>New collection c3
 [Vector allocates space for at least 5 values, c3[0] to c3[4]]
 Basic constructor for c3[0]
 Basic constructor for c3[1]
 Basic constructor for c3[2]
 Basic constructor for c3[3]
 Basic constructor for c3[4]
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Using <code>emplace_back()</code>, we have built the result using the minimum number of allocations and operations on the <code>C</code> values. In tradeoff, we can no longer use simple STL algorithms unless we use some form of  <code>back_emplacer</code> adaptor. Although none is provided in the 2017 STL, Andre Tomazos has <a href="http://stackoverflow.com/questions/18728257/back-emplacer-implementation-default-operator-vs-universal-reference-version">presented a solution</a> in a Stack Overflow discussion.</p>
 
@@ -563,7 +556,7 @@ Basic constructor for c3[4]
 </li>
 </ul>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="cm">/*
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*
   Demonstration of different approaches to building a vector.
  */</span>
 
@@ -591,14 +584,14 @@ Basic constructor for c3[4]
 <span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">make_ostream_joiner</span><span class="p">;</span>
 
 <span class="k">class</span> <span class="nc">C</span><span class="p">;</span>
-<span class="kt">void</span> <span class="n">temps_del</span><span class="p">(</span><span class="k">const</span> <span class="n">C</span><span class="o">*</span> <span class="n">cp</span><span class="p">);</span>
-<span class="n">string</span> <span class="n">collection_name</span><span class="p">(</span><span class="k">const</span> <span class="n">C</span><span class="o">*</span> <span class="n">loc</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">temps_del</span><span class="p">(</span><span class="k">const</span> <span class="n">C</span><span class="o">*</span> <span class="n">cp</span><span class="p">);</span>
+<span class="n">string</span> <span class="nf">collection_name</span><span class="p">(</span><span class="k">const</span> <span class="n">C</span><span class="o">*</span> <span class="n">loc</span><span class="p">);</span>
 
 <span class="cm">/*
   Class to make creation, assignment, and destruction visible.
  */</span>
 <span class="k">class</span> <span class="nc">C</span> <span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
+<span class="nl">public:</span>
   <span class="n">C</span> <span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="o">:</span> <span class="n">m1</span> <span class="p">{</span><span class="n">a</span><span class="p">},</span> <span class="n">m2</span><span class="p">{</span><span class="n">b</span><span class="p">}</span> <span class="p">{</span>
     <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Basic constructor for "</span><span class="p">;</span>
     <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">collection_name</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
@@ -609,9 +602,9 @@ Basic constructor for c3[4]
     <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">collection_name</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">" from "</span><span class="p">;</span>
     <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">collection_name</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
   <span class="p">}</span>
-  <span class="c1">// Replace above with this to test with only move constructor
-</span>  <span class="c1">//C (const C&amp; c) = delete;
-</span>
+  <span class="c1">// Replace above with this to test with only move constructor</span>
+  <span class="c1">//C (const C&amp; c) = delete;</span>
+
   <span class="n">C</span> <span class="p">(</span><span class="n">C</span><span class="o">&amp;&amp;</span> <span class="n">c</span><span class="p">)</span> <span class="o">:</span> <span class="n">m1</span> <span class="p">{</span><span class="n">c</span><span class="p">.</span><span class="n">m1</span><span class="p">},</span> <span class="n">m2</span> <span class="p">{</span><span class="n">c</span><span class="p">.</span><span class="n">m2</span><span class="p">}</span> <span class="p">{</span>
     <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Move constructor for "</span><span class="p">;</span>
     <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">collection_name</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">" from "</span><span class="p">;</span>
@@ -653,7 +646,7 @@ Basic constructor for c3[4]
 
   <span class="k">friend</span> <span class="n">ostream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">os</span><span class="p">,</span> <span class="k">const</span> <span class="n">C</span><span class="o">&amp;</span> <span class="n">c</span><span class="p">);</span>
 
-<span class="k">private</span><span class="o">:</span>
+<span class="nl">private:</span>
   <span class="kt">int</span> <span class="n">m1</span> <span class="p">{};</span>
   <span class="kt">int</span> <span class="n">m2</span> <span class="p">{};</span>
 <span class="p">};</span>
@@ -675,14 +668,14 @@ Basic constructor for c3[4]
   <span class="k">return</span> <span class="n">os</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
 <span class="p">}</span>
 
-<span class="k">struct</span> <span class="n">Cpair</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="nc">Cpair</span> <span class="p">{</span>
   <span class="k">const</span> <span class="n">Coll</span><span class="o">*</span> <span class="n">cp</span> <span class="p">{};</span>
   <span class="k">const</span> <span class="n">string</span> <span class="n">name</span> <span class="p">{};</span>
 <span class="p">};</span>
 
 <span class="n">vector</span><span class="o">&lt;</span><span class="n">Cpair</span><span class="o">&gt;</span> <span class="n">colls</span> <span class="p">{};</span>
 
-<span class="k">struct</span> <span class="n">Tpair</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="nc">Tpair</span> <span class="p">{</span>
   <span class="k">const</span> <span class="n">C</span><span class="o">*</span> <span class="n">cp</span> <span class="p">{};</span>
   <span class="n">string</span> <span class="n">name</span> <span class="p">{};</span>
 <span class="p">};</span>
@@ -709,7 +702,7 @@ Basic constructor for c3[4]
 <span class="cm">/*
   Highly specific to implementation, memory model, and so forth!
  */</span>
-<span class="n">bool</span> <span class="nf">is_stack</span><span class="p">(</span><span class="k">const</span> <span class="n">C</span><span class="o">*</span> <span class="n">cp</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">bool</span> <span class="nf">is_stack</span><span class="p">(</span><span class="k">const</span> <span class="n">C</span><span class="o">*</span> <span class="n">cp</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="o">&gt;</span><span class="p">(</span><span class="n">cp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mh">0x700'000'000'000UL</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -750,7 +743,7 @@ Basic constructor for c3[4]
 <span class="cm">/*
   Demonstrate three ways to build a result vector.
  */</span>
-<span class="n">constexpr</span> <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+<span class="k">constexpr</span> <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
 
 <span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span> <span class="p">{</span>
   <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">init</span> <span class="p">(</span><span class="n">len</span><span class="p">);</span>
@@ -789,8 +782,7 @@ Basic constructor for c3[4]
   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">Destructors called as collections go out of scope:</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 
 </div>

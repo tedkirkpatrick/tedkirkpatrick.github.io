@@ -45,7 +45,8 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Flambloozlement and the student enthusiasm for crunch mode" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
@@ -54,8 +55,10 @@
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-04-03T00:00:00-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Flambloozlement and the student enthusiasm for crunch mode" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Flambloozlement and the student enthusiasm for crunch mode","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2020-04-03T00:00:00-07:00","dateModified":"2020-04-03T00:00:00-07:00","description":"How do students assess the value of what they learn in class? On the one hand, years of attending school have made them sophisticated judges of teaching effectiveness: They know whether an approach is working for their circumstances and purposes—although these may diverge far from the instructor’s goals. At the same time, students can harbour a curious enthusiasm for a course precisely because it overhwelms them. Why do they respond this way?","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/04/03/flambloozlement/"},"url":"/2020/04/03/flambloozlement/"}</script>
+{"url":"/2020/04/03/flambloozlement/","headline":"Flambloozlement and the student enthusiasm for crunch mode","dateModified":"2020-04-03T00:00:00-07:00","datePublished":"2020-04-03T00:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/04/03/flambloozlement/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"How do students assess the value of what they learn in class? On the one hand, years of attending school have made them sophisticated judges of teaching effectiveness: They know whether an approach is working for their circumstances and purposes—although these may diverge far from the instructor’s goals. At the same time, students can harbour a curious enthusiasm for a course precisely because it overhwelms them. Why do they respond this way?","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,7 +246,7 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
@@ -391,36 +394,34 @@ to be a fix.</p>
 <p>Many of these problems will have nothing to do with operating systems
 principles. For example, suppose they are using the
 <a href="https://microk8s.io/">Microk8s</a> Kubernetes distribution and wish to
-determine how many <code class="highlighter-rouge">kubelet</code> instances are running locally. They may
-know that the <code class="highlighter-rouge">ps -eaf</code> command will dump the process table.  If
+determine how many <code class="language-plaintext highlighter-rouge">kubelet</code> instances are running locally. They may
+know that the <code class="language-plaintext highlighter-rouge">ps -eaf</code> command will dump the process table.  If
 they simply type that command they will get a tedious list of hundreds
 of processes—460 on the system that I just tried.</p>
 
 <p>An experienced programmer would exclude most irrelevant lines via
-piping the output through <code class="highlighter-rouge">grep</code>, producing three extraneous hits in
+piping the output through <code class="language-plaintext highlighter-rouge">grep</code>, producing three extraneous hits in
 addition to the correct one:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ ps -ef | grep kubelet
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ps -ef | grep kubelet
 ... The kubelet instance
 ... The API server, which included kubelet in its command-line arguments
 ... /bin/operator, which also included kubelet in its command-line arguments
 ... The "grep kubelet" command
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<p>or use <code class="highlighter-rouge">pgrep</code> to combine listing and filtering and get just the
+<p>or use <code class="language-plaintext highlighter-rouge">pgrep</code> to combine listing and filtering and get just the
 correct line:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ pgrep -a kubelet
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ pgrep -a kubelet
 ... The kubelet instance
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>But a relative novice, unaccustomed to quick-and-dirty pipelines (the
 first solution) and unaware of esoteric commands that produce more
 precise results (the second solution), is likely to squander tens of
 minutes just plucking the appropriate line out of the 460 produced by
-a simple <code class="highlighter-rouge">ps -eaf</code>. At this point, they have certainly forgotten why
+a simple <code class="language-plaintext highlighter-rouge">ps -eaf</code>. At this point, they have certainly forgotten why
 they even wanted to find this item and will need to reconstruct their logic.</p>
 
 <h2 id="the-instructors-goals-are-distant-from-actual-student-experience">The instructor’s goals are distant from actual student experience</h2>

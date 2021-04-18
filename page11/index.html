@@ -45,17 +45,20 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Home" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
 <meta property="og:description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
 <meta property="og:site_name" content="All my marbles in one place" />
-<link rel="prev" href="/page10">
-<link rel="next" href="/page12">
+<link rel="prev" href="/page10" />
+<link rel="next" href="/page12" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Home" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"WebPage","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","url":"/page11/"}</script>
+{"url":"/page11/","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","@type":"WebPage","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,13 +246,40 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
 
     <div class="content container">
       <div class="posts">
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/03/21/the-limits-of-list-comprehensions/">
+        The limits of list comprehensions
+      </a>
+    </h1>
+    
+    <span class="post-date">21 Mar 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>,
+        
+      
+        
+        <a href="/tag/Python">Python</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>I’ve spent my recent posts unfavourably comparing the STL design of containers/iterators/algorithms with Python list comprehensions and their close relatives in Haskell.  This is an unfairly restrictive way to view the STL design, which addresses a wider range of use cases than the ones addressed by list comprehensions.  But it is also unfair in that it ignores the limitations of list comprehensions themselves, limitations avoided by the more general structure provided by the STL.  In this post, I’ll start from the other direction, considering the inherent limitations of Python list comprehensions. This in turn leads to an idiom in the STL that in fact provides virtually all the functionality of basic list comprehensions, with only slightly more complex syntax.</p>
+ <a href="/2017/03/21/the-limits-of-list-comprehensions/">more ...</a>
+  </div>
   
   <div class="post">
     <h1 class="post-title">
@@ -271,7 +301,6 @@
     </span>
 
     <p>This morning, I realized that there is a fourth approach to appending items to a vector that combines <a href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/">elements of the first and third</a>.  I’m embarrassed to have missed this one because it is a longstanding, well-understood approach that’s particularly applicable to the kinds of “list comprehension algorithms” I’m considering in this series.</p>
-
  <a href="/2017/03/09/a-simpler-fourth-idiom-for-appending/">more ...</a>
   </div>
   
@@ -321,7 +350,6 @@
     </span>
 
     <p>The post presenting the <a href="/2017/02/22/iterators-a-failure-case/">failure case for iterators</a> contrasted this simple Python list comprehension:</p>
-
  <a href="/2017/03/03/iterators-arent-the-problem-they-just-enable-it/">more ...</a>
   </div>
   
@@ -345,32 +373,7 @@
     </span>
 
     <p>The story so far:</p>
-
  <a href="/2017/03/01/the-genius-insight-behind-iterators/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2017/02/25/lambdas-typical-use-cases/">
-        Lambdas: Typical use cases
-      </a>
-    </h1>
-    
-    <span class="post-date">25 Feb 2017
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/C++">C++</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>My last post, highlighting the differences between C++ lambdas and the lambdas in languages based upon functional programs, went more deeply into the weeds than I had intended. I realized too late that it cried out for examples.  The rules for declaring free variables (the member variables of the anonymous class) in C++ lambdas can seem contorted but most uses of them fall into one of a few simple types.  In this post, I want to present three simple use cases of C++ lambdas, each demonstrating a different way to use free variables.</p>
-
- <a href="/2017/02/25/lambdas-typical-use-cases/">more ...</a>
   </div>
   
 </div>

@@ -45,7 +45,8 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Benchmarking the transform and loop idioms" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
@@ -54,8 +55,10 @@
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-05-19T00:00:00-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Benchmarking the transform and loop idioms" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Benchmarking the transform and loop idioms","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2017-05-19T00:00:00-07:00","dateModified":"2017-05-19T00:00:00-07:00","description":"Update: Mon Aug 20, 2018: Also see this semi-rant about the limitations of microbenchmarkering.","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/05/19/benchmarking-the-transform-and-loop-idioms/"},"url":"/2017/05/19/benchmarking-the-transform-and-loop-idioms/"}</script>
+{"url":"/2017/05/19/benchmarking-the-transform-and-loop-idioms/","headline":"Benchmarking the transform and loop idioms","dateModified":"2017-05-19T00:00:00-07:00","datePublished":"2017-05-19T00:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/05/19/benchmarking-the-transform-and-loop-idioms/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"Update: Mon Aug 20, 2018: Also see this semi-rant about the limitations of microbenchmarkering.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,7 +246,7 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
@@ -312,7 +315,7 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
 
 <h3><code>str_loop_emplace</code>: Basic loop using <code>emplace_back()</code></h3>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">str_loop_emplace</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="nf">str_loop_emplace</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">assert</span> <span class="p">(</span> <span class="o">!</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
   <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">p</span> <span class="o">:</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">!=</span> <span class="n">exclude</span><span class="p">)</span>
@@ -320,12 +323,11 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
   <span class="p">}</span>
   <span class="k">return</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h3><code>str_loop_push</code>: Basic loop using <code>push_back()</code></h3>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">str_loop_push</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="nf">str_loop_push</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">assert</span> <span class="p">(</span> <span class="o">!</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
   <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">p</span> <span class="o">:</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">!=</span> <span class="n">exclude</span><span class="p">)</span>
@@ -333,12 +335,11 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
   <span class="p">}</span>
   <span class="k">return</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h3><code>str_option_emp</code>: <code>transform</code> idiom using an output iterator calling <code>emplace_back()</code></h3>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">str_option_emp</span><span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="nf">str_option_emp</span><span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">assert</span> <span class="p">(</span> <span class="o">!</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
   <span class="n">std</span><span class="o">::</span><span class="n">transform</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">src</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">opt_back_emplacer</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
     <span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
@@ -348,12 +349,11 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
         <span class="k">return</span> <span class="n">oppair</span><span class="p">(</span><span class="n">ppair</span><span class="p">{</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">});</span>
     <span class="p">}</span> <span class="p">);</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h3><code>str_option</code>: <code>transform</code> idiom using an output iterator calling <code>push_back()</code></h3>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">str_option</span><span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="nf">str_option</span><span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">assert</span> <span class="p">(</span> <span class="o">!</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
   <span class="n">std</span><span class="o">::</span><span class="n">transform</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">src</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">opt_back_inserter</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
     <span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
@@ -363,8 +363,7 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
         <span class="k">return</span> <span class="n">oppair</span><span class="p">(</span><span class="n">ppair</span><span class="p">{</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">});</span>
     <span class="p">}</span> <span class="p">);</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>There are two blemishes in the above code that I only noticed after gathering all the data. Neither of them substantively affects the benchmark results:</p>
 
@@ -482,17 +481,17 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
 
 <p>The code for running the <code>str_loop_emplace</code> benchmark:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">using</span> <span class="n">ppair</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">;</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="n">ppair</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">oppair</span> <span class="o">=</span> <span class="n">optional</span><span class="o">&lt;</span><span class="n">ppair</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">plist</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ppair</span><span class="o">&gt;</span><span class="p">;</span>
 
 <span class="n">plist</span> <span class="n">src</span> <span class="p">{};</span>
-<span class="n">plist</span> <span class="n">res</span> <span class="p">{};</span> <span class="c1">// NOT USED IN BENCHMARKS
-</span>
+<span class="n">plist</span> <span class="n">res</span> <span class="p">{};</span> <span class="c1">// NOT USED IN BENCHMARKS</span>
+
 <span class="kt">int</span> <span class="n">included</span> <span class="p">{};</span>
 <span class="n">string</span> <span class="n">exclude</span> <span class="p">{};</span>
 
-<span class="n">bool</span> <span class="nf">check</span><span class="p">(</span><span class="k">const</span> <span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">bool</span> <span class="nf">check</span><span class="p">(</span><span class="k">const</span> <span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
   <span class="cp">#if PRINT_SIZE
 </span>  <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">"LEFT "</span> <span class="o">&lt;&lt;</span> <span class="n">LEFT</span> <span class="o">&lt;&lt;</span> <span class="s">" res.size() "</span> <span class="o">&lt;&lt;</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
   <span class="cp">#endif
@@ -507,7 +506,7 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
 
 <span class="cp">#ifdef DO_LOOP_EMPLACE
 </span>
-<span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">str_loop_emplace</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="nf">str_loop_emplace</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">assert</span> <span class="p">(</span> <span class="o">!</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
   <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">BY</span> <span class="n">p</span> <span class="o">:</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">!=</span> <span class="n">exclude</span><span class="p">)</span>
@@ -528,8 +527,7 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
 <span class="p">});</span>
 
 <span class="cp">#endif
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p>The code for the other three benchmarks was the same, substituting the appropriate function from the beginning of this post for <code>str_loop_emplace</code>.</p>
 
@@ -552,7 +550,7 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
 
 <p>The source vector was initialized and Nonius called by the following code:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">char</span> <span class="k">const</span> <span class="o">*</span> <span class="k">const</span><span class="p">,</span> <span class="mi">13</span><span class="o">&gt;</span> <span class="n">regions</span> <span class="o">=</span> <span class="p">{</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">char</span> <span class="k">const</span> <span class="o">*</span> <span class="k">const</span><span class="p">,</span> <span class="mi">13</span><span class="o">&gt;</span> <span class="n">regions</span> <span class="o">=</span> <span class="p">{</span>
   <span class="s">"British Columbia"</span><span class="p">,</span>
   <span class="s">"Alberta"</span><span class="p">,</span>
   <span class="s">"Saskatchewan"</span><span class="p">,</span>
@@ -578,8 +576,8 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
   <span class="s">"NL1"</span>
 <span class="p">};</span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">N</span><span class="o">&gt;</span>
-<span class="kt">void</span> <span class="n">set_copied</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">,</span> <span class="kt">int</span> <span class="n">proportion</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">char</span> <span class="k">const</span> <span class="o">*</span> <span class="k">const</span><span class="p">,</span> <span class="n">N</span><span class="o">&gt;&amp;</span><span class="n">regs</span><span class="p">,</span> <span class="kt">int</span> <span class="n">value</span><span class="p">,</span> <span class="kt">int</span><span class="o">&amp;</span> <span class="n">included</span><span class="p">,</span> <span class="n">plist</span><span class="o">&amp;</span> <span class="n">vec</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">N</span><span class="p">&gt;</span>
+<span class="kt">void</span> <span class="nf">set_copied</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">,</span> <span class="kt">int</span> <span class="n">proportion</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">char</span> <span class="k">const</span> <span class="o">*</span> <span class="k">const</span><span class="p">,</span> <span class="n">N</span><span class="o">&gt;&amp;</span><span class="n">regs</span><span class="p">,</span> <span class="kt">int</span> <span class="n">value</span><span class="p">,</span> <span class="kt">int</span><span class="o">&amp;</span> <span class="n">included</span><span class="p">,</span> <span class="n">plist</span><span class="o">&amp;</span> <span class="n">vec</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&amp;&amp;</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">proportion</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">vec</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">ppair</span><span class="p">{</span><span class="n">regs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">value</span><span class="p">});</span>
     <span class="n">included</span><span class="o">++</span><span class="p">;</span>
@@ -588,10 +586,10 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
     <span class="n">vec</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">ppair</span><span class="p">{</span><span class="n">regs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">value</span><span class="p">});</span>      
 <span class="p">}</span>
 
-<span class="kt">void</span> <span class="n">init</span><span class="p">(</span><span class="kt">int</span> <span class="n">size</span><span class="p">,</span> <span class="n">SeedType</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">void</span> <span class="nf">init</span><span class="p">(</span><span class="kt">int</span> <span class="n">size</span><span class="p">,</span> <span class="n">SeedType</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">auto</span> <span class="n">rbits</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">RBits</span><span class="o">&gt;</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
-  <span class="c1">// Range of random #s includes both bounds: [0, 99]
-</span>  <span class="n">MRandInt</span> <span class="n">rnd</span><span class="p">(</span><span class="n">rbits</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span> <span class="mi">99</span><span class="p">);</span>
+  <span class="c1">// Range of random #s includes both bounds: [0, 99]</span>
+  <span class="n">MRandInt</span> <span class="n">rnd</span><span class="p">(</span><span class="n">rbits</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span> <span class="mi">99</span><span class="p">);</span>
   
 <span class="cp">#if LEFT == 1
 </span>  <span class="n">exclude</span> <span class="o">=</span> <span class="n">regions</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
@@ -600,7 +598,7 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
 <span class="cp">#elif LEFT == 3 || LEFT == 4 || LEFT == 5 || LEFT == 8 || LEFT == 9
 </span>  <span class="n">exclude</span> <span class="o">=</span> <span class="n">short_regs</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
 <span class="cp">#else
-</span>  <span class="n">static_assert</span><span class="p">(</span><span class="nb">false</span><span class="p">,</span> <span class="s">"Missing case in init "</span> <span class="err">##</span> <span class="n">LEFT</span><span class="p">);</span>
+</span>  <span class="k">static_assert</span><span class="p">(</span><span class="nb">false</span><span class="p">,</span> <span class="s">"Missing case in init "</span> <span class="err">##</span> <span class="n">LEFT</span><span class="p">);</span>
 <span class="cp">#endif
 </span>
   <span class="n">src</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
@@ -634,7 +632,7 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
     <span class="cp">#elif LEFT == 11
 </span>    <span class="n">set_copied</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="n">long_regs</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">included</span><span class="p">,</span> <span class="n">src</span><span class="p">);</span>
     <span class="cp">#else
-</span>    <span class="n">static_assert</span><span class="p">(</span><span class="nb">false</span><span class="p">,</span> <span class="s">"src proportions undefined"</span><span class="p">);</span>
+</span>    <span class="k">static_assert</span><span class="p">(</span><span class="nb">false</span><span class="p">,</span> <span class="s">"src proportions undefined"</span><span class="p">);</span>
     <span class="cp">#endif
 </span>  <span class="p">}</span>
 
@@ -652,13 +650,12 @@ The <code>transform</code> idiom used <code>push_back()</code>. I verified that 
   <span class="n">res</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">const</span> <span class="k">auto</span> <span class="n">size</span> <span class="o">=</span> <span class="n">SIZE</span><span class="p">;</span>
   <span class="n">init</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">MRandInt</span><span class="o">::</span><span class="n">getSeed</span><span class="p">(</span><span class="nb">true</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">));</span>
   <span class="k">return</span> <span class="n">nonius</span><span class="o">::</span><span class="n">main</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The following macros determined the compiled code:</p>
 

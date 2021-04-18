@@ -45,7 +45,8 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Iterators aren’t the problem, they just enable it" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
@@ -54,8 +55,10 @@
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-03-03T00:00:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Iterators aren’t the problem, they just enable it" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Iterators aren’t the problem, they just enable it","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2017-03-03T00:00:00-08:00","dateModified":"2017-03-03T00:00:00-08:00","description":"The post presenting the failure case for iterators contrasted this simple Python list comprehension:","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/03/03/iterators-arent-the-problem-they-just-enable-it/"},"url":"/2017/03/03/iterators-arent-the-problem-they-just-enable-it/"}</script>
+{"url":"/2017/03/03/iterators-arent-the-problem-they-just-enable-it/","headline":"Iterators aren’t the problem, they just enable it","dateModified":"2017-03-03T00:00:00-08:00","datePublished":"2017-03-03T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/03/03/iterators-arent-the-problem-they-just-enable-it/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"The post presenting the failure case for iterators contrasted this simple Python list comprehension:","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,7 +246,7 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
@@ -265,13 +268,12 @@
   
   <p>The post presenting the <a href="/2017/02/22/iterators-a-failure-case/">failure case for iterators</a> contrasted this simple Python list comprehension:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
-</code></pre>
-</div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+</code></pre></div></div>
 
 <p>with its C++ equivalent using the STL:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">a</span> <span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">};</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">a</span> <span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">};</span>
 
 <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">t1</span> <span class="p">{};</span>
 <span class="n">copy_if</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">a</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">back_inserter</span><span class="p">(</span><span class="n">t1</span><span class="p">),</span>
@@ -280,8 +282,7 @@
 <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">res</span> <span class="p">{};</span>
 <span class="n">transform</span> <span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">cbegin</span><span class="p">(),</span> <span class="n">t1</span><span class="p">.</span><span class="n">cend</span><span class="p">(),</span> <span class="n">back_inserter</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
                <span class="p">[](</span><span class="k">auto</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span> <span class="o">*</span> <span class="n">i</span><span class="p">;</span> <span class="p">});</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The list comprehension reduces the notation to the essentials of the algorithm: The source <code>a</code> and sink <code>res</code> are each mentioned once, while the code presents the transformations of an individual value <code>i</code> on its way from source to sink.</p>
 

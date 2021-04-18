@@ -45,7 +45,8 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Why is distributed consensus so hard?" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
@@ -54,8 +55,10 @@
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2019-06-12T00:00:00-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Why is distributed consensus so hard?" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Why is distributed consensus so hard?","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2019-06-12T00:00:00-07:00","dateModified":"2019-06-12T00:00:00-07:00","description":"Second in a series describing Howard &amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry introduced the source papers. Updated May 27, 2020 to incorporate points from Howard and Mortier (2020) and Santos and Schiper (2013). I begin this series on distributed consensus by stepping back from the details, considering why the problem seems so hard and specifically why literature on the problem is so difficult to read. This ultimately results from the breadth of issues that must be addressed by any solution. “Distributed consensus” isn’t a single problem so much as a class of problems, with related but distinct solutions. Before describing the specific focus of Howard and Mortier’s paper, I want to set the broader context. This context will help readers who want to apply these results to different forms of consensus. So why is distributed consensus so hard, not just to solve, but to even describe? Turns out there’s a lot of reasons.","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/06/12/why-consensus-is-hard/"},"url":"/2019/06/12/why-consensus-is-hard/"}</script>
+{"url":"/2019/06/12/why-consensus-is-hard/","headline":"Why is distributed consensus so hard?","dateModified":"2019-06-12T00:00:00-07:00","datePublished":"2019-06-12T00:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/06/12/why-consensus-is-hard/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"Second in a series describing Howard &amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry introduced the source papers. Updated May 27, 2020 to incorporate points from Howard and Mortier (2020) and Santos and Schiper (2013). I begin this series on distributed consensus by stepping back from the details, considering why the problem seems so hard and specifically why literature on the problem is so difficult to read. This ultimately results from the breadth of issues that must be addressed by any solution. “Distributed consensus” isn’t a single problem so much as a class of problems, with related but distinct solutions. Before describing the specific focus of Howard and Mortier’s paper, I want to set the broader context. This context will help readers who want to apply these results to different forms of consensus. So why is distributed consensus so hard, not just to solve, but to even describe? Turns out there’s a lot of reasons.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,7 +246,7 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
@@ -285,7 +288,7 @@ describe?  Turns out there’s a <em>lot</em> of reasons.</p>
 
 <!--more-->
 
-<h2 id="you-cant-get-what-you-really-want">1. You can’t get what you really want</h2>
+<h2 id="1-you-cant-get-what-you-really-want">1. You can’t get what you really want</h2>
 
 <p>The
 <a href="https://groups.csail.mit.edu/tds/papers/Lynch/jacm85.pdf">Fischer, Lynch, and Paterson (1985) paper</a>
@@ -298,7 +301,7 @@ concurrent programming, the algorithms guarantee <em>safety</em> but not <em>liv
 Careful reliability engineering can make the probability of completion
 high but never 100%.</p>
 
-<h2 id="the-scope-matters">2. The scope matters</h2>
+<h2 id="2-the-scope-matters">2. The scope matters</h2>
 
 <p>Writers assume different scopes for their articles. Some only consider
 the consensus-making processes. Others include the processes that
@@ -308,7 +311,7 @@ Some versions include the option of backup processes whose only role
 is to observe and track the decisions but not participate in making
 them.</p>
 
-<h2 id="there-are-many-ways-of-defining-roles">3. There are many ways of defining roles</h2>
+<h2 id="3-there-are-many-ways-of-defining-roles">3. There are many ways of defining roles</h2>
 
 <p>Paxos is typically described in terms of a collection of a concurrent,
 replicated roles. Each role executes a specific algorithm, typically
@@ -406,7 +409,7 @@ Note however that only one of Altınbüken &amp; van Renesse’s
 differing ways the authors separate Paxos into
 roles, but they are close.</p>
 
-<h2 id="the-fundamental-concepts-have-multiple-names">4. The fundamental concepts have multiple names</h2>
+<h2 id="4-the-fundamental-concepts-have-multiple-names">4. The fundamental concepts have multiple names</h2>
 
 <p>Several times, the consensus literature has suffered the fate of defining
 perfectly good terms for basic concepts, only to have the field later
@@ -424,7 +427,7 @@ nomenclature is now ambiguous.</p>
 names (Point 3 above), we get a nomenclature that is
 several times larger than the actual number of concepts it describes.</p>
 
-<h2 id="the-basic-algorithm-leaves-many-key-decisions-to-implementation">5. The basic algorithm leaves many key decisions to implementation</h2>
+<h2 id="5-the-basic-algorithm-leaves-many-key-decisions-to-implementation">5. The basic algorithm leaves many key decisions to implementation</h2>
 
 <p>The basic consensus algorithm makes a single decision (called “instance” in
 the literature), runs on a fixed
@@ -447,7 +450,7 @@ requests for lower latency and higher throughput.</li>
 <p>Variants of consensus include more or less of these implementation
 choices.</p>
 
-<h2 id="there-are-several-metrics-of-efficiency">6. There are several metrics of efficiency</h2>
+<h2 id="6-there-are-several-metrics-of-efficiency">6. There are several metrics of efficiency</h2>
 
 <p>The metrics for the efficiency of a consensus algorithm typically
 count the number of hops (often counted as round-trips) required to
@@ -536,7 +539,7 @@ in wide-area networks), the CPU cost of consensus can limit
 performance. However, this case seems rarer than those where the
 latency of the network or persistent storage limits performance.</p>
 
-<h2 id="there-are-several-definitions-of-fault-tolerant">7. There are several definitions of “fault-tolerant”</h2>
+<h2 id="7-there-are-several-definitions-of-fault-tolerant">7. There are several definitions of “fault-tolerant”</h2>
 
 <p>Distributed consensus is typically used for its fault-tolerance.  But
 what kinds of faults must it tolerate?</p>
@@ -603,7 +606,7 @@ throughput, and require more processors to achieve a given level of
 availability. Unless specifically stated to be so,
 consensus algorithms are not Byzantine fault-tolerant.</p>
 
-<h2 id="there-is-a-tension-between-clarity-and-practicality">8. There is a tension between clarity and practicality</h2>
+<h2 id="8-there-is-a-tension-between-clarity-and-practicality">8. There is a tension between clarity and practicality</h2>
 
 <p>Descriptions of consensus have to trade off between elegant proofs and
 practical algorithms. For example,
@@ -633,7 +636,7 @@ suitable for production use, you have to work through the sequence
 when what you actually want is the final algorithm, combined with a
 systematic presentation of its invariants.</p>
 
-<h2 id="descriptions-emphasize-safety-but-not-liveness">9. Descriptions emphasize safety but not liveness</h2>
+<h2 id="9-descriptions-emphasize-safety-but-not-liveness">9. Descriptions emphasize safety but not liveness</h2>
 
 <p>The core purpose of consensus algorithms is ensuring safety: All
 processes that complete should agree on a single value. Ensuring

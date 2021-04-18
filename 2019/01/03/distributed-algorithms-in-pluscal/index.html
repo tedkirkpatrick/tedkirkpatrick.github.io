@@ -45,7 +45,8 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Distributed algorithms in PlusCal" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
@@ -54,8 +55,10 @@
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2019-01-03T00:00:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Distributed algorithms in PlusCal" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Distributed algorithms in PlusCal","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2019-01-03T00:00:00-08:00","dateModified":"2019-01-03T00:00:00-08:00","description":"Second in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The first post presented the context and why the topic is important. The next post describes the semantics of fairness in PlusCal.","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/01/03/distributed-algorithms-in-pluscal/"},"url":"/2019/01/03/distributed-algorithms-in-pluscal/"}</script>
+{"url":"/2019/01/03/distributed-algorithms-in-pluscal/","headline":"Distributed algorithms in PlusCal","dateModified":"2019-01-03T00:00:00-08:00","datePublished":"2019-01-03T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2019/01/03/distributed-algorithms-in-pluscal/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"Second in a series on using the TLA Toolbox to explore the failure tolerance of distributed algorithms. The first post presented the context and why the topic is important. The next post describes the semantics of fairness in PlusCal.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,7 +246,7 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
@@ -295,7 +298,7 @@ to the structure of the algorithms that we want to represent.  Many
 distributed algorithms have a common structure, an infinite loop whose
 body is a collection of alternatives, each guarded by a condition:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>while TRUE do
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>while TRUE do
   either
     guard1
       alternative1
@@ -306,14 +309,13 @@ body is a collection of alternatives, each guarded by a condition:</p>
     ...
   end either
 end while
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Each guard specifies the enabling condition for its associated
 alternative.  In each loop iteration, one of the enabled alternatives
 is chosen to be executed. So long as at least one guard is true,
 enabling its alternative, the loop continues to execute.  The loop may
-also terminate if it executes an alternative that ends with a <code class="highlighter-rouge">goto</code>
+also terminate if it executes an alternative that ends with a <code class="language-plaintext highlighter-rouge">goto</code>
 out of the loop.</p>
 
 <p>If there is an iteration in which every alternative is disabled, the
@@ -339,70 +341,66 @@ or more labels, on the other hand, will have its execution
 interspersed with actions by other processes. I will return to this
 point in a moment; for now, I’ll simply state that for distributed
 algorithms, which only communicate through messages, atomicity of
-alternatives in an <code class="highlighter-rouge">either</code> statement is less important than for
+alternatives in an <code class="language-plaintext highlighter-rouge">either</code> statement is less important than for
 algorithms that communicate through shared memory.</p>
 
 <h2 id="guards-in-pluscal">Guards in PlusCal</h2>
 
 <p>PlusCal guards can have rich structure. They are constructed from
-three language keywords that define an enabling condition: <code class="highlighter-rouge">await</code>,
-<code class="highlighter-rouge">when</code>, and <code class="highlighter-rouge">with</code>. The <code class="highlighter-rouge">await</code> and <code class="highlighter-rouge">when</code> keywords are
-interchangeable. In the Lamport algorithm, I chose <code class="highlighter-rouge">when</code> because it
+three language keywords that define an enabling condition: <code class="language-plaintext highlighter-rouge">await</code>,
+<code class="language-plaintext highlighter-rouge">when</code>, and <code class="language-plaintext highlighter-rouge">with</code>. The <code class="language-plaintext highlighter-rouge">await</code> and <code class="language-plaintext highlighter-rouge">when</code> keywords are
+interchangeable. In the Lamport algorithm, I chose <code class="language-plaintext highlighter-rouge">when</code> because it
 gave the algorithm a straightforward reading but for other algorithms
-<code class="highlighter-rouge">await</code> might read better.</p>
+<code class="language-plaintext highlighter-rouge">await</code> might read better.</p>
 
-<p>Whereas <code class="highlighter-rouge">await</code> and <code class="highlighter-rouge">when</code> simply establish an enabling condition, the
-<code class="highlighter-rouge">with</code> keyword combines an enabling condition with the operation of
+<p>Whereas <code class="language-plaintext highlighter-rouge">await</code> and <code class="language-plaintext highlighter-rouge">when</code> simply establish an enabling condition, the
+<code class="language-plaintext highlighter-rouge">with</code> keyword combines an enabling condition with the operation of
 choosing a value from a set. An expression such as</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>with a \in { ... some set ...}
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>with a \in { ... some set ...}
+</code></pre></div></div>
 
 <p>is enabled when the set is nonempty. Furthermore, when the set is
-nonempty, a value is nondeterministically chosen and assigned to <code class="highlighter-rouge">a</code>.</p>
+nonempty, a value is nondeterministically chosen and assigned to <code class="language-plaintext highlighter-rouge">a</code>.</p>
 
 <p>A guard composed of just one of these keywords is simple enough to
 interpret. For example, in the following snippet,</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>when /\ 1 &lt; b
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>when /\ 1 &lt; b
      /\ b &lt; 10;
   \* guarded alternative ...
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<p>the alternative is enabled when <code class="highlighter-rouge">a</code> is strictly between 1 and 10.</p>
+<p>the alternative is enabled when <code class="language-plaintext highlighter-rouge">a</code> is strictly between 1 and 10.</p>
 
 <p>However, PlusCal allows combining enabling statements and even
 interspersing assignments with guards. Guards can be placed at any
 point in an action, even as the last statement. The evaluation rule
 for actions is:</p>
 
-<p class="pull">An action is enabled if and only if every one of its <code class="highlighter-rouge">await</code>,
-<code class="highlighter-rouge">when</code>, and <code class="highlighter-rouge">with</code> statements is enabled. If even one guard is
+<p class="pull">An action is enabled if and only if every one of its <code class="language-plaintext highlighter-rouge">await</code>,
+<code class="language-plaintext highlighter-rouge">when</code>, and <code class="language-plaintext highlighter-rouge">with</code> statements is enabled. If even one guard is
 disabled, no statement in the action is executed.</p>
 
 <p>This rule implies that the evaluation may backtrack when a guard
 depends upon the result of an assignment. Consider this snippet:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>a := b + 1;
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a := b + 1;
 await a &gt; 2;
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<p>If <code class="highlighter-rouge">b &lt;= 1</code>, the action will not be enabled and so <code class="highlighter-rouge">a</code> will not in fact
+<p>If <code class="language-plaintext highlighter-rouge">b &lt;= 1</code>, the action will not be enabled and so <code class="language-plaintext highlighter-rouge">a</code> will not in fact
 be assigned in the preceding statement.  The action comprising these
 two statements is only executed if the assignment <em>were to have
-resulted</em> in <code class="highlighter-rouge">a &gt; 2</code>.</p>
+resulted</em> in <code class="language-plaintext highlighter-rouge">a &gt; 2</code>.</p>
 
 <p>Another way of viewing this is that the mathematical equalities
 in the TLA underlying PlusCal allow us to rewrite the above
 statements as the equivalent</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>await b &gt; 1;
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>await b &gt; 1;
 a := b + 1;
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>moving the guard before the assignment.</p>
 
@@ -439,7 +437,7 @@ representing the network.</p>
 <p>For example, consider the following algorithm, which includes one
 global variable and two local variables:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>--algorithm RaceAlgo
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--algorithm RaceAlgo
 variables
   \* Global variable
   glob
@@ -467,8 +465,7 @@ L4:
 
 end process
 end algorithm
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Running this on TLC, it finds 54 distinct end states. The algorithm is
 symmetric, so there are 6 distinct outcomes, repeated for each
@@ -477,9 +474,9 @@ process:</p>
 <table>
   <thead>
     <tr>
-      <th style="text-align: center"><code class="highlighter-rouge">loc1</code></th>
-      <th style="text-align: center"><code class="highlighter-rouge">loc2</code></th>
-      <th style="text-align: center"><code class="highlighter-rouge">glob</code></th>
+      <th style="text-align: center"><code class="language-plaintext highlighter-rouge">loc1</code></th>
+      <th style="text-align: center"><code class="language-plaintext highlighter-rouge">loc2</code></th>
+      <th style="text-align: center"><code class="language-plaintext highlighter-rouge">glob</code></th>
     </tr>
   </thead>
   <tbody>
@@ -516,13 +513,13 @@ process:</p>
   </tbody>
 </table>
 
-<p>In every case, <code class="highlighter-rouge">loc2</code> equals <code class="highlighter-rouge">loc1 + 2</code>, but not necessarily for
-<code class="highlighter-rouge">glob</code>, which can have three different outcomes for each value
-of<code class="highlighter-rouge">loc1</code>. We get <code class="highlighter-rouge">glob</code> equal to <code class="highlighter-rouge">loc1 + 2</code> if the two processes are
+<p>In every case, <code class="language-plaintext highlighter-rouge">loc2</code> equals <code class="language-plaintext highlighter-rouge">loc1 + 2</code>, but not necessarily for
+<code class="language-plaintext highlighter-rouge">glob</code>, which can have three different outcomes for each value
+of<code class="language-plaintext highlighter-rouge">loc1</code>. We get <code class="language-plaintext highlighter-rouge">glob</code> equal to <code class="language-plaintext highlighter-rouge">loc1 + 2</code> if the two processes are
 executed sequentially, producing the two highlighted rows: 1, 3, 3 and
 2, 4, 4.  But those aren’t the only outcomes. In addition to them,
-there are four other outcomes for <code class="highlighter-rouge">glob</code>, from executions that
-intermingled execution of the statements at <code class="highlighter-rouge">L3</code> and <code class="highlighter-rouge">L4</code> by
+there are four other outcomes for <code class="language-plaintext highlighter-rouge">glob</code>, from executions that
+intermingled execution of the statements at <code class="language-plaintext highlighter-rouge">L3</code> and <code class="language-plaintext highlighter-rouge">L4</code> by
 Processes 1 and 2.</p>
 
 <p>As the example demonstrates, we can assign to local variables without
@@ -541,65 +538,60 @@ representation of networks as sets and functions into familiar
 operation names.</p>
 
 <p>For example, in the Lamport algorithm, the network is represented as a
-function of type <code class="highlighter-rouge">Channel</code>, a mapping from source and
-destination process ids to a <code class="highlighter-rouge">Sequence</code> of <code class="highlighter-rouge">Messages</code>:</p>
+function of type <code class="language-plaintext highlighter-rouge">Channel</code>, a mapping from source and
+destination process ids to a <code class="language-plaintext highlighter-rouge">Sequence</code> of <code class="language-plaintext highlighter-rouge">Messages</code>:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>Channel == [src \in Pid |-&gt; [dst \in Pid |-&gt; Seq(Message)]]
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Channel == [src \in Pid |-&gt; [dst \in Pid |-&gt; Seq(Message)]]
+</code></pre></div></div>
 
-<p>The network itself is a variable <code class="highlighter-rouge">channel</code> of that type, and a
+<p>The network itself is a variable <code class="language-plaintext highlighter-rouge">channel</code> of that type, and a
 network broadcast is represented by</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>channel := [channel EXCEPT ![self] =
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>channel := [channel EXCEPT ![self] =
              [dst \in Pid |-&gt;
                IF dst = self THEN channel[self][self]
                              ELSE Append(channel[self][dst], msg)]]
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>This is more readably written as the macro call</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>Broadcast(msg);
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Broadcast(msg);
+</code></pre></div></div>
 
 <p>For a more complex example, consider receiving a message. The
 receiving process must perform three steps in sequence:</p>
 
 <ol>
-  <li>Wait for a message of a specified <code class="highlighter-rouge">type</code> to be
+  <li>Wait for a message of a specified <code class="language-plaintext highlighter-rouge">type</code> to be
 available at the head of the sequence sent from at least one source,</li>
   <li>pick the process id of one source when the wait is satisfied, and</li>
   <li>remove that message from the sequence, passing the message contents
-<code class="highlighter-rouge">src</code> and <code class="highlighter-rouge">time</code> to the destination.</li>
+<code class="language-plaintext highlighter-rouge">src</code> and <code class="language-plaintext highlighter-rouge">time</code> to the destination.</li>
 </ol>
 
 <p>The resulting code is subtle:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>with s \in {src \in Pid: /\ Len(channel[src][dst]) &gt; 0
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>with s \in {src \in Pid: /\ Len(channel[src][dst]) &gt; 0
                          /\ Head(channel[src][dst]).type = type
            } do
   src := s;
   time := Head(channel[src][self]).time;
   channel := [channel EXCEPT ![src][self] = Tail(channel[src][self])]
 end with
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>It’s far more readable when packaged into a macro call:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>Receive("AckReq", src, time);
-</code></pre>
-</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Receive("AckReq", src, time);
+</code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">Receive</code> macro functions as both a guard and, when the guard is
+<p>The <code class="language-plaintext highlighter-rouge">Receive</code> macro functions as both a guard and, when the guard is
 enabled and allows the assignments to be executed, updates the global
 state. A message is removed from the network (represented by
-<code class="highlighter-rouge">channel</code>) and its contents, a sender id and logical clock value, are
+<code class="language-plaintext highlighter-rouge">channel</code>) and its contents, a sender id and logical clock value, are
 assigned to local variables. In the actual algorithm, its call looks like</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>either
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>either
  ...
 or
   Receive("AckReq", src, time); \* Guard; updates src and time
@@ -607,8 +599,7 @@ or
     acks := acks \union {src}   \* Record receipt of acknowledgement
 or
  ...
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>I indent the statements following the guard to indicate that their
 execution is controlled by the guard.</p>

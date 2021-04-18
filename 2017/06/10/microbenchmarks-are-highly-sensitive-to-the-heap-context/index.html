@@ -45,7 +45,8 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Microbenchmarks are highly sensitive to the heap context!" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
@@ -54,8 +55,10 @@
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-06-10T00:00:00-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Microbenchmarks are highly sensitive to the heap context!" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Microbenchmarks are highly sensitive to the heap context!","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2017-06-10T00:00:00-07:00","dateModified":"2017-06-10T00:00:00-07:00","description":"Over two weeks ago, I posted an article about by-value parameters in the loop and transform idioms. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis. In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda.","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"},"url":"/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"}</script>
+{"url":"/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/","headline":"Microbenchmarks are highly sensitive to the heap context!","dateModified":"2017-06-10T00:00:00-07:00","datePublished":"2017-06-10T00:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"Over two weeks ago, I posted an article about by-value parameters in the loop and transform idioms. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis. In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,7 +246,7 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
@@ -263,7 +266,7 @@
   
   </span>
   
-  <p>Over two weeks ago, I posted an article about <a href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/">by-value parameters in the loop and <code class="highlighter-rouge">transform</code> idioms</a>. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis.  In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda.</p>
+  <p>Over two weeks ago, I posted an article about <a href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/">by-value parameters in the loop and <code class="language-plaintext highlighter-rouge">transform</code> idioms</a>. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis.  In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda.</p>
 
 <h2>The anomaly</h2>
 
@@ -273,7 +276,7 @@
 
 <p>The plot compares the results for the two versions of the loop, which differ only in using either <code>emplace_back()</code> or <code>push_back()</code> in their body. The by-value version of the loop parameter was used in both cases:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">str_loop_emplace</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="nf">str_loop_emplace</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">assert</span> <span class="p">(</span> <span class="o">!</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
   <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">p</span> <span class="o">:</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">!=</span> <span class="n">exclude</span><span class="p">)</span>
@@ -281,10 +284,9 @@
   <span class="p">}</span>
   <span class="k">return</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">str_loop_push</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="nf">str_loop_push</span> <span class="p">(</span><span class="n">plist</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">assert</span> <span class="p">(</span> <span class="o">!</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
   <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">p</span> <span class="o">:</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">first</span> <span class="o">!=</span> <span class="n">exclude</span><span class="p">)</span>
@@ -292,14 +294,13 @@
   <span class="p">}</span>
   <span class="k">return</span> <span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Each version has been compiled with <code>-O2</code> and run twice on random data sets, with from 0–100% of the source data set copied to the result.</p>
 
 <p>At first glance, the result wasn’t surprising. The loop using <code>push_back()</code> was slower, which I would expect, given that it constructs an extra <code>pair</code> compared to the one using <code>emplace_back()</code>. This is borne out by an analysis of the generated object code.  Summarizing their object code in pseudo-C:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>// str_loop_emplace_long_by_copy:
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// str_loop_emplace_long_by_copy:
 
 goto begin
 
@@ -329,8 +330,7 @@ begin: p &lt;- *src_i
  if (exclude != p.first) goto loop
  else goto next
 end:
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Spot the problem?  I’ll take solace if you didn’t; I looked at the original plot for weeks before seeing it myself.</p>
 

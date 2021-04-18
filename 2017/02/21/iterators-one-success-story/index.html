@@ -45,7 +45,8 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Iterators: One success story" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
@@ -54,8 +55,10 @@
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-02-21T00:00:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Iterators: One success story" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Iterators: One success story","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2017-02-21T00:00:00-08:00","dateModified":"2017-02-21T00:00:00-08:00","description":"Iterators intrigue me because they seem to bring to C++ facilities that I’ve found congenial in other languages. I’ve spent some time in Haskell and a lot of time in Python, which both support list comprehensions. I’ve also enjoyed the limited amount of C# Language-Integrated Query (LINQ) programming that I’ve done. Yet when I come to actually use the STL iterators, it feels awkward and requires much more text than achieving comparable results using list comprehensions or LINQ. Some of that may be simple unfamiliarity but that is itself a problem: A good design will allow me to apply patterns I’ve learned in other languages.","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/02/21/iterators-one-success-story/"},"url":"/2017/02/21/iterators-one-success-story/"}</script>
+{"url":"/2017/02/21/iterators-one-success-story/","headline":"Iterators: One success story","dateModified":"2017-02-21T00:00:00-08:00","datePublished":"2017-02-21T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/02/21/iterators-one-success-story/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"Iterators intrigue me because they seem to bring to C++ facilities that I’ve found congenial in other languages. I’ve spent some time in Haskell and a lot of time in Python, which both support list comprehensions. I’ve also enjoyed the limited amount of C# Language-Integrated Query (LINQ) programming that I’ve done. Yet when I come to actually use the STL iterators, it feels awkward and requires much more text than achieving comparable results using list comprehensions or LINQ. Some of that may be simple unfamiliarity but that is itself a problem: A good design will allow me to apply patterns I’ve learned in other languages.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,7 +246,7 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
@@ -272,9 +275,8 @@
 
 <p>But it’s more than unfamiliarity.  I’ve practiced implementing functions in the C++ STL and found that simple Python expressions such as</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">[</span><span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
-</code></pre>
-</div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+</code></pre></div></div>
 
 <p>have to be turned inside-out and sprawl across multiple lines when written in the STL. (I’ll give details in a later post.) The STL appears essentially much more verbose.</p>
 
@@ -286,7 +288,7 @@
 
 <p>Consider the following C program:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="cp">#define LEN 3
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define LEN 3
 </span>
 <span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span> <span class="p">{</span>
   <span class="kt">int</span> <span class="n">a</span> <span class="p">[</span><span class="n">LEN</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">};</span>
@@ -296,25 +298,23 @@
 
   <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The loop simply walks a pointer <code>p</code> over the length of array <code>a</code>, summing the values in <code>sum</code>. (Note: The above code is so simple that the optimizer does something much simpler. The Appendix to this post shows the actual code necessary to fake out the optimizer and get the compiler to generate the code I’m describing. I’m displaying the simpler code here because it presents the essential loop.)  The resulting loop code (from gcc 6.2) is as simple as it gets:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>  xorl	%eax, %eax
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  xorl	%eax, %eax
 L3:
   addl	(%edx), %eax
   addl	$4, %edx
   cmpl	%esi, %edx
   jne	.L3
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Register <code>edx</code> is pointer <code>p</code>, incrementing through the array.  Register <code>eax</code> is <code>sum</code>, while register <code>esi</code> contains the address <code>a+LEN</code>. This is the most efficient scalar code possible for the loop (though it could likely be improved by using the x86 <a href="https://en.wikipedia.org/wiki/Advanced_Vector_Extensions">vector instructions</a> or your processor’s equivalent).</p>
 
 <p>Here is the same algorithm using the C++ STL library and a range-based <code>for</code>:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="cp">#include &lt;array&gt;
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;array&gt;
 </span>
 <span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="p">;</span>
 
@@ -327,12 +327,11 @@ L3:
 
   <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>This version generates equivalent loop code (though with different register assignments) as the C program, despite its more abstract presentation.  In fact, C++ will generate equivalent code to C’s pointer-based program for a loop over a <code>std::vector</code> as well:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="cp">#include &lt;vector&gt;
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;vector&gt;
 </span>
 <span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="p">;</span>
 
@@ -345,8 +344,7 @@ L3:
 
   <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Where the <code>std::array</code> collection is just mild syntactic sugar over a foundational C/C++ array, a <code>std::vector</code> is a more powerful collection, expanding in size as new elements are appended. Yet a loop over a vector generates just as efficient code as the far more explicit, pointer-oriented code in C.</p>
 
@@ -362,16 +360,15 @@ L3:
 
 <p>The C program given above in fact generates the following object code:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>  .cfi_startproc
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  .cfi_startproc
   movl	$15, %eax
   ret
   .cfi_endproc
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The smarty-pants optimizer has recognized that the loop is completely specified and has precomputed its result (the value 15) at compile-time.  To generate an actual runtime loop, we have to make the array larger and read it from input:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
 </span>
 <span class="cp">#define LEN 10
 </span>
@@ -388,14 +385,13 @@ L3:
 
   <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The resulting loop generates the code given in the body of this post.</p>
 
 <p>A similar problem arises with the C++ code. Here is the version that prevents the optimizer from eliminating the loop:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="cp">#include &lt;array&gt;
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;array&gt;
 #include &lt;iostream&gt;
 </span>
 <span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="p">;</span>
@@ -412,8 +408,7 @@ L3:
 
   <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 
 </div>

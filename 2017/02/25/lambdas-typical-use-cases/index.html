@@ -45,7 +45,8 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.2.3 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Lambdas: Typical use cases" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
@@ -54,8 +55,10 @@
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-02-25T00:00:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Lambdas: Typical use cases" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Lambdas: Typical use cases","author":{"@type":"Person","name":"Ted Kirkpatrick"},"datePublished":"2017-02-25T00:00:00-08:00","dateModified":"2017-02-25T00:00:00-08:00","description":"My last post, highlighting the differences between C++ lambdas and the lambdas in languages based upon functional programs, went more deeply into the weeds than I had intended. I realized too late that it cried out for examples. The rules for declaring free variables (the member variables of the anonymous class) in C++ lambdas can seem contorted but most uses of them fall into one of a few simple types. In this post, I want to present three simple use cases of C++ lambdas, each demonstrating a different way to use free variables.","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/02/25/lambdas-typical-use-cases/"},"url":"/2017/02/25/lambdas-typical-use-cases/"}</script>
+{"url":"/2017/02/25/lambdas-typical-use-cases/","headline":"Lambdas: Typical use cases","dateModified":"2017-02-25T00:00:00-08:00","datePublished":"2017-02-25T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/02/25/lambdas-typical-use-cases/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"My last post, highlighting the differences between C++ lambdas and the lambdas in languages based upon functional programs, went more deeply into the weeds than I had intended. I realized too late that it cried out for examples. The rules for declaring free variables (the member variables of the anonymous class) in C++ lambdas can seem contorted but most uses of them fall into one of a few simple types. In this post, I want to present three simple use cases of C++ lambdas, each demonstrating a different way to use free variables.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -243,7 +246,7 @@
 
     </nav>
 
-    <p>&copy; 2020. All rights reserved.</p>
+    <p>&copy; 2021. All rights reserved.</p>
   </div>
 </div>
 
@@ -270,15 +273,14 @@
 <p>Perhaps the most common use of free variables, in all languages, is to pass in some parameters to guide the lambda’s algorithm.  For example, a filter function might be passed parameters specifying the filter range.  Here’s a simple example of a min/max filter over an integer vector:</p>
 
 <!-- highlight="5"-->
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="c1">// Copy-construct const values
-</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">filter</span> <span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">vec</span><span class="p">,</span> <span class="kt">int</span> <span class="n">minimum</span><span class="p">,</span> <span class="kt">int</span> <span class="n">maximum</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Copy-construct const values</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">filter</span> <span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">vec</span><span class="p">,</span> <span class="kt">int</span> <span class="n">minimum</span><span class="p">,</span> <span class="kt">int</span> <span class="n">maximum</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">res</span> <span class="p">{};</span>
   <span class="n">copy_if</span> <span class="p">(</span><span class="n">vec</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">vec</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">back_inserter</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
     <span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="k">auto</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">minimum</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&amp;&amp;</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="n">maximum</span><span class="p">;</span> <span class="p">});</span>
   <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The <code>[=]</code> lambda prefix specifies that all free variables in the lambda expression are copy-initialized from the surrounding context and never modified in the execution of the filter. The free variables <code>minimum</code> and <code>maxiumum</code> are initialized from the function parameters of the same name.</p>
 
@@ -289,15 +291,14 @@
 <p>Another common use case (although less common than copy-constructed immutables) is to update variables in the surrounding context. In this example,</p>
 
 <!-- highlight="5"-->
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="c1">// Reference mutable values
-</span><span class="kt">int</span> <span class="nf">accum</span> <span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">vec</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Reference mutable values</span>
+<span class="kt">int</span> <span class="nf">accum</span> <span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">vec</span><span class="p">)</span> <span class="p">{</span>
   <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="n">for_each</span><span class="p">(</span><span class="n">vec</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">vec</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span>
     <span class="p">[</span><span class="o">&amp;</span><span class="p">]</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span> <span class="n">sum</span> <span class="o">+=</span> <span class="n">v</span><span class="p">;</span> <span class="p">});</span>
   <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The <code>[&amp;]</code> lambda prefix specifies that all free variables in the lambda expression will be references to correspondingly-named variables in their surrounding context.  In this case, <code>sum</code> is used to retain the running accumulated sum across calls of the lambda.  The function then returns the accumulated total.</p>
 
@@ -308,16 +309,15 @@
 <p>A less common use case is a lambda that needs a local variable. The lambda syntax permits the declaration of locals that do not correspond to any variables in the containing context. An example of such a case is a function that, given a vector, returns a vector of (index, value) tuples, similar to Python’s <a href="https://docs.python.org/3/library/functions.html#enumerate"><code>enumerate</code></a> function:</p>
 
 <!-- highlight="6" -->
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="c1">// Mutable local
-</span><span class="k">using</span> <span class="n">vec_pair</span> <span class="o">=</span> <span class="n">vector</span><span class="o">&lt;</span> <span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">;</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Mutable local</span>
+<span class="k">using</span> <span class="n">vec_pair</span> <span class="o">=</span> <span class="n">vector</span><span class="o">&lt;</span> <span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">;</span>
 <span class="n">vec_pair</span> <span class="nf">enumerate</span><span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">vec</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">vec_pair</span> <span class="n">res</span> <span class="p">{};</span>
   <span class="n">transform</span> <span class="p">(</span><span class="n">vec</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">vec</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">back_inserter</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
     <span class="p">[</span><span class="n">ind</span><span class="o">=</span><span class="mi">0</span><span class="p">]</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span><span class="p">)</span> <span class="k">mutable</span> <span class="p">{</span> <span class="k">return</span> <span class="n">make_tuple</span> <span class="p">(</span><span class="n">ind</span><span class="o">++</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span> <span class="p">});</span>
   <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The <code>[ind=0]</code> lambda prefix defines a local variable <code>ind</code> whose type and initial value is determined by <code>=0</code>. <code>ind</code> is a member variable of the lambda object, unneeded outside that context. Note that unlike the other two cases, there is no variable <code>ind</code> declared in the surrounding context. Note also the <code>mutable</code> declaration; lambdas with private local variables are virtually the only use case that you will need to declare the lambda <code>mutable</code>. (The use of the <code>mutable</code> keyword in lambdas is unrelated to its distinct use as a <a href="http://en.cppreference.com/w/cpp/language/cv">qualifier for non-static member variables</a> of a class.)</p>
 
