@@ -7,7 +7,7 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
   <meta name="author" content="Arthur E. Kirkpatrick">
-  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018, 2019, 2020">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018, 2019, 2020, 2021">
 
   <!-- Enable responsiveness on mobile devices-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -58,7 +58,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Random access to long string bodies incurs cache misses" />
 <script type="application/ld+json">
-{"url":"/2017/06/29/rand-access-long-cache-misses/","headline":"Random access to long string bodies incurs cache misses","dateModified":"2017-06-29T00:00:00-07:00","datePublished":"2017-06-29T00:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/06/29/rand-access-long-cache-misses/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"As I described in the last post, shuffling the items in the source vector leaves the string handles in contiguous sequential order while introducing disorder into the sequence of string bodies. The NShuffled “data set” is really a family of 11 related data sets, differing in the fraction of their items that were shuffled. All sets start with the same vector src of 50,000 elements, then std::shuffle() is run on the first N items in the vector, where N ranges from 0 (no items shuffled) to 50,000 (all items shuffled) in increments of 5,000. All the data sets will have 37,500 (75% of 50,000) of their source elements copied to the result vector.","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"headline":"Random access to long string bodies incurs cache misses","dateModified":"2017-06-29T00:00:00-07:00","datePublished":"2017-06-29T00:00:00-07:00","url":"/2017/06/29/rand-access-long-cache-misses/","mainEntityOfPage":{"@type":"WebPage","@id":"/2017/06/29/rand-access-long-cache-misses/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"As I described in the last post, shuffling the items in the source vector leaves the string handles in contiguous sequential order while introducing disorder into the sequence of string bodies. The NShuffled “data set” is really a family of 11 related data sets, differing in the fraction of their items that were shuffled. All sets start with the same vector src of 50,000 elements, then std::shuffle() is run on the first N items in the vector, where N ranges from 0 (no items shuffled) to 50,000 (all items shuffled) in increments of 5,000. All the data sets will have 37,500 (75% of 50,000) of their source elements copied to the result vector.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -105,6 +105,10 @@
         
           
             <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
           
         
       

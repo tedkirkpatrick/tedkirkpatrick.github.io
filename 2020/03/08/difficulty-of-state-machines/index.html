@@ -7,7 +7,7 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
   <meta name="author" content="Arthur E. Kirkpatrick">
-  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018, 2019, 2020">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018, 2019, 2020, 2021">
 
   <!-- Enable responsiveness on mobile devices-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -58,7 +58,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="How hard is it to implement replicated state machines?" />
 <script type="application/ld+json">
-{"url":"/2020/03/08/difficulty-of-state-machines/","headline":"How hard is it to implement replicated state machines?","dateModified":"2020-03-08T00:00:00-08:00","datePublished":"2020-03-08T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/03/08/difficulty-of-state-machines/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"Note: Over the past eight months, I have been working with the code for TenCent’s Phxpaxos, an open-source implementation of replicated state-machines, with consensus enforced by Paxos. I have learned a lot from studying this code and from comparing it with the more focussed libpaxos, which does not include state machine code. Recently I have isolated several topics well-adapted to the smaller size of blog posts and I will be adding them here. Distributed systems are often made highly available by implementing them as replicated state machines, coordinating their operations via a consensus algorithm such as Paxos. Two popular tutorials from the 1990s describe the basic theory but how hard is it to implement this theory? The code from the Phxpaxos project suggests that the general solution requires more work than it might seem.","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"headline":"How hard is it to implement replicated state machines?","dateModified":"2020-03-08T00:00:00-08:00","datePublished":"2020-03-08T00:00:00-08:00","url":"/2020/03/08/difficulty-of-state-machines/","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/03/08/difficulty-of-state-machines/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"Note: Over the past eight months, I have been working with the code for TenCent’s Phxpaxos, an open-source implementation of replicated state-machines, with consensus enforced by Paxos. I have learned a lot from studying this code and from comparing it with the more focussed libpaxos, which does not include state machine code. Recently I have isolated several topics well-adapted to the smaller size of blog posts and I will be adding them here. Distributed systems are often made highly available by implementing them as replicated state machines, coordinating their operations via a consensus algorithm such as Paxos. Two popular tutorials from the 1990s describe the basic theory but how hard is it to implement this theory? The code from the Phxpaxos project suggests that the general solution requires more work than it might seem.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -105,6 +105,10 @@
         
           
             <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
           
         
       

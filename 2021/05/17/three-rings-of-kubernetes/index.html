@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
+  <meta name="author" content="Arthur E. Kirkpatrick">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018, 2019, 2020, 2021">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Three rings of abstraction in Kubernetes &middot; All my marbles in one place
+    
+  </title>
+
+    <!-- Asychronously-loaded JavaScript -->
+    
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66576928-4', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Three rings of abstraction in Kubernetes" />
+<meta name="author" content="Ted Kirkpatrick" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A common analogy for Kubernetes presents it as “the operating system for microservices”, identifying Kubernetes as a kind of operating system. I don’t think this analogy is wrong but I do think it’s underinformative, leaving the key question unanswered: What abstractions does this “operating system” provide? I suggest that unlike the more focused set of abstractions provided by the classic Unix model, the abstractions of Kubernetes can be grouped into three concentric rings. This highlights the different kinds of benefits Kubernetes affords and clarifies the decisions an organization must make when adopting Kubernetes." />
+<meta property="og:description" content="A common analogy for Kubernetes presents it as “the operating system for microservices”, identifying Kubernetes as a kind of operating system. I don’t think this analogy is wrong but I do think it’s underinformative, leaving the key question unanswered: What abstractions does this “operating system” provide? I suggest that unlike the more focused set of abstractions provided by the classic Unix model, the abstractions of Kubernetes can be grouped into three concentric rings. This highlights the different kinds of benefits Kubernetes affords and clarifies the decisions an organization must make when adopting Kubernetes." />
+<meta property="og:site_name" content="All my marbles in one place" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-05-17T00:00:00-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Three rings of abstraction in Kubernetes" />
+<script type="application/ld+json">
+{"headline":"Three rings of abstraction in Kubernetes","dateModified":"2021-05-17T00:00:00-07:00","datePublished":"2021-05-17T00:00:00-07:00","url":"/2021/05/17/three-rings-of-kubernetes/","mainEntityOfPage":{"@type":"WebPage","@id":"/2021/05/17/three-rings-of-kubernetes/"},"author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A common analogy for Kubernetes presents it as “the operating system for microservices”, identifying Kubernetes as a kind of operating system. I don’t think this analogy is wrong but I do think it’s underinformative, leaving the key question unanswered: What abstractions does this “operating system” provide? I suggest that unlike the more focused set of abstractions provided by the classic Unix model, the abstractions of Kubernetes can be grouped into three concentric rings. This highlights the different kinds of benefits Kubernetes affords and clarifies the decisions an organization must make when adopting Kubernetes.","@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/comment-policy/">Comment policy</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	   
+	    <a href="/tag/Python/">Python</a>,
+	  
+        
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
+	   
+	    <a href="/tag/Big data/">Big data</a>,
+	  
+        
+	   
+	    <a href="/tag/Soft skills/">Soft skills</a>,
+	  
+        
+	   
+	    <a href="/tag/Statistics/">Statistics</a>,
+	  
+        
+	   
+	    <a href="/tag/Experimental design/">Experimental design</a>,
+	  
+        
+	   
+	    <a href="/tag/Rhetoric/">Rhetoric</a>,
+	  
+        
+	   
+	    <a href="/tag/Admin/">Admin</a>,
+	  
+        
+	  	    
+            <a href="/tag/Distributed systems/">Distributed systems</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2021. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Three rings of abstraction in Kubernetes</h1>
+  <span class="post-date">17 May 2021
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/Distributed systems">Distributed systems</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>A common analogy for Kubernetes presents it as “the operating system
+for microservices”, identifying Kubernetes
+as a kind of operating system. I don’t think this analogy is wrong but
+I do think it’s underinformative, leaving the key question unanswered:
+What <em>abstractions</em> does this “operating system” provide?  I suggest
+that unlike the more focused set of abstractions provided by the
+classic Unix model, the abstractions of Kubernetes can be grouped into
+three concentric rings. This highlights the different
+kinds of benefits Kubernetes affords and clarifies the decisions an
+organization must make when adopting Kubernetes.</p>
+
+<h2 id="a-mercifully-brief-history-of-operating-systems-and-their-textbooks">A mercifully brief history of operating systems and their textbooks</h2>
+
+<p>The description of an operating system in terms of its supported
+abstractions took time to develop. Early textbooks emphasized that
+operating systems provided machine independence and resource
+sharing. “Machine independence” in these early days might best be
+thought of as device independence.  Operating systems insulated the
+developer from specific devices within the hardware families offered
+by a given vendor but didn’t provide vendor independence. System
+services exposed a large number of implementation details, requiring
+the application programmer to manage them. For example,
+<a href="https://en.wikipedia.org/wiki/MVS">IBM’s MVS/370</a> operating system
+featured a welter of file access methods, with acronyms such as
+<a href="https://www.ibm.com/docs/no/zos-basic-skills?topic=set-what-are-access-methods">BPAM, QSAM, BDAM, ISAM, and VSAM</a>,
+each with its own strengths, weaknesses, and tuning parameters.</p>
+
+<p>Unix was the first widely-available system to take a different
+approach, offering a select set of higher-level abstractions
+substantially above the level of the underlying hardware. The CPU was
+abstracted into a process, a coherent set of services such as file
+descriptors, memory space control, and signals. These services
+operated at a distinctly more abstract level than anything provided by
+the underlying hardware. The input and output devices were abstracted
+into a file system. Unlike the many distinct access methods provided
+by systems such as MVS, Unix emphasized the commonalities supported by
+different hardware and made them as similar as possible. An
+application sequentially writing text made the same system calls
+regardless of whether the text was going to a terminal, a tape, or a
+disk.</p>
+
+<p>From this perspective, the operating system implements an <em>abstract
+machine</em> that is more systematic than the actual machine: regular,
+consistent, simple, operating at a level meaningful to application
+programmers. This abstract machine was implemented by the kernel.</p>
+
+<p>The development of this understanding was reflected in early
+textbooks.  I believe that the first text I saw that presented
+operating systems in terms of their support for an abstract machine
+was the first edition of Andrew Tannenbaum’s
+<a href="https://en.wikipedia.org/wiki/Modern_Operating_Systems">Modern Operating Systems</a>.</p>
+
+<p>If Kubernetes is an operating system, what abstractions does it
+implement? What abstract machine model does it provide?  I suggest
+that the scope of the term “Kubernetes abstract machine” is broader
+than that of older operating systems, comprising three concentric rings.</p>
+
+<h2 id="innermost-ring-abstractions-implemented-by-the-control-plane">Innermost ring: abstractions implemented by the control plane</h2>
+
+<p>The innermost ring of Kubernetes’s abstractions is directly
+implemented in the control plane, supported by the highly-available
+consistent store <a href="https://etcd.io/">etcd</a>.  Their specifications are
+located in the <code class="language-plaintext highlighter-rouge">core</code> API group. A sampling of these abstractions includes:</p>
+
+<ul>
+  <li>Those for the underlying hardware, such as 
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#node-v1-core">Node</a>
+and <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#volume-v1-core">Volume</a>.</li>
+  <li>Those for applications and their interconnections, such as <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#service-v1-core">Service</a>
+and <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">Deployment</a>.</li>
+  <li>Those for processes and groups of processes, such as
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#replicationcontroller-v1-core">ReplicationController</a>,
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#pod-v1-core">Pod</a>, and
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#container-v1-core">Container</a>.</li>
+  <li>Those for external and internal signals, such as <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#event-v1-core">Event</a>.</li>
+  <li>Those for security, isolation, and configuration such as
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#secret-v1-core">Secret</a>,
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#namespace-v1-core">Namespace</a>, and
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#configmap-v1-core">ConfigMap</a>.</li>
+</ul>
+
+<h3 id="inner-ring-design-patterns">Inner ring design patterns</h3>
+
+<p>Additionally, there are two important meta-abstractions, design patterns
+fundamental to the control plane:</p>
+
+<ul>
+  <li>The <a href="https://engineering.bitnami.com/articles/a-deep-dive-into-kubernetes-controllers.html">controller loop</a></li>
+  <li>The Kubernetes API, <a href="https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec">specified in
+OpenAPI syntax</a>
+and exemplified in the
+<a href="https://github.com/kubernetes/client-go">client library for Go</a></li>
+</ul>
+
+<h3 id="purpose-of-the-inner-ring">Purpose of the inner ring</h3>
+
+<p>Together, these core abstractions define the basic objects managed by
+Kubernetes and the operations that might be performed on them. They
+establish the fundamental model of the system, such as reconciling the
+observed state to the desired state.  Their implementations run on nodes which are
+often reserved for their exclusive use and typically in a
+high-availability configuration of multiple replicas coordinating via
+distributed consensus. The choices embodied in these designs ripple
+through the entire system, touching every facet of a Kubernetes
+installation.</p>
+
+<h3 id="correspondence-to-operating-systems">Correspondence to operating systems</h3>
+
+<p>The inner ring of Kubernetes abstractions corresponds closely to the
+kernel of an operating system: critical for performance, availability,
+and security, while establishing the basic resources that will be
+interconnected by the middle ring.</p>
+
+<h2 id="middle-ring-interfaces-with-multiple-implementations">Middle ring: interfaces with multiple implementations</h2>
+
+<p>The middle ring comprises systems that are essential to a cluster,
+similar to the inner ring, but with the difference that Kubernetes
+merely specifies interfaces, which in turn have multiple
+implementations.  In many cases, Google considered these systems
+distinct from orchestration and so did not package them with
+Kubernetes. Over time, the interfaces for these systems became
+codified into standards.</p>
+
+<h3 id="dns">DNS</h3>
+
+<p>DNS lookup is the first step of Kubernetes service
+discovery, using
+<a href="https://github.com/kubernetes/dns/blob/master/docs/specification.md">specified DNS queries</a>.
+This is most commonly implemented by installing
+<a href="https://coredns.io/plugins/kubernetes/">CoreDNS with the <em>kubernetes</em> plugin</a>
+in the cluster. On a cloud, clients might use the
+<a href="https://github.com/kubernetes-sigs/external-dns">cloud provider’s DNS</a> instead.</p>
+
+<h3 id="the-i-specifications">The “**I” specifications</h3>
+
+<p>Many of the middle ring specifications are named according to an “**I”
+convention, a three-letter acronym ending with “I” for “Interface”.
+These specify the interfaces for basic operations within the cluster:</p>
+
+<ul>
+  <li><a href="https://github.com/containernetworking/cni">Container Networking interface (CNI)</a></li>
+  <li><a href="https://github.com/container-storage-interface/spec/blob/master/spec.md">Container Storage Interface (CSI)</a></li>
+  <li><a href="https://github.com/kubernetes/cri-api">Container Runtime Interface (CRI)</a>.
+Clusters often install the open-source (thus the “-O suffix)
+<a href="https://cri-o.io/">CRI-O</a> implementation, which in turn relies upon
+the
+<a href="https://github.com/opencontainers/runtime-spec">Open Container Interface (OCI) runtime</a>
+specification.
+Alternatives that implement similar functionality but do not
+entirely match the CRI specification are
+<a href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/"><code class="language-plaintext highlighter-rouge">containerd</code>, Docker, or other runtimes</a>.</li>
+</ul>
+
+<p>Note that although the SMI specification for service meshes matches the
+above “**I” naming, as an optional feature it belongs in
+the next section as part of the outer ring.</p>
+
+<p>The “**I” specifications are not necessarily the optimal way to
+implement their respective features. Many components offer a
+**I-compatible interface providing a subset of their features and an
+extended interface providing more control. The “**I” specifications codify
+a standardized common core of features, ensuring some degree of
+plug-and-play between offerings but not total compatibility.</p>
+
+<h3 id="cluster-ingress">Cluster ingress</h3>
+
+<p>Any real cluster will require an agent that provides external clients
+with controlled access. As Kubernetes has matured, it has offered
+increasingly flexible approaches to specifying such an agent and the
+operations it might perform on incoming traffic:</p>
+
+<ul>
+  <li>The <a href="https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer">type LoadBalancer Service</a></li>
+  <li>The <a href="https://kubernetes.io/docs/concepts/services-networking/ingress/">Ingress</a>
+resource and associated
+<a href="https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/">Ingress controller</a></li>
+  <li>Service mesh ingress (service meshes are described in the
+outer ring below)</li>
+</ul>
+
+<p><a href="/2021/05/18/external-interfaces-to-kubernetes/">I distinguish these approaches</a>
+in a later post but in terms of the three rings all forms of ingress
+are equivalent. They are all interfaces from the cluster to an agent,
+often provided by a cloud vendor, connecting external clients to
+services inside the cluster.</p>
+
+<p>Note that this section describes the <em>external</em> interface, connecting
+the cluster to the external agent managing client requests. This is
+distinct from the YAML files describing the Service or Ingress, which
+comprise the <em>internal</em> interface, describing the external agent to
+the cluster and the services inside it.</p>
+
+<h3 id="middle-ring-design-patterns">Middle ring design patterns</h3>
+
+<p>The middle ring also adds an
+important design pattern, the
+<a href="https://kubernetes.io/docs/concepts/extend-kubernetes/operator/">operator pattern</a>. This
+pattern extends the controller pattern to manage more demanding
+resources, such as services with extensive state or those requiring
+more elaborate administration, such as backups or log rotation.  The
+distinction between a Controller and an Operator is qualitative, not
+hard and fast. I have placed the operator pattern in the middle ring
+because it is most typically used for the more complicated components
+in this ring, whereas the basic controller pattern suffices for the
+simpler components of the inner ring.</p>
+
+<h3 id="implementations-for-components-in-the-middle-ring">Implementations for components in the middle ring</h3>
+
+<p>The implementations for the above interfaces can be provided in any of
+several ways.</p>
+
+<p>Vendors of managed Kubernetes services in the cloud typically provide
+default implementations of these interfaces. Their control loops are
+collected into a separate
+<a href="https://kubernetes.io/docs/concepts/overview/components/#cloud-controller-manager"><code class="language-plaintext highlighter-rouge">cloud-controller-manager</code></a>,
+isolating the vendor-specific controllers from the core
+vendor-independent Kubernetes controllers in the
+<a href="https://kubernetes.io/docs/concepts/overview/components/#kube-controller-manager"><code class="language-plaintext highlighter-rouge">kube-controller-manager</code></a>. Some
+of these cloud-vendor-provided components can be overridden by the
+client but others may be required.</p>
+
+<p>Packaged distributions of Kubernetes designed to be entirely
+administered by the user, such as
+<a href="https://www.openshift.com/">OpenShift</a>,
+<a href="https://microk8s.io/">microk8s</a>, <a href="https://kind.sigs.k8s.io/">kind</a>,
+and <a href="https://k3s.io/">k3s</a>, typically include implementations of all
+these components. The user can override any of these choices with a
+preferred alternative.</p>
+
+<p>Finally, if the user wishes to define their own configuration, they
+must choose implementations for every interface in this middle
+ring. This is a lot of work but obviously offers the most control.</p>
+
+<h3 id="purpose-of-the-middle-ring-of-abstractions">Purpose of the middle ring of abstractions</h3>
+
+<p>The middle ring of abstractions comprises all the components that are
+essential to a cluster but for which there are many possible valid
+implementations.  For example, every cloud vendor has their own
+implementation of DNS and networking, optimized for high
+throughput in large datacentres.  On the other hand, distributions of
+Kubernetes aimed at edge and IoT hardware, such as
+<a href="https://k3s.io/">k3s</a>, may instead opt to implement networking with
+an emphasis on low power consumption.</p>
+
+<p>The Kubernetes approach to this middle layer provides stable,
+vendor-independent interfaces for the applications to access
+networking and other essential components while allowing the platform
+architect to pick the implementation most-suited to their use case. No
+single implementation could possibly suffice so instead Kubernetes
+standardizes the interface all implementations must satisfy.</p>
+
+<h3 id="correspondence-to-operating-systems-1">Correspondence to operating systems</h3>
+
+<p>The middle ring of Kubernetes abstractions corresponds very roughly to
+the device drivers of an operating system. Both isolate the details of
+the environment from the algorithms controlling and responding to that
+environment. Beyond this, the two are very different. Where drivers
+are low level and primitive, the components of the Kubernetes middle
+ring are large, sophisticated systems with many subcomponents of their
+own. Many run in whole or part as pods managed by Kubernetes
+itself. They are more properly seen as wrapped around the Kubernetes
+core, rather than a primitive level beneath it.</p>
+
+<h2 id="outer-ring-prevalent-tools">Outer ring: Prevalent tools</h2>
+
+<p>The outermost ring contains entirely optional items.  Optional in
+theory, at least. In practice, when an organization commits to “moving
+to Kubernetes”, to provide a genuinely functional application platform
+they must adopt versions of these services. There are no standards set
+by Kubernetes itself, but there are both standardized interfaces
+defined by industry consortia and de facto standards, products that
+have become so prevalent that their interfaces have been adopted by
+their competition.</p>
+
+<p>In most organizations, these items are the responsibility of the
+platform team, as with the the other two rings.</p>
+
+<h3 id="performance-monitoring-and-observability">Performance monitoring and observability</h3>
+
+<p>Both the operations staff and the development staff (who may overlap
+in some organizations) will need tools for monitoring the system
+state, monitoring security, and delving into the detailed state to
+resolve problems and defects. Detailed runtime records will also be
+useful for marketing and for planning service extensions.</p>
+
+<p>Application performance monitoring (APM) and observability is a large,
+diverse field with ongoing controversies about best practice but the
+general structure is well-agreed. A cluster will need:</p>
+
+<ul>
+  <li>Tools for gathering metrics, logs, traces, and other data in real time</li>
+  <li>Tools for storing and querying that detailed data</li>
+  <li>Tools for displaying aggregate data to the operations staff
+(“dashboards”)</li>
+</ul>
+
+<p>Within this structure, there are widely-varying
+approaches. Many of the following only solve part of the general
+problem and so actual clusters will include some combination.</p>
+
+<h4 id="vendor-based-services">Vendor-based services</h4>
+
+<p>Cloud vendors offer solutions specific to their systems. These may not
+match the conventions supported by other vendors or industry standards, so
+multicloud systems will require integration of different data formats.</p>
+
+<h4 id="independent-cloud-based-services">Independent cloud-based services</h4>
+
+<p>Many companies offer cloud-based services performing these
+functions. The cluster being monitored sends its data to the
+monitoring service, which processes the data and
+provides user interfaces for monitoring and querying it. Such
+services include <a href="https://www.datadoghq.com/">Datadog</a>,
+<a href="https://www.splunk.com/">Splunk</a>,
+<a href="https://www.honeycomb.io/">Honeycomb</a>,
+<a href="https://newrelic.com/">New Relic</a>,
+<a href="https://lightstep.com/">Lightstep</a>, and
+<a href="https://glasnostic.com/product/kubernetes">Glasnostics</a>.</p>
+
+<h4 id="in-cluster-tools">In-cluster tools</h4>
+
+<p>Platform architects may implement their own monitoring and
+observability services using open-source tools. Widely-used tools
+include:</p>
+
+<ul>
+  <li><a href="https://prometheus.io/">Prometheus</a> for gathering metrics</li>
+  <li><a href="https://grafana.com/">Grafana</a> for displaying Prometheus metrics and other data</li>
+  <li><a href="https://www.elastic.co/what-is/elk-stack">ELK stack</a> for collecting and querying logs</li>
+  <li><a href="https://www.jaegertracing.io/">Jaeger</a> for tracing</li>
+</ul>
+
+<p>This list is just a sample. Competing tools exist for most of these applications.</p>
+
+<h4 id="standards">Standards</h4>
+
+<p>The <a href="https://opentelemetry.io/">OpenTelemetry</a> consortium is
+developing a common standard for metrics, logs, and traces. This
+ambitious standard is designed to provide a common basis for all three
+streams, allowing a platform team to mix underlying libraries and
+provide a consistent API for their applications teams. If the
+standard becomes widely-adopted, it will greatly simplify the task of
+combining these streams.</p>
+
+<h3 id="service-meshes">Service meshes</h3>
+
+<p>As of early 2021, Service meshes appear to be widely discussed and
+have diverse competing implementations (there are
+<a href="https://landscape.cncf.io/card-mode?category=service-mesh&amp;grouping=category">ten meshes in the CNCF Landscape</a>
+alone) but are not widely adopted in production.  The adoption rate will
+surely increase in the next year or two.</p>
+
+<p>Some cloud vendors provide branded versions
+(<a href="https://aws.amazon.com/app-mesh/">AWS App Mesh</a>,
+<a href="https://cloud.google.com/service-mesh/docs/overview">Google Anthos Service Mesh</a>,
+<a href="https://www.alibabacloud.com/product/servicemesh">Alibaba Cloud Service Mesh</a>),
+while others support multiple third-party meshes
+(<a href="https://docs.microsoft.com/en-us/azure/aks/servicemesh-about">supported meshes on Azure AKS</a>). Regardless
+of the cloud vendor’s offerings, an organization can choose to install
+any mesh that they consider well-matched to their requirements. The
+mesh designs are compatible with any Kubernetes implementation.</p>
+
+<p>Mesh vendors are collaborating on an interface standard, the
+<a href="https://smi-spec.io/">Service Mesh Interface (SMI)</a>.  As with the
+“**I” interfaces in the middle ring, the SMI supports a common
+subset of mesh features. If you wish to use all the features of your
+mesh, you will have to supplement SMI with vendor-specific
+requests. The SMI is under active development though, supporting an
+increasing range of common mesh features.</p>
+
+<h3 id="messaging--queueing">Messaging / queueing</h3>
+
+<p>The final widely-used component of Kubernetes clusters is a queuing or
+messaging system. The architectures for such a component are
+even more diverse than those for performance monitoring or meshes.  An
+organization might well adopt several different architectures, sometimes
+even in the same cluster.</p>
+
+<p>Open-source systems for messaging and queueing include
+<a href="https://kafka.apache.org/">Kafka</a>,
+<a href="https://vectorized.io/">RedPanda</a>, <a href="https://nats.io/">NATS</a>, and
+<a href="https://www.rabbitmq.com/">RabbitMQ</a>.
+Vendor-specific services include
+<a href="https://aws.amazon.com/sqs/">Amazon SQS</a>,
+<a href="https://cloud.google.com/pubsub/docs/overview">Google PubSub</a>,
+<a href="https://azure.microsoft.com/en-us/services/service-bus/">Azure Service Bus</a>,
+and
+<a href="https://www.alibabacloud.com/help/doc-detail/27414.htm?spm=a2c63.l28256.a3.10.63e0747dPrONzn">Alibaba MNS</a>. There
+are many more of each type; this list is just a sample.</p>
+
+<p>The messaging/queuing component lies on the boundary between
+applications and platform. Application designers may choose an
+approach specific to their needs. Nonetheless, I place them in this
+ring because most often one or more queuing services are supported by
+the platform team for use by application designers, as a default if
+not a prescribed approach.</p>
+
+<h3 id="purpose-of-the-outer-ring">Purpose of the outer ring</h3>
+
+<p>The outer ring of abstractions is the most diverse, sharing the common
+thread of deep connectedness to applications. Metrics and traces
+record operations at the application level, requiring annotations by
+the application.  Service meshes route traffic between application
+services, often rewriting application-specified routes. Messaging and
+queuing systems interconnect services and must be selected and tuned
+to meet application service level objectives. These abstractions of the
+outer ring form the most direct interface between the platform and
+applications running upon it.</p>
+
+<h3 id="correspondence-to-operating-systems-2">Correspondence to operating systems</h3>
+
+<p>The outer ring of Kubernetes abstractions corresponds to the
+system-level services of an operating system such as
+<a href="https://en.wikipedia.org/wiki/Systemd">systemd</a> and
+<a href="https://en.wikipedia.org/wiki/Syslog">syslog</a> that run as processes
+atop the kernel. At this level, the notion of an “abstract machine”
+seems less useful and it makes more sense to consider these as
+services common to all applications and that are often best addressed
+with a single implementation supported by the systems staff rather
+than having every application implement its own version. The parallels
+between these operating system services and the services in the
+Kubernetes outer ring are straightforward.</p>
+
+<h2 id="how-might-we-use-this-taxonomy">How might we use this taxonomy?</h2>
+
+<p>For me, the first benefit of formulating this taxonomy is the way it
+orders the apparent chaos of the Kubernetes environment, which
+otherwise can appear as a slurry of words and acronyms with vague or
+indiscernible relationships. Assigning all these pieces to larger
+categories, with the categories themselves forming a broader whole,
+gives an immediate sense of each piece’s role. Knowing where something lies
+gives you clues about what it does.</p>
+
+<p>Distinguishing the components consistently implemented by the Kubernetes
+control plane, such as Nodes and Pods, from the components that may
+vary with cloud provider, such as networking or DNS, locates the
+cluster within a cloud vendor’s documentation.  Need to understand how
+your cluster’s applications are made externally visible? Read your
+cloud vendor’s documentation, because DNS and ingress are ultimately
+provided by the vendor.</p>
+
+<p>This taxonomy also highlights why setting up a Kubernetes cluster is
+so much work. There are a <em>lot</em> of pieces, many of which are complex
+systems in their own right. The three rings clarify why so many
+organizations find value in the managed systems offered by cloud
+vendors and packaged “Kubernetes-in-a-bottle” distributions. Let
+someone else make the hard decisions of systems integration!</p>
+
+<p>Describing Kubernetes as a “cluster operating system” doesn’t tell us
+enough. Viewing it in terms of its many abstractions is far more informative.</p>
+
+
+</div>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+this.page.url = "http://kirkpatricktech.com/2021/05/17/three-rings-of-kubernetes/";
+//this.page.identifier = "/2021/05/17/three-rings-of-kubernetes";
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://kirkpatricktech-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
+  </body>
+</html>

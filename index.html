@@ -7,7 +7,7 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
   <meta name="author" content="Arthur E. Kirkpatrick">
-  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018, 2019, 2020">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018, 2019, 2020, 2021">
 
   <!-- Enable responsiveness on mobile devices-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -57,7 +57,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Home" />
 <script type="application/ld+json">
-{"url":"/","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","name":"All my marbles in one place","@type":"WebSite","@context":"https://schema.org"}</script>
+{"headline":"Home","url":"/","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","name":"All my marbles in one place","@type":"WebSite","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -104,6 +104,10 @@
         
           
             <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
           
         
       
@@ -255,6 +259,69 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="/2021/05/18/external-interfaces-to-kubernetes/">
+        The <i>external</i> interfaces to Kubernetes ingress
+      </a>
+    </h1>
+    
+    <span class="post-date">18 May 2021
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/Distributed systems">Distributed systems</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>Defining a Kubernetes ingress seems simple enough: Define a YAML file
+and you’re good. But that only defines the interface from services <em>inside</em> the
+cluster to whatever external agent is connecting external client
+requests to cluster services.  It says nothing about the interface
+from that external agent to the Kubernetes control and data
+planes. If you are building a cloud provider, how do you connect your
+external load balancer to Kubernetes clusters inside your cloud?  If
+you are configuring an entire on-prem cluster from scratch, how
+do you set up access to the Internet?</p>
+ <a href="/2021/05/18/external-interfaces-to-kubernetes/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2021/05/17/three-rings-of-kubernetes/">
+        Three rings of abstraction in Kubernetes
+      </a>
+    </h1>
+    
+    <span class="post-date">17 May 2021
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/Distributed systems">Distributed systems</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>A common analogy for Kubernetes presents it as “the operating system
+for microservices”, identifying Kubernetes
+as a kind of operating system. I don’t think this analogy is wrong but
+I do think it’s underinformative, leaving the key question unanswered:
+What <em>abstractions</em> does this “operating system” provide?  I suggest
+that unlike the more focused set of abstractions provided by the
+classic Unix model, the abstractions of Kubernetes can be grouped into
+three concentric rings. This highlights the different
+kinds of benefits Kubernetes affords and clarifies the decisions an
+organization must make when adopting Kubernetes.</p>
+ <a href="/2021/05/17/three-rings-of-kubernetes/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="/2021/04/18/mentors-not-supervisors/">
         A manager cannot be a mentor&mdash;but should still give advice
       </a>
@@ -365,69 +432,6 @@ argument to smaller but more frequent latencies provides even more insight into 
 design.</p>
 
  <a href="/2020/07/24/extending-the-tail-at-scale/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2020/06/20/guarantees-vs-methods/">
-        Guarantees vs. metrics: What the designers intend, what the clients see
-      </a>
-    </h1>
-    
-    <span class="post-date">20 Jun 2020
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Distributed systems">Distributed systems</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>In my
-<a href="/2019/12/31/design-space-2020/">distributed systems design space</a>, I
-distinguish guarantees from metrics. A <em>guarantee</em> is a property a
-system is designed to ensure in all cases, such as consistency between
-replicas of a data store, or the number of copies written to
-persistent storage before a result is returned to the client. In
-contrast, a <em>metric</em> is a measurable quantity of a system, such as
-median latency or annual availability. The guarantee/metric
-distinction arises from the designer’s perspective and clearly
-separates the two categories. But when we consider the categories
-instead from the perspective of the system’s clients, this distinction
-becomes fuzzier. Is it real? Is it valuable?</p>
- <a href="/2020/06/20/guarantees-vs-methods/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2020/04/03/flambloozlement/">
-        Flambloozlement and the student enthusiasm for crunch mode
-      </a>
-    </h1>
-    
-    <span class="post-date">03 Apr 2020
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Course design">Course design</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>How do students assess the value of what they learn in class? On the
-one hand, years of attending school have made them sophisticated
-judges of teaching effectiveness: They know whether an approach is
-working for their circumstances and purposes—although these
-may diverge far from the instructor’s goals. At the same time, students
-can harbour a curious enthusiasm for a course precisely because it
-overhwelms them.  Why do they respond this way?</p>
- <a href="/2020/04/03/flambloozlement/">more ...</a>
   </div>
   
 </div>
