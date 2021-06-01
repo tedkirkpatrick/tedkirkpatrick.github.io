@@ -58,7 +58,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Home" />
 <script type="application/ld+json">
-{"headline":"Home","url":"/page2/","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","@type":"WebPage","@context":"https://schema.org"}</script>
+{"url":"/page2/","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","@type":"WebPage","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -260,6 +260,43 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="/2020/07/24/extending-the-tail-at-scale/">
+        Extending "The Tail at Scale"
+      </a>
+    </h1>
+    
+    <span class="post-date">24 Jul 2020
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/Distributed systems">Distributed systems</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p><em>A companion post goes into more detail on
+  <a href="/2020/09/09/latency-basics.html">constructing the percentile function from a density function</a>.</em></p>
+
+<p>In their classic article,
+<a href="https://research.google/pubs/pub40801/">“The Tail at Scale”</a>, Dean
+and Barroso formulate an important principle of service design: Reduce
+the variance of the latency for low-level services because that has a
+large impact on the performance of their callers.  This effect arises
+due to the high number of subservices called by a typical main
+service, making it likely that at least one subservice will have an
+extremely slow response, holding back the main service. In their article, Dean and
+Barroso focus on the very largest latencies but extending their
+argument to smaller but more frequent latencies provides even more insight into service
+design.</p>
+
+ <a href="/2020/07/24/extending-the-tail-at-scale/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="/2020/06/20/guarantees-vs-methods/">
         Guarantees vs. metrics: What the designers intend, what the clients see
       </a>
@@ -390,33 +427,6 @@ lot of time on topics such as engineering for resilience and
 automating production processes. It turns out that applying those big
 topics in the small matters of my life is a big challenge.</p>
  <a href="/2020/02/13/systems-resilience-in-daily-life/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2020/02/11/meaning-of-distributed-systems/">
-        "Distributed Systems" are not what they used to be
-      </a>
-    </h1>
-    
-    <span class="post-date">11 Feb 2020
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Distributed systems">Distributed systems</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>The phrase “distributed systems” has had several meanings over the
-last 50 years, from a mathematical topic to a style of
-engineering practice to a suite of technologies. What can
-we learn from these changes and how do we reconcile these
-perspectives?</p>
- <a href="/2020/02/11/meaning-of-distributed-systems/">more ...</a>
   </div>
   
 </div>

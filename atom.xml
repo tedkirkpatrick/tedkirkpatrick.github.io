@@ -4,13 +4,220 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2021-05-18T14:22:10-07:00</updated>
+ <updated>2021-05-31T20:28:30-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>"Opinionated" design as design rationale</title>
+   <link href="/2021/05/31/opinionated-designs/"/>
+   <updated>2021-05-31T00:00:00-07:00</updated>
+   <id>/2021/05/31/opinionated-designs</id>
+   <content type="html">&lt;p&gt;I see increasing use of the phrase “opinionated design”, frequent
+enough to risk it becoming a
+&lt;a href=&quot;https://www.thoughtco.com/vogue-word-1692599&quot;&gt;vogue word&lt;/a&gt; in our
+field. What makes a design “opinionated”?  If someone declares a
+design to be “opinionated”, what might that tell you about it?  How
+would a designer justify that claim?&lt;/p&gt;
+
+&lt;h2 id=&quot;opinionated-designs-select-one-approach-and-favour-it&quot;&gt;Opinionated designs select one approach and favour it&lt;/h2&gt;
+
+&lt;p&gt;The notion of opinionated designs became a common discussion topic
+over ten years ago. The Stack Overflow question,
+&lt;a href=&quot;https://stackoverflow.com/questions/802050/what-is-opinionated-software&quot;&gt;“What is opinionated software?”&lt;/a&gt;,
+was posted in 2009 and had contributions as recently as 2014
+before being locked.&lt;/p&gt;
+
+&lt;p&gt;In 2014 Steve Bradley approached the question from a more
+design-oriented view,
+&lt;a href=&quot;https://vanseodesign.com/web-design/opinionated-design-make-decisions-leave-fewer-options/&quot;&gt;“Opinionated design—make more decisions and leave fewer options”&lt;/a&gt;.
+A succinct summary that agrees with all these perspectives was
+provided by Jason Skowronoski in 2019, 
+&lt;a href=&quot;https://dev.to/heroku/opinionated-or-not-choosing-the-right-framework-for-the-job-4e9f&quot;&gt;“Opinionated or Not—Choosing the Right Framework for the Job”&lt;/a&gt;,
+featuring this pull quote:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Ultimately, being opinionated means the framework works best as it
+was originally intended, and varying from it can sometimes only be
+done with great pain.
+— &lt;a href=&quot;https://dev.to/heroku/opinionated-or-not-choosing-the-right-framework-for-the-job-4e9f&quot;&gt;Opinionated or not&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The above articles focus on frameworks rather than
+languages, but the description can also be applied to languages. For
+example, Perl revels in its multiple approaches to solving any given
+problem, while Python emphasizes a single, “Pythonic” approach.&lt;/p&gt;
+
+&lt;p&gt;So it seems there is a widely-agreed meaning to the term. Yet knowing
+this meaning still leaves much unspecified. When is “opinionated” the
+best way to characterize a design? How pervasive must the
+opinion be? For that matter, what are some &lt;em&gt;other&lt;/em&gt; ways to
+characterize a design?&lt;/p&gt;
+
+&lt;h2 id=&quot;design-rationales-characterize-a-design&quot;&gt;Design rationales characterize a design&lt;/h2&gt;
+
+&lt;p&gt;The background to the choices underlying a design’s is called a &lt;em&gt;design
+rationale&lt;/em&gt;. In academic CS contexts, the phrase acquired the more
+specialized meaning of a highly detailed accounting that links every decision
+to its underlying rationale. This description is exemplified by the
+current (as of May 2021)
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Design_rationale&quot;&gt;Wikipedia page for design rationale&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;For this post, I am using a broader meaning, featuring 
+high-level discussions of the broad principles underlying a
+design. This definition of design rationale is closer to how the
+phrase is used by user experience (UX) designers.
+Rania Glass captures the purpose of this
+design-thinking-oriented style:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;This is your goal for your audience when articulating a design
+rationale: describe the design in a way that clarifies things that
+haven’t yet been made clear, helping them to express what they’re
+thinking. You want them to walk away not just knowing more, but
+understanding more, and more clearly. You’re not simply telling them
+about what you did; you’re &lt;strong&gt;facilitating a conversation&lt;/strong&gt; about what is
+being solved and how that’s being done. This is the difference
+between explanation and articulation; &lt;strong&gt;articulation supports the
+audience’s thinking&lt;/strong&gt; while explanation only serves to demonstrate
+yours. [Emphasis added]
+—&lt;a href=&quot;https://uxdesign.cc/articulating-design-rationale-782689a8f964&quot;&gt;Articulating design rationale&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;From this perspective, a design rationale not only answers questions,
+it &lt;em&gt;raises the questions in the first place&lt;/em&gt;.  A design rationale is a
+lens for looking at a design. Different rationales will emphasize
+different features of the design by raising different
+sets of questions.&lt;/p&gt;
+
+&lt;p&gt;What are some of the different styles of design rationale and what
+questions do they raise?&lt;/p&gt;
+
+&lt;h2 id=&quot;styles-of-design-rationalelenses-on-design&quot;&gt;Styles of design rationale—lenses on design&lt;/h2&gt;
+
+&lt;p&gt;I’m going to propose a rough, informal taxonomy of design rationales.
+This has some overlap with the
+&lt;a href=&quot;https://web.cs.wpi.edu/Research/aidg/DR-Rpt98.html&quot;&gt;more formal taxonomy by Burge and Brown&lt;/a&gt;,
+although they were describing the more mechanistic, detailed “CS” rationales I
+mentioned above.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;em&gt;Opinionated&lt;/em&gt; rationales focus on the group of users most
+likely to benefit from the design. It asks the questions,
+    &lt;ul&gt;
+      &lt;li&gt;What are the most frequent tasks these users perform?&lt;/li&gt;
+      &lt;li&gt;What is their workflow for those tasks?&lt;/li&gt;
+      &lt;li&gt;What is the essential information they need to specify at each step?&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;The opinionated rationale argues, “This design is great due to its
+simplicity of use for these users following these workflows and
+addressing these use cases”. The opinionated rationale also
+foregrounds the designer and the milieu in which they work.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;em&gt;Principled&lt;/em&gt; rationales focus on adherence to overall principles,
+especially ones regarded as important or elegant within the
+community. For example, the
+&lt;a href=&quot;https://www.hashicorp.com/tao-of-hashicorp&quot;&gt;Tao of Hashicorp&lt;/a&gt;
+lists eight principles guiding Hashicorp’s designs, including the
+classic Unix principle of “Simple, Modular,
+Composable”.&lt;/p&gt;
+
+    &lt;p&gt;The principled rationale asks the questions,&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;What larger principles might account for the success of this design?&lt;/li&gt;
+      &lt;li&gt;What larger principles were ignored or even contradicted by this design?&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;The principled rationale argues, “This design is great because it
+exemplifies these valued principles”, simultaneously benefitting
+from community acceptance of those principles and reaffirming them.
+It is often used in teaching to highlight one or more
+design principles.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;em&gt;Historical&lt;/em&gt; rationales present the current design as the successor
+to prior designs. For example, Linux might trace its design lineage
+from OS/360 -&amp;gt; Multics -&amp;gt; Unix -&amp;gt; Linux, while Go might trace its
+lineage from (PL/I and B) -&amp;gt; C -&amp;gt; (Plan 9 languages) -&amp;gt; Go.&lt;/p&gt;
+
+    &lt;p&gt;The historical rationale asks the questions,&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;What prior designs influenced this one?&lt;/li&gt;
+      &lt;li&gt;How did this design blend and adapt ideas from those prior ones?&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;The historical rationale argues, “This design is great because it continues
+the development of this important type of tool”.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;em&gt;Generalization/abstraction&lt;/em&gt; rationales present the current design
+as a generalization or abstraction of a previous design. For
+example, containers can be presented as a generalization of virtual
+machines, where the virtualized layer is the operating system API
+rather than the machine instruction set.&lt;/p&gt;
+
+    &lt;p&gt;The generalization rationale asks the questions,&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;How can this design be seen as a generalization of other designs?&lt;/li&gt;
+      &lt;li&gt;What did this design gain from this generalization?&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;The generalization rationale argues, “This design is great because it
+makes this existing widely-used design of use in even more contexts”.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;em&gt;Technological advance&lt;/em&gt; rationales present the current design
+as a response to technology advances that rendered prior designs
+less effective. For example, designers of ScyllaDB argue that
+&lt;a href=&quot;https://www.scylladb.com/2021/05/13/an-interview-with-pekka-enberg-modern-hardware-old-apis/&quot;&gt;ScyllaDB is better-suited to the relative performance of current processors, disks, and memory&lt;/a&gt;.&lt;/p&gt;
+
+    &lt;p&gt;The technological advance rationale asks the questions,&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;How does this design exploit recent technologies more completely than
+others?&lt;/li&gt;
+      &lt;li&gt;What did this design gain from this increased utilization?&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;The technological advance rationale argues, “This design is great
+because it takes advantage of new technologies that are not
+fully-utilized by other designs”.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I propose the above categories as a loose, informal taxonomy of rationales. I do not
+consider them exhaustive and they are certainly not mutually
+exclusive.
+Most importantly, these are categories of &lt;em&gt;design descriptions&lt;/em&gt;, not
+designs themselves. One could easily pick any of these approaches to
+describe any design, emphasizing different aspects. An actual design
+is typically the result of balancing nearly all these considerations.&lt;/p&gt;
+
+&lt;p&gt;Furthermore, different analysts can provide widely-varying rationales
+for a design. A designer may have their preferred
+rationale but it’s entirely feasible to analyze a design using an
+entirely different one.&lt;/p&gt;
+
+&lt;h2 id=&quot;opinionated-suggests-a-designs-audience&quot;&gt;“Opinionated” suggests a design’s audience&lt;/h2&gt;
+
+&lt;p&gt;There are many possible rationales for a given design. Claiming that a
+design is “opinionated” is just one approach, an approach that
+prioritizes one group of potential users and their use cases over
+other groups. One could instead start from the principles embodied in
+the design, its historical lineage, how it generalizes prior designs,
+or how it takes better advantage of recent advances in other
+systems. “Opinionated” isn’t an inherent property of a design but one
+of several lenses through which we might view it. To the extent a
+design is best-characterized as “opinionated”, it indicates how
+tightly its use may be bound to a specific group of users and
+usage. Other users may find it awkward for their purposes.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>The <i>external</i> interfaces to Kubernetes ingress</title>
