@@ -259,6 +259,31 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="/2021/06/03/superpower/">
+        Designs don't have "superpowers"
+      </a>
+    </h1>
+    
+    <span class="post-date">03 Jun 2021
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/Rhetoric">Rhetoric</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>Time for another rant about a word seeing increased use in technical
+discussions (and elsewhere): <em>superpower</em>. It just doesn’t mean what
+people imply it means.</p>
+ <a href="/2021/06/03/superpower/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="/2021/05/31/opinionated-designs/">
         "Opinionated" design as design rationale
       </a>
@@ -379,50 +404,6 @@ distinct roles from mentoring, however much they share elements with
 it.  The advisory nature of mentoring affects every aspect of the
 relationship.</p>
  <a href="/2021/04/18/mentors-not-supervisors/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2020/09/09/latency-basics/">
-        The basics of latency percentiles
-      </a>
-    </h1>
-    
-    <span class="post-date">09 Sep 2020
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Distributed systems">Distributed systems</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>Designers of distributed systems obsess over service latency. They
-forecast latencies of proposed designs, stress-test the latencies of
-systems under development, equalize latencies of
-replicated services by load balancing, monitor latencies of production
-systems using instrumentation, and commit to latency targets in
-service level objectives and agreements.</p>
-
-<p>The most commonly-used representation of latency in these scenarios is
-<a href="https://www.dynatrace.com/news/blog/why-averages-suck-and-percentiles-are-great/">percentiles</a>. Percentiles
-are deceptively simple, a function from values between 0 and 1 (or
-equivalently 0% and 100%) to a response time. But the relation between
-percentiles and the distribution they describe is subtle: Formally,
-the percentile function is the inverse of the integral of the
-probability density of the distribution.</p>
-
-<p>The subtlety of this construction makes
-it easy to miss a step and become confused. Working through the
-basics in detail, gaining a clear understanding of how percentiles relate to
-other representations of latency, provides designers with a straightforward
-approach to reasoning about a fundamental concept in distributed
-systems design.</p>
-
- <a href="/2020/09/09/latency-basics/">more ...</a>
   </div>
   
 </div>

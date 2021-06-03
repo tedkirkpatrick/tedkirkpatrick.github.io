@@ -4,13 +4,69 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2021-05-31T20:28:30-07:00</updated>
+ <updated>2021-06-03T08:48:40-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>Designs don't have "superpowers"</title>
+   <link href="/2021/06/03/superpower/"/>
+   <updated>2021-06-03T00:00:00-07:00</updated>
+   <id>/2021/06/03/superpower</id>
+   <content type="html">&lt;p&gt;Time for another rant about a word seeing increased use in technical
+discussions (and elsewhere): &lt;em&gt;superpower&lt;/em&gt;. It just doesn’t mean what
+people imply it means.&lt;/p&gt;
+
+&lt;p&gt;Consider:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Loki’s &lt;strong&gt;superpower&lt;/strong&gt; is breaking up queries into small pieces and dispatching them in parallel so that you can query huge amounts of log data in small amounts of time.
+— &lt;a href=&quot;https://grafana.com/docs/loki/latest/getting-started/labels/&quot;&gt;Loki Getting Started: Labels&lt;/a&gt;
+[Emphasis added]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Now I am not criticising
+&lt;a href=&quot;https://grafana.com/oss/loki/&quot;&gt;Grafana Loki&lt;/a&gt; itself.  It’s probably a
+perfectly fine log aggregator for many important use cases. And it
+probably excels at parallelizing queries across large datasets of
+logs.&lt;/p&gt;
+
+&lt;p&gt;But describing this as a superpower misses the point. If Loki (the
+software, not the Norse god) is good
+at parallelizing queries, that is a direct result of design
+choices. We could highlight those choices using any one of several
+&lt;a href=&quot;/2021/05/31/opinionated-designs/&quot;&gt;design rationales&lt;/a&gt;. The design’s excellence
+is a direct result of conscious choice and fully replicable in other
+designs.&lt;/p&gt;
+
+&lt;p&gt;Contrast that with the origins of
+&lt;a href=&quot;https://superheroes.fandom.com/wiki/Superpower&quot;&gt;superhero superpowers&lt;/a&gt;. They
+derive from circumstances unique to the character. You can’t build on
+Superman’s example and become “Super” yourself—you weren’t born on
+Krypton. Even the powers potentially available to anyone who studies
+long enough, such as the magic of
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Doctor_Strange#Powers_and_skills&quot;&gt;Dr. Strange&lt;/a&gt;,
+require rare artifacts, unavailable to others. Ultimately, two of the defining
+features of superhero superpowers are their basis in forces outside
+our phyical understanding and the uniqueness of the individual
+posessing a given power.&lt;/p&gt;
+
+&lt;p&gt;By contrast, a design’s successes are a logical, intended outcome of
+that design. They are not beyond understanding, they are a direct
+outcome of an &lt;em&gt;exceptionally clear&lt;/em&gt; understanding.&lt;/p&gt;
+
+&lt;p&gt;Superheroes are interesting because they are unique and more powerful
+than we ever can be whereas designs are interesting precisely because
+anyone can use their underlying principles to replicate their
+successes.  Claiming that any particular outcome is a “superpower”
+effaces that important distinction.&lt;/p&gt;
+
+</content>
+ </entry>
  
  <entry>
    <title>"Opinionated" design as design rationale</title>

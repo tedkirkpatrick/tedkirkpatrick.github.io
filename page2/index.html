@@ -260,6 +260,50 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="/2020/09/09/latency-basics/">
+        The basics of latency percentiles
+      </a>
+    </h1>
+    
+    <span class="post-date">09 Sep 2020
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/Distributed systems">Distributed systems</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>Designers of distributed systems obsess over service latency. They
+forecast latencies of proposed designs, stress-test the latencies of
+systems under development, equalize latencies of
+replicated services by load balancing, monitor latencies of production
+systems using instrumentation, and commit to latency targets in
+service level objectives and agreements.</p>
+
+<p>The most commonly-used representation of latency in these scenarios is
+<a href="https://www.dynatrace.com/news/blog/why-averages-suck-and-percentiles-are-great/">percentiles</a>. Percentiles
+are deceptively simple, a function from values between 0 and 1 (or
+equivalently 0% and 100%) to a response time. But the relation between
+percentiles and the distribution they describe is subtle: Formally,
+the percentile function is the inverse of the integral of the
+probability density of the distribution.</p>
+
+<p>The subtlety of this construction makes
+it easy to miss a step and become confused. Working through the
+basics in detail, gaining a clear understanding of how percentiles relate to
+other representations of latency, provides designers with a straightforward
+approach to reasoning about a fundamental concept in distributed
+systems design.</p>
+
+ <a href="/2020/09/09/latency-basics/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="/2020/07/24/extending-the-tail-at-scale/">
         Extending "The Tail at Scale"
       </a>
@@ -401,32 +445,6 @@ theory?  The code from the
 the general solution requires more work than it might seem.</p>
 
  <a href="/2020/03/08/difficulty-of-state-machines/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2020/02/13/systems-resilience-in-daily-life/">
-        Applying resilient design to my own systems
-      </a>
-    </h1>
-    
-    <span class="post-date">13 Feb 2020
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Distributed systems">Distributed systems</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>When I teach a course in modern distributed systems design, I spend a
-lot of time on topics such as engineering for resilience and
-automating production processes. It turns out that applying those big
-topics in the small matters of my life is a big challenge.</p>
- <a href="/2020/02/13/systems-resilience-in-daily-life/">more ...</a>
   </div>
   
 </div>
