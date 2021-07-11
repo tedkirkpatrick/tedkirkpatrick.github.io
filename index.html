@@ -57,7 +57,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Home" />
 <script type="application/ld+json">
-{"url":"/","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","name":"All my marbles in one place","@type":"WebSite","@context":"https://schema.org"}</script>
+{"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","url":"/","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"@type":"WebSite","name":"All my marbles in one place","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -259,6 +259,39 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="/2021/07/10/outpost-vs-region-at-customer/">
+        AWS Outpost vs. Oracle Region @ Customer: How do they differ?
+      </a>
+    </h1>
+    
+    <span class="post-date">10 Jul 2021
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/Distributed systems">Distributed systems</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>Cloud vendors are rolling out products that place proprietary
+hardware in customer’s datacentres, delivering a selection of the
+vendor’s cloud services from the customer’s datacentre. These new
+products require a rethinking of current guidelines regarding
+tradeoffs between data residency, latency, and failure tolerance. As a
+start towards this, I compare two specific products,
+<a href="https://aws.amazon.com/outposts/">Amazon Outpost in 42U rack form factor</a>
+and
+<a href="https://www.oracle.com/cloud/cloud-at-customer/">Oracle Dedicated Region Cloud @ Customer</a>,
+according to these criteria. What do these comparisons tell us about
+the new possibilities such products create?</p>
+ <a href="/2021/07/10/outpost-vs-region-at-customer/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="/2021/06/13/prescriptive-descriptive/">
         The 'Descriptive' versus 'Prescriptive' distinction is irrelevant for actual writing
       </a>
@@ -371,38 +404,6 @@ external load balancer to Kubernetes clusters inside your cloud?  If
 you are configuring an entire on-prem cluster from scratch, how
 do you set up access to the Internet?</p>
  <a href="/2021/05/18/external-interfaces-to-kubernetes/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2021/05/17/three-rings-of-kubernetes/">
-        Three rings of abstraction in Kubernetes
-      </a>
-    </h1>
-    
-    <span class="post-date">17 May 2021
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Distributed systems">Distributed systems</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>A common analogy for Kubernetes presents it as “the operating system
-for microservices”, identifying Kubernetes
-as a kind of operating system. I don’t think this analogy is wrong but
-I do think it’s underinformative, leaving the key question unanswered:
-What <em>abstractions</em> does this “operating system” provide?  I suggest
-that unlike the more focused set of abstractions provided by the
-classic Unix model, the abstractions of Kubernetes can be grouped into
-three concentric rings. This highlights the different
-kinds of benefits Kubernetes affords and clarifies the decisions an
-organization must make when adopting Kubernetes.</p>
- <a href="/2021/05/17/three-rings-of-kubernetes/">more ...</a>
   </div>
   
 </div>
