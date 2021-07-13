@@ -4,7 +4,7 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2021-07-10T17:40:12-07:00</updated>
+ <updated>2021-07-12T18:08:07-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
@@ -770,6 +770,14 @@ anyone can use their underlying principles to replicate their
 successes.  Claiming that any particular outcome is a “superpower”
 effaces that important distinction.&lt;/p&gt;
 
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;Update July 12, 2021&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Full disclosure:&lt;/strong&gt; Reviewing old posts, I see that I used
+“superpowered” in my post on
+&lt;a href=&quot;/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/&quot;&gt;using TLA to explore failures of distributed algorithms&lt;/a&gt;. What
+can I say? I’m a work in progress.&lt;/p&gt;
 </content>
  </entry>
  
@@ -7071,7 +7079,8 @@ syntax and explore a subtle point of the semantics of PlusCal.&lt;/p&gt;
    <updated>2018-10-31T00:00:00-07:00</updated>
    <id>/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series on using the TLA Toolbox to explore the failure
- tolerance of distributed algorithms. The next post has not been written.&lt;/em&gt;&lt;/p&gt;
+ tolerance of distributed algorithms. The next post describes
+ &lt;a href=&quot;/2019/01/03/distributed-algorithms-in-pluscal/&quot;&gt;conventions for distributed algorithms in PlusCal&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;I have wanted to write a series about Leslie Lamport’s
 &lt;a href=&quot;https://lamport.azurewebsites.net/tla/toolbox.html&quot;&gt;TLA Toolbox&lt;/a&gt; for
