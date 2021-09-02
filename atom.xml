@@ -4,13 +4,425 @@
  <title>All my marbles in one place</title>
  <link href="/atom.xml" rel="self"/>
  <link href="/"/>
- <updated>2021-07-12T18:08:07-07:00</updated>
+ <updated>2021-09-02T16:54:31-07:00</updated>
  <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
  </author>
 
+ 
+ <entry>
+   <title>How much information is retained in an average of percentiles?</title>
+   <link href="/2021/09/02/averages-of-percentiles/"/>
+   <updated>2021-09-02T00:00:00-07:00</updated>
+   <id>/2021/09/02/averages-of-percentiles</id>
+   <content type="html">&lt;p&gt;Experienced performance analysts caution against taking averages of
+percentiles. Gil Tene’s famous 2015 Strange Loop talk,
+&lt;a href=&quot;https://www.youtube.com/watch?v=lJ8ydIuPFeU?&amp;quot;start=482&quot;&gt;“How NOT to Measure Latency”&lt;/a&gt;,
+features the tip, “You can’t average percentiles. Period.” (at
+9:15). Tene offers a brief example using the 100th percentile, the
+maximum, but does not provide many details. You might think this is
+enough—simply never average percentiles and you’re safe, right? But
+as Baron Schwartz points out,
+&lt;a href=&quot;https://orangematter.solarwinds.com/2016/11/18/why-percentiles-dont-work-the-way-you-think/&quot;&gt;the metric pipeline probably averages metrics before you see them&lt;/a&gt;,
+and even displaying metrics as pixels on the screen is a form of
+averaging. Why is it so bad to average percentiles and how
+much information does the result retain, if any at all?&lt;/p&gt;
+
+&lt;h2 id=&quot;averaging-two-percentiles&quot;&gt;Averaging two percentiles&lt;/h2&gt;
+
+&lt;p&gt;Let’s begin with some examples highlighting the problem.  I’m going
+to use latency distributions, as those are the most common application
+of percentiles in our industry, but the math is the same for any
+metric presented as percentiles (or more generally, as
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Quantile&quot;&gt;quantiles&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;As a motivating example, consider a latency metric computed in the
+following way:  Request latencies for a service are collected for one
+second and the 95th percentile is computed for that sample and
+stored. The process is repeated every second and the 95th percentiles
+are reported in a stream to a monitoring system.&lt;/p&gt;
+
+&lt;p&gt;For computational simplicity, assume the latencies are
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Continuous_uniform_distribution&quot;&gt;distributed continuously and uniformly&lt;/a&gt;
+between 0  and some maximum number of seconds \(m_i\) for
+sample \(i\). For this distribution, the 95th percentile is simply
+\(.95 m_i\).&lt;/p&gt;
+
+&lt;p&gt;First, consider the case where the rate of traffic has remained the
+same but response latencies have increased substantially, perhaps
+because a replicated database on the backend has had one of its replicas crash. The
+result will be two samples of equal size but with very different
+P95 percentiles. For two periods we might have:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Period 1:  1000 samples, \(m_1 = 0.5~\text{s}, \text{P95} = .95 \cdot 0.5 = 0.475~\text{s}\)&lt;/li&gt;
+  &lt;li&gt;Period 2:  1000 samples, \(m_2 = 1.0~\text{s}, \text{P95} = .95 \cdot 1.0 = 0.950~\text{s}\)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If we simply average these two percentiles, we get .712 s. What
+is the actual P95? To compute this, we need to compute the
+latency that bounds 95% of the values in the combined sample. The
+combined sample has 2,000 values and 95% of that is 1,900.&lt;/p&gt;
+
+&lt;p&gt;All 1,000 values in Period 1 are less than or equal to 0.5 s, as
+well as half the values in Period 2, for a total of 1,500
+values. To compute P95, we must bound the 400 remaining values. Given that
+Period 2 is distributed uniformly, the 400 smallest values
+greater than 0.5 s are bounded above by 0.900 s, which is the
+actual P95 for the combined sample.  Comparing these statistics:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Period&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Sample size&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;P95 (s)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;P1&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,000&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.475&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;(P95&lt;sub&gt;1&lt;/sub&gt; + P95&lt;sub&gt;2&lt;/sub&gt;)/2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;(Not a sample)&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.712&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;P1 and P2 combined&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,000&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.900&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;P2&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,000&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.950&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Simply averaging the two percentiles produces an estimate considerably
+lower than the correct one. Our latency is much worse than suggested
+by the simple average of the original percentiles. On the other hand,
+both values, the average and the actual percentile of the combined
+samples, lie between the two original values. We will see later in
+this post that this is generally true.&lt;/p&gt;
+
+&lt;h3 id=&quot;varying-the-distributions&quot;&gt;Varying the distributions&lt;/h3&gt;
+
+&lt;p&gt;The above example used two samples that differed in distribution but
+were the same size. Sample size also affects the outcome.  We can
+achieve the effect of varying the sample sizes by varying their
+weight. The following figure and table show how the P95 values vary
+with the weight of our two distributions:&lt;/p&gt;
+
+&lt;figure&gt;
+  &lt;p&gt;&lt;img src=&quot;/assets/images/Percentiles-0-5-blend-1-75.png&quot; alt=&quot;Density plots of six distributions, each with separate regions in blue and magenta&quot; /&gt;&lt;/p&gt;
+  &lt;figcaption&gt;
+    &lt;p&gt;&lt;a href=&quot;#pctile-table&quot;&gt;Density plots of six distributions, with their top 5% region highlighted in magenta&lt;/a&gt;&lt;/p&gt;
+  &lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;table id=&quot;pctile-table&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Distribution&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;95th percentile&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;100% 0–0.5&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.475&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;90% 0–0.5 + 10% 0–1.0 blend&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.500&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;83% 0–0.5 + 17% 0–1.0 blend&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.706&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;em&gt;Naive average (P95&lt;sub&gt;1&lt;/sub&gt; + P95&lt;sub&gt;2&lt;/sub&gt;)/2&lt;/em&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;&lt;em&gt;0.712&lt;/em&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;50% 0–0.5 + 50% 0–1.0 blend&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.900&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;10% 0–0.5 + 90% 0–1.0 blend&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.944&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;100% 0–1.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.950&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;As the proportion of the lower-latency distribution decreases from 100%
+to 0%, the P95 for the combined sample increases from the P95 of the
+lower-latency distribution up to that of the higher-latency. The naive
+average of the original P95s happens to correspond most
+closely to an 83% / 17% weighting of the two distributions.  Once
+again, the P95 values for all blends fall between those of the two
+original distributions.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-total-percentile-always-lies-inside-the-range-of-constituent-percentiles&quot;&gt;The total percentile always lies inside the range of constituent percentiles&lt;/h2&gt;
+
+&lt;p&gt;In the examples so far, the percentile of the combined samples lay
+between the percentiles for the two constituent samples. How general
+is this result? Does it apply beyond the simple uniform distributions
+used above, to actual latency distributions, which are positively
+skewed, multimodal, and often have no upper bound? Furthermore, does
+this result apply to averages over more than two percentiles?&lt;/p&gt;
+
+&lt;p&gt;Yes, the percentile for the combination of several samples will always
+lie between the smallest and largest percentile values for the
+individual samples, for any underlying distributions and combination
+of sample sizes. This section will show a simple proof of that result.&lt;/p&gt;
+
+&lt;p&gt;This proof applies to the &lt;em&gt;continuous case&lt;/em&gt;: Specifically, we require
+that we can select a subset of each sample that exactly matches an
+arbitrary proportion \( 0 \le p \le 1 \). No finite sample can
+satisfy this requirement but sufficiently large samples can
+approximate it. The phrase “sufficiently large” is vague but the
+samples typically used in performance analysis of distributed systems,
+containing hundreds of items or more, meet this requirement. In a
+future post, I will consider the case of small samples, for
+which the combined percentile can in fact be outside the range of the
+percentiles of the constituent samples.&lt;/p&gt;
+
+&lt;p&gt;An older post
+&lt;a href=&quot;/2020/09/09/latency-basics/&quot;&gt;describes the basics of percentiles and the notation&lt;/a&gt;
+that I will use in this section.&lt;/p&gt;
+
+&lt;p&gt;Assume we have a set of \(N\) latency samples \(S_i\), each of size
+\(B_i\), with density \(LD_i(x)\), cumulative distribution \(LC_i(x)\), and
+percentile function \(LP_i(p)\). For simplicity, we can assume that
+the distributions \(LD_i(x)\) are nonzero everywhere \(0
+&amp;lt; x\) (if this assumption is not met, there are technical solutions
+that will not change the main results—see Appendix). Under this assumption,
+the cumulative distributions \(LC_i(x)\) will be strictly monotonic
+on x, and their inverses, the percentile functions \(LP_i(p) =
+LC_i(x)^{-1}\), are well-defined.&lt;/p&gt;
+
+&lt;p&gt;Consider the \(p\)th percentiles of these samples, \(LP_i(p)\),
+and let \(LP_1(p)\) be the smallest and \(LP_n(p)\) the largest.
+Begin with the lower bound. We want to show that the percentile for
+the combination of all the samples, \(LP_*(p)\), is greater than or
+equal to \(LP_1\).&lt;/p&gt;
+
+&lt;p&gt;Presenting the calculation as a
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Structured_derivations&quot;&gt;structured derivation&lt;/a&gt;:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;\( \bullet \)&lt;/td&gt;
+	  &lt;td style=&quot;text-align: right&quot;&gt; \( LP_1(p) \) &lt;/td&gt;
+	  &lt;td style=&quot;text-aling: center&quot;&gt; \( \le \) &lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; \( LP_i(p) \quad \forall i : 2 \le i \le n \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt; \( \equiv \) &lt;/td&gt;
+	  &lt;td style=&quot;text-align: left&quot; colspan=&quot;3&quot;&gt;\( \{ LC_i \text{ is monotonic} \} \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt;&lt;/td&gt;
+	  &lt;td style=&quot;text-align: right&quot;&gt; \( LC_i(LP_1(p)) \) &lt;/td&gt;
+	  &lt;td style=&quot;text-aling: center&quot;&gt; \( \le \) &lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; \( LC_i(LP_i(p)) \quad \forall i : 2 \le i \le n \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt; \( \equiv \) &lt;/td&gt;
+	  &lt;td style=&quot;text-align: left&quot; colspan=&quot;3&quot;&gt;\( \{ \text{LHS: let }  p_i = LC_i(LP_1(p)) \text{; RHS: } LC_i \text{ and } LP_i \text{ are inverses} \} \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt;&lt;/td&gt;
+	  &lt;td style=&quot;text-align: right&quot;&gt; \( p_i \) &lt;/td&gt;
+	  &lt;td style=&quot;text-aling: center&quot;&gt; \( \le \) &lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; \( p \quad \forall i : 2 \le i \le n \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt; \( \equiv \) &lt;/td&gt;
+	  &lt;td style=&quot;text-align: left&quot; colspan=&quot;3&quot;&gt;\( \{ \text{Multiply by positive } B_i \} \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt;&lt;/td&gt;
+	  &lt;td style=&quot;text-align: right&quot;&gt; \( p_i B_i \) &lt;/td&gt;
+	  &lt;td style=&quot;text-aling: center&quot;&gt; \( \le \) &lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; \( p B_i \quad \forall i : 2 \le i \le n \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt; \( \equiv \) &lt;/td&gt;
+	  &lt;td style=&quot;text-align: left&quot; colspan=&quot;3&quot;&gt;\( \{ \text{Summing over}\: 2 \le i \le n \} \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt;&lt;/td&gt;
+	  &lt;td style=&quot;text-align: right&quot;&gt; \( \sum_{i=2}^n p_i B_i \) &lt;/td&gt;
+	  &lt;td style=&quot;text-aling: center&quot;&gt; \( \le \) &lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; \( p \sum_{i=2}^n B_i \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt; \( \equiv \) &lt;/td&gt;
+	  &lt;td style=&quot;text-align: left&quot; colspan=&quot;3&quot;&gt; \( \{ \text{Adding}\: p B_1 \} \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt;&lt;/td&gt;
+	  &lt;td style=&quot;text-align: right&quot;&gt; \( p B_1 + \sum_{i=2}^n p_i B_i \) &lt;/td&gt;
+	  &lt;td style=&quot;text-aling: center&quot;&gt; \( \le \) &lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; \( p B_1 + p \sum_{i=2}^n B_i \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt; \( \equiv \) &lt;/td&gt;
+	  &lt;td style=&quot;text-align: left&quot; colspan=&quot;3&quot;&gt; \( \{ \text{Combine RHS} \} \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt;&lt;/td&gt;
+	  &lt;td style=&quot;text-align: right&quot;&gt; \( p B_1 + \sum_{i=2}^n p_i B_i \) &lt;/td&gt;
+	  &lt;td style=&quot;text-aling: center&quot;&gt; \( \le \) &lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; \( p \sum_{i=1}^n B_i \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt; \( \equiv \) &lt;/td&gt;
+	  &lt;td style=&quot;text-align: left&quot; colspan=&quot;3&quot;&gt;\( \{ \text{Divide by positive value } \sum_{i=1}^n B_i\} \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt;&lt;/td&gt;
+	  &lt;td style=&quot;text-align: right&quot;&gt; \( \frac{p B_1 + \sum_{i=2}^n p_i B_i}{\sum_{i=1}^n B_i} \) &lt;/td&gt;
+	  &lt;td style=&quot;text-aling: center&quot;&gt; \( \le \) &lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; \( p \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt; \( \equiv \) &lt;/td&gt;
+	  &lt;td style=&quot;text-align: left&quot; colspan=&quot;3&quot;&gt; \( \{ LP_* \text{ is monotonic}  \} \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt;&lt;/td&gt;
+	  &lt;td style=&quot;text-align: right&quot;&gt; \( LP_*(\frac{p B_1 + \sum_{i=2}^n p_i B_i}{\sum_{i=1}^n B_i}) \) &lt;/td&gt;
+	  &lt;td style=&quot;text-aling: center&quot;&gt; \( \le \) &lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; \( LP_*(p) \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt; \( \equiv \) &lt;/td&gt;
+	  &lt;td style=&quot;text-align: left&quot; colspan=&quot;3&quot;&gt; \( \{ \text{Show equivalence to } LP_1(p) \} \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt;&lt;/td&gt;
+	  &lt;td style=&quot;text-align: left&quot; colspan=&quot;3&quot;&gt; \( \bullet \quad LP_*(\frac{p B_1 + \sum_{i=2}^n p_i B_i}{\sum_{i=1}^n B_i}) \) &lt;/td&gt; 
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt;&lt;/td&gt;
+	  &lt;td style=&quot;text-align: left&quot; colspan=&quot;3&quot;&gt; \( \equiv \quad \{ \frac{p B_1 + \sum_{i=2}^n p_i B_i}{\sum_{i=1}^n B_i} \text{ is exactly the proportion of the combined sample } \le LP_1(p) \} \) &lt;/td&gt; 
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt;&lt;/td&gt;
+	  &lt;td style=&quot;text-align: left&quot; colspan=&quot;3&quot;&gt; \( \quad \; LP_1(p) \) &lt;/td&gt; 
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt;\( \cdots \)&lt;/td&gt;
+	  &lt;td style=&quot;text-align: right&quot;&gt; \( LP_1(p) \) &lt;/td&gt;
+	  &lt;td style=&quot;text-aling: center&quot;&gt; \( \le \) &lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; \( LP_*(p) \) &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td&gt;\( \Box \)&lt;/td&gt;
+	  &lt;td&gt;&lt;/td&gt;
+	  &lt;td&gt;&lt;/td&gt;
+	  &lt;td&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Analogous logic proves the upper bound, \(LP_*(p) \le LP_n(p)\). Combining these, we have proven:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Combined Percentile Theorem (Continuous case):&lt;/strong&gt; For a collection of
+\(n\) samples, each with an arbitrary distribution and sample size
+and each of which can be subdivided to arbitrary precision,&lt;/p&gt;
+
+&lt;p&gt;\[ LP_1(p) \le LP_*(p) \le LP_n(p) \]&lt;/p&gt;
+
+&lt;p&gt;where \(LP_1(p)\) and \(LP_n(p)\) are the smallest and largest
+percentiles in the collection, respectively.&lt;/p&gt;
+
+&lt;p&gt;Combining this theorem with the widely-known result that an average
+lies within the range of its constituent values, we get:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Corollary (Continuous case):&lt;/strong&gt; The average of the \(p\)-percentiles for a collection
+of infinitely subdividable samples will be at most \(LP_n(p) -
+LP_1(p)\) from the \(p\)-percentile of the combined samples,
+\(LP_*(p)\).&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;The average of the percentiles for a collection of samples is not the
+same as the percentile for the combined samples but its deviation from
+the combined percentile is bounded. So long as the the samples are
+large and their percentiles are near one another, their average will
+be close to the combined percentile whereas if the percentiles are
+widely-spaced, their average could be distant from it.&lt;/p&gt;
+
+&lt;p&gt;We have also seen that when reasoning about combined percentiles, we
+have to consider both the distributions they represent and the sizes
+of the individual samples.&lt;/p&gt;
+
+&lt;p&gt;In the next post, I’ll consider the implications of these results for
+some typical uses of percentiles in dashboards.&lt;/p&gt;
+
+&lt;h2 id=&quot;appendixwhen-the-density-function-has-regions-at-zero&quot;&gt;Appendix—When the density function has regions at zero&lt;/h2&gt;
+
+&lt;p&gt;In this appendix, I briefly discuss the case where a sample’s
+distribution has a region where its density function is 0.&lt;/p&gt;
+
+&lt;p&gt;Wherever \(LD_i(x)\) has a zero region, \(LC_i(x)\) will be a
+flat line seqment. For the proportion \(q = LC_i(x)\), we could
+define the percentile \(LP_i(q)\) to be any \(x\) within that region.
+Define \(LP_i(q)\) to be the &lt;em&gt;smallest&lt;/em&gt; such \(x\). With this
+definition, we retain the key identity&lt;/p&gt;
+
+&lt;p&gt;\[ LC_i(LP_i(p)) = p \]&lt;/p&gt;
+
+&lt;p&gt;required in the above proof.&lt;/p&gt;
+
+&lt;p&gt;Under these revised definitions, \(LC_i\) is weakly monotonic and
+\(LP_i\) remains strongly monotonic. The above proof only requires
+that both be at least weakly monotonic.&lt;/p&gt;
+
+&lt;p&gt;Consequently, all transformations in the proof continue to
+apply and so the proof holds.&lt;/p&gt;
+
+</content>
+ </entry>
  
  <entry>
    <title>AWS Outpost vs. Oracle Region @ Customer: How do they differ?</title>

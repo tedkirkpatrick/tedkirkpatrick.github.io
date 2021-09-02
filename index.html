@@ -199,6 +199,10 @@
           
         
       
+        
+          
+        
+      
 
     
         <div class="sidebar-tags">
@@ -256,6 +260,40 @@
 
     <div class="content container">
       <div class="posts">
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2021/09/02/averages-of-percentiles/">
+        How much information is retained in an average of percentiles?
+      </a>
+    </h1>
+    
+    <span class="post-date">02 Sep 2021
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/Distributed systems">Distributed systems</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>Experienced performance analysts caution against taking averages of
+percentiles. Gil Tene’s famous 2015 Strange Loop talk,
+<a href="https://www.youtube.com/watch?v=lJ8ydIuPFeU?&quot;start=482">“How NOT to Measure Latency”</a>,
+features the tip, “You can’t average percentiles. Period.” (at
+9:15). Tene offers a brief example using the 100th percentile, the
+maximum, but does not provide many details. You might think this is
+enough—simply never average percentiles and you’re safe, right? But
+as Baron Schwartz points out,
+<a href="https://orangematter.solarwinds.com/2016/11/18/why-percentiles-dont-work-the-way-you-think/">the metric pipeline probably averages metrics before you see them</a>,
+and even displaying metrics as pixels on the screen is a form of
+averaging. Why is it so bad to average percentiles and how
+much information does the result retain, if any at all?</p>
+ <a href="/2021/09/02/averages-of-percentiles/">more ...</a>
+  </div>
   
   <div class="post">
     <h1 class="post-title">
@@ -373,37 +411,6 @@ field. What makes a design “opinionated”?  If someone declares a
 design to be “opinionated”, what might that tell you about it?  How
 would a designer justify that claim?</p>
  <a href="/2021/05/31/opinionated-designs/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2021/05/18/external-interfaces-to-kubernetes/">
-        The <i>external</i> interfaces to Kubernetes ingress
-      </a>
-    </h1>
-    
-    <span class="post-date">18 May 2021
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Distributed systems">Distributed systems</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>Defining a Kubernetes ingress seems simple enough: Define a YAML file
-and you’re good. But that only defines the interface from services <em>inside</em> the
-cluster to whatever external agent is connecting external client
-requests to cluster services.  It says nothing about the interface
-from that external agent to the Kubernetes control and data
-planes. If you are building a cloud provider, how do you connect your
-external load balancer to Kubernetes clusters inside your cloud?  If
-you are configuring an entire on-prem cluster from scratch, how
-do you set up access to the Internet?</p>
- <a href="/2021/05/18/external-interfaces-to-kubernetes/">more ...</a>
   </div>
   
 </div>

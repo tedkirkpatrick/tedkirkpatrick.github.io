@@ -200,6 +200,10 @@
           
         
       
+        
+          
+        
+      
 
     
         <div class="sidebar-tags">
@@ -257,6 +261,37 @@
 
     <div class="content container">
       <div class="posts">
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2021/05/18/external-interfaces-to-kubernetes/">
+        The <i>external</i> interfaces to Kubernetes ingress
+      </a>
+    </h1>
+    
+    <span class="post-date">18 May 2021
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/Distributed systems">Distributed systems</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>Defining a Kubernetes ingress seems simple enough: Define a YAML file
+and you’re good. But that only defines the interface from services <em>inside</em> the
+cluster to whatever external agent is connecting external client
+requests to cluster services.  It says nothing about the interface
+from that external agent to the Kubernetes control and data
+planes. If you are building a cloud provider, how do you connect your
+external load balancer to Kubernetes clusters inside your cloud?  If
+you are configuring an entire on-prem cluster from scratch, how
+do you set up access to the Internet?</p>
+ <a href="/2021/05/18/external-interfaces-to-kubernetes/">more ...</a>
+  </div>
   
   <div class="post">
     <h1 class="post-title">
@@ -402,40 +437,6 @@ argument to smaller but more frequent latencies provides even more insight into 
 design.</p>
 
  <a href="/2020/07/24/extending-the-tail-at-scale/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2020/06/20/guarantees-vs-methods/">
-        Guarantees vs. metrics: What the designers intend, what the clients see
-      </a>
-    </h1>
-    
-    <span class="post-date">20 Jun 2020
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Distributed systems">Distributed systems</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>In my
-<a href="/2019/12/31/design-space-2020/">distributed systems design space</a>, I
-distinguish guarantees from metrics. A <em>guarantee</em> is a property a
-system is designed to ensure in all cases, such as consistency between
-replicas of a data store, or the number of copies written to
-persistent storage before a result is returned to the client. In
-contrast, a <em>metric</em> is a measurable quantity of a system, such as
-median latency or annual availability. The guarantee/metric
-distinction arises from the designer’s perspective and clearly
-separates the two categories. But when we consider the categories
-instead from the perspective of the system’s clients, this distinction
-becomes fuzzier. Is it real? Is it valuable?</p>
- <a href="/2020/06/20/guarantees-vs-methods/">more ...</a>
   </div>
   
 </div>

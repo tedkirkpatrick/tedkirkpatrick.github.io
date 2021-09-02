@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
+  <meta name="author" content="Arthur E. Kirkpatrick">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018, 2019, 2020, 2021">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      How much information is retained in an average of percentiles? &middot; All my marbles in one place
+    
+  </title>
+
+    <!-- Asychronously-loaded JavaScript -->
+    
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/tex-chtml.js" integrity="sha384-j9ODZKtRF0+heKS/yKvP7oInOBmXb6YTVeyZsxRqp1u9DTFlO0RE5m34WHkrzPCN" crossorigin="anonymous"></script>
+    
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66576928-4', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="How much information is retained in an average of percentiles?" />
+<meta name="author" content="Ted Kirkpatrick" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Experienced performance analysts caution against taking averages of percentiles. Gil Tene’s famous 2015 Strange Loop talk, “How NOT to Measure Latency”, features the tip, “You can’t average percentiles. Period.” (at 9:15). Tene offers a brief example using the 100th percentile, the maximum, but does not provide many details. You might think this is enough—simply never average percentiles and you’re safe, right? But as Baron Schwartz points out, the metric pipeline probably averages metrics before you see them, and even displaying metrics as pixels on the screen is a form of averaging. Why is it so bad to average percentiles and how much information does the result retain, if any at all?" />
+<meta property="og:description" content="Experienced performance analysts caution against taking averages of percentiles. Gil Tene’s famous 2015 Strange Loop talk, “How NOT to Measure Latency”, features the tip, “You can’t average percentiles. Period.” (at 9:15). Tene offers a brief example using the 100th percentile, the maximum, but does not provide many details. You might think this is enough—simply never average percentiles and you’re safe, right? But as Baron Schwartz points out, the metric pipeline probably averages metrics before you see them, and even displaying metrics as pixels on the screen is a form of averaging. Why is it so bad to average percentiles and how much information does the result retain, if any at all?" />
+<meta property="og:site_name" content="All my marbles in one place" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-09-02T00:00:00-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="How much information is retained in an average of percentiles?" />
+<script type="application/ld+json">
+{"description":"Experienced performance analysts caution against taking averages of percentiles. Gil Tene’s famous 2015 Strange Loop talk, “How NOT to Measure Latency”, features the tip, “You can’t average percentiles. Period.” (at 9:15). Tene offers a brief example using the 100th percentile, the maximum, but does not provide many details. You might think this is enough—simply never average percentiles and you’re safe, right? But as Baron Schwartz points out, the metric pipeline probably averages metrics before you see them, and even displaying metrics as pixels on the screen is a form of averaging. Why is it so bad to average percentiles and how much information does the result retain, if any at all?","url":"/2021/09/02/averages-of-percentiles/","headline":"How much information is retained in an average of percentiles?","dateModified":"2021-09-02T00:00:00-07:00","datePublished":"2021-09-02T00:00:00-07:00","author":{"@type":"Person","name":"Ted Kirkpatrick"},"mainEntityOfPage":{"@type":"WebPage","@id":"/2021/09/02/averages-of-percentiles/"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/comment-policy/">Comment policy</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	   
+	    <a href="/tag/Python/">Python</a>,
+	  
+        
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
+	   
+	    <a href="/tag/Big data/">Big data</a>,
+	  
+        
+	   
+	    <a href="/tag/Soft skills/">Soft skills</a>,
+	  
+        
+	   
+	    <a href="/tag/Statistics/">Statistics</a>,
+	  
+        
+	   
+	    <a href="/tag/Experimental design/">Experimental design</a>,
+	  
+        
+	   
+	    <a href="/tag/Rhetoric/">Rhetoric</a>,
+	  
+        
+	   
+	    <a href="/tag/Admin/">Admin</a>,
+	  
+        
+	  	    
+            <a href="/tag/Distributed systems/">Distributed systems</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2021. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">How much information is retained in an average of percentiles?</h1>
+  <span class="post-date">02 Sep 2021
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/Distributed systems">Distributed systems</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <p>Experienced performance analysts caution against taking averages of
+percentiles. Gil Tene’s famous 2015 Strange Loop talk,
+<a href="https://www.youtube.com/watch?v=lJ8ydIuPFeU?&quot;start=482">“How NOT to Measure Latency”</a>,
+features the tip, “You can’t average percentiles. Period.” (at
+9:15). Tene offers a brief example using the 100th percentile, the
+maximum, but does not provide many details. You might think this is
+enough—simply never average percentiles and you’re safe, right? But
+as Baron Schwartz points out,
+<a href="https://orangematter.solarwinds.com/2016/11/18/why-percentiles-dont-work-the-way-you-think/">the metric pipeline probably averages metrics before you see them</a>,
+and even displaying metrics as pixels on the screen is a form of
+averaging. Why is it so bad to average percentiles and how
+much information does the result retain, if any at all?</p>
+
+<h2 id="averaging-two-percentiles">Averaging two percentiles</h2>
+
+<p>Let’s begin with some examples highlighting the problem.  I’m going
+to use latency distributions, as those are the most common application
+of percentiles in our industry, but the math is the same for any
+metric presented as percentiles (or more generally, as
+<a href="https://en.wikipedia.org/wiki/Quantile">quantiles</a>).</p>
+
+<p>As a motivating example, consider a latency metric computed in the
+following way:  Request latencies for a service are collected for one
+second and the 95th percentile is computed for that sample and
+stored. The process is repeated every second and the 95th percentiles
+are reported in a stream to a monitoring system.</p>
+
+<p>For computational simplicity, assume the latencies are
+<a href="https://en.wikipedia.org/wiki/Continuous_uniform_distribution">distributed continuously and uniformly</a>
+between 0  and some maximum number of seconds \(m_i\) for
+sample \(i\). For this distribution, the 95th percentile is simply
+\(.95 m_i\).</p>
+
+<p>First, consider the case where the rate of traffic has remained the
+same but response latencies have increased substantially, perhaps
+because a replicated database on the backend has had one of its replicas crash. The
+result will be two samples of equal size but with very different
+P95 percentiles. For two periods we might have:</p>
+
+<ul>
+  <li>Period 1:  1000 samples, \(m_1 = 0.5~\text{s}, \text{P95} = .95 \cdot 0.5 = 0.475~\text{s}\)</li>
+  <li>Period 2:  1000 samples, \(m_2 = 1.0~\text{s}, \text{P95} = .95 \cdot 1.0 = 0.950~\text{s}\)</li>
+</ul>
+
+<p>If we simply average these two percentiles, we get .712 s. What
+is the actual P95? To compute this, we need to compute the
+latency that bounds 95% of the values in the combined sample. The
+combined sample has 2,000 values and 95% of that is 1,900.</p>
+
+<p>All 1,000 values in Period 1 are less than or equal to 0.5 s, as
+well as half the values in Period 2, for a total of 1,500
+values. To compute P95, we must bound the 400 remaining values. Given that
+Period 2 is distributed uniformly, the 400 smallest values
+greater than 0.5 s are bounded above by 0.900 s, which is the
+actual P95 for the combined sample.  Comparing these statistics:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Period</th>
+      <th style="text-align: right">Sample size</th>
+      <th style="text-align: right">P95 (s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">P1</td>
+      <td style="text-align: right">1,000</td>
+      <td style="text-align: right">0.475</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">(P95<sub>1</sub> + P95<sub>2</sub>)/2</td>
+      <td style="text-align: right">(Not a sample)</td>
+      <td style="text-align: right">0.712</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">P1 and P2 combined</td>
+      <td style="text-align: right">2,000</td>
+      <td style="text-align: right">0.900</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">P2</td>
+      <td style="text-align: right">1,000</td>
+      <td style="text-align: right">0.950</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Simply averaging the two percentiles produces an estimate considerably
+lower than the correct one. Our latency is much worse than suggested
+by the simple average of the original percentiles. On the other hand,
+both values, the average and the actual percentile of the combined
+samples, lie between the two original values. We will see later in
+this post that this is generally true.</p>
+
+<h3 id="varying-the-distributions">Varying the distributions</h3>
+
+<p>The above example used two samples that differed in distribution but
+were the same size. Sample size also affects the outcome.  We can
+achieve the effect of varying the sample sizes by varying their
+weight. The following figure and table show how the P95 values vary
+with the weight of our two distributions:</p>
+
+<figure>
+  <p><img src="/assets/images/Percentiles-0-5-blend-1-75.png" alt="Density plots of six distributions, each with separate regions in blue and magenta" /></p>
+  <figcaption>
+    <p><a href="#pctile-table">Density plots of six distributions, with their top 5% region highlighted in magenta</a></p>
+  </figcaption>
+</figure>
+
+<table id="pctile-table">
+  <thead>
+    <tr>
+      <th style="text-align: left">Distribution</th>
+      <th style="text-align: right">95th percentile</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">100% 0–0.5</td>
+      <td style="text-align: right">0.475</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">90% 0–0.5 + 10% 0–1.0 blend</td>
+      <td style="text-align: right">0.500</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">83% 0–0.5 + 17% 0–1.0 blend</td>
+      <td style="text-align: right">0.706</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>Naive average (P95<sub>1</sub> + P95<sub>2</sub>)/2</em></td>
+      <td style="text-align: right"><em>0.712</em></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">50% 0–0.5 + 50% 0–1.0 blend</td>
+      <td style="text-align: right">0.900</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">10% 0–0.5 + 90% 0–1.0 blend</td>
+      <td style="text-align: right">0.944</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">100% 0–1.0</td>
+      <td style="text-align: right">0.950</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>As the proportion of the lower-latency distribution decreases from 100%
+to 0%, the P95 for the combined sample increases from the P95 of the
+lower-latency distribution up to that of the higher-latency. The naive
+average of the original P95s happens to correspond most
+closely to an 83% / 17% weighting of the two distributions.  Once
+again, the P95 values for all blends fall between those of the two
+original distributions.</p>
+
+<h2 id="the-total-percentile-always-lies-inside-the-range-of-constituent-percentiles">The total percentile always lies inside the range of constituent percentiles</h2>
+
+<p>In the examples so far, the percentile of the combined samples lay
+between the percentiles for the two constituent samples. How general
+is this result? Does it apply beyond the simple uniform distributions
+used above, to actual latency distributions, which are positively
+skewed, multimodal, and often have no upper bound? Furthermore, does
+this result apply to averages over more than two percentiles?</p>
+
+<p>Yes, the percentile for the combination of several samples will always
+lie between the smallest and largest percentile values for the
+individual samples, for any underlying distributions and combination
+of sample sizes. This section will show a simple proof of that result.</p>
+
+<p>This proof applies to the <em>continuous case</em>: Specifically, we require
+that we can select a subset of each sample that exactly matches an
+arbitrary proportion \( 0 \le p \le 1 \). No finite sample can
+satisfy this requirement but sufficiently large samples can
+approximate it. The phrase “sufficiently large” is vague but the
+samples typically used in performance analysis of distributed systems,
+containing hundreds of items or more, meet this requirement. In a
+future post, I will consider the case of small samples, for
+which the combined percentile can in fact be outside the range of the
+percentiles of the constituent samples.</p>
+
+<p>An older post
+<a href="/2020/09/09/latency-basics/">describes the basics of percentiles and the notation</a>
+that I will use in this section.</p>
+
+<p>Assume we have a set of \(N\) latency samples \(S_i\), each of size
+\(B_i\), with density \(LD_i(x)\), cumulative distribution \(LC_i(x)\), and
+percentile function \(LP_i(p)\). For simplicity, we can assume that
+the distributions \(LD_i(x)\) are nonzero everywhere \(0
+&lt; x\) (if this assumption is not met, there are technical solutions
+that will not change the main results—see Appendix). Under this assumption,
+the cumulative distributions \(LC_i(x)\) will be strictly monotonic
+on x, and their inverses, the percentile functions \(LP_i(p) =
+LC_i(x)^{-1}\), are well-defined.</p>
+
+<p>Consider the \(p\)th percentiles of these samples, \(LP_i(p)\),
+and let \(LP_1(p)\) be the smallest and \(LP_n(p)\) the largest.
+Begin with the lower bound. We want to show that the percentile for
+the combination of all the samples, \(LP_*(p)\), is greater than or
+equal to \(LP_1\).</p>
+
+<p>Presenting the calculation as a
+<a href="https://en.wikipedia.org/wiki/Structured_derivations">structured derivation</a>:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>\( \bullet \)</td>
+	  <td style="text-align: right"> \( LP_1(p) \) </td>
+	  <td style="text-aling: center"> \( \le \) </td>
+      <td style="text-align: left"> \( LP_i(p) \quad \forall i : 2 \le i \le n \) </td>
+    </tr>
+
+    <tr>
+      <td> \( \equiv \) </td>
+	  <td style="text-align: left" colspan="3">\( \{ LC_i \text{ is monotonic} \} \) </td>
+    </tr>
+
+    <tr>
+      <td></td>
+	  <td style="text-align: right"> \( LC_i(LP_1(p)) \) </td>
+	  <td style="text-aling: center"> \( \le \) </td>
+      <td style="text-align: left"> \( LC_i(LP_i(p)) \quad \forall i : 2 \le i \le n \) </td>
+    </tr>
+
+    <tr>
+      <td> \( \equiv \) </td>
+	  <td style="text-align: left" colspan="3">\( \{ \text{LHS: let }  p_i = LC_i(LP_1(p)) \text{; RHS: } LC_i \text{ and } LP_i \text{ are inverses} \} \) </td>
+    </tr>
+
+    <tr>
+      <td></td>
+	  <td style="text-align: right"> \( p_i \) </td>
+	  <td style="text-aling: center"> \( \le \) </td>
+      <td style="text-align: left"> \( p \quad \forall i : 2 \le i \le n \) </td>
+    </tr>
+
+    <tr>
+      <td> \( \equiv \) </td>
+	  <td style="text-align: left" colspan="3">\( \{ \text{Multiply by positive } B_i \} \) </td>
+    </tr>
+
+    <tr>
+      <td></td>
+	  <td style="text-align: right"> \( p_i B_i \) </td>
+	  <td style="text-aling: center"> \( \le \) </td>
+      <td style="text-align: left"> \( p B_i \quad \forall i : 2 \le i \le n \) </td>
+    </tr>
+
+    <tr>
+      <td> \( \equiv \) </td>
+	  <td style="text-align: left" colspan="3">\( \{ \text{Summing over}\: 2 \le i \le n \} \) </td>
+    </tr>
+
+    <tr>
+      <td></td>
+	  <td style="text-align: right"> \( \sum_{i=2}^n p_i B_i \) </td>
+	  <td style="text-aling: center"> \( \le \) </td>
+      <td style="text-align: left"> \( p \sum_{i=2}^n B_i \) </td>
+    </tr>
+
+    <tr>
+      <td> \( \equiv \) </td>
+	  <td style="text-align: left" colspan="3"> \( \{ \text{Adding}\: p B_1 \} \) </td>
+    </tr>
+
+    <tr>
+      <td></td>
+	  <td style="text-align: right"> \( p B_1 + \sum_{i=2}^n p_i B_i \) </td>
+	  <td style="text-aling: center"> \( \le \) </td>
+      <td style="text-align: left"> \( p B_1 + p \sum_{i=2}^n B_i \) </td>
+    </tr>
+
+    <tr>
+      <td> \( \equiv \) </td>
+	  <td style="text-align: left" colspan="3"> \( \{ \text{Combine RHS} \} \) </td>
+    </tr>
+
+    <tr>
+      <td></td>
+	  <td style="text-align: right"> \( p B_1 + \sum_{i=2}^n p_i B_i \) </td>
+	  <td style="text-aling: center"> \( \le \) </td>
+      <td style="text-align: left"> \( p \sum_{i=1}^n B_i \) </td>
+    </tr>
+
+    <tr>
+      <td> \( \equiv \) </td>
+	  <td style="text-align: left" colspan="3">\( \{ \text{Divide by positive value } \sum_{i=1}^n B_i\} \) </td>
+    </tr>
+
+    <tr>
+      <td></td>
+	  <td style="text-align: right"> \( \frac{p B_1 + \sum_{i=2}^n p_i B_i}{\sum_{i=1}^n B_i} \) </td>
+	  <td style="text-aling: center"> \( \le \) </td>
+      <td style="text-align: left"> \( p \) </td>
+    </tr>
+
+    <tr>
+      <td> \( \equiv \) </td>
+	  <td style="text-align: left" colspan="3"> \( \{ LP_* \text{ is monotonic}  \} \) </td>
+    </tr>
+
+    <tr>
+      <td></td>
+	  <td style="text-align: right"> \( LP_*(\frac{p B_1 + \sum_{i=2}^n p_i B_i}{\sum_{i=1}^n B_i}) \) </td>
+	  <td style="text-aling: center"> \( \le \) </td>
+      <td style="text-align: left"> \( LP_*(p) \) </td>
+    </tr>
+
+    <tr>
+      <td> \( \equiv \) </td>
+	  <td style="text-align: left" colspan="3"> \( \{ \text{Show equivalence to } LP_1(p) \} \) </td>
+    </tr>
+
+    <tr>
+      <td></td>
+	  <td style="text-align: left" colspan="3"> \( \bullet \quad LP_*(\frac{p B_1 + \sum_{i=2}^n p_i B_i}{\sum_{i=1}^n B_i}) \) </td> 
+    </tr>
+
+    <tr>
+      <td></td>
+	  <td style="text-align: left" colspan="3"> \( \equiv \quad \{ \frac{p B_1 + \sum_{i=2}^n p_i B_i}{\sum_{i=1}^n B_i} \text{ is exactly the proportion of the combined sample } \le LP_1(p) \} \) </td> 
+    </tr>
+
+    <tr>
+      <td></td>
+	  <td style="text-align: left" colspan="3"> \( \quad \; LP_1(p) \) </td> 
+    </tr>
+
+    <tr>
+      <td>\( \cdots \)</td>
+	  <td style="text-align: right"> \( LP_1(p) \) </td>
+	  <td style="text-aling: center"> \( \le \) </td>
+      <td style="text-align: left"> \( LP_*(p) \) </td>
+    </tr>
+
+    <tr>
+      <td>\( \Box \)</td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+    </tr>
+
+  </tbody>
+</table>
+
+<p>Analogous logic proves the upper bound, \(LP_*(p) \le LP_n(p)\). Combining these, we have proven:</p>
+
+<p><strong>Combined Percentile Theorem (Continuous case):</strong> For a collection of
+\(n\) samples, each with an arbitrary distribution and sample size
+and each of which can be subdivided to arbitrary precision,</p>
+
+<p>\[ LP_1(p) \le LP_*(p) \le LP_n(p) \]</p>
+
+<p>where \(LP_1(p)\) and \(LP_n(p)\) are the smallest and largest
+percentiles in the collection, respectively.</p>
+
+<p>Combining this theorem with the widely-known result that an average
+lies within the range of its constituent values, we get:</p>
+
+<p><strong>Corollary (Continuous case):</strong> The average of the \(p\)-percentiles for a collection
+of infinitely subdividable samples will be at most \(LP_n(p) -
+LP_1(p)\) from the \(p\)-percentile of the combined samples,
+\(LP_*(p)\).</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The average of the percentiles for a collection of samples is not the
+same as the percentile for the combined samples but its deviation from
+the combined percentile is bounded. So long as the the samples are
+large and their percentiles are near one another, their average will
+be close to the combined percentile whereas if the percentiles are
+widely-spaced, their average could be distant from it.</p>
+
+<p>We have also seen that when reasoning about combined percentiles, we
+have to consider both the distributions they represent and the sizes
+of the individual samples.</p>
+
+<p>In the next post, I’ll consider the implications of these results for
+some typical uses of percentiles in dashboards.</p>
+
+<h2 id="appendixwhen-the-density-function-has-regions-at-zero">Appendix—When the density function has regions at zero</h2>
+
+<p>In this appendix, I briefly discuss the case where a sample’s
+distribution has a region where its density function is 0.</p>
+
+<p>Wherever \(LD_i(x)\) has a zero region, \(LC_i(x)\) will be a
+flat line seqment. For the proportion \(q = LC_i(x)\), we could
+define the percentile \(LP_i(q)\) to be any \(x\) within that region.
+Define \(LP_i(q)\) to be the <em>smallest</em> such \(x\). With this
+definition, we retain the key identity</p>
+
+<p>\[ LC_i(LP_i(p)) = p \]</p>
+
+<p>required in the above proof.</p>
+
+<p>Under these revised definitions, \(LC_i\) is weakly monotonic and
+\(LP_i\) remains strongly monotonic. The above proof only requires
+that both be at least weakly monotonic.</p>
+
+<p>Consequently, all transformations in the proof continue to
+apply and so the proof holds.</p>
+
+
+
+</div>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+this.page.url = "http://kirkpatricktech.com/2021/09/02/averages-of-percentiles/";
+//this.page.identifier = "/2021/09/02/averages-of-percentiles";
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://kirkpatricktech-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
+  </body>
+</html>
