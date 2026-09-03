@@ -45,20 +45,23 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.7.1 -->
-<meta name="generator" content="Jekyll v4.2.0" />
+  <!-- Begin Jekyll SEO tag v2.9.0 -->
+<meta name="generator" content="Jekyll v4.4.1" />
 <meta property="og:title" content="Microbenchmarks are highly sensitive to the heap context!" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Over two weeks ago, I posted an article about by-value parameters in the loop and transform idioms. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis. In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda." />
-<meta property="og:description" content="Over two weeks ago, I posted an article about by-value parameters in the loop and transform idioms. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis. In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda." />
+<meta name="description" content="Over two weeks ago, I posted an article about by-value parameters in the loop and transform idioms. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis. In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify…" />
+<meta name="twitter:description" property="og:description" content="Over two weeks ago, I posted an article about by-value parameters in the loop and transform idioms. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis. In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify…" />
+<link rel="canonical" href="http://0.0.0.0:5000/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/" />
+<meta property="og:url" content="http://0.0.0.0:5000/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/" />
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2017-06-10T00:00:00-07:00" />
+<meta property="article:published_time" content="2017-06-10T00:00:00+00:00" />
+<meta property="article:modified_time" content="2017-06-10T00:00:00+00:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Microbenchmarks are highly sensitive to the heap context!" />
+<meta name="twitter:title" content="Microbenchmarks are highly sensitive to the heap context!" />
 <script type="application/ld+json">
-{"description":"Over two weeks ago, I posted an article about by-value parameters in the loop and transform idioms. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis. In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda.","url":"/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/","headline":"Microbenchmarks are highly sensitive to the heap context!","dateModified":"2017-06-10T00:00:00-07:00","datePublished":"2017-06-10T00:00:00-07:00","author":{"@type":"Person","name":"Ted Kirkpatrick"},"mainEntityOfPage":{"@type":"WebPage","@id":"/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Ted Kirkpatrick"},"dateModified":"2017-06-10T00:00:00+00:00","datePublished":"2017-06-10T00:00:00+00:00","description":"Over two weeks ago, I posted an article about by-value parameters in the loop and transform idioms. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis. In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify…","headline":"Microbenchmarks are highly sensitive to the heap context!","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:5000/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"},"url":"http://0.0.0.0:5000/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -90,10 +93,42 @@
       
         
           
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
             <a class="sidebar-nav-item" href="/about/">About</a>
           
         
       
+        
+          
+        
+      
+        
+      
+        
+          
+        
+      
+        
+          
         
       
         
@@ -104,7 +139,131 @@
       
         
           
+        
+      
+        
+          
             <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
           
         
       
@@ -245,8 +404,12 @@
 	    <a href="/tag/Admin/">Admin</a>,
 	  
         
+	   
+	    <a href="/tag/Distributed systems/">Distributed systems</a>,
+	  
+        
 	  	    
-            <a href="/tag/Distributed systems/">Distributed systems</a>
+            <a href="/tag/Programming/">Programming</a>
           
         
 	</div>
@@ -254,7 +417,7 @@
 
     </nav>
 
-    <p>&copy; 2021. All rights reserved.</p>
+    <p>&copy; 2026. All rights reserved.</p>
   </div>
 </div>
 

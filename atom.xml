@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
  <title>All my marbles in one place</title>
- <link href="/atom.xml" rel="self"/>
- <link href="/"/>
- <updated>2021-09-02T16:54:31-07:00</updated>
- <id></id>
+ <link href="http://0.0.0.0:5000/atom.xml" rel="self"/>
+ <link href="http://0.0.0.0:5000/"/>
+ <updated>2026-09-03T22:42:11+00:00</updated>
+ <id>http://0.0.0.0:5000</id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
@@ -13,10 +13,661 @@
 
  
  <entry>
+   <title>Reading "TeX: The Program" in 2026</title>
+   <link href="http://0.0.0.0:5000/2026/09/03/reading-tex-the-program/"/>
+   <updated>2026-09-03T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2026/09/03/reading-tex-the-program</id>
+   <content type="html">&lt;p&gt;According to the order slip tucked into my copy, I ordered &lt;em&gt;TeX: The
+Program&lt;/em&gt; on June 5, 1986. For four decades as I moved through two countries and nine mailing
+addresses, that book lived in boxes and
+bookshelves. I took it out several times, intending to read it, each
+time setting it aside because I wanted to understand &lt;em&gt;TeX&lt;/em&gt;’s syntax
+first. So I took down its companion volume, &lt;em&gt;The TeXbook&lt;/em&gt;, read
+a few chapters in, set that aside and never returned to either one.&lt;/p&gt;
+
+&lt;p&gt;I made my last attempt sometime in the 1990s. Despite this lack of
+progress, the books survived multiple bookshelf culls, winding up in
+the much-reduced “technical” shelf of my latest home office.  Never
+mind how few pages I’d ever read or how many years had passed without
+even opening them, these books were keepers.&lt;/p&gt;
+
+&lt;p&gt;I retired in December of 2025, ready to leave programming behind and
+explore other interests. Yet after six months I felt an absence, a
+lack. I kept looking over to my technical bookshelf, seeking the right
+balance of difficulty and readability.&lt;/p&gt;
+
+&lt;p&gt;And so, nearly forty years to the day after I made my initial order, I
+pulled out &lt;em&gt;TeX: The Program&lt;/em&gt; and opened to the first page. I had
+some misgivings. Would it hold up?  Could I learn anything from it?
+Or is it just an artifact of a long-past technical era, an application
+coded in a disused language, useful only for laying out an outdated
+media format, whose data structures address portability for obsolete
+machine architectures, developed in a team structure—one person
+working several years—totally unreplicable in modern, team-based,
+high-velocity environments?&lt;/p&gt;
+
+&lt;p&gt;This is the story of what I found.&lt;/p&gt;
+
+&lt;h2 id=&quot;relating-the-tex-of-1986-to-the-tex-of-2026&quot;&gt;Relating the TeX of 1986 to the TeX of 2026&lt;/h2&gt;
+
+&lt;p&gt;The version of TeX describe in the book’s 1986 edition is TeX 2.0,
+while the current &lt;a href=&quot;https://www-cs-faculty.stanford.edu/~knuth/abcde.html#jubilee&quot;&gt;“Jubilee” version&lt;/a&gt;
+is 3.141592653. I have reviewed the code for the more recent version
+and the changes from 2.0 are modest. The data structures and program organization
+I describe here are the same across both versions.&lt;/p&gt;
+
+&lt;p&gt;In the final section of this article, I will review how modern extensions to
+TeX, such as &lt;a href=&quot;https://www.luatex.org&quot;&gt;adding Lua as a scripting language&lt;/a&gt;,
+are organized.&lt;/p&gt;
+
+&lt;p&gt;With the version issues out of the way, we can consider the book.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-book-flows&quot;&gt;The book flows&lt;/h2&gt;
+
+&lt;p&gt;My first impression was that the book reads &lt;em&gt;as a book&lt;/em&gt;, quite
+unlike surveying a repo on GitHub or GitLab. It flows, it tells a
+story. I started on Page 1 and have read to Page 124 (so
+far), almost never feeling the need to flip ahead or behind.&lt;/p&gt;
+
+&lt;p&gt;Far from a limitation, the presentation of the code as a book is used
+to good effect. The basic unit of presentation is the two-page spread
+of the opened book. The bottom of the right-hand page is a
+cross-reference section, linking most identifiers not defined on these
+two pages with its defining section. If the identifier’s value is a
+WEB constant, its value is provided directly and you don’t need to leave
+the current page.&lt;/p&gt;
+
+&lt;p&gt;The cross-referencing falls a bit short in two ways. First, although
+most identifiers used on a page are cross-referenced, a few are not
+and have to be looked up in the full index. For example,
+Section 120 (p. 52) refers to &lt;code&gt;mem_end&lt;/code&gt;, which is
+not listed in the cross-reference on the facing page (p. 53).  I
+have never learned the criteria for whether an identifier will be listed
+or not.&lt;/p&gt;
+
+&lt;p&gt;Second, if the identifier is a Pascal constant, such as &lt;code&gt;mem_max&lt;/code&gt;
+in the same section, the cross-reference only describes it as &lt;strong&gt;const&lt;/strong&gt;,
+not its defined value. This likely results from the cross-reference
+being generated by WEB, which parses its own macros completely
+but not Pascal syntax.&lt;/p&gt;
+
+&lt;p&gt;The two-page spreads are grouped into sections, each beginning with a
+summary of this code’s role in the overall program and then laying out
+the relevant routines in a sequence of spreads. Each page
+repeats the section title in its header, connecting that page’s
+routines to its larger purpose.&lt;/p&gt;
+
+&lt;p&gt;The sections in turn proceed in the order most readers would expect: First
+the basic definitions, then memory management, then data structures
+building on that memory managment, and so forth.&lt;/p&gt;
+
+&lt;p&gt;Now this is just one way to read a computer program, where the
+reader wants an overview of the code, its consituent parts, and key
+algorithms. It’s far from a deep understanding, more of a warm feeling
+of &lt;em&gt;having understood&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;For other forms of reading, such as modifying the code, the book
+format is less suitable: The reader would need to see routines from
+widely-separated parts of the code. The format is terrible for that
+purpose, as the reader could only see one page at a time and would
+have to flip back and forth between pages, never able to see the
+routines at the same time. A multi-window editor with a backing index
+locating all the identifiers is a far better match for modifying the
+code. As I describe in Part 2, this is exactly what
+happened when I went on to re-implement some of these algorithms in
+C++.&lt;/p&gt;
+
+&lt;h2 id=&quot;my-reaction-to-the-code&quot;&gt;My reaction to the code&lt;/h2&gt;
+
+&lt;p&gt;The potential lessons from this code are going to come from its
+structure and the design choices that Knuth made. The detailed
+code has little to teach us because the Pascal language is
+dated, the code is written to maximize portability across a range
+of architectures that no longer exist, and the data structures were
+chosen with an eye to absolutely minimizing memory size.&lt;/p&gt;
+
+&lt;h3 id=&quot;pascal-is-dated&quot;&gt;Pascal is dated&lt;/h3&gt;
+
+&lt;p&gt;For the past forty years I’ve been programming in C and languages
+derived from it, with particular emphasis on those featuring some form
+of objects, such as C++, Java, C#, and JavaScript. Although those
+languages have wide variations in memory management, they have a
+generally consistent syntax, including generalized &lt;code&gt;for&lt;/code&gt;
+loops, &lt;code&gt;break&lt;/code&gt; and &lt;code&gt;continue&lt;/code&gt; statements for
+altering loop flow, and a &lt;code&gt;return&lt;/code&gt; statement for
+immediately returning from a function. They all support breaking a
+program into multiple files.&lt;/p&gt;
+
+&lt;p&gt;Classic Pascal featured none of these. Although specific implementations
+provided some of these features, none was standard, and
+so Knuth opted not to use them. To gain equivalent functionality, Knuth
+defined macros in his WEB markup language.&lt;/p&gt;
+
+&lt;p&gt;For example, to provide the effect of a &lt;code&gt;return&lt;/code&gt; statement,
+he had to build macros on top of Pascal’s numeric line labels and
+&lt;code&gt;goto&lt;/code&gt; statement.&lt;/p&gt;
+
+&lt;p&gt;First, he globally defines a constant (indicated by an equals sign) and a macro (indicated by
+a defined-as sign ≡):&lt;/p&gt;
+&lt;pre&gt;
+&lt;b&gt;define&lt;/b&gt; &lt;i&gt;exit&lt;/i&gt; = 10
+&lt;b&gt;define&lt;/b&gt; &lt;i&gt;return&lt;/i&gt; &amp;equiv; &lt;b&gt;goto&lt;/b&gt; &lt;i&gt;exit&lt;/i&gt;
+&lt;/pre&gt;
+
+&lt;p&gt;Then in any function or procedure (Pascal
+distinguishes these) in which he
+wishes to use a &lt;code&gt;return&lt;/code&gt;, he defines &lt;em&gt;exit&lt;/em&gt; as a label:&lt;/p&gt;
+
+&lt;pre&gt;
+&lt;b&gt;function&lt;/b&gt; &lt;i&gt;init_terminal&lt;/i&gt;: &lt;i&gt;boolean&lt;/i&gt;; { Section 37, p. 17 }
+  &lt;b&gt;label&lt;/b&gt; &lt;i&gt;exit&lt;/i&gt;;
+  ...
+  &lt;b&gt;loop begin&lt;/b&gt; { &lt;b&gt;loop&lt;/b&gt; is another Knuth macro }
+      &lt;b&gt;if&lt;/b&gt; ....&lt;b&gt;then begin&lt;/b&gt;
+         ...
+         &lt;b&gt;return&lt;/b&gt;
+         &lt;b&gt;end&lt;/b&gt;
+      &lt;b&gt;end&lt;/b&gt;
+  ...
+&lt;i&gt;exit&lt;/i&gt;: &lt;b&gt;end&lt;/b&gt;
+&lt;/pre&gt;
+
+&lt;p&gt;This annoyed me the first few times I read it but I
+quickly acclimated and interpreted &lt;b&gt;return&lt;/b&gt; normally,
+ignoring the noise of the &lt;i&gt;exit&lt;/i&gt; label. I’ve never
+gotten used to the way he indents his trailing &lt;b&gt;end&lt;/b&gt;s, though.&lt;/p&gt;
+
+&lt;p&gt;The TeX code has reminded me of one feature of Pascal (as well as
+its successors Modula and Ada) that I do miss: explicit specification
+of fixed-range integer values:&lt;/p&gt;
+
+&lt;pre&gt;
+&lt;i&gt;ASCII_code&lt;/i&gt; = 0 .. 127; { Section 18 }
+&lt;/pre&gt;
+
+&lt;p&gt;(Modern versions of TeX support full 8-bit ASCII, extending the range to &lt;code&gt;0 .. 255&lt;/code&gt;.)&lt;/p&gt;
+
+&lt;h3 id=&quot;the-code-maximizes-portability-to-nonexistent-architectures&quot;&gt;The code maximizes portability to nonexistent architectures&lt;/h3&gt;
+
+&lt;p&gt;At the time Knuth wrote TeX, there was a much wider range of 
+extant computer architectures. For example, IBM mainfames used
+the &lt;a href=&quot;https://en.wikipedia.org/wiki/EBCDIC&quot;&gt;EBCDIC character encoding&lt;/a&gt; rather than ASCII. Of more
+direct significance to Pascal’s design was the architecture of &lt;a href=&quot;https://en.wikipedia.org/wiki/Control_Data_Corporation&quot;&gt;CDC’s scientific computers&lt;/a&gt;,
+which were amongst the primary machines used at the university
+where Wirth defined Pascal. These machines featured
+a 60-bit word length (double precision was 120 bits, by the way), with
+no way to directly address smaller units within those words. To fit characters into
+words of that length, CDC used a &lt;a href=&quot;https://en.wikipedia.org/wiki/CDC_display_code&quot;&gt;6-bit character set&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;At the same time, a growing number of machines featured the design
+that has became nearly universal: byte-addressable memory and the ASCII
+character set.&lt;/p&gt;
+
+&lt;p&gt;Knuth wanted to write genuinely universal code, so he strove to accept
+the widest range of input characters, translated to 7-bit ASCII for
+TeX’s internal representation. He also chose data types that compilers
+of the era could translate to the widest range of underlying word lengths
+extant in the early 1980s.
+The resulting data types feel a bit “off” to a modern reader, as they
+reflect machine architectures that have long since fallen out of use.&lt;/p&gt;
+
+&lt;p&gt;These anachronisms only have mild effects on readability. Far more
+difficulty arises from the design choices for TeX’s memory layout.&lt;/p&gt;
+
+&lt;h3 id=&quot;texs-memory-management-is-complex-and-brittle&quot;&gt;TeX’s memory management is complex and brittle&lt;/h3&gt;
+
+&lt;p&gt;Much of the code in the book’s first 19 sections (120 pages) lays out the basic
+data structures in which TeX will represent its data.
+Several factors forced Knuth to craft intricate code to implement
+the structures. These factors prevailed when he wrote the
+program in the early 1980s but do not apply so strongly, if at all,
+today.&lt;/p&gt;
+
+&lt;p&gt;At the time Knuth wrote TeX, machines had less memory than they do now.
+Far, far less memory. A program’s memory footprint was also correlated
+with its speed: Smaller was typically faster. Large size could even prevent running TeX altogether, as many of the writers interested in using it might
+only have access to small machines and would not be able to run a large
+program at all.
+Squeezing out every extraneous byte of memory
+was essential and, as Knuth was the man
+who &lt;a href=&quot;https://www.goodreads.com/en/book/show/112247.The_Art_of_Computer_Programming_Volume_1&quot;&gt;wrote the book on fundamental data structures&lt;/a&gt;,
+it was almost foreordained that TeX’s foundational data structures be intricate.&lt;/p&gt;
+
+&lt;h4 id=&quot;tex-uses-custom-dynamic-memory&quot;&gt;TeX uses custom dynamic memory&lt;/h4&gt;
+
+&lt;p&gt;A key contributor to the code’s complexity was the lack of dynamic memory allocation, such
+as C’s &lt;code&gt;malloc()&lt;/code&gt; function, in the standard Pascal of the time.
+To ensure portability, Knuth had to build his own dynamic memory from scratch by preallocating a large array of words and allocating TeX’s dynamic data structures within that.&lt;/p&gt;
+
+&lt;p&gt;Knuth defines
+the &lt;code&gt;memory_word&lt;/code&gt; type (Section 113) as a variant
+record that is either an &lt;code&gt;int&lt;/code&gt;, a &lt;code&gt;real&lt;/code&gt;, two &lt;code&gt;halfwords&lt;/code&gt;, or four &lt;code&gt;quarter_words&lt;/code&gt; (bytes). The constraints on the value ranges of &lt;code&gt;quarter_words&lt;/code&gt; and &lt;code&gt;halfwords&lt;/code&gt;
+(Section 111) require a &lt;code&gt;memory_word&lt;/code&gt; to be
+at least 32 bits wide, although it could be larger.&lt;/p&gt;
+
+&lt;p&gt;In TeX, all dynamic values are allocated from an array &lt;code&gt;mem&lt;/code&gt; (Section 116) of &lt;code&gt;memory_word&lt;/code&gt;s.
+A pointer to a dynamically-allocated value is an index into &lt;code&gt;mem&lt;/code&gt; and the &lt;code&gt;pointer&lt;/code&gt; type is simply a macro
+defined (Section 115) as &lt;code&gt;halfword&lt;/code&gt;.
+The equivalence between pointers and halfwords is a deep expectation of
+TeX’s data structures, which often tuck a pointer together with another halfword-sized value into a single &lt;code&gt;machine_word&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;For a machine with a 32-bit word, this definition limits the total dynamic
+memory (the largest possible size of &lt;code&gt;mem&lt;/code&gt;) to 65,535 words (the
+value 0 is reserved as the null) of 32
+bits, or 262,140 bytes. The only way to increase that range is to 
+define &lt;code&gt;memory_word&lt;/code&gt; to be larger, such as 64 bits, resulting in
+a much larger total footprint even if you only wanted a small increase in the &lt;code&gt;mem&lt;/code&gt;
+array. For example, even just increasing the pointer range to 100,000 would
+require allocating that many 64 bit words, for a total of 800,000 bytes, more
+than tripling the footprint.&lt;/p&gt;
+
+&lt;p&gt;The version of TeX described in this book specifies the pool size to be
+30,000 words (&lt;code&gt;mem_max&lt;/code&gt;, Section 11), though production
+versions can specify larger pools.&lt;/p&gt;
+
+&lt;h4 id=&quot;two-distinct-memory-allocators&quot;&gt;Two distinct memory allocators&lt;/h4&gt;
+
+&lt;p&gt;TeX allocates dynamic memory using two distinct allocators, one for the general case
+and one specifically for characters.&lt;/p&gt;
+
+&lt;p&gt;The general case is a standard allocator for variably-sized blocks, similar to
+C’s &lt;code&gt;malloc()&lt;/code&gt;. He
+implements this using a sophisticated algorithm from Ex. 2.5–19
+of &lt;em&gt;The Art of Computer Programming&lt;/em&gt;. As the author of both the low-level memory management and its higher-level
+callers, Knuth could micro-optimize the memory API to require that the
+caller specify the size of a box at both allocation and deallocation time,
+eliminating the need for a field in the box itself to record its size. This
+saves memory at the expense of greater complexity in the caller.&lt;/p&gt;
+
+&lt;p&gt;Second, he wrote a special case for individual characters. These are by far
+the most common type of data in a text processor and also require only two bytes to represent,
+one for the font and one for the character. Note that this design will not
+suffice for &lt;a href=&quot;https://en.wikipedia.org/wiki/CJK_Unified_Ideographs&quot;&gt;CJK ideographs&lt;/a&gt; or other large character sets. In Section 134, Knuth suggests a way to
+handle what we would now call the &lt;a href=&quot;https://codepoints.net/basic_multilingual_plane?lang=en&quot;&gt;Unicode Basic Multilingual Plane&lt;/a&gt;
+but that is insufficient for the full CJK set.&lt;/p&gt;
+
+&lt;p&gt;Character sequences are represented by singly-linked lists, with the links being
+the two-byte indices into the &lt;code&gt;mem&lt;/code&gt; array. Combining the links
+with the two-byte character representation allows character sequences to
+be represented as a list of &lt;code&gt;memory_word&lt;/code&gt;s.&lt;/p&gt;
+
+&lt;p&gt;Note that unlike nodes allocated by the general allocator, character nodes do not 
+include a type field. TeX distinguishes general nodes from character nodes by
+placing them at different ends of the &lt;code&gt;mem&lt;/code&gt; array: The general
+allocator works from the bottom up, while the special character allocator
+works from the top down. A character node’s “type field” is simply its location
+at the high end of the array. This minimizes the size of character nodes,
+by far the most common type in TeX.&lt;/p&gt;
+
+&lt;h4 id=&quot;the-custom-dynamic-memory-cannot-use-regular-pascal-types&quot;&gt;The custom dynamic memory cannot use regular Pascal types&lt;/h4&gt;
+
+&lt;p&gt;This approach precludes using Pascal’s strict data types, which cannot be dynamically
+mapped on to array elements of a different underlying type. Instead of
+defining new Pascal data types for dynamically-allocated values, Knuth
+defines WEB macros that expand to an underlying machine memory unit.
+For example, the free pool of single-word values is represented as
+a singly-linked list, with each word comprising a pointer and an info
+field. The WEB macros define these as (Section 118)&lt;/p&gt;
+
+&lt;pre&gt;
+&lt;b&gt;define&lt;/b&gt; &lt;i&gt;link&lt;/i&gt;(&lt;b&gt;#&lt;/b&gt;) &amp;equiv; &lt;i&gt;mem&lt;/i&gt;[&lt;b&gt;#&lt;/b&gt;].&lt;i&gt;hh&lt;/i&gt;.&lt;i&gt;rh&lt;/i&gt;
+&lt;b&gt;define&lt;/b&gt; &lt;i&gt;info&lt;/i&gt;(&lt;b&gt;#&lt;/b&gt;) &amp;equiv; &lt;i&gt;mem&lt;/i&gt;[&lt;b&gt;#&lt;/b&gt;].&lt;i&gt;hh&lt;/i&gt;.&lt;i&gt;lh&lt;/i&gt;
+&lt;/pre&gt;
+
+&lt;p&gt;where &lt;i&gt;.hh.rh&lt;/i&gt; and &lt;i&gt;.hh.lh&lt;/i&gt; identify the two halfwords of the
+underlying word.&lt;/p&gt;
+
+&lt;p&gt;Using WEB macros rather than actual Pascal types has serious consequences.
+First, it makes the definitions inaccessible to type-checking, bypassing an important feature of modern languages.
+Second, it ties the range of possible values of these structures to the
+range expressible by the underlying memory unit, as we saw above with
+the limited range of pointers. Third, it prevented Knuth from using even
+the basic data structuring provided by Pascal records.&lt;/p&gt;
+
+&lt;p&gt;Consider the most important data type in all of TeX, the box, defined in the nine
+pages of Part 10 (Sections 133–161). At its core, TeX is program assembling a page as a list
+of boxes, each of which might contain other boxes, in turn potentially containing
+more boxes, and so on. In Pascal or any other high-level language, an individual
+box would be represented by a type definition such as:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;TYPE Box = RECORD
+  width: real;
+  depth: real;
+  next: ^Box; { Pointer to next box in the list }
+  ...
+END;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Knuth cannot use this feature however, because his dynamic memory routines
+only allocate &lt;code&gt;memory_word&lt;/code&gt;s. So Knuth has to effectively
+hand-compile the above logical record structure into a collection of 
+offsets into an allocated block of these words, then write WEB macros that
+look like accessing a record type.&lt;/p&gt;
+
+&lt;p&gt;The code in Section 135 implements this approach:&lt;/p&gt;
+
+&lt;pre&gt;
+&lt;b&gt;define&lt;/b&gt; &lt;i&gt;box_node_size&lt;/i&gt; = 7 { Number of &lt;code&gt;memory_word&lt;/code&gt;s for a box}
+&lt;b&gt;define&lt;/b&gt; &lt;i&gt;width_offset&lt;/i&gt; = 1 { The width field is in the second word }
+&lt;b&gt;define&lt;/b&gt; &lt;i&gt;width&lt;/i&gt;(&lt;b&gt;#&lt;/b&gt;) &amp;equiv; &lt;i&gt;mem&lt;/i&gt;[&lt;b&gt;#&lt;/b&gt; + &lt;i&gt;width_offset&lt;/i&gt;].&lt;i&gt;sc&lt;/i&gt; { the &lt;i&gt;.sc&lt;/i&gt; field interprets a memory_word as real }
+&lt;/pre&gt;
+
+&lt;p&gt;So where in Pascal you would access the width of a box referred to by the pointer &lt;code&gt;next&lt;/code&gt;
+using the straightforward &lt;code&gt;next^.width&lt;/code&gt;, in TeX &lt;code&gt;next&lt;/code&gt; would
+be an integer index into the array &lt;code&gt;mem&lt;/code&gt; and you would access the
+box width by the macro call &lt;code&gt;width(next)&lt;/code&gt;, expanding to
+&lt;code&gt;mem[width + width_offset].sc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This approach adds bookkeeping code and cannot be type-checked (what if the integer
+&lt;code&gt;next&lt;/code&gt;
+is not the index of a box node or not an index into mem at all?). But it’s the only
+approach available using a custom-written memory allocator rather than the Pascal implementation’s
+built-in one.&lt;/p&gt;
+
+&lt;h4 id=&quot;pascal-did-not-support-an-object-hiearchy&quot;&gt;Pascal did not support an object hiearchy&lt;/h4&gt;
+
+&lt;p&gt;Dynamically-allocated values form a natural hierarchy in TeX. With the
+exception of glue specifications, which I’ll return to later, all dynamic
+values are a type of box. Boxes are arranged in singly-linked lists, with
+the link accessible via the &lt;code&gt;link()&lt;/code&gt; macro. Each type of box,
+such as vertical or horizontal lists or rules, extend this basic type
+with fields specific to their type. For example, a vertical list contains
+a sublist of boxes, with the sublist accessed through the
+&lt;code&gt;list_ptr()&lt;/code&gt; macro.&lt;/p&gt;
+
+&lt;p&gt;Modern readers, versed in object-oriented programming, would immediately
+design this as a class type hiearchy. Although object-oriented programming
+is facing increasing criticism for overuse in cases where it obscures more than clarifies, this case is a natural fit
+to that technique.&lt;/p&gt;
+
+&lt;p&gt;But the Pascal of the 1980s had no object features—indeed, at that time
+object-oriented programming was mostly an experimental feature rather than
+mainstream—and Knuth wanted to stay within the most portable features
+of the language, so he essentially implemented a basic object system
+in WEB macros. Every box has a two-byte type field (specified via the &lt;code&gt;type()&lt;/code&gt;
+macro) and all its fields are defined using the technique described above of an
+offset and a macro.&lt;/p&gt;
+
+&lt;p&gt;The resulting code includes textbook examples of the awkward code that class
+hierarchies eliminate. For example, the &lt;code&gt;show_box()&lt;/code&gt; procedure (Part 12) that
+recurses through a hierarchy of linked boxes includes a long &lt;code&gt;case&lt;/code&gt; statement
+with a case for each box type. Defining a class hierarchy would define a &lt;code&gt;show_box()&lt;/code&gt;
+procedure within each box class and the &lt;code&gt;case&lt;/code&gt; would be eliminated.&lt;/p&gt;
+
+&lt;p&gt;Knuth made the best of the language facilities available to him at the time but a modern reader is likely
+to find themselves screaming, “Just define a class hiearchy!” when reading Section 10.&lt;/p&gt;
+
+&lt;h4 id=&quot;other-dynamic-structures&quot;&gt;Other dynamic structures&lt;/h4&gt;
+
+&lt;p&gt;In addition to lists of dynamically-allocated nodes, TeX has three other dynamic
+data structures.&lt;/p&gt;
+
+&lt;p&gt;First, glue specifications (Section 150) are allocated from the node array
+but have a different structure than a node. They do not link &lt;em&gt;to&lt;/em&gt; any other
+nodes but can be linked &lt;em&gt;from&lt;/em&gt; multiple nodes. For this reason, the field
+that would ordinarily be used for a link is instead a reference count.&lt;/p&gt;
+
+&lt;p&gt;Second, control sequences are implemented by a standard hash table (Part 18).
+This is a standard algorithm and I will not describe it further.&lt;/p&gt;
+
+&lt;p&gt;The third dynamic structure is the equivalence table (Part 17) and its
+save stack (Part 19). This table records the current values of variables
+local to the current group. These variables include available control sequences and
+parameters such as skip registers. These values are local to the current group;
+when a group ends, any value local to it is replaced with the value for
+the containing group.&lt;/p&gt;
+
+&lt;p&gt;The equivalence table has 5,076 values. A simple design would just implement
+a stack of these, pushing a new table upon group entry and popping it on exit.
+Instead, Knuth chose a more complicated design with a single 5,076-entry
+table (requiring 20K bytes) supplemented with a 600-entry stack (requiring
+2K bytes). Whenever a value is defined local to the current group, the older
+value for the enclosing group is pushed on the stack. When the current group
+exits, any values it changed are restored from the stack.&lt;/p&gt;
+
+&lt;p&gt;I do not know the TeX code well enough to say whether this more complex
+design is simply to save a small bit of space or is required by subtle semantics of
+TeX groups. I note that the save stack alone consumes seven pages of
+code, a level of extra complexity that requires substantial justification.
+I suspect a modern implementation would just stack the full equivalence
+table and be done with it in a few lines.&lt;/p&gt;
+
+&lt;h2 id=&quot;web-factors-code-into-parts-but-not-scopes&quot;&gt;WEB factors code into parts but not scopes&lt;/h2&gt;
+
+&lt;p&gt;TeX makes extensive use of the WEB feature for breaking longer routines into smaller
+pieces. For example, the &lt;code&gt;get_node()&lt;/code&gt; function, TeX’s counterpart to
+&lt;code&gt;malloc()&lt;/code&gt;, includes the lines (Section 125):&lt;/p&gt;
+
+&lt;pre&gt;&lt;b&gt;if&lt;/b&gt; &lt;i&gt;lo_mem_max&lt;/i&gt; + 1 &amp;leq; &lt;i&gt;mem_bot&lt;/i&gt; + &lt;i&gt;max_halfword&lt;/i&gt; &lt;b&gt;then&lt;/b&gt;
+  &amp;LeftAngleBracket; Grow more variable-size memory and &lt;b&gt;goto&lt;/b&gt; &lt;i&gt;restart&lt;/i&gt; 126 &amp;RightAngleBracket;;
+&lt;/pre&gt;
+
+&lt;p&gt;Then Section 126 expands the description between angle brackets into
+seven lines of Pascal. Logically, Section 126 functions as a subroutine
+called by Section 125—or nearly so. But this mechanism lacks
+the scoping provided by actual subroutines. Section 126 has
+complete access to every variable contained in Section 125 and can
+read or even update them at will. In fact, the lines in Section 126 can
+also access any variable contained in &lt;em&gt;any enclosing scope&lt;/em&gt; of Section 125,
+all the way up to the global scope.&lt;/p&gt;
+
+&lt;p&gt;This unlimited scope is not simply inadvertent, it is essential to how TeX’s
+data structures operate. Recall from the discussion of dynamic memory that
+TeX simulates the fields of records via WEB macros that expand into direct
+references into the global array &lt;code&gt;mem&lt;/code&gt;. For these references
+to succeed, every line of code has to be able to access that array.&lt;/p&gt;
+
+&lt;h2 id=&quot;tex-lacks-clear-separation-into-levels&quot;&gt;TeX lacks clear separation into levels&lt;/h2&gt;
+
+&lt;p&gt;The unrestricted scoping is a facet of a larger issue, the lack of separation
+of TeX into separate levels. TeX is clearly the product of one developer,
+working over a period of years, intimately familiar with every line of code
+and its contribution to the overall application.&lt;/p&gt;
+
+&lt;p&gt;The lack of separation has myriad effects throughout the code. I’ll
+highlight two here.&lt;/p&gt;
+
+&lt;h3 id=&quot;reading-the-first-commands-from-a-file-versus-the-console&quot;&gt;Reading the first commands from a file versus the console&lt;/h3&gt;
+
+&lt;p&gt;Upon starting, TeX’s first console prompt is a pair of asterisks.
+Ignoring some special cases, the user will respond one of two ways
+(p. 23 of &lt;em&gt;The TeXbook&lt;/em&gt;):&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Enter the name of a file that contains a document to be formatted (or
+at least the start of a document), or&lt;/li&gt;
+  &lt;li&gt;Enter the command &lt;code&gt;\relax&lt;/code&gt;, indicating that they will
+be entering the document and associated commands from the console.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The decision between these two options is partly implemented
+deep in the code, in the &lt;code&gt;scan_file_name&lt;/code&gt; routine (Section 526). If this routine encounters a command as the first token
+it reads, it sets the global &lt;code&gt;name_in_progress&lt;/code&gt; to &lt;code&gt;false&lt;/code&gt;
+and returns. For its part, the &lt;code&gt;\relax&lt;/code&gt; command gets
+special treatment as the only primitive command in Section 265
+that is assigned an operand, ensuring that the file name routine
+will recognize it as a command and abandon scanning for a name.&lt;/p&gt;
+
+&lt;p&gt;The description of this choice in &lt;em&gt;The TeXbook&lt;/em&gt; implies that this
+design may have been chosen late in the implementation. Handling
+the relax command deep in the file name scanner may have been a
+last-minute solution.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-values-chosen-for-enumerations-are-themselves-significant&quot;&gt;The values chosen for enumerations are themselves significant&lt;/h3&gt;
+
+&lt;p&gt;TeX makes extensive use of enumerated values: lists of integer constants representing
+commands, modes, and other internal states. Modern programming languages,
+including Pascal, support enumerated types (for example, &lt;code&gt;enum&lt;/code&gt; in C/C++).&lt;/p&gt;
+
+&lt;p&gt;The subset of standard Pascal used by Knuth does not permit specifying the
+integer values associated with a given identifier, so he defines his enumerations
+instead via long sequences of WEB &lt;code&gt;define&lt;/code&gt; macros. See, for example,
+Sections 207–210, which define the 119 codes identifying every
+TeX primitive command.&lt;/p&gt;
+
+&lt;p&gt;Knuth needs explicit control of the values assigned each constant because he
+wants to be able to make simple decisions between &lt;em&gt;categories&lt;/em&gt; of constants:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code&gt;0&lt;/code&gt;–&lt;code&gt;max_char_code&lt;/code&gt; are characters.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;max_char_code+1&lt;/code&gt;–&lt;code&gt;min_internal-1&lt;/code&gt; are “ordinary” commands.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;min_internal&lt;/code&gt;–&lt;code&gt;max_non_prefixed_command&lt;/code&gt; are
+“ordinary” commands that might follow &lt;code&gt;\the&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;max_non_prefixed_command+1&lt;/code&gt;–&lt;code&gt;max_internal&lt;/code&gt; are
+“special” commands that might follow &lt;code&gt;\the&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;max_internal+1&lt;/code&gt;–&lt;code&gt;max_command&lt;/code&gt; are “special” commands that cannot follow &lt;code&gt;\the&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;max_command+1&lt;/code&gt;–&lt;code&gt;data&lt;/code&gt; are “extra-special”
+commands that will be handled entirely in the scanner.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These deliberate value choices allow the higher-level routines to distinguish
+categories using simple &lt;code&gt;if&lt;/code&gt; statements rather than long &lt;code&gt;switch&lt;/code&gt; sequences. The negative consequence of these choices is that the low-level
+decision of code assignment must be made in accord with the requirements of
+higher-level semantic choices; the levels blend together.&lt;/p&gt;
+
+&lt;p&gt;This blending is exacerbated by the choice to combine multiple codes into
+a single integer and then make semantic choices based on the range of the combined value. For
+example, Section 211 adds the current mode to the current command
+for later use in &lt;code&gt;if&lt;/code&gt; comparisons. To make this work, the
+three mode values have to be assigned multiples of &lt;em&gt;max_command&lt;/em&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;b&gt;define&lt;/b&gt; &lt;i&gt;vmode&lt;/i&gt; = 1
+&lt;b&gt;define&lt;/b&gt; &lt;i&gt;hmode&lt;/i&gt; = &lt;i&gt;vmode&lt;/i&gt; + &lt;i&gt;max_command&lt;/i&gt; + 1
+&lt;b&gt;define&lt;/b&gt; &lt;i&gt;mmode&lt;/i&gt; = &lt;i&gt;hmode&lt;/i&gt; + &lt;i&gt;max_command&lt;/i&gt; + 1
+&lt;/pre&gt;
+
+&lt;p&gt;See Section 211 for the details. Section 289 does a similar
+computation for token codes.&lt;/p&gt;
+
+&lt;p&gt;These combined values compound the level blending, in that low-level constants must be precisely chosen to ensure that
+higher-level decisions work correctly.&lt;/p&gt;
+
+&lt;h2 id=&quot;tex-in-2026&quot;&gt;TeX in 2026&lt;/h2&gt;
+
+&lt;p&gt;Reading TeX’s code, I was reminded again and again that this was the product of
+a single, master programmer, refining his code for years without deadlines, and with an
+extraordinary focus on saving every byte of memory. This approach is almost
+unrecognizable today, where programs are written by teams, updated incrementally,
+and feature velocity is more important than memory efficiency almost every time.
+The recent move to AI-aided programming takes us even further from TeX’s development model.&lt;/p&gt;
+
+&lt;p&gt;Language features such as nested scoping and design approaches such as strong separation
+of levels are essential to contemporary development. They permit a
+developer to work locally with the assurance that they don’t have to understand
+the full architecture, only the code within their interface, and that implementation decisions
+they make in the local code are hidden behind the interface’s abstraction. When team
+members are entering and leaving the project with some regularity, they have to be
+able to get up to speed quickly. There’s no opportunity for them to gain the sort
+of detailed, line-by-line understanding that Knuth had of TeX.&lt;/p&gt;
+
+&lt;p&gt;Of course, TeX is ultimately tiny compared to most modern programs, with a narrow scope.
+It has no networking component, it doesn’t serve online requests,
+and its interface is entirely console-based. It simply takes a few files, formats
+them—elegantly, to be sure—and writes out a binary file that drives
+the display. It doesn’t have a single external dependency, other than the most basic file
+and console operations afforded by the base language.&lt;/p&gt;
+
+&lt;p&gt;In all these regards, it is a relic of a long-gone era. And yet, astonishingly,
+forty years later it remains a widely-used, well-liked tool for writing technical
+documents. As recently as July of 2026, Dr. Angela Collier described how
+virtually all research papers in Physics use Tex/LaTeX
+(video &lt;a href=&quot;https://nebula.tv/videos/angelacollier-im-sorry&quot;&gt;on Nebula&lt;/a&gt;, &lt;a href=&quot;https://www.youtube.com/watch?v=KhWwuQ7qf5A&quot;&gt;on YouTube&lt;/a&gt;).
+The accomplishment is even more striking when we note that code for the current version
+has remained unchanged for forty years, with only modest extensions to handle more
+recent technologies such as &lt;a href=&quot;https://en.wikipedia.org/wiki/UTF-8&quot;&gt;UTF-8 encoding&lt;/a&gt; and
+&lt;a href=&quot;https://en.wikipedia.org/wiki/TrueType&quot;&gt;TrueType fonts&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;TeX may be the only consumer-facing program from the 1980s that remains
+in active use. I certainly can’t think of another. There may well be programs
+within specialized, vertical markets, or longstanding IT code running on the
+mainframes of large organizations, but to my knowledge no other programs
+from the 1980 with a wide customer base remain in use essentially unchanged.&lt;/p&gt;
+
+&lt;p&gt;TeX’s influence on contemporary technical writing extends beyond its direct
+use. The &lt;a href=&quot;https://www.mathjax.org&quot;&gt;MathJax project&lt;/a&gt; allows authors to define
+formulas in the notation of TeX’s math mode for display in Web pages.
+The &lt;a href=&quot;https://latex.js.org&quot;&gt;LATEX.js project&lt;/a&gt; goes even further, providing a
+complete LaTeX-to-HTML5 translator in JavaScript. Whatever the future of
+the original TeX program, the notation it established for writing mathematical
+formulas seems destined to persist long into the 21st century.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-tao-of-tex-the-tex-you-read-is-not-the-tex-you-use&quot;&gt;The Tao of TeX: The TeX you read is not the TeX you use&lt;/h2&gt;
+
+&lt;p&gt;When we read &lt;em&gt;Tex: The Program&lt;/em&gt;, we are seeing the reference version of
+the program. This specifies the exact algorithms to be used and sets
+the standard for any variant. But end users of the program have always
+used slight variants, even from the earliest days.&lt;/p&gt;
+
+&lt;p&gt;These variants do not change the algorithms or computations—they
+must produce identical outputs to the reference version, after all—but
+they will be modified to reflect local requirements:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;They may need changes to interface with their underlying operating system.&lt;/li&gt;
+  &lt;li&gt;They may need to read in character sets other than 7-bit ASCII (now 8-bit). Historically
+these would be non-ASCII character sets, while now it might be UTF-8 or
+other Unicode representations.&lt;/li&gt;
+  &lt;li&gt;They may be mechanically translated to another language, such as C, that
+can compile to more efficient code than a system’s Pascal compiler.&lt;/li&gt;
+  &lt;li&gt;They may have larger or smaller internal arrays, to accommodate larger
+documents or smaller computers.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Beyond local adaptations of basic TeX are more ambitious extensions, such
+as &lt;a href=&quot;https://tug.org/applications/pdftex/&quot;&gt;pdfTeX&lt;/a&gt;, &lt;a href=&quot;https://tug.org/xetex/&quot;&gt;XeTeX&lt;/a&gt;,
+and &lt;a href=&quot;https://www.luatex.org&quot;&gt;LuaTeX&lt;/a&gt;. I have skimmed the
+changes made by each of these and didn’t find any major changes
+to the architecture and data structures. LuaTeX seems to have made the biggest
+updates, using C’s &lt;code&gt;realloc()&lt;/code&gt; to dynamically allocate the
+&lt;a href=&quot;https://svn.tug.org:8369/texlive/trunk/Build/source/texk/web2c/luatexdir/tex/textoken.c?revision=76262&amp;amp;view=markup#l170&quot;&gt;one-word-length&lt;/a&gt;
+and &lt;a href=&quot;https://svn.tug.org:8369/texlive/trunk/Build/source/texk/web2c/luatexdir/tex/texnodes.c?revision=76262&amp;amp;view=markup#l2964&quot;&gt;variable-length&lt;/a&gt; node pools.
+LuaTeX also manages the &lt;a href=&quot;https://svn.tug.org:8369/texlive/trunk/Build/source/texk/web2c/luatexdir/tex/stringpool.c?revision=63110&amp;amp;view=markup&quot;&gt;string pool&lt;/a&gt;
+differently from standard TeX but as I didn’t consider that data
+structure in my analysis above I won’t go into details.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-did-i-gain-from-reading-this-code&quot;&gt;What did I gain from reading this code?&lt;/h2&gt;
+
+&lt;p&gt;So what have I gained from reading and reviewing this code? The most striking
+effect was the sense of opening a time capsule, peering into a programming
+past so different from our present that it seems quaint.  At times, its use
+of the Pascal language and its definition of records via WEB macros gave
+an impression of an outdated dialect, much like reading Shakespearean English.
+Understandable but requiring a bit of effort.&lt;/p&gt;
+
+&lt;p&gt;At the same time, I was struck by the care evident in every line, the consciousness behind
+each choice. It simply makes everything I’ve written in recent years seem a bit slapdash.
+It got me thinking, if I had the chance to work on something until it was really right,
+how would the result look? And how would I feel while crafting it?&lt;/p&gt;
+
+&lt;p&gt;It also engendered a sense of loss. TeX seems unique, an artifact entirely
+specific to its moment of creation and its creator, conditions that will simply
+never recur in the contemporary environment. The consummation of a programming era
+that has long passed, it sits like a vase of cut crystal on a pedestal,
+an artifact more to be admired
+from a distance than handled.&lt;/p&gt;
+
+&lt;p&gt;That loss is compounded by the reminder of how fun programming used to be.&lt;/p&gt;
+
+&lt;h2 id=&quot;coming-in-part-2-reimplementing-the-node-data-structures&quot;&gt;Coming in Part 2: Reimplementing the node data structures&lt;/h2&gt;
+
+&lt;p&gt;I finished the data structure sections with a question in the back of my mind:
+Would reimplementing the base structures in a more modern language and paradigm
+improve the code? Would it be easier to read? Would it improve or worsen
+performance? The memory managers underlying modern languages are written
+with an awareness of the role of locality in the modern memory hierarchy, such as the importance of
+cache coherence. Would these routines perform better than Knuth’s code, written well
+before such considerations arose?&lt;/p&gt;
+
+&lt;p&gt;In Part 2, I reimplement TeX’s node data structures twice in C++ 23, first
+using the original approach, second using the full capacities of the language.
+Along the way, I just may rediscover the fun in this work.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>How much information is retained in an average of percentiles?</title>
-   <link href="/2021/09/02/averages-of-percentiles/"/>
-   <updated>2021-09-02T00:00:00-07:00</updated>
-   <id>/2021/09/02/averages-of-percentiles</id>
+   <link href="http://0.0.0.0:5000/2021/09/02/averages-of-percentiles/"/>
+   <updated>2021-09-02T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2021/09/02/averages-of-percentiles</id>
    <content type="html">&lt;p&gt;Experienced performance analysts caution against taking averages of
 percentiles. Gil Tene’s famous 2015 Strange Loop talk,
 &lt;a href=&quot;https://www.youtube.com/watch?v=lJ8ydIuPFeU?&amp;quot;start=482&quot;&gt;“How NOT to Measure Latency”&lt;/a&gt;,
@@ -426,9 +1077,9 @@ apply and so the proof holds.&lt;/p&gt;
  
  <entry>
    <title>AWS Outpost vs. Oracle Region @ Customer: How do they differ?</title>
-   <link href="/2021/07/10/outpost-vs-region-at-customer/"/>
-   <updated>2021-07-10T00:00:00-07:00</updated>
-   <id>/2021/07/10/outpost-vs-region-at-customer</id>
+   <link href="http://0.0.0.0:5000/2021/07/10/outpost-vs-region-at-customer/"/>
+   <updated>2021-07-10T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2021/07/10/outpost-vs-region-at-customer</id>
    <content type="html">&lt;p&gt;Cloud vendors are rolling out products that place proprietary
 hardware in customer’s datacentres, delivering a selection of the
 vendor’s cloud services from the customer’s datacentre. These new
@@ -752,9 +1403,9 @@ to handle these use cases as well.&lt;/p&gt;
  
  <entry>
    <title>The 'Descriptive' versus 'Prescriptive' distinction is irrelevant for actual writing</title>
-   <link href="/2021/06/13/prescriptive-descriptive/"/>
-   <updated>2021-06-13T00:00:00-07:00</updated>
-   <id>/2021/06/13/prescriptive-descriptive</id>
+   <link href="http://0.0.0.0:5000/2021/06/13/prescriptive-descriptive/"/>
+   <updated>2021-06-13T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2021/06/13/prescriptive-descriptive</id>
    <content type="html">&lt;p&gt;I sometimes get asked whether I’m a “prescriptivist” or
 “descriptivist”, or—worse still—labelled as one. This has always
 struck me as beside the point. In none of my roles, not as a writer,
@@ -1131,9 +1782,9 @@ simply distract from that fundamental task.&lt;/p&gt;
  
  <entry>
    <title>Designs don't have "superpowers"</title>
-   <link href="/2021/06/03/superpower/"/>
-   <updated>2021-06-03T00:00:00-07:00</updated>
-   <id>/2021/06/03/superpower</id>
+   <link href="http://0.0.0.0:5000/2021/06/03/superpower/"/>
+   <updated>2021-06-03T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2021/06/03/superpower</id>
    <content type="html">&lt;p&gt;Time for another rant about a word seeing increased use in technical
 discussions (and elsewhere): &lt;em&gt;superpower&lt;/em&gt;. It just doesn’t mean what
 people imply it means.&lt;/p&gt;
@@ -1195,9 +1846,9 @@ can I say? I’m a work in progress.&lt;/p&gt;
  
  <entry>
    <title>"Opinionated" design as design rationale</title>
-   <link href="/2021/05/31/opinionated-designs/"/>
-   <updated>2021-05-31T00:00:00-07:00</updated>
-   <id>/2021/05/31/opinionated-designs</id>
+   <link href="http://0.0.0.0:5000/2021/05/31/opinionated-designs/"/>
+   <updated>2021-05-31T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2021/05/31/opinionated-designs</id>
    <content type="html">&lt;p&gt;I see increasing use of the phrase “opinionated design”, frequent
 enough to risk it becoming a
 &lt;a href=&quot;https://www.thoughtco.com/vogue-word-1692599&quot;&gt;vogue word&lt;/a&gt; in our
@@ -1402,9 +2053,9 @@ usage. Other users may find it awkward for their purposes.&lt;/p&gt;
  
  <entry>
    <title>The <i>external</i> interfaces to Kubernetes ingress</title>
-   <link href="/2021/05/18/external-interfaces-to-kubernetes/"/>
-   <updated>2021-05-18T00:00:00-07:00</updated>
-   <id>/2021/05/18/external-interfaces-to-kubernetes</id>
+   <link href="http://0.0.0.0:5000/2021/05/18/external-interfaces-to-kubernetes/"/>
+   <updated>2021-05-18T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2021/05/18/external-interfaces-to-kubernetes</id>
    <content type="html">&lt;p&gt;Defining a Kubernetes ingress seems simple enough: Define a YAML file
 and you’re good. But that only defines the interface from services &lt;em&gt;inside&lt;/em&gt; the
 cluster to whatever external agent is connecting external client
@@ -1513,9 +2164,9 @@ address to a service inside the cluster.&lt;/p&gt;
  
  <entry>
    <title>Three rings of abstraction in Kubernetes</title>
-   <link href="/2021/05/17/three-rings-of-kubernetes/"/>
-   <updated>2021-05-17T00:00:00-07:00</updated>
-   <id>/2021/05/17/three-rings-of-kubernetes</id>
+   <link href="http://0.0.0.0:5000/2021/05/17/three-rings-of-kubernetes/"/>
+   <updated>2021-05-17T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2021/05/17/three-rings-of-kubernetes</id>
    <content type="html">&lt;p&gt;A common analogy for Kubernetes presents it as “the operating system
 for microservices”, identifying Kubernetes
 as a kind of operating system. I don’t think this analogy is wrong but
@@ -1971,9 +2622,9 @@ enough. Viewing it in terms of its many abstractions is far more informative.&lt
  
  <entry>
    <title>A manager cannot be a mentor&mdash;but should still give advice</title>
-   <link href="/2021/04/18/mentors-not-supervisors/"/>
-   <updated>2021-04-18T00:00:00-07:00</updated>
-   <id>/2021/04/18/mentors-not-supervisors</id>
+   <link href="http://0.0.0.0:5000/2021/04/18/mentors-not-supervisors/"/>
+   <updated>2021-04-18T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2021/04/18/mentors-not-supervisors</id>
    <content type="html">&lt;p&gt;Mentoring. Everyone thinks it’s a great idea and many claim to do it.
 Yet both formal studies and my personal observations suggest that such
 relationships are rarely sustained and often not retrospectively
@@ -2153,9 +2804,9 @@ contexts of such committees or the domain of teaching.&lt;/p&gt;
  
  <entry>
    <title>The basics of latency percentiles</title>
-   <link href="/2020/09/09/latency-basics/"/>
-   <updated>2020-09-09T00:00:00-07:00</updated>
-   <id>/2020/09/09/latency-basics</id>
+   <link href="http://0.0.0.0:5000/2020/09/09/latency-basics/"/>
+   <updated>2020-09-09T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2020/09/09/latency-basics</id>
    <content type="html">&lt;p&gt;Designers of distributed systems obsess over service latency. They
 forecast latencies of proposed designs, stress-test the latencies of
 systems under development, equalize latencies of
@@ -2240,8 +2891,8 @@ Gaussian with mean 5 and standard deviation 0.5.&lt;/li&gt;
 
 &lt;p&gt;The &lt;a href=&quot;https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.lognorm.html#scipy.stats.lognorm&quot;&gt;SciPy&lt;/a&gt; code for this density function is:&lt;/p&gt;
 
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stats&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lognorm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pdf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-           &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stats&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lognorm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pdf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;loc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;5.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stats&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lognorm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;pdf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+           &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stats&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lognorm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;pdf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;loc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;5.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;and it has the following density function:&lt;/p&gt;
@@ -2369,9 +3020,9 @@ important concepts such as effective percentiles.&lt;/p&gt;
  
  <entry>
    <title>Extending "The Tail at Scale"</title>
-   <link href="/2020/07/24/extending-the-tail-at-scale/"/>
-   <updated>2020-07-24T00:00:00-07:00</updated>
-   <id>/2020/07/24/extending-the-tail-at-scale</id>
+   <link href="http://0.0.0.0:5000/2020/07/24/extending-the-tail-at-scale/"/>
+   <updated>2020-07-24T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2020/07/24/extending-the-tail-at-scale</id>
    <content type="html">&lt;p&gt;&lt;em&gt;A companion post goes into more detail on
   &lt;a href=&quot;/2020/09/09/latency-basics.html&quot;&gt;constructing the percentile function from a density function&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
@@ -2784,9 +3435,9 @@ far more common than their single-call percentile would indicate.&lt;/p&gt;
  
  <entry>
    <title>Guarantees vs. metrics: What the designers intend, what the clients see</title>
-   <link href="/2020/06/20/guarantees-vs-methods/"/>
-   <updated>2020-06-20T00:00:00-07:00</updated>
-   <id>/2020/06/20/guarantees-vs-methods</id>
+   <link href="http://0.0.0.0:5000/2020/06/20/guarantees-vs-methods/"/>
+   <updated>2020-06-20T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2020/06/20/guarantees-vs-methods</id>
    <content type="html">&lt;p&gt;In my
 &lt;a href=&quot;/2019/12/31/design-space-2020/&quot;&gt;distributed systems design space&lt;/a&gt;, I
 distinguish guarantees from metrics. A &lt;em&gt;guarantee&lt;/em&gt; is a property a
@@ -2971,9 +3622,9 @@ important.&lt;/p&gt;
  
  <entry>
    <title>Flambloozlement and the student enthusiasm for crunch mode</title>
-   <link href="/2020/04/03/flambloozlement/"/>
-   <updated>2020-04-03T00:00:00-07:00</updated>
-   <id>/2020/04/03/flambloozlement</id>
+   <link href="http://0.0.0.0:5000/2020/04/03/flambloozlement/"/>
+   <updated>2020-04-03T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2020/04/03/flambloozlement</id>
    <content type="html">&lt;p&gt;How do students assess the value of what they learn in class? On the
 one hand, years of attending school have made them sophisticated
 judges of teaching effectiveness: They know whether an approach is
@@ -3211,9 +3862,9 @@ principles that form the main learning outcomes of our courses.&lt;/p&gt;
  
  <entry>
    <title>How hard is it to implement replicated state machines?</title>
-   <link href="/2020/03/08/difficulty-of-state-machines/"/>
-   <updated>2020-03-08T00:00:00-08:00</updated>
-   <id>/2020/03/08/difficulty-of-state-machines</id>
+   <link href="http://0.0.0.0:5000/2020/03/08/difficulty-of-state-machines/"/>
+   <updated>2020-03-08T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2020/03/08/difficulty-of-state-machines</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Note: Over the past eight months, I have been working with the code for
 TenCent’s &lt;a href=&quot;https://github.com/Tencent/phxpaxos&quot;&gt;Phxpaxos&lt;/a&gt;, an
 open-source implementation of replicated state-machines, with
@@ -3611,9 +4262,9 @@ it correct for the many edge conditions and modes of partial failure.&lt;/p&gt;
  
  <entry>
    <title>Applying resilient design to my own systems</title>
-   <link href="/2020/02/13/systems-resilience-in-daily-life/"/>
-   <updated>2020-02-13T00:00:00-08:00</updated>
-   <id>/2020/02/13/systems-resilience-in-daily-life</id>
+   <link href="http://0.0.0.0:5000/2020/02/13/systems-resilience-in-daily-life/"/>
+   <updated>2020-02-13T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2020/02/13/systems-resilience-in-daily-life</id>
    <content type="html">&lt;p&gt;When I teach a course in modern distributed systems design, I spend a
 lot of time on topics such as engineering for resilience and
 automating production processes. It turns out that applying those big
@@ -3698,9 +4349,9 @@ than much individual activity.&lt;/p&gt;
  
  <entry>
    <title>"Distributed Systems" are not what they used to be</title>
-   <link href="/2020/02/11/meaning-of-distributed-systems/"/>
-   <updated>2020-02-11T00:00:00-08:00</updated>
-   <id>/2020/02/11/meaning-of-distributed-systems</id>
+   <link href="http://0.0.0.0:5000/2020/02/11/meaning-of-distributed-systems/"/>
+   <updated>2020-02-11T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2020/02/11/meaning-of-distributed-systems</id>
    <content type="html">&lt;p&gt;The phrase “distributed systems” has had several meanings over the
 last 50 years, from a mathematical topic to a style of
 engineering practice to a suite of technologies. What can
@@ -3966,9 +4617,9 @@ produce better solutions.&lt;/p&gt;
  
  <entry>
    <title>A strategy for more frequent posts</title>
-   <link href="/2020/01/29/increasing-post-frequency/"/>
-   <updated>2020-01-29T00:00:00-08:00</updated>
-   <id>/2020/01/29/increasing-post-frequency</id>
+   <link href="http://0.0.0.0:5000/2020/01/29/increasing-post-frequency/"/>
+   <updated>2020-01-29T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2020/01/29/increasing-post-frequency</id>
    <content type="html">&lt;p&gt;I have many incomplete threads on distributed systems. How do I
 balance my desire for complete and correct presentations with the need
 to post more frequently?&lt;/p&gt;
@@ -4017,9 +4668,9 @@ make them and instead accepting imperfections as the price of timeliness.&lt;/p&
  
  <entry>
    <title>When are "motivating" images useful in a presentation?</title>
-   <link href="/2020/01/25/motivating-images/"/>
-   <updated>2020-01-25T00:00:00-08:00</updated>
-   <id>/2020/01/25/motivating-images</id>
+   <link href="http://0.0.0.0:5000/2020/01/25/motivating-images/"/>
+   <updated>2020-01-25T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2020/01/25/motivating-images</id>
    <content type="html">&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; &lt;em&gt;I’m writing this post to clarify my thinking about an issue in
 presentation design. I’m using a stream-of-consciousness format,
 with little editing. You might want to skip this one if
@@ -4286,9 +4937,9 @@ but well-grounded result.&lt;/p&gt;
  
  <entry>
    <title>Figure failures (and successes!)</title>
-   <link href="/2020/01/21/figure-failures/"/>
-   <updated>2020-01-21T00:00:00-08:00</updated>
-   <id>/2020/01/21/figure-failures</id>
+   <link href="http://0.0.0.0:5000/2020/01/21/figure-failures/"/>
+   <updated>2020-01-21T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2020/01/21/figure-failures</id>
    <content type="html">&lt;p&gt;Well-designed figures are invaluable for presenting technical detail,
 including architectural diagrams, timing diagrams, data visualizations,
 category hierarchies, and many other forms. Yet the simplicity and
@@ -4433,9 +5084,9 @@ for.&lt;/p&gt;
  
  <entry>
    <title>A class is a story: Fitting content to sessions</title>
-   <link href="/2020/01/16/class-as-story/"/>
-   <updated>2020-01-16T00:00:00-08:00</updated>
-   <id>/2020/01/16/class-as-story</id>
+   <link href="http://0.0.0.0:5000/2020/01/16/class-as-story/"/>
+   <updated>2020-01-16T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2020/01/16/class-as-story</id>
    <content type="html">&lt;p&gt;Any given class is a story. It has a beginning, middle, and end. It
 arcs toward a conclusion.  The story can be deliberate and designed or
 it can be inadvertent and confused. Ultimately, the story will be
@@ -4513,9 +5164,9 @@ structure.&lt;/p&gt;
  
  <entry>
    <title>Roles vs. Silos, Contribution vs. Technology</title>
-   <link href="/2020/01/14/roles-vs-silos/"/>
-   <updated>2020-01-14T00:00:00-08:00</updated>
-   <id>/2020/01/14/roles-vs-silos</id>
+   <link href="http://0.0.0.0:5000/2020/01/14/roles-vs-silos/"/>
+   <updated>2020-01-14T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2020/01/14/roles-vs-silos</id>
    <content type="html">&lt;p&gt;With the developing maturity of chaos engineering techniques, I see
 people taking the job title, “Chaos Engineer”. Although I think chaos
 engineer&lt;em&gt;ing&lt;/em&gt; is a truly useful field based upon important principles,
@@ -4571,9 +5222,9 @@ descriptions serve both organization and employee best.&lt;/p&gt;
  
  <entry>
    <title>What genres of readings should be assigned to Prof. MSc. students?</title>
-   <link href="/2020/01/10/readings-in-prof-masters/"/>
-   <updated>2020-01-10T00:00:00-08:00</updated>
-   <id>/2020/01/10/readings-in-prof-masters</id>
+   <link href="http://0.0.0.0:5000/2020/01/10/readings-in-prof-masters/"/>
+   <updated>2020-01-10T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2020/01/10/readings-in-prof-masters</id>
    <content type="html">&lt;p&gt;What sort of materials should students read in a professional MSc.
 course in computing science? Journal articles? Research conference
 papers? Systems-oriented conference papers? Articles from
@@ -4823,9 +5474,9 @@ MSc. programs.&lt;/p&gt;
  
  <entry>
    <title>The service design space (2020 Edition)</title>
-   <link href="/2019/12/31/design-space-2020/"/>
-   <updated>2019-12-31T00:00:00-08:00</updated>
-   <id>/2019/12/31/design-space-2020</id>
+   <link href="http://0.0.0.0:5000/2019/12/31/design-space-2020/"/>
+   <updated>2019-12-31T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2019/12/31/design-space-2020</id>
    <content type="html">
 &lt;p&gt;&lt;em&gt;Post in an ongoing series on the issues constraining service design
  for datacentres. A previous post presented 2019’s
@@ -5308,9 +5959,9 @@ actual service—into a production service.&lt;/p&gt;
  
  <entry>
    <title>"Awareness" outcomes as preparation for internships</title>
-   <link href="/2019/12/16/awareness-outcomes/"/>
-   <updated>2019-12-16T00:00:00-08:00</updated>
-   <id>/2019/12/16/awareness-outcomes</id>
+   <link href="http://0.0.0.0:5000/2019/12/16/awareness-outcomes/"/>
+   <updated>2019-12-16T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2019/12/16/awareness-outcomes</id>
    <content type="html">&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; &lt;em&gt;Outside activities interrupted my posting here. Where did those five
 months go? I did generate a lot of potential posts on distributed
 systems, which I’ll discuss in coming posts. This post focusses
@@ -5606,9 +6257,9 @@ effective.&lt;/p&gt;
  
  <entry>
    <title>Why is distributed consensus so hard?</title>
-   <link href="/2019/06/12/why-consensus-is-hard/"/>
-   <updated>2019-06-12T00:00:00-07:00</updated>
-   <id>/2019/06/12/why-consensus-is-hard</id>
+   <link href="http://0.0.0.0:5000/2019/06/12/why-consensus-is-hard/"/>
+   <updated>2019-06-12T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2019/06/12/why-consensus-is-hard</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series describing Howard &amp;amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry &lt;a href=&quot;/2019/05/29/distributed-consensus-intro/&quot;&gt;introduced the source papers&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Updated &lt;strong&gt;May 27, 2020&lt;/strong&gt; to incorporate points from
@@ -6039,9 +6690,9 @@ description of Paxos.&lt;/p&gt;
  
  <entry>
    <title>Generalized distributed consensus in PlusCal: Introduction</title>
-   <link href="/2019/05/29/distributed-consensus-intro/"/>
-   <updated>2019-05-29T00:00:00-07:00</updated>
-   <id>/2019/05/29/distributed-consensus-intro</id>
+   <link href="http://0.0.0.0:5000/2019/05/29/distributed-consensus-intro/"/>
+   <updated>2019-05-29T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2019/05/29/distributed-consensus-intro</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series describing Howard &amp;amp; Mortier’s generalization of
 distributed consensus, expressed in PlusCal. The next post describes
 &lt;a href=&quot;/2019/06/12/why-consensus-is-hard/&quot;&gt;why consensus is hard&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -6187,9 +6838,9 @@ consensus can be so challenging&lt;/a&gt;.&lt;/p&gt;
  
  <entry>
    <title>Simulation checks of the PlusCal version of Lamport's algorithm</title>
-   <link href="/2019/05/07/simulation-checks-of-pluscal-lamport/"/>
-   <updated>2019-05-07T00:00:00-07:00</updated>
-   <id>/2019/05/07/simulation-checks-of-pluscal-lamport</id>
+   <link href="http://0.0.0.0:5000/2019/05/07/simulation-checks-of-pluscal-lamport/"/>
+   <updated>2019-05-07T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2019/05/07/simulation-checks-of-pluscal-lamport</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fifth in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The previous post was a
  &lt;a href=&quot;/2019/04/15/lamport-algorithm/&quot;&gt;description of Lamport’s 1978 mutual exclusion algorithm&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -6293,7 +6944,7 @@ are preserved, as they are by the HTML &lt;code class=&quot;language-plaintext h
     &lt;span class=&quot;s&quot;&gt;defaultInitValue &amp;lt;- [model value]&lt;/span&gt;
 
 &lt;span class=&quot;na&quot;&gt;Checks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;Deadlock&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;Deadlock&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;Invariants&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TypeOK&lt;/span&gt;
     &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;MutualExclusion&lt;/span&gt;
@@ -6368,7 +7019,7 @@ effect on the outcome:&lt;/p&gt;
     &lt;span class=&quot;s&quot;&gt;maxClock &amp;lt;- &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;8&lt;/span&gt;
 
 &lt;span class=&quot;na&quot;&gt;Checks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;Deadlock&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;Deadlock&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;Invariants&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TypeOK&lt;/span&gt;
     &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Mutex&lt;/span&gt;
@@ -6417,9 +7068,9 @@ when its assumptions are violated.&lt;/p&gt;
  
  <entry>
    <title>Lamport's 1978 mutual exclusion algorithm in PlusCal</title>
-   <link href="/2019/04/15/lamport-algorithm/"/>
-   <updated>2019-04-15T00:00:00-07:00</updated>
-   <id>/2019/04/15/lamport-algorithm</id>
+   <link href="http://0.0.0.0:5000/2019/04/15/lamport-algorithm/"/>
+   <updated>2019-04-15T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2019/04/15/lamport-algorithm</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fourth in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The previous post was a
  &lt;a href=&quot;/2019/01/18/fairness-semantics-of-pluscal/&quot;&gt;specialized discussion of the fairness semantics of PlusCal&lt;/a&gt;. The
@@ -6848,9 +7499,9 @@ end macro
  
  <entry>
    <title>Fairness semantics of PlusCal</title>
-   <link href="/2019/01/18/fairness-semantics-of-pluscal/"/>
-   <updated>2019-01-18T00:00:00-08:00</updated>
-   <id>/2019/01/18/fairness-semantics-of-pluscal</id>
+   <link href="http://0.0.0.0:5000/2019/01/18/fairness-semantics-of-pluscal/"/>
+   <updated>2019-01-18T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2019/01/18/fairness-semantics-of-pluscal</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The second post
  &lt;a href=&quot;/2019/01/03/distributed-algorithms-in-pluscal/&quot;&gt;presented some PlusCal conventions for writing distributed algorithms&lt;/a&gt;. The
@@ -7122,9 +7773,9 @@ impact.&lt;/p&gt;
  
  <entry>
    <title>Distributed algorithms in PlusCal</title>
-   <link href="/2019/01/03/distributed-algorithms-in-pluscal/"/>
-   <updated>2019-01-03T00:00:00-08:00</updated>
-   <id>/2019/01/03/distributed-algorithms-in-pluscal</id>
+   <link href="http://0.0.0.0:5000/2019/01/03/distributed-algorithms-in-pluscal/"/>
+   <updated>2019-01-03T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2019/01/03/distributed-algorithms-in-pluscal</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The first post
  &lt;a href=&quot;/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/&quot;&gt;presented the context and why the topic is important&lt;/a&gt;. The
@@ -7487,9 +8138,9 @@ syntax and explore a subtle point of the semantics of PlusCal.&lt;/p&gt;
  
  <entry>
    <title>Exploring distributed algorithm failures using TLA Toolbox</title>
-   <link href="/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/"/>
-   <updated>2018-10-31T00:00:00-07:00</updated>
-   <id>/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox</id>
+   <link href="http://0.0.0.0:5000/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/"/>
+   <updated>2018-10-31T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The next post describes
  &lt;a href=&quot;/2019/01/03/distributed-algorithms-in-pluscal/&quot;&gt;conventions for distributed algorithms in PlusCal&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -7680,9 +8331,9 @@ fodder for a whole series of posts.&lt;/p&gt;
  
  <entry>
    <title>Assignments with coding only teach coding</title>
-   <link href="/2018/10/26/assignments-with-coding-only-teach-coding/"/>
-   <updated>2018-10-26T00:00:00-07:00</updated>
-   <id>/2018/10/26/assignments-with-coding-only-teach-coding</id>
+   <link href="http://0.0.0.0:5000/2018/10/26/assignments-with-coding-only-teach-coding/"/>
+   <updated>2018-10-26T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/10/26/assignments-with-coding-only-teach-coding</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fourth in a series on designing a course on data engineering.  The
  previous post listed the
  &lt;a href=&quot;/2018/10/23/data-engineering-prerequisites/&quot;&gt;minimal operating system and networking knowlege&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -7859,9 +8510,9 @@ January 2019, so I must pick realistic goals.&lt;/p&gt;
  
  <entry>
    <title>Minimal OS and networking knowledge for a data engineering course</title>
-   <link href="/2018/10/23/data-engineering-prerequisites/"/>
-   <updated>2018-10-23T00:00:00-07:00</updated>
-   <id>/2018/10/23/data-engineering-prerequisites</id>
+   <link href="http://0.0.0.0:5000/2018/10/23/data-engineering-prerequisites/"/>
+   <updated>2018-10-23T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/10/23/data-engineering-prerequisites</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on designing a data engineering course.  The
  previous post presented
  &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;draft learning outcomes&lt;/a&gt;. The
@@ -8051,9 +8702,9 @@ the
  
  <entry>
    <title>Draft learning outcomes for data engineering course</title>
-   <link href="/2018/10/18/data-engineering-learning-outcomes/"/>
-   <updated>2018-10-18T00:00:00-07:00</updated>
-   <id>/2018/10/18/data-engineering-learning-outcomes</id>
+   <link href="http://0.0.0.0:5000/2018/10/18/data-engineering-learning-outcomes/"/>
+   <updated>2018-10-18T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/10/18/data-engineering-learning-outcomes</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series about designing a professional master’s course on
  data engineering.  The first post laid out the
  &lt;a href=&quot;/2018/10/13/data-engineering-design-space/&quot;&gt;data engineering design space&lt;/a&gt;. The
@@ -8154,9 +8805,9 @@ necessarily observe them closely as the actual course unfolds.&lt;/p&gt;
  
  <entry>
    <title>The data engineering design space (2019 Edition)</title>
-   <link href="/2018/10/13/data-engineering-design-space/"/>
-   <updated>2018-10-13T00:00:00-07:00</updated>
-   <id>/2018/10/13/data-engineering-design-space</id>
+   <link href="http://0.0.0.0:5000/2018/10/13/data-engineering-design-space/"/>
+   <updated>2018-10-13T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/10/13/data-engineering-design-space</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series on designing a course on data engineering.  The
  next post specifies the
  &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;learning outcomes&lt;/a&gt;.
@@ -8471,9 +9122,9 @@ actual service—into a production service.&lt;/p&gt;
  
  <entry>
    <title>Myth-spotting</title>
-   <link href="/2018/10/03/myth-spotting/"/>
-   <updated>2018-10-03T00:00:00-07:00</updated>
-   <id>/2018/10/03/myth-spotting</id>
+   <link href="http://0.0.0.0:5000/2018/10/03/myth-spotting/"/>
+   <updated>2018-10-03T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/10/03/myth-spotting</id>
    <content type="html">&lt;p&gt;As part of a larger project, I’m reading many articles from the
 management literature. This is a very different kind of writing and
 argument than I’m used to in the technical side of computing. The
@@ -8633,9 +9284,9 @@ part for the next post.&lt;/p&gt;
  
  <entry>
    <title>The vision: A culture of effective meetings</title>
-   <link href="/2018/09/26/the-vision-a-culture-of-effective-meetings/"/>
-   <updated>2018-09-26T00:00:00-07:00</updated>
-   <id>/2018/09/26/the-vision-a-culture-of-effective-meetings</id>
+   <link href="http://0.0.0.0:5000/2018/09/26/the-vision-a-culture-of-effective-meetings/"/>
+   <updated>2018-09-26T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/09/26/the-vision-a-culture-of-effective-meetings</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Seventh and final post in a series on group decision-making, based on
 Ch. 10–11 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -8705,9 +9356,9 @@ some distinct differences. Stay tuned!&lt;/p&gt;
  
  <entry>
    <title>Decision sculpting: Stepping back to see the whole mosaic</title>
-   <link href="/2018/09/21/decision-sculpting/"/>
-   <updated>2018-09-21T00:00:00-07:00</updated>
-   <id>/2018/09/21/decision-sculpting</id>
+   <link href="http://0.0.0.0:5000/2018/09/21/decision-sculpting/"/>
+   <updated>2018-09-21T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/09/21/decision-sculpting</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Sixth in a series on group decision-making, based on Ch. 10–11
 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;.
@@ -8792,9 +9443,9 @@ series on the topic of soft skills.&lt;/p&gt;
  
  <entry>
    <title>Three evidence-based books for better teaching</title>
-   <link href="/2018/09/19/three-evidence-based-books-for-better-teaching/"/>
-   <updated>2018-09-19T00:00:00-07:00</updated>
-   <id>/2018/09/19/three-evidence-based-books-for-better-teaching</id>
+   <link href="http://0.0.0.0:5000/2018/09/19/three-evidence-based-books-for-better-teaching/"/>
+   <updated>2018-09-19T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/09/19/three-evidence-based-books-for-better-teaching</id>
    <content type="html">&lt;p&gt;I’ve read many books on effective university education, covering a
 range of topics and perspectives.  An annotated bibliography of them
 all would be a &lt;em&gt;long&lt;/em&gt; post.&lt;/p&gt;
@@ -8986,9 +9637,9 @@ to avoid the traps of myths presented as received wisdom.&lt;/p&gt;
  
  <entry>
    <title>Learning decision crystallization</title>
-   <link href="/2018/09/16/learning-decision-crystallization/"/>
-   <updated>2018-09-16T00:00:00-07:00</updated>
-   <id>/2018/09/16/learning-decision-crystallization</id>
+   <link href="http://0.0.0.0:5000/2018/09/16/learning-decision-crystallization/"/>
+   <updated>2018-09-16T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/09/16/learning-decision-crystallization</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fifth in a series on group decision-making, based on Ch. 10–11 of &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The previous post
 showed &lt;a href=&quot;/2018/09/05/discussion-rounds-and-decision-crystallization/&quot;&gt;how to crystallize a decision out of a round of discussion&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
@@ -9107,9 +9758,9 @@ the final step,
  
  <entry>
    <title>Discussion rounds and decision crystallization</title>
-   <link href="/2018/09/05/discussion-rounds-and-decision-crystallization/"/>
-   <updated>2018-09-05T00:00:00-07:00</updated>
-   <id>/2018/09/05/discussion-rounds-and-decision-crystallization</id>
+   <link href="http://0.0.0.0:5000/2018/09/05/discussion-rounds-and-decision-crystallization/"/>
+   <updated>2018-09-05T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/09/05/discussion-rounds-and-decision-crystallization</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fourth in a series on group decision-making, based on Ch. 10–11 of &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The previous post
 showed &lt;a href=&quot;/2018/08/29/the-decision-mosaic-every-piece-in-place/&quot;&gt;how to pick the next decision element to discuss&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
@@ -9236,9 +9887,9 @@ why this ought to be the next item:&lt;/p&gt;
  
  <entry>
    <title>Disqus comments enabled</title>
-   <link href="/2018/09/04/disqus-enabled/"/>
-   <updated>2018-09-04T00:00:00-07:00</updated>
-   <id>/2018/09/04/disqus-enabled</id>
+   <link href="http://0.0.0.0:5000/2018/09/04/disqus-enabled/"/>
+   <updated>2018-09-04T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/09/04/disqus-enabled</id>
    <content type="html">&lt;p&gt;I have set up Disqus comments on each post. Google Analytics shows that recent posts are generating some views, so it seemed time to finally turn comments on.&lt;/p&gt;
 
 &lt;p&gt;I hope I’ve set everything up correctly but, as with any technical
@@ -9249,9 +9900,9 @@ me know at &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;te
  
  <entry>
    <title>The decision mosaic: Every piece in place</title>
-   <link href="/2018/08/29/the-decision-mosaic-every-piece-in-place/"/>
-   <updated>2018-08-29T00:00:00-07:00</updated>
-   <id>/2018/08/29/the-decision-mosaic-every-piece-in-place</id>
+   <link href="http://0.0.0.0:5000/2018/08/29/the-decision-mosaic-every-piece-in-place/"/>
+   <updated>2018-08-29T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/08/29/the-decision-mosaic-every-piece-in-place</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on group decision-making, based on Ch. 10–11
 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The
@@ -9455,9 +10106,9 @@ sequence&lt;/a&gt;.&lt;/p&gt;
  
  <entry>
    <title>Decision crystallization: Form emerging from solution</title>
-   <link href="/2018/08/24/decision-crystallization/"/>
-   <updated>2018-08-24T00:00:00-07:00</updated>
-   <id>/2018/08/24/decision-crystallization</id>
+   <link href="http://0.0.0.0:5000/2018/08/24/decision-crystallization/"/>
+   <updated>2018-08-24T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/08/24/decision-crystallization</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series on group decision-making, based on Ch. 10–11
 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;.
@@ -9498,9 +10149,9 @@ producing mediocre results?&lt;/p&gt;
  
  <entry>
    <title>Attributing causality has important practical consequences</title>
-   <link href="/2018/08/22/attributing-causality-has-important-consequences/"/>
-   <updated>2018-08-22T00:00:00-07:00</updated>
-   <id>/2018/08/22/attributing-causality-has-important-consequences</id>
+   <link href="http://0.0.0.0:5000/2018/08/22/attributing-causality-has-important-consequences/"/>
+   <updated>2018-08-22T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/08/22/attributing-causality-has-important-consequences</id>
    <content type="html">&lt;p&gt;Yesterday Matthew Zeitlin tweeted:&lt;/p&gt;
 
 &lt;blockquote class=&quot;twitter-tweet&quot; data-lang=&quot;en&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;If you uncover an interesting correlation, hoards of wonks and twitter pedants will bray that all you have is a correlation, but if you do the work to &amp;quot;show&amp;quot; causation, those same people will bury you in little detailed complaints about how you did it&lt;/p&gt;&amp;mdash; Matthew Zeitlin (@MattZeitlin) &lt;a href=&quot;https://twitter.com/MattZeitlin/status/1032064399203287040?ref_src=twsrc%5Etfw&quot;&gt;August 22, 2018&lt;/a&gt;&lt;/blockquote&gt;
@@ -9526,9 +10177,9 @@ producing mediocre results?&lt;/p&gt;
  
  <entry>
    <title>Don't let your babies grow up to be microbenchmarkers!</title>
-   <link href="/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/"/>
-   <updated>2018-08-20T00:00:00-07:00</updated>
-   <id>/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers</id>
+   <link href="http://0.0.0.0:5000/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/"/>
+   <updated>2018-08-20T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers</id>
    <content type="html">&lt;p&gt;I never wanted to be a microbenchmarker. I was OK with a modest but
 respectable career choice, such as programming in &lt;a href=&quot;https://en.wikipedia.org/wiki/IBM_RPG_II&quot;&gt;RPG II&lt;/a&gt;
 or &lt;a href=&quot;http://www.computerhistory.org/collections/catalog/102635171&quot;&gt;IBM 1604 assembler&lt;/a&gt;.&lt;/p&gt;
@@ -9681,9 +10332,9 @@ expectations to a more realistic level.&lt;/p&gt;
  
  <entry>
    <title>The best process for effective group decisions</title>
-   <link href="/2018/08/13/the-best-process-for-group-decisions/"/>
-   <updated>2018-08-13T00:00:00-07:00</updated>
-   <id>/2018/08/13/the-best-process-for-group-decisions</id>
+   <link href="http://0.0.0.0:5000/2018/08/13/the-best-process-for-group-decisions/"/>
+   <updated>2018-08-13T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2018/08/13/the-best-process-for-group-decisions</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First post in a series on group decision-making.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;The series:&lt;/em&gt;&lt;/p&gt;
@@ -9744,9 +10395,9 @@ expectations to a more realistic level.&lt;/p&gt;
  
  <entry>
    <title>The many and varied audiences for Big Data training</title>
-   <link href="/2017/08/13/the-many-and-varied-audiences-for-big-data-training/"/>
-   <updated>2017-08-13T00:00:00-07:00</updated>
-   <id>/2017/08/13/the-many-and-varied-audiences-for-big-data-training</id>
+   <link href="http://0.0.0.0:5000/2017/08/13/the-many-and-varied-audiences-for-big-data-training/"/>
+   <updated>2017-08-13T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/08/13/the-many-and-varied-audiences-for-big-data-training</id>
    <content type="html">&lt;p&gt;There’s a wide range of Big Data training on offer, from full in-person university degree programs (in the North American context, typically Master’s degrees), to certificates from online universities (such as Coursera or EdX), to short professional development courses from for-profit trainers.  A common element of the sales pitches is the presumed universality of the need.  Every discipline and nearly every profession, it is claimed, will benefit from the technologies of Big Data.  Some pitches make an even stronger claim, that incorporating data analysis is now &lt;em&gt;essential&lt;/em&gt; for success.&lt;/p&gt;
 
 &lt;p&gt;These pitches tacitly presume another form of universality: That a small suite of courses will be sufficient to cover all potential audiences. For example, the on-line courses in data analysis from Coursera fall into several distinct categories:&lt;/p&gt;
@@ -9805,9 +10456,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Random access to long string bodies incurs cache misses</title>
-   <link href="/2017/06/29/rand-access-long-cache-misses/"/>
-   <updated>2017-06-29T00:00:00-07:00</updated>
-   <id>/2017/06/29/rand-access-long-cache-misses</id>
+   <link href="http://0.0.0.0:5000/2017/06/29/rand-access-long-cache-misses/"/>
+   <updated>2017-06-29T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/06/29/rand-access-long-cache-misses</id>
    <content type="html">&lt;p&gt;As I &lt;a href=&quot;/2017/06/23/for-long-strings-access-order-determines-performance/&quot;&gt;described in the last post&lt;/a&gt;, shuffling the items in the source vector leaves the string handles in contiguous sequential order while introducing disorder into the sequence of string bodies. The NShuffled “data set” is really a family of 11 related data sets, differing in the fraction of their items that were shuffled.  All sets start with the same vector &lt;code&gt;src&lt;/code&gt; of 50,000 elements, then &lt;code&gt;std::shuffle()&lt;/code&gt; is run on the first &lt;i&gt;N&lt;/i&gt; items in the vector, where &lt;i&gt;N&lt;/i&gt; ranges from 0 (no items shuffled) to 50,000 (all items shuffled) in increments of 5,000. All the data sets will have 37,500 (75% of 50,000) of their source elements copied to the result vector.&lt;/p&gt;
 
 &lt;p&gt;These data sets allow us to correlate the degree of disorder in the string bodies with the execution time of the filter-and-transform algorithm.  More disorder in the string bodies produces more cache misses, slowing performance. I will use the NShuffle data sets to demonstrate this.&lt;/p&gt;
@@ -9927,9 +10578,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>For long strings, access order determines performance</title>
-   <link href="/2017/06/23/for-long-strings-access-order-determines-performance/"/>
-   <updated>2017-06-23T00:00:00-07:00</updated>
-   <id>/2017/06/23/for-long-strings-access-order-determines-performance</id>
+   <link href="http://0.0.0.0:5000/2017/06/23/for-long-strings-access-order-determines-performance/"/>
+   <updated>2017-06-23T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/06/23/for-long-strings-access-order-determines-performance</id>
    <content type="html">&lt;p&gt;In the last post, I described several possible causes of the slowdown for long strings in the by-value version of the idioms.  I concluded the most likely actual cause was the order in which the string bodies are accessed.&lt;/p&gt;
 
 &lt;h2&gt;Structure of long strings in &lt;code&gt;libstdc++&lt;/code&gt;&lt;/h2&gt;
@@ -10018,9 +10669,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Sidling up to the long string slowdown</title>
-   <link href="/2017/06/14/sidling-up-to-the-long-string-slowdown/"/>
-   <updated>2017-06-14T00:00:00-07:00</updated>
-   <id>/2017/06/14/sidling-up-to-the-long-string-slowdown</id>
+   <link href="http://0.0.0.0:5000/2017/06/14/sidling-up-to-the-long-string-slowdown/"/>
+   <updated>2017-06-14T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/06/14/sidling-up-to-the-long-string-slowdown</id>
    <content type="html">&lt;p&gt;In the last post, I highlighted an anomaly in the results for filtering long strings using the by-value implementation of the loop. The usual suspect for such outcomes, heap fragmentation, didn’t seem to apply in this case. What might be the actual source of the problem?&lt;/p&gt;
 
 &lt;p&gt;The slowdown arises only for long strings, which suggests it is related to the heap, as long strings are the only form of string considered in these posts that use the heap. Unique &lt;code&gt;char const *&lt;/code&gt; strings only move pointers, while short strings, &lt;code&gt;std::string&lt;/code&gt; instances less than 16 characters, are stored in the string handle by &lt;code&gt;libstdc++&lt;/code&gt; 6.2. The degree of slowdown correlates well with the number of elements that have been moved in the source vector after it was initially created.  This suggests that the slowdown is related to some measure of the “degree of disorder” in the heap.&lt;/p&gt;
@@ -10052,9 +10703,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Microbenchmarks are highly sensitive to the heap context!</title>
-   <link href="/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"/>
-   <updated>2017-06-10T00:00:00-07:00</updated>
-   <id>/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context</id>
+   <link href="http://0.0.0.0:5000/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"/>
+   <updated>2017-06-10T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context</id>
    <content type="html">&lt;p&gt;Over two weeks ago, I posted an article about &lt;a href=&quot;/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/&quot;&gt;by-value parameters in the loop and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;transform&lt;/code&gt; idioms&lt;/a&gt;. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis.  In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda.&lt;/p&gt;
 
 &lt;h2&gt;The anomaly&lt;/h2&gt;
@@ -10217,9 +10868,9 @@ end:
  
  <entry>
    <title>The elegant machine code for char const *</title>
-   <link href="/2017/05/24/the-elegant-machine-code-for-char-const/"/>
-   <updated>2017-05-24T00:00:00-07:00</updated>
-   <id>/2017/05/24/the-elegant-machine-code-for-char-const</id>
+   <link href="http://0.0.0.0:5000/2017/05/24/the-elegant-machine-code-for-char-const/"/>
+   <updated>2017-05-24T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/05/24/the-elegant-machine-code-for-char-const</id>
    <content type="html">&lt;p&gt;Unique strings—null-terminated strings uniquely identified by their &lt;code&gt;char const *&lt;/code&gt;—are the simplest type considered in this series of posts. Constructing, copying, moving, and assigning these strings are trivial operations on a single pointer. No destructor code is required.&lt;/p&gt;
 
 &lt;p&gt;This simplicity was reflected in the benchmarks. Unique strings were
@@ -10381,9 +11032,9 @@ generated identical code and &lt;a href=&quot;/2017/05/22/passing-stdstring-by-v
  
  <entry>
    <title>Passing std::string by-value noticeably slows the idioms</title>
-   <link href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/"/>
-   <updated>2017-05-22T00:00:00-07:00</updated>
-   <id>/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms</id>
+   <link href="http://0.0.0.0:5000/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/"/>
+   <updated>2017-05-22T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms</id>
    <content type="html">&lt;p&gt;The &lt;a href=&quot;/2017/05/19/benchmarking-the-transform-and-loop-idioms/&quot;&gt;benchmarks comparing &lt;code&gt;transform&lt;/code&gt; to a
 loop&lt;/a&gt; also highlighted the substantial contribution that copying values made to their performance. Copying costs become especially noticeable for complex types, such as standard strings too long to fit in the short string optimization.&lt;/p&gt;
 
@@ -10491,9 +11142,9 @@ loop&lt;/a&gt; also highlighted the substantial contribution that copying values
  
  <entry>
    <title>Benchmarking the transform and loop idioms</title>
-   <link href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/"/>
-   <updated>2017-05-19T00:00:00-07:00</updated>
-   <id>/2017/05/19/benchmarking-the-transform-and-loop-idioms</id>
+   <link href="http://0.0.0.0:5000/2017/05/19/benchmarking-the-transform-and-loop-idioms/"/>
+   <updated>2017-05-19T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/05/19/benchmarking-the-transform-and-loop-idioms</id>
    <content type="html">&lt;p&gt;&lt;strong&gt;Update: Mon Aug 20, 2018:&lt;/strong&gt; Also see this &lt;a href=&quot;/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/&quot;&gt;semi-rant about the limitations of microbenchmarkering&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;The last posts compared the machine code generated by &lt;code&gt;transform&lt;/code&gt; and the equivalent idiom using an explicit &lt;code&gt;for&lt;/code&gt; loop and &lt;code&gt;if&lt;/code&gt; statement.  The &lt;code&gt;transform&lt;/code&gt; idiom generated more intermediate copies of the &lt;code&gt;std::string&lt;/code&gt; member than the loop.&lt;/p&gt;
@@ -10911,9 +11562,9 @@ The &lt;code&gt;transform&lt;/code&gt; idiom used &lt;code&gt;push_back()&lt;/co
  
  <entry>
    <title>Analysis of code generated from the transform idiom</title>
-   <link href="/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/"/>
-   <updated>2017-05-03T00:00:00-07:00</updated>
-   <id>/2017/05/03/analysis-of-code-generated-from-the-transform-idiom</id>
+   <link href="http://0.0.0.0:5000/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/"/>
+   <updated>2017-05-03T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/05/03/analysis-of-code-generated-from-the-transform-idiom</id>
    <content type="html">&lt;p&gt;The last post presented the baseline C++ code and its generated machine code. Now it’s time to compare the code generated by the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;std::transform&lt;/code&gt; idiom and see how well it fares.&lt;/p&gt;
 
 &lt;h2&gt;Removing two inefficiencies&lt;/h2&gt;
@@ -10954,7 +11605,7 @@ The &lt;code&gt;transform&lt;/code&gt; idiom used &lt;code&gt;push_back()&lt;/co
   &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;lambda_type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l_us&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;lambda_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;us&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l_us&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;us&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{};&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;ppair&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;operator&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ppair&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l_us&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ppair&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;operator&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ppair&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l_us&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;lambda_type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;us&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;transform&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(...,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lambda&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
@@ -11210,9 +11861,9 @@ in the element at &lt;code class=&quot;language-plaintext highlighter-rouge&quot
  
  <entry>
    <title>Performance of the STL idiom for list comprehension: Introduction</title>
-   <link href="/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/"/>
-   <updated>2017-05-02T00:00:00-07:00</updated>
-   <id>/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction</id>
+   <link href="http://0.0.0.0:5000/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/"/>
+   <updated>2017-05-02T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction</id>
    <content type="html">&lt;p&gt;In my &lt;a href=&quot;/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/&quot;&gt;last post&lt;/a&gt;, I promised to consider the machine code generated from the STL idiom equivalent to a basic Python list comprehension. As I proceeded, the project expanded to a broader analysis of the idiom’s performance. I am shocked at how much effort this project took.  I have spent much of the last five weeks generating and reading the output from g++ 6.2.  So. Many. Alternatives.  In this post, I’ll describe my baseline for comparison and the criteria I’ll use. In future posts, I’ll present the results.&lt;/p&gt;
 
 &lt;p&gt;All performance analyses are fraught. Conference speakers frequently argue that the gold standard is to run your actual code on your actual data, or as close to actual code and data as you can get. I think this claim is overly strong, but whatever its merits, by design this method by provides no general comparison of two approaches to writing code, only specific results for your context.&lt;/p&gt;
@@ -11417,9 +12068,9 @@ in the element at &lt;code class=&quot;language-plaintext highlighter-rouge&quot
  
  <entry>
    <title>A single STL statement equivalent to the basic Python list comprehension</title>
-   <link href="/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/"/>
-   <updated>2017-03-26T00:00:00-07:00</updated>
-   <id>/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension</id>
+   <link href="http://0.0.0.0:5000/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/"/>
+   <updated>2017-03-26T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension</id>
    <content type="html">&lt;p&gt;In &lt;a href=&quot;/2017/03/21/the-limits-of-list-comprehensions/&quot;&gt;the last post&lt;/a&gt;, I described the structure of the basic Python list comprehension&lt;/p&gt;
 
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[expression1(var) for var in expression2 if condition(var)]
@@ -11437,12 +12088,12 @@ in the element at &lt;code class=&quot;language-plaintext highlighter-rouge&quot
 &lt;!-- highlight=&quot;2,3&quot; --&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lst&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lst&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;US&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lst&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;US&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__name__&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;__main__&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;zip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;BC&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;NB&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;BC&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;US&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;NB&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;BC&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;BC&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__name__&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;__main__&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;zip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;BC&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;NB&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;BC&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;US&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;NB&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;BC&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;BC&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+    &lt;span class=&quot;nf&quot;&gt;print &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;can be written in the STL as&lt;/p&gt;
@@ -11518,14 +12169,14 @@ to building the result vector&lt;/a&gt;, though the reserve/insert-back one used
   Example of passing optional values to OutputIterator 
  */&lt;/span&gt;
 
-&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;algorithm&amp;gt;
-#include &amp;lt;iostream&amp;gt;
-#include &amp;lt;iterator&amp;gt;
-#include &amp;lt;string&amp;gt;
-#include &amp;lt;tuple&amp;gt;
-#include &amp;lt;vector&amp;gt;
+&lt;span class=&quot;cp&quot;&gt;#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;algorithm&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;iterator&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;tuple&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;vector&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
 &lt;/span&gt;
-&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;experimental/optional&amp;gt;
+&lt;span class=&quot;cp&quot;&gt;#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;experimental/optional&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
 &lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ostream&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
@@ -11657,9 +12308,9 @@ to building the result vector&lt;/a&gt;, though the reserve/insert-back one used
  
  <entry>
    <title>The limits of list comprehensions</title>
-   <link href="/2017/03/21/the-limits-of-list-comprehensions/"/>
-   <updated>2017-03-21T00:00:00-07:00</updated>
-   <id>/2017/03/21/the-limits-of-list-comprehensions</id>
+   <link href="http://0.0.0.0:5000/2017/03/21/the-limits-of-list-comprehensions/"/>
+   <updated>2017-03-21T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/03/21/the-limits-of-list-comprehensions</id>
    <content type="html">&lt;p&gt;I’ve spent my recent posts unfavourably comparing the STL design of containers/iterators/algorithms with Python list comprehensions and their close relatives in Haskell.  This is an unfairly restrictive way to view the STL design, which addresses a wider range of use cases than the ones addressed by list comprehensions.  But it is also unfair in that it ignores the limitations of list comprehensions themselves, limitations avoided by the more general structure provided by the STL.  In this post, I’ll start from the other direction, considering the inherent limitations of Python list comprehensions. This in turn leads to an idiom in the STL that in fact provides virtually all the functionality of basic list comprehensions, with only slightly more complex syntax.&lt;/p&gt;
 
 &lt;h2&gt;The general and basic forms of Python list comprehensions&lt;/h2&gt;
@@ -11686,12 +12337,12 @@ to building the result vector&lt;/a&gt;, though the reserve/insert-back one used
 
 &lt;!-- highlight=&quot;2,3&quot; --&gt;
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lst&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lst&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;US&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lst&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;US&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__name__&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;__main__&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;zip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;BC&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;NB&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;BC&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;US&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;NB&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;BC&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;BC&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__name__&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;__main__&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;zip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;BC&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;NB&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;BC&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;US&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;NB&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;BC&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;BC&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+    &lt;span class=&quot;nf&quot;&gt;print &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;The per-pair processing is handled well by the list comprehension (Line 2), with the sort done (Line 3) on the computed result.  The same effect can be accomplished via the considerably more prolix STL sequence (equivalent code highlighted)&lt;/p&gt;
@@ -11753,9 +12404,9 @@ to building the result vector&lt;/a&gt;, though the reserve/insert-back one used
  
  <entry>
    <title>A simpler, fourth idiom for appending</title>
-   <link href="/2017/03/09/a-simpler-fourth-idiom-for-appending/"/>
-   <updated>2017-03-09T00:00:00-08:00</updated>
-   <id>/2017/03/09/a-simpler-fourth-idiom-for-appending</id>
+   <link href="http://0.0.0.0:5000/2017/03/09/a-simpler-fourth-idiom-for-appending/"/>
+   <updated>2017-03-09T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/03/09/a-simpler-fourth-idiom-for-appending</id>
    <content type="html">&lt;p&gt;This morning, I realized that there is a fourth approach to appending items to a vector that combines &lt;a href=&quot;/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/&quot;&gt;elements of the first and third&lt;/a&gt;.  I’m embarrassed to have missed this one because it is a longstanding, well-understood approach that’s particularly applicable to the kinds of “list comprehension algorithms” I’m considering in this series.&lt;/p&gt;
 
 &lt;p&gt;Reviewing the output of the first method, a large proportion of the extra effort is due to the incremental &lt;em&gt;allocation&lt;/em&gt; of the vector’s data member, where the values are actually stored. In some use cases, this is the best you can do because you do not know in advance how large the result is going to be. However, in the case considered in our examples, we know exactly how many elements the result will have:  exactly as many elements as the source vector.  In such cases, we can pre-allocate a storage block of the right size and then the back insertions simply consist of moving the values into that allocated space, with no reallocations to expand the vector. This was a crucial part of the efficiency of the third idiom, using &lt;code&gt;emplace_back()&lt;/code&gt;.&lt;/p&gt;
@@ -11825,9 +12476,9 @@ Destructor for T0
  
  <entry>
    <title>Three idioms for appending values&mdash;a damaging decision?</title>
-   <link href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"/>
-   <updated>2017-03-07T00:00:00-08:00</updated>
-   <id>/2017/03/07/three-idioms-for-appending-values-a-damaging-decision</id>
+   <link href="http://0.0.0.0:5000/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"/>
+   <updated>2017-03-07T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/03/07/three-idioms-for-appending-values-a-damaging-decision</id>
    <content type="html">&lt;p&gt;&lt;b&gt;Update:&lt;/b&gt; See also the &lt;a href=&quot;/2017/03/09/a-simpler-fourth-idiom-for-appending/&quot;&gt;next post&lt;/a&gt;, which adds a fourth idiom and mitigates some of the criticisms in the conclusion of this post.&lt;/p&gt;
 
 &lt;p&gt;The &lt;a href=&quot;/2017/02/22/iterators-a-failure-case/&quot;&gt;STL code for squaring the positive values&lt;/a&gt;, included the following lines to create the intermediate result &lt;code&gt;t1&lt;/code&gt; containing the positive values of the original list &lt;code&gt;a&lt;/code&gt;:&lt;/p&gt;
@@ -11943,7 +12594,7 @@ Destructor for T0
 
   &lt;span class=&quot;k&quot;&gt;friend&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ostream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;operator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ostream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;C&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
-&lt;span class=&quot;nl&quot;&gt;private:&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;private&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{};&lt;/span&gt;
   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m2&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{};&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
@@ -12122,15 +12773,15 @@ Basic constructor for c3[4]
   Demonstration of different approaches to building a vector.
  */&lt;/span&gt;
 
-&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;algorithm&amp;gt;
-#include &amp;lt;cassert&amp;gt;
-#include &amp;lt;iostream&amp;gt;
-#include &amp;lt;list&amp;gt;
-#include &amp;lt;sstream&amp;gt;
-#include &amp;lt;string&amp;gt;
-#include &amp;lt;vector&amp;gt;
+&lt;span class=&quot;cp&quot;&gt;#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;algorithm&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;cassert&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;list&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;sstream&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;vector&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
 &lt;/span&gt;
-&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;experimental/iterator&amp;gt;
+&lt;span class=&quot;cp&quot;&gt;#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;experimental/iterator&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
 &lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
@@ -12208,7 +12859,7 @@ Basic constructor for c3[4]
 
   &lt;span class=&quot;k&quot;&gt;friend&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ostream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;operator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ostream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;C&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
-&lt;span class=&quot;nl&quot;&gt;private:&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;private&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{};&lt;/span&gt;
   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m2&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{};&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
@@ -12299,7 +12950,7 @@ Basic constructor for c3[4]
       &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;[&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;to_string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;base&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;]&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
 	&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;base&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot; [&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to_string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;]&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;temps_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;temps_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
 &lt;span class=&quot;cm&quot;&gt;/*
@@ -12324,7 +12975,7 @@ Basic constructor for c3[4]
   &lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&apos;\n&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 
   &lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Default values of required length, assigned&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;Coll&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c2&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Coll&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;c2&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;colls_add&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;c2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;auto&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c2_it&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;begin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;auto&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;in_it&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cbegin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;in_it&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cend&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;in_it&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c2_it&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -12350,9 +13001,9 @@ Basic constructor for c3[4]
  
  <entry>
    <title>Iterators aren’t the problem, they just enable it</title>
-   <link href="/2017/03/03/iterators-arent-the-problem-they-just-enable-it/"/>
-   <updated>2017-03-03T00:00:00-08:00</updated>
-   <id>/2017/03/03/iterators-arent-the-problem-they-just-enable-it</id>
+   <link href="http://0.0.0.0:5000/2017/03/03/iterators-arent-the-problem-they-just-enable-it/"/>
+   <updated>2017-03-03T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/03/03/iterators-arent-the-problem-they-just-enable-it</id>
    <content type="html">&lt;p&gt;The post presenting the &lt;a href=&quot;/2017/02/22/iterators-a-failure-case/&quot;&gt;failure case for iterators&lt;/a&gt; contrasted this simple Python list comprehension:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
@@ -12396,9 +13047,9 @@ Basic constructor for c3[4]
  
  <entry>
    <title>The genius insight behind iterators</title>
-   <link href="/2017/03/01/the-genius-insight-behind-iterators/"/>
-   <updated>2017-03-01T00:00:00-08:00</updated>
-   <id>/2017/03/01/the-genius-insight-behind-iterators</id>
+   <link href="http://0.0.0.0:5000/2017/03/01/the-genius-insight-behind-iterators/"/>
+   <updated>2017-03-01T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/03/01/the-genius-insight-behind-iterators</id>
    <content type="html">&lt;p&gt;The story so far:&lt;/p&gt;
 
 &lt;ol&gt;
@@ -12535,7 +13186,7 @@ I’ll return to this below.&lt;/p&gt;
       &lt;span class=&quot;n&quot;&gt;bi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;it&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next_it&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
       &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;next_it&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
-  &lt;span class=&quot;nl&quot;&gt;private:&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;private&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;_L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;back_inserter_fl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
@@ -12552,7 +13203,7 @@ I’ll return to this below.&lt;/p&gt;
   &lt;span class=&quot;n&quot;&gt;back_inserter_fl&lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;operator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;back_inserter_fl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;operator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
-&lt;span class=&quot;nl&quot;&gt;private:&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;private&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
   &lt;span class=&quot;n&quot;&gt;_L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fl&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;nullptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;typename&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;iterator&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{};&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
@@ -12567,9 +13218,9 @@ I’ll return to this below.&lt;/p&gt;
  
  <entry>
    <title>Lambdas: Typical use cases</title>
-   <link href="/2017/02/25/lambdas-typical-use-cases/"/>
-   <updated>2017-02-25T00:00:00-08:00</updated>
-   <id>/2017/02/25/lambdas-typical-use-cases</id>
+   <link href="http://0.0.0.0:5000/2017/02/25/lambdas-typical-use-cases/"/>
+   <updated>2017-02-25T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/02/25/lambdas-typical-use-cases</id>
    <content type="html">&lt;p&gt;My last post, highlighting the differences between C++ lambdas and the lambdas in languages based upon functional programs, went more deeply into the weeds than I had intended. I realized too late that it cried out for examples.  The rules for declaring free variables (the member variables of the anonymous class) in C++ lambdas can seem contorted but most uses of them fall into one of a few simple types.  In this post, I want to present three simple use cases of C++ lambdas, each demonstrating a different way to use free variables.&lt;/p&gt;
 
 &lt;h2&gt;Copy-constructed constant values&lt;/h2&gt;
@@ -12637,9 +13288,9 @@ I’ll return to this below.&lt;/p&gt;
  
  <entry>
    <title>Lambdas: Sweet, sweet syntactic sugar</title>
-   <link href="/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/"/>
-   <updated>2017-02-23T00:00:00-08:00</updated>
-   <id>/2017/02/23/lambdas-sweet-sweet-syntactic-sugar</id>
+   <link href="http://0.0.0.0:5000/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/"/>
+   <updated>2017-02-23T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/02/23/lambdas-sweet-sweet-syntactic-sugar</id>
    <content type="html">&lt;p&gt;&lt;b&gt;Update:&lt;/b&gt; The &lt;a href=&quot;/2017/02/25/lambdas-typical-use-cases/&quot;&gt;next post&lt;/a&gt; provides recipes for common use cases of lambdas.  If parts of this post seem too abstract, you might find the examples in the next post clarify things.&lt;/p&gt;
 
 &lt;p&gt;STL iterators and algorithms really can’t be discussed without also talking about lambdas. Although the STL design predates the introduction of lambdas by almost two decades, the introduction of lambdas in C++ 2011 improved the usability of STL algorithms substantially.  I don’t have statistics but I presume that the STL algorithms now receive substantially more use due to the greater simplicity of passing callbacks as lambdas rather than instances of named classes. Lambdas are purely a matter of convenience—they introduce nothing to the language that you couldn’t do before—but by making common use cases more convenient, they effectively extend the range of use cases where calling a standard algorithm makes sense.&lt;/p&gt;
@@ -12677,10 +13328,10 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;
 
 &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;, &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;print &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;, &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;What value will this print?  It depends upon whether the free &lt;code&gt;c&lt;/code&gt; in the lambda expression binds to the parameter &lt;code&gt;c&lt;/code&gt; (line 1), whose value is 2, or the global &lt;code&gt;c&lt;/code&gt; (line 5), whose value is 1. Python uses Scheme’s notion of “lexically apparent binding”, binding the free &lt;code&gt;c&lt;/code&gt; to the parameter &lt;code&gt;c&lt;/code&gt; and printing &lt;code&gt;0, 2, 4, 6&lt;/code&gt;.&lt;/p&gt;
@@ -12746,9 +13397,9 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
  
  <entry>
    <title>Iterators: A failure case</title>
-   <link href="/2017/02/22/iterators-a-failure-case/"/>
-   <updated>2017-02-22T00:00:00-08:00</updated>
-   <id>/2017/02/22/iterators-a-failure-case</id>
+   <link href="http://0.0.0.0:5000/2017/02/22/iterators-a-failure-case/"/>
+   <updated>2017-02-22T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/02/22/iterators-a-failure-case</id>
    <content type="html">&lt;p&gt;In my first post on iterators, I presented a case where they work well.  In this post, I’ll present a clear failure and begin discussing why the deep structure of the design leads to this failure.&lt;/p&gt;
 
 &lt;p&gt;Consider the simple Python list comprehension:&lt;/p&gt;
@@ -12797,9 +13448,9 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
  
  <entry>
    <title>Iterators: One success story</title>
-   <link href="/2017/02/21/iterators-one-success-story/"/>
-   <updated>2017-02-21T00:00:00-08:00</updated>
-   <id>/2017/02/21/iterators-one-success-story</id>
+   <link href="http://0.0.0.0:5000/2017/02/21/iterators-one-success-story/"/>
+   <updated>2017-02-21T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2017/02/21/iterators-one-success-story</id>
    <content type="html">
 &lt;p&gt;Iterators intrigue me because they seem to bring to C++ facilities that I’ve found congenial in other languages. I’ve spent some time in Haskell and a lot of time in Python, which both support &lt;a href=&quot;https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions&quot;&gt;list comprehensions&lt;/a&gt;. I’ve also enjoyed the limited amount of C# &lt;a href=&quot;https://msdn.microsoft.com/en-us/library/bb397933.aspx&quot;&gt;Language-Integrated Query (LINQ)&lt;/a&gt; programming that I’ve done.&lt;/p&gt;
 
@@ -12848,7 +13499,7 @@ L3:
 
 &lt;p&gt;Here is the same algorithm using the C++ STL library and a range-based &lt;code&gt;for&lt;/code&gt;:&lt;/p&gt;
 
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;array&amp;gt;
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;array&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
 &lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 
@@ -12865,7 +13516,7 @@ L3:
 
 &lt;p&gt;This version generates equivalent loop code (though with different register assignments) as the C program, despite its more abstract presentation.  In fact, C++ will generate equivalent code to C’s pointer-based program for a loop over a &lt;code&gt;std::vector&lt;/code&gt; as well:&lt;/p&gt;
 
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;vector&amp;gt;
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;vector&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
 &lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 
@@ -12902,7 +13553,7 @@ L3:
 
 &lt;p&gt;The smarty-pants optimizer has recognized that the loop is completely specified and has precomputed its result (the value 15) at compile-time.  To generate an actual runtime loop, we have to make the array larger and read it from input:&lt;/p&gt;
 
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;stdio.h&amp;gt;
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
 &lt;/span&gt;
 &lt;span class=&quot;cp&quot;&gt;#define LEN 10
 &lt;/span&gt;
@@ -12925,8 +13576,8 @@ L3:
 
 &lt;p&gt;A similar problem arises with the C++ code. Here is the version that prevents the optimizer from eliminating the loop:&lt;/p&gt;
 
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;array&amp;gt;
-#include &amp;lt;iostream&amp;gt;
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;array&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#include&lt;/span&gt; &lt;span class=&quot;cpf&quot;&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
 &lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;

@@ -45,20 +45,23 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.7.1 -->
-<meta name="generator" content="Jekyll v4.2.0" />
+  <!-- Begin Jekyll SEO tag v2.9.0 -->
+<meta name="generator" content="Jekyll v4.4.1" />
 <meta property="og:title" content="Home" />
 <meta name="author" content="Ted Kirkpatrick" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
-<meta property="og:description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
+<meta name="twitter:description" property="og:description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
+<link rel="canonical" href="http://0.0.0.0:5000/page11/" />
+<meta property="og:url" content="http://0.0.0.0:5000/page11/" />
 <meta property="og:site_name" content="All my marbles in one place" />
-<link rel="prev" href="/page10" />
-<link rel="next" href="/page12" />
+<meta property="og:type" content="website" />
+<link rel="prev" href="http://0.0.0.0:5000/page10" />
+<link rel="next" href="http://0.0.0.0:5000/page12" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Home" />
+<meta name="twitter:title" content="Home" />
 <script type="application/ld+json">
-{"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","url":"/page11/","headline":"Home","author":{"@type":"Person","name":"Ted Kirkpatrick"},"@type":"WebPage","@context":"https://schema.org"}</script>
+{"@context":"https://schema.org","@type":"WebPage","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","headline":"Home","url":"http://0.0.0.0:5000/page11/"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -90,10 +93,42 @@
       
         
           
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
             <a class="sidebar-nav-item" href="/about/">About</a>
           
         
       
+        
+          
+        
+      
+        
+      
+        
+          
+        
+      
+        
+          
         
       
         
@@ -104,7 +139,131 @@
       
         
           
+        
+      
+        
+          
             <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
           
         
       
@@ -245,8 +404,12 @@
 	    <a href="/tag/Admin/">Admin</a>,
 	  
         
+	   
+	    <a href="/tag/Distributed systems/">Distributed systems</a>,
+	  
+        
 	  	    
-            <a href="/tag/Distributed systems/">Distributed systems</a>
+            <a href="/tag/Programming/">Programming</a>
           
         
 	</div>
@@ -254,13 +417,36 @@
 
     </nav>
 
-    <p>&copy; 2021. All rights reserved.</p>
+    <p>&copy; 2026. All rights reserved.</p>
   </div>
 </div>
 
 
     <div class="content container">
       <div class="posts">
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2017/06/14/sidling-up-to-the-long-string-slowdown/">
+        Sidling up to the long string slowdown
+      </a>
+    </h1>
+    
+    <span class="post-date">14 Jun 2017
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <p>In the last post, I highlighted an anomaly in the results for filtering long strings using the by-value implementation of the loop. The usual suspect for such outcomes, heap fragmentation, didn’t seem to apply in this case. What might be the actual source of the problem?</p>
+ <a href="/2017/06/14/sidling-up-to-the-long-string-slowdown/">more ...</a>
+  </div>
   
   <div class="post">
     <h1 class="post-title">
@@ -353,29 +539,6 @@ loop</a> also highlighted the substantial contribution that copying values made 
 
     <p><strong>Update: Mon Aug 20, 2018:</strong> Also see this <a href="/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/">semi-rant about the limitations of microbenchmarkering</a>.</p>
  <a href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/">
-        Analysis of code generated from the transform idiom
-      </a>
-    </h1>
-    
-    <span class="post-date">03 May 2017
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/C++">C++</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>The last post presented the baseline C++ code and its generated machine code. Now it’s time to compare the code generated by the <code class="language-plaintext highlighter-rouge">std::transform</code> idiom and see how well it fares.</p>
- <a href="/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/">more ...</a>
   </div>
   
 </div>
