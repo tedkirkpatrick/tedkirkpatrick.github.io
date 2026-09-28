@@ -52,15 +52,13 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
 <meta name="twitter:description" property="og:description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
-<link rel="canonical" href="http://0.0.0.0:5000/" />
-<meta property="og:url" content="http://0.0.0.0:5000/" />
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="website" />
-<link rel="next" href="http://0.0.0.0:5000/page2" />
+<link rel="next" href="/page2" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Home" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","headline":"Home","name":"All my marbles in one place","url":"http://0.0.0.0:5000/"}</script>
+{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","headline":"Home","name":"All my marbles in one place","url":"/"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -92,42 +90,10 @@
       
         
           
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
             <a class="sidebar-nav-item" href="/about/">About</a>
           
         
       
-        
-          
-        
-      
-        
-      
-        
-          
-        
-      
-        
-          
         
       
         
@@ -138,127 +104,7 @@
       
         
           
-        
-      
-        
-          
             <a class="sidebar-nav-item" href="/credits/">Credits</a>
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
-          
-        
-      
-        
           
         
       
@@ -426,6 +272,55 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="/2026/09/28/reimplementing-the-tex-data-structures/">
+        Part 2: Reimplementing the TeX data structures in C++
+      </a>
+    </h1>
+    
+    <span class="post-date">28 Sep 2026
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/Programming">Programming</a>,
+        
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <table>
+  <thead>
+    <tr>
+      <th style="text-align: left">&lt;- <a href="/2026/09/03/reading-tex-the-program/">Part 1: Reading TeX: The Program in 2026</a></th>
+      <th style="text-align: right">Part 3: A Benchmark Harness  -&gt; (Not yet published)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: right"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>While reading the TeX source code (see <a href="/2026/09/03/reading-tex-the-program/">Part 1</a>),
+I repeatedly asked myself, “What if we implemented the data structures using modern tools?
+Would the design be clearer? Would it perform better?”.
+Knuth took enormous pains to save memory. He also designed TeX’s dynamic memory
+allocator to be compatible with the early virtual memory systems of the 1980s.
+While he did his best, the resulting code is obscure compared to how we would
+implement this design using modern language facilities.</p>
+
+ <a href="/2026/09/28/reimplementing-the-tex-data-structures/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="/2026/09/03/reading-tex-the-program/">
         Reading "TeX: The Program" in 2026
       </a>
@@ -443,13 +338,29 @@
     
     </span>
 
-    <p>According to the order slip tucked into my copy, I ordered <em>TeX: The
+    <table>
+  <thead>
+    <tr>
+      <th style="text-align: left">[Start of series]</th>
+      <th style="text-align: right"><a href="/2026/09/28/reimplementing-the-tex-data-structures/">Part 2: Reimplementing the TeX data structures in C++ -&gt;</a></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: right"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>According to the order slip tucked into my copy, I ordered <em>TeX: The
 Program</em> on June 5, 1986. For four decades as I moved through two countries and nine mailing
 addresses, that book lived in boxes and
 bookshelves. I took it out several times, intending to read it, each
 time setting it aside because I wanted to understand <em>TeX</em>’s syntax
 first. So I took down its companion volume, <em>The TeXbook</em>, read
 a few chapters in, set that aside and never returned to either one.</p>
+
  <a href="/2026/09/03/reading-tex-the-program/">more ...</a>
   </div>
   
@@ -550,31 +461,6 @@ choices might sometimes conform to prescriptive rules or existing
 usage or neither. Effective writing is a balance of competing
 requirements, not rote adherence to an overarching “philosophy”.</p>
  <a href="/2021/06/13/prescriptive-descriptive/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2021/06/03/superpower/">
-        Designs don't have "superpowers"
-      </a>
-    </h1>
-    
-    <span class="post-date">03 Jun 2021
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Rhetoric">Rhetoric</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>Time for another rant about a word seeing increased use in technical
-discussions (and elsewhere): <em>superpower</em>. It just doesn’t mean what
-people imply it means.</p>
- <a href="/2021/06/03/superpower/">more ...</a>
   </div>
   
 </div>

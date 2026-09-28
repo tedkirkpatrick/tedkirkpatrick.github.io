@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
+  <meta name="author" content="Arthur E. Kirkpatrick">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018, 2019, 2020, 2021">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Part 2: Reimplementing the TeX data structures in C++ &middot; All my marbles in one place
+    
+  </title>
+
+    <!-- Asychronously-loaded JavaScript -->
+    
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66576928-4', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- Begin Jekyll SEO tag v2.9.0 -->
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Part 2: Reimplementing the TeX data structures in C++" />
+<meta name="author" content="Ted Kirkpatrick" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;- Part 1: Reading TeX: The Program in 2026 Part 3: A Benchmark Harness -&gt; (Not yet published)     While reading the TeX source code (see Part 1), I repeatedly asked myself, “What if we implemented the data structures using modern tools? Would the design be clearer? Would it perform better?”. Knuth took enormous pains to save memory. He also designed TeX’s dynamic memory allocator to be compatible with the early virtual memory systems of the 1980s. While he did his best, the resulting code is obscure compared to how we would implement this design using modern language facilities." />
+<meta name="twitter:description" property="og:description" content="&lt;- Part 1: Reading TeX: The Program in 2026 Part 3: A Benchmark Harness -&gt; (Not yet published)     While reading the TeX source code (see Part 1), I repeatedly asked myself, “What if we implemented the data structures using modern tools? Would the design be clearer? Would it perform better?”. Knuth took enormous pains to save memory. He also designed TeX’s dynamic memory allocator to be compatible with the early virtual memory systems of the 1980s. While he did his best, the resulting code is obscure compared to how we would implement this design using modern language facilities." />
+<meta property="og:site_name" content="All my marbles in one place" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-09-28T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-09-28T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Part 2: Reimplementing the TeX data structures in C++" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Ted Kirkpatrick"},"dateModified":"2026-09-28T00:00:00+00:00","datePublished":"2026-09-28T00:00:00+00:00","description":"&lt;- Part 1: Reading TeX: The Program in 2026 Part 3: A Benchmark Harness -&gt; (Not yet published)     While reading the TeX source code (see Part 1), I repeatedly asked myself, “What if we implemented the data structures using modern tools? Would the design be clearer? Would it perform better?”. Knuth took enormous pains to save memory. He also designed TeX’s dynamic memory allocator to be compatible with the early virtual memory systems of the 1980s. While he did his best, the resulting code is obscure compared to how we would implement this design using modern language facilities.","headline":"Part 2: Reimplementing the TeX data structures in C++","mainEntityOfPage":{"@type":"WebPage","@id":"/2026/09/28/reimplementing-the-tex-data-structures/"},"url":"/2026/09/28/reimplementing-the-tex-data-structures/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/comment-policy/">Comment policy</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	   
+	    <a href="/tag/Python/">Python</a>,
+	  
+        
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
+	   
+	    <a href="/tag/Big data/">Big data</a>,
+	  
+        
+	   
+	    <a href="/tag/Soft skills/">Soft skills</a>,
+	  
+        
+	   
+	    <a href="/tag/Statistics/">Statistics</a>,
+	  
+        
+	   
+	    <a href="/tag/Experimental design/">Experimental design</a>,
+	  
+        
+	   
+	    <a href="/tag/Rhetoric/">Rhetoric</a>,
+	  
+        
+	   
+	    <a href="/tag/Admin/">Admin</a>,
+	  
+        
+	   
+	    <a href="/tag/Distributed systems/">Distributed systems</a>,
+	  
+        
+	  	    
+            <a href="/tag/Programming/">Programming</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2026. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Part 2: Reimplementing the TeX data structures in C++</h1>
+  <span class="post-date">28 Sep 2026
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/Programming">Programming</a>,
+      
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <table>
+  <thead>
+    <tr>
+      <th style="text-align: left">&lt;- <a href="/2026/09/03/reading-tex-the-program/">Part 1: Reading TeX: The Program in 2026</a></th>
+      <th style="text-align: right">Part 3: A Benchmark Harness  -&gt; (Not yet published)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: right"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>While reading the TeX source code (see <a href="/2026/09/03/reading-tex-the-program/">Part 1</a>),
+I repeatedly asked myself, “What if we implemented the data structures using modern tools?
+Would the design be clearer? Would it perform better?”.
+Knuth took enormous pains to save memory. He also designed TeX’s dynamic memory
+allocator to be compatible with the early virtual memory systems of the 1980s.
+While he did his best, the resulting code is obscure compared to how we would
+implement this design using modern language facilities.</p>
+
+<!--more-->
+
+<p>It might well perform better, too. The memory hierarchy of modern processors differs substantially from
+those of the 1980s. In particular, the large cache hierarchies and data
+prefetch algorithms, when combined with branch prediction strategies
+in execution pipelines, favour data structures with high locality and
+predictable execution paths, requirements not present when classical
+data structures were developed.</p>
+
+<p>I decided to reimplement TeX’s data structures twice, once
+using identical memory layout and once using the modern features
+provided by the language, and compare their clarity and performance.</p>
+
+<h2 id="choosing-c-as-the-implementation-language">Choosing C++ as the implementation language</h2>
+
+<p>I chose C++ as much from necessity as habit. I needed a language that
+could directly implement both the statically-allocated structures of
+TeX and the more modern dynamically-allocated class hierarchy. The
+largest limitation of C++, its lack of garbage collection, is not
+an issue for TeX, which has no circular data structures.</p>
+
+<h2 id="implementing-required-a-different-style-of-reading">Implementing required a different style of reading</h2>
+
+<p>In Part 1 I described how the sequence of topics in <em>TeX: The Program</em> matched
+the order in which you might want to learn the levels of its design, giving the
+book a natural flow but not leading to a deep understanding. I predicted that a
+very different style of reading would be required to modify the code.</p>
+
+<p>The prediction was borne out as soon as I began replicating TeX’s Pascal data
+structures in C++. I found myself inserting multiple bookmarks, flipping between
+sections. I realized I didn’t actually understand most of what I’d originally
+read. I might have gotten the gist but when programming, details matter, and
+I most definitely had more details to learn. There are also concepts such
+as token lists and how they are distinct from character lists that are more
+implied than explicit in the book. Implementing them required me to learn
+those distinctions down to the last detail.</p>
+
+<p>Still, the book format wasn’t much of an impediment. The cross-referencing
+at the base of each two-page spread, combined with the thorough index, allowed
+me to track relationships as quickly as if I were using an integrated
+development environment (IDE). The main limitation compared to an IDE was
+the limitation of seeing only two pages at once in the book, where an IDE
+can display many more sections of a program on contemporary large displays.
+Ultimately though, the small display was more an annoyance than a hindrance
+to serious work.</p>
+
+<h2 id="i-reimplemented-the-structures-that-might-require-most-change-to-adapt-to-modern-processors">I reimplemented the structures that might require most change to adapt to modern processors</h2>
+
+<p>TeX’s key data structures are described in Parts 4–20 of <em>TeX:
+The Program</em>. They comprise:</p>
+
+<ul>
+  <li>
+    <p>The string pool (Part 4)</p>
+  </li>
+  <li>
+    <p>Packed data (Part 8). This section just defines types that will
+be used in the other structures.</p>
+  </li>
+  <li>Dynamic memory (Part 9)</li>
+  <li>Boxes (Parts 10–14)</li>
+  <li>Semantic nest (Part 16)</li>
+  <li>Table of equivalents (Part 17)</li>
+  <li>Stack for saving and restoring equivalents (Part 19)</li>
+  <li>
+    <p>Hash table (Part 18)</p>
+  </li>
+  <li>Token lists (Part 20) and their close relations, character
+lists (not explicitly described anywhere, that I can see)</li>
+</ul>
+
+<p>These structures can be organized into six groups:</p>
+
+<ul>
+  <li>String pool</li>
+  <li>Dynamic memory, together with the boxes, token lists, and character lists allocated in it</li>
+  <li>Semantic nest</li>
+  <li>Table of equivalents and its stack</li>
+  <li>Hash table</li>
+</ul>
+
+<p>The string pool is not heavily used. It only contains strings hardcoded
+in the Pascal code (that are then extracted by the WEB preprocessor and
+preloaded into the TeX image via INITEX) and a small number of strings
+defined in the current document, typically csnames. Due to this
+limited use, I did not reimplement it.</p>
+
+<p>TeX’s dynamic memory is a high-use, home-grown substitute for the
+standard memory management provided by every modern language. I
+reimplemented this because I wanted to see how TeX’s version from the
+1980s holds upon 2020-era processors when compared to more modern
+libraries.</p>
+
+<p>The remaining categories of data structure, the semantic nest, the equivalents table and its stack,
+and the hash table, are more specialized and less central to TeX, so I will
+not implement them at this time.</p>
+
+<p>The code is publicly available at <a href="https://github.com/tedkirkpatrick/tex-memory">tedkirkpatrick/tex-memory</a>.</p>
+
+<h2 id="the-tex-like-implementation-follows-the-pascal-closely">The “TeX-like” implementation follows the Pascal closely</h2>
+
+<p>My first implementation, the “TeX-like” version, is in directory
+<code>original-approach</code>.</p>
+
+<p>I chose to follow
+TeX’s style closely, even when it contradicted typical C++ best
+practices. In particular, whenever TeX has an <code>if</code> block,
+<code>else</code> block, or loop with a single statement, it doesn’t enclose
+them with a Pascal <code>begin/end</code> pair. I used the corresponding
+convention for this version, only brace-enclosing such blocks when they
+contained more than one statement. The resulting code was essentially
+written in the C subset of C++.</p>
+
+<p>In some cases this meant ignoring recent improvements in the language in
+favour of much older approaches. For example, I distinguished <a href="https://www.cppreference.com/cpp/language/storage_duration">internal
+and external linkages</a>
+via the longstanding <code>static</code> and <code>extern</code>
+keywords, rather than the more refined approach possible with <a href="https://www.cppreference.com/cpp/language/namespace">namespaces</a>.</p>
+
+<h2 id="the-special-case-of-web-constants-and-macros">The special case of WEB constants and macros</h2>
+
+<p>As you may recall from <a href="https://kirkpatricktech.org/2026/09/03/reading-tex-the-program/">Part 1</a>, TeX’s code makes extensive use of the WEB preprocessor facilities.
+These are used to define named constants via the <code>=</code> operator</p>
+
+<pre>
+<b>define</b> <i>width_offset</i> = 1
+</pre>
+
+<p>and to define macros using the <code>&equiv;</code> operator</p>
+
+<pre>
+<b>define</b> <i>width</i>(<b>#</b>) &equiv; <i>mem</i>[<b>#</b> + <i>width_offset</i>].<i>sc</i>
+</pre>
+
+<p>Part 1 describes how TeX makes extensive use of WEB constants and macros
+to implement higher-level abstractions on top of basic Pascal. The WEB constructs
+correspond closely to features in the C/C++ preprocessor. Indeed, the WEB preprocessor
+might well have been inspired by the C preprocessor.</p>
+
+<p>But preprocessors have widely-discussed disadvantages. First, they introduce a
+new syntax and semantics, distinct from that of the underlying language. More
+importantly, they do not work within the standard type system and are not type-checked.
+Type checking is an essential feature of statically-typed
+languages and a design compatible with that is a much better
+fit.</p>
+
+<p>In light of this, I decided to implement the WEB variables and functions not
+in preprocessor syntax but as <a href="https://www.cppreference.com/cpp/language/constexpr"><code>constexpr</code> variables and functions</a>, which work within regular C++ syntax and
+type-checking. They also ultimately generate the same object code as if they’d been
+implemented in the preprocessor. The route to that efficient object code is subtle
+however, resulting from coordinated choices in the language specification and the
+compilers implementing it.</p>
+
+<p>Strap in, this one’s going to take a while to explain.</p>
+
+<h3 id="implementing-web-constants-as-constexpr-constants">Implementing WEB constants as <code>constexpr</code> constants</h3>
+
+<p>The case of WEB constants is straightforward. Given the WEB definition of <code><i>width_offset</i></code> above, WEB translates the statement</p>
+
+<pre><i>a</i> = <i>mem</i>[<i>width_offset</i>]</pre>
+
+<p>to the Pascal statement</p>
+
+<pre><i>a</i> = <i>mem</i>[7]</pre>
+
+<p>which is all the Pascal compiler sees. The <i>width_offset</i> identifier
+simply doesn’t exist in Pascal because it’s been translated by WEB first.</p>
+
+<p>In contrast, the C++ definition</p>
+
+<pre>constexpr int width_offset = 7;</pre>
+
+<p><em>is</em> seen by the compiler, as it is a valid definition in the language, and <i>width_offset</i> is
+entered in the symbol table. The <code>constexpr</code> qualifier restricts the identifier’s
+initialization to a <a href="https://www.cppreference.com/cpp/language/constant_expression">constant expression</a>,
+which can be evaluated at compile time. The identifier is also implicitly <code>const</code>,
+meaning it is immutable. And so, unlike WEB, the C++ compiler will directly parse the statement</p>
+
+<pre>a = mem[width_offset]</pre>
+
+<p>but because <code>width_offset</code> was initialized at compile time and known to
+be immutable, the compiler will replace it with the value <code>7</code>, generating
+the same object code as the Pascal compiler.</p>
+
+<p>Note the relationship between the language definition and the compiler: The
+requirements of the <code>constexpr</code> qualifier, restricting the initialization
+to an expression executable at compile-time and guaranteeing that the value
+will not change during execution, give the compiler leeway to directly substitute
+the value whenever the identifier appears. The language definition specifically doesn’t
+<em>require</em> this, leaving it as a potential optimization choice by compiler authors. A conformant compiler could in fact
+assign a memory location to <code>width_offset</code>, initialize it to <code>7</code>,
+and generate code to load the value from that location every time the identifier
+is referenced. The language definition just makes it easy for the compiler to
+generate the more optimal code and virtually all
+of them will.</p>
+
+<p>There is one case however, where the language does require the compiler
+to replace the identifier with its constant value: when referenced
+in a constant expression, such as used to set array limits. The
+language expressly permits definitions such as</p>
+
+<pre>int value[width_offset];</pre>
+
+<p>and in this case the compiler must directly substitute the value the value
+<code>7</code> to set the size of array <code>value</code>.</p>
+
+<p>I went into this level of detail for the simpler case of <code>constexpr</code> constants
+because it provides a context for discussing the more complicated
+case of <code>constexpr</code> functions.</p>
+
+<h3 id="implementing-web-macros-as-constexpr-functions">Implementing WEB macros as <code>constexpr</code> functions</h3>
+
+<p>The broad principles of how <code>constexpr</code> functions can be used
+in place of WEB macros are similar to how <code>constexpr</code> constants
+can replace WEB constants but there are more steps to the logic.</p>
+
+<p>In TeX, given the definitions above, the statement</p>
+
+<pre>a = width(n)</pre>
+
+<p>is translated by WEB to the Pascal statement</p>
+
+<pre>a = <i>mem</i>[<i>n</i> + 7].<i>sc</i></pre>
+
+<p>expanding the <code>width</code> macro and the <code>width_offset</code>
+constant to their definitions and substituting
+the variable <code>n</code> for the parameter <code>#</code>.
+As with WEB constants, the Pascal
+compiler only sees the result of the expansion; the names of the
+macro and constant do not exist in Pascal.</p>
+
+<p>The use of WEB macros that are preprocessed into an inline
+expression has a potential efficiency benefit: Inline code is
+typically more efficient than a function call because the
+function call adds the overhead of parameter setup,
+a branch to different location, and a return. The inline
+code for this macro, by contrast, just does a simple addition
+and indexed memory reference, which is much faster.</p>
+
+<p>On the other hand, the corresponding <code>constexpr</code> function in C++</p>
+
+<pre>constexpr int width(int n) { return mem[n + width_offset].sc; }</pre>
+
+<p>works differently. It is a C++ function parsed
+according to the language’s typing rules. As with constant definitions,
+the <code>constexpr</code> qualifier states that the compiler
+<i>may</i> execute this at compile time and, in specialized
+contexts, even <i>must</i> do so. It so happens that, for
+all the functions corresponding to the WEB macros used in TeX,
+<i>none</i> will be executed at compile time but all of them will
+ultimately produce the same inline code. Getting to that conclusion
+will a few steps.</p>
+
+<h4 id="when-c-requires-compile-time-execution-of-a-constexpr-function">When C++ requires compile time execution of a <code>constexpr</code> function</h4>
+
+<p>I want to begin with the case of required compile-time execution,
+despite it never arising for my implementation of the TeX WEB
+macros, because it highlights some issues we’ll need to
+understand for those macros. Consider the following
+code (admittedly silly but it makes the point):</p>
+
+<pre>// This case does not arise in TeX!
+constexpr int mem[8] {0, 1, 2, 3, 4, 5, 6, 7};
+constexpr int width_offset = 7;
+constexpr int width(int n) { return mem[n + width_offset]; }
+int array[width(0)]; // width(0) must be executed at compile-time
+</pre>
+
+<p><strong>Note:</strong> For this section, I’m going to elide the <code>.sc</code>
+suffix in the actual definition of <code>width</code>.  That simply
+selects an entry in the <code>memory_word</code> union. For simplicity,
+I’ll assume that <code>mem</code> is just an array of <code>int</code>s
+and that is the return type of <code>width</code>.</p>
+
+<p>This compiles (<a href="https://godbolt.org/z/K8x7KKfEa">example on Compiler Explorer</a>). The size of <code>array</code> must be available at
+compile time, so <code>width(0)</code> is executed by the
+compiler to compute the size, returning 7.</p>
+
+<h4 id="when-a-constexpr-function-cannot-be-executed-at-compile-time">When a <code>constexpr</code> function cannot be executed at compile time</h4>
+
+<p>Compare that with a similar example where <code>mem</code> is not
+qualified by <code>constexpr</code> and is not initialized:</p>
+
+<pre>// How mem is actually defined in TeX!
+int mem[8]; // Actual array is much bigger
+constexpr int width_offset = 7;
+constexpr int width(int n) { return mem[n + width_offset]; }
+// This line just illustrates the problem---it doesn't arise in TeX
+int array[width(0)]; // width(0) cannot be executed at compile time
+</pre>
+
+<p>This fails to compile (<a href="https://godbolt.org/z/3cEqshaPn">example on Compiler Explorer</a>) because
+the contents of <code>mem</code> are unknown at compile time.
+Due to its reliance on <code>mem</code>, the function <code>width</code>
+can never be executed at compile time and so the required size of
+<code>array</code> cannot be computed.</p>
+
+<h4 id="how-a-runtime-constexpr-function-gets-compiled-inline">How a runtime <code>constexpr</code> function gets compiled inline</h4>
+
+<p>Given the actual definitions of <code>mem</code> and <code>width</code>,
+a C++ definition such as</p>
+
+<pre>int q = width(n);</pre>
+
+<p>will always generate runtime code for the <code>width(n)</code> call. So how does its code become compiled inline rather than as a call? As with
+<code>constexpr</code> constants, this results from the coordinated
+but separate designs of the language and its compilers.</p>
+
+<p>A function like <code>width()</code> poses an apparent paradox: Its
+<code>constexpr</code> qualification supposedly makes it eligible
+for compile time execution but its reliance on the runtime contents
+of <code>mem</code> makes actual execution at compile time impossible.
+What’s the point of <code>constexpr</code> here?</p>
+
+<p>The answer lies in an implied consequence of <code>constexpr</code>,
+that <a href="https://www.cppreference.com/cpp/language/constexpr"><code>constexpr</code> functions are also <code>inline</code></a>.</p>
+
+<p>The semantics of the <code>inline</code> qualifier are themselves
+subtle. They don’t require a compiler to compile the function
+inline, as the C++ language definition does not wish to impose
+optimizations on the compiler. Instead, <code>inline</code>
+<em>enables</em> that optimization by specifying that <a href="https://www.cppreference.com/cpp/language/inline">identical
+definitions of this function are permtted in different files</a>.</p>
+
+<p>The practical way to insert the same definition of a function
+in multiple files (technically, in the language of the C++ specification, “translation units”)
+is to define the function body along with its signature in
+a header file. Defining an ordinary function that way will
+produce a link-time error but a <code>constexpr</code>- 
+or <code>inline</code>-qualified function is permitted.
+The header file will be included in every file where
+the function is called.</p>
+
+<p>This creates the context for the compiler to perform
+an inline optimization of the function’s code. The language
+guarantees that every call will be to the identical
+function definition, allowing the compiler to directly
+compile the function body at each point of call. There
+is no need to create a single copy of the function referenced
+by every call.</p>
+
+<p>This choice remains an option but it’s one that compilers
+typically take if any optimization is requested. For
+example, both gcc 15.2 and clang 19.1 compile
+<code>width()</code> out of line at <code>-O0</code> but
+begin inlining it at <code>-O1</code>.</p>
+
+<p>Examples in Compiler Explorer for ARM64 code generation:</p>
+
+<ul>
+  <li><a href="https://godbolt.org/z/h36Tv8fqM">gcc 15.2 compiled with <code>-O0</code>: out-of-line function call</a></li>
+  <li><a href="https://godbolt.org/z/sff8f14jj">gcc 15.2 compiled with <code>-O1</code>: in-line function call</a></li>
+</ul>
+
+<h4 id="summary-of-constexpr-constants-and-functions">Summary of <code>constexpr</code> constants and functions</h4>
+
+<p>Implementing the WEB macros as <code>constexpr</code> constants and functions
+was a complete win. It kept the code within regular C++ syntax and type-checking while
+producing the same object code as if I’d used the C++ preprocessor. However, determining that
+this was going to be the outcome from any modern compiler required looking carefully
+into the semantics of the language, what the definition promised and what it
+left up to the compiler.</p>
+
+<p>One final detail remains. Earlier, I wrote “Inline code is
+<em>typically</em> more efficient than a function call” [emphasis added]. Under
+what circumstances might inline code in fact be slower than calling a function?
+The potential problem is the size of the executable. Replacing each
+function call with inline code increases that size and this in turn
+can cause key execution paths to be too large for the <a href="https://en.wikipedia.org/wiki/CPU_cache">instruction cache (I-cache)</a>.
+This results in higher I-cache misses, slowing the program.</p>
+
+<p>TeX is a small enough program that this effect is unlikely to arise. Ultimately
+though the question can only be answered through benchmarks, coming in future entries
+in this series.</p>
+
+<h2 id="some-other-small-uses-of-c-features">Some other small uses of C++ features</h2>
+
+<p>In addition to <code>constexpr</code> constants and functions, I used
+a few other C++ features that don’t match the original WEB/Pascal code:</p>
+
+<ul>
+  <li>I annotated functions that generate a node with <code>[[nodiscard]]</code>, to
+take advantage of the greater error-checking that annotation provides.</li>
+  <li>For files and functions that were not part of TeX but solely added for debugging,
+testing, and benchmarking, I used any C++ features that improved
+the code. For example, the debugging functions in <code>basic_memory.cpp</code>
+are isolated in their own <code>dynmemdbg</code> namespace.</li>
+</ul>
+
+<h2 id="testing-was-exhaustive">Testing was exhaustive</h2>
+
+<p>Translating the TeX code required understanding subtle points
+of the underlying semantics. The essentially typeless
+Pascal code, where the macros expand down to make every value
+an 8-, 16-, or 32-bit integer, occasionally hid the underlying
+semantics. To check my translation, I wrote extensive test
+routines in the <a href="https://catch2.org">Catch2</a> framework. I chose
+the v2 version, which is header-only.</p>
+
+<p>The resulting tests feature almost 200 assertions, testing the
+underlying memory allocation routines in <code>basic_memory.{hpp,cpp}</code> and the node routines built atop those in <code>boxes.{hpp,cpp}</code>.</p>
+
+<p>These tests were essential for ensuring that my code matched
+the semantics of the original TeX.</p>
+
+<h2 id="reimplementing-in-modern-c-was-straightforward">Reimplementing in modern C++ was straightforward</h2>
+
+<p>In contrast to reimplementing the exact code, simply reimplementing
+its <em>intent</em> in modern C++ was straightforward. 
+The reimplementation is in directory <code>modern-approach</code>.</p>
+
+<p>There was no need to
+write underlying memory management (files <code>basic_memory.{hpp,cpp}</code> in
+the original version) because in this version I was relying on the facilities
+provided by the base language. The complex macro structures
+defining the node types in the original simply became a class hierarchy in this version, with
+each class defining its specific fields. The hierarchy has
+only two levels, with the top level defining the base <code>Node</code>
+and each node type (vertical box, horizontal box, etc.) derived
+from that.</p>
+
+<p>The hierarchy made explicit a point that I found confusing in
+the original code: Although GlueSpecs are allocated
+from the same general memory pool as Nodes, they are not themselves
+Nodes because they do not link to anything else. The
+word that would have contained that link instead contains
+a reference count, as GlueSpecs can be linked to by multiple
+Nodes. This is a good example of how implementing the design
+in the actual types of the language clarified a point that
+was obscured by the more typeless approach in the original.</p>
+
+<h3 id="using-modern-c-11-smart-pointers">Using modern (C++ 11) smart pointers</h3>
+
+<p>In the Pascal code, pointers between Nodes (and from Nodes
+to GlueSpecs) are implemented as integer indices into the
+<code>mem</code> array. In C++, I implemented pointers to Nodes
+using <a href="https://www.cppreference.com/cpp/memory/unique_ptr"><code>std::unique_ptr</code></a> and pointers to GlueSpecs using
+<a href="https://www.cppreference.com/cpp/memory/shared_ptr"><code>std::shared_ptr</code></a>. These features are sufficient to handle any structure
+used in TeX, which does not have circular references. They
+guarantee that there will be no memory leaks, as they ensure
+that the referenced object will be deleted whenever the
+single pointer to it (for Nodes) or the last pointer to it
+(for GlueSpecs) goes out of lifetime.</p>
+
+<p>Consequently, my implementation never calls <code>delete</code>,
+as that is done automatically by the smart pointers.
+This approach has one disadvantage that might arise for larger
+data structures: When the top-level object is deleted, the
+system must recurse down the hierarchy, traversing the tree
+of Nodes referred by the top object. If the height of the
+underlying tree is high, the recursive calls can exceed
+the function call stack size.</p>
+
+<p>A robust implementation must
+either guarantee that the call stack is large enough to accommodate
+the deletion—a challenging guarantee—or implement
+a traversal with an explicit stack. In that case, the value
+of smart pointers is that any deletions missed by the traversal
+will be performed by the system. The traversal algorithm is the belt, the pointers are the suspenders.</p>
+
+<h2 id="testing-was-near-trivial">Testing was near-trivial</h2>
+
+<p>Where reimplementing the original Pascal code required extensive
+testing to ensure I had done it correctly, the was essentially
+one test case required for the modern C++ implementaton. I just
+wrote a function that creates an instance of every Node type
+and several GlueSpecs. Their deletion was performed automatically
+upon the top-level pointer leaving scope.</p>
+
+<h2 id="the-modern-c-implementation-was-far-clearer">The modern C++ implementation was far clearer</h2>
+
+<p>Taking the above into account, the modern C++ was shorter, clearer,
+more direct, and supported far more comprehensive static checking
+at compile time.</p>
+
+<p>If I had reimplemented the other layers of TeX atop this base,
+this code would have supported far cleaner separation between
+the layers, with decisions in lower levels hidden from their
+higher-level callers.</p>
+
+<p>So the code was a win but what about performance?  My original
+speculation was that the facilities of a modern language
+should be better-adapted to the performance requirements of
+modern processors, which are quite different from the
+requirements of processors in the 1980s. I turned my attention
+to benchmarking the two approaches.</p>
+
+<p>Performing reliable benchmarks requires an automated harness
+to run the tests under controlled conditions and reliably
+record the results. In Part 3 I’ll describe the
+requirements and the system of tools I built
+to meet them.</p>
+
+
+</div>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+this.page.url = "http://kirkpatricktech.com/2026/09/28/reimplementing-the-tex-data-structures/";
+//this.page.identifier = "/2026/09/28/reimplementing-the-tex-data-structures";
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://kirkpatricktech-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
+  </body>
+</html>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
  <title>All my marbles in one place</title>
- <link href="http://0.0.0.0:5000/atom.xml" rel="self"/>
- <link href="http://0.0.0.0:5000/"/>
- <updated>2026-09-03T22:42:11+00:00</updated>
- <id>http://0.0.0.0:5000</id>
+ <link href="/atom.xml" rel="self"/>
+ <link href="/"/>
+ <updated>2026-09-28T22:03:00+00:00</updated>
+ <id></id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
@@ -13,17 +13,557 @@
 
  
  <entry>
+   <title>Part 2: Reimplementing the TeX data structures in C++</title>
+   <link href="/2026/09/28/reimplementing-the-tex-data-structures/"/>
+   <updated>2026-09-28T00:00:00+00:00</updated>
+   <id>/2026/09/28/reimplementing-the-tex-data-structures</id>
+   <content type="html">&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;&amp;lt;- &lt;a href=&quot;/2026/09/03/reading-tex-the-program/&quot;&gt;Part 1: Reading TeX: The Program in 2026&lt;/a&gt;&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Part 3: A Benchmark Harness  -&amp;gt; (Not yet published)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;While reading the TeX source code (see &lt;a href=&quot;/2026/09/03/reading-tex-the-program/&quot;&gt;Part 1&lt;/a&gt;),
+I repeatedly asked myself, “What if we implemented the data structures using modern tools?
+Would the design be clearer? Would it perform better?”.
+Knuth took enormous pains to save memory. He also designed TeX’s dynamic memory
+allocator to be compatible with the early virtual memory systems of the 1980s.
+While he did his best, the resulting code is obscure compared to how we would
+implement this design using modern language facilities.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;It might well perform better, too. The memory hierarchy of modern processors differs substantially from
+those of the 1980s. In particular, the large cache hierarchies and data
+prefetch algorithms, when combined with branch prediction strategies
+in execution pipelines, favour data structures with high locality and
+predictable execution paths, requirements not present when classical
+data structures were developed.&lt;/p&gt;
+
+&lt;p&gt;I decided to reimplement TeX’s data structures twice, once
+using identical memory layout and once using the modern features
+provided by the language, and compare their clarity and performance.&lt;/p&gt;
+
+&lt;h2 id=&quot;choosing-c-as-the-implementation-language&quot;&gt;Choosing C++ as the implementation language&lt;/h2&gt;
+
+&lt;p&gt;I chose C++ as much from necessity as habit. I needed a language that
+could directly implement both the statically-allocated structures of
+TeX and the more modern dynamically-allocated class hierarchy. The
+largest limitation of C++, its lack of garbage collection, is not
+an issue for TeX, which has no circular data structures.&lt;/p&gt;
+
+&lt;h2 id=&quot;implementing-required-a-different-style-of-reading&quot;&gt;Implementing required a different style of reading&lt;/h2&gt;
+
+&lt;p&gt;In Part 1 I described how the sequence of topics in &lt;em&gt;TeX: The Program&lt;/em&gt; matched
+the order in which you might want to learn the levels of its design, giving the
+book a natural flow but not leading to a deep understanding. I predicted that a
+very different style of reading would be required to modify the code.&lt;/p&gt;
+
+&lt;p&gt;The prediction was borne out as soon as I began replicating TeX’s Pascal data
+structures in C++. I found myself inserting multiple bookmarks, flipping between
+sections. I realized I didn’t actually understand most of what I’d originally
+read. I might have gotten the gist but when programming, details matter, and
+I most definitely had more details to learn. There are also concepts such
+as token lists and how they are distinct from character lists that are more
+implied than explicit in the book. Implementing them required me to learn
+those distinctions down to the last detail.&lt;/p&gt;
+
+&lt;p&gt;Still, the book format wasn’t much of an impediment. The cross-referencing
+at the base of each two-page spread, combined with the thorough index, allowed
+me to track relationships as quickly as if I were using an integrated
+development environment (IDE). The main limitation compared to an IDE was
+the limitation of seeing only two pages at once in the book, where an IDE
+can display many more sections of a program on contemporary large displays.
+Ultimately though, the small display was more an annoyance than a hindrance
+to serious work.&lt;/p&gt;
+
+&lt;h2 id=&quot;i-reimplemented-the-structures-that-might-require-most-change-to-adapt-to-modern-processors&quot;&gt;I reimplemented the structures that might require most change to adapt to modern processors&lt;/h2&gt;
+
+&lt;p&gt;TeX’s key data structures are described in Parts 4–20 of &lt;em&gt;TeX:
+The Program&lt;/em&gt;. They comprise:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;The string pool (Part 4)&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Packed data (Part 8). This section just defines types that will
+be used in the other structures.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Dynamic memory (Part 9)&lt;/li&gt;
+  &lt;li&gt;Boxes (Parts 10–14)&lt;/li&gt;
+  &lt;li&gt;Semantic nest (Part 16)&lt;/li&gt;
+  &lt;li&gt;Table of equivalents (Part 17)&lt;/li&gt;
+  &lt;li&gt;Stack for saving and restoring equivalents (Part 19)&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Hash table (Part 18)&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Token lists (Part 20) and their close relations, character
+lists (not explicitly described anywhere, that I can see)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These structures can be organized into six groups:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;String pool&lt;/li&gt;
+  &lt;li&gt;Dynamic memory, together with the boxes, token lists, and character lists allocated in it&lt;/li&gt;
+  &lt;li&gt;Semantic nest&lt;/li&gt;
+  &lt;li&gt;Table of equivalents and its stack&lt;/li&gt;
+  &lt;li&gt;Hash table&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The string pool is not heavily used. It only contains strings hardcoded
+in the Pascal code (that are then extracted by the WEB preprocessor and
+preloaded into the TeX image via INITEX) and a small number of strings
+defined in the current document, typically csnames. Due to this
+limited use, I did not reimplement it.&lt;/p&gt;
+
+&lt;p&gt;TeX’s dynamic memory is a high-use, home-grown substitute for the
+standard memory management provided by every modern language. I
+reimplemented this because I wanted to see how TeX’s version from the
+1980s holds upon 2020-era processors when compared to more modern
+libraries.&lt;/p&gt;
+
+&lt;p&gt;The remaining categories of data structure, the semantic nest, the equivalents table and its stack,
+and the hash table, are more specialized and less central to TeX, so I will
+not implement them at this time.&lt;/p&gt;
+
+&lt;p&gt;The code is publicly available at &lt;a href=&quot;https://github.com/tedkirkpatrick/tex-memory&quot;&gt;tedkirkpatrick/tex-memory&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-tex-like-implementation-follows-the-pascal-closely&quot;&gt;The “TeX-like” implementation follows the Pascal closely&lt;/h2&gt;
+
+&lt;p&gt;My first implementation, the “TeX-like” version, is in directory
+&lt;code&gt;original-approach&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I chose to follow
+TeX’s style closely, even when it contradicted typical C++ best
+practices. In particular, whenever TeX has an &lt;code&gt;if&lt;/code&gt; block,
+&lt;code&gt;else&lt;/code&gt; block, or loop with a single statement, it doesn’t enclose
+them with a Pascal &lt;code&gt;begin/end&lt;/code&gt; pair. I used the corresponding
+convention for this version, only brace-enclosing such blocks when they
+contained more than one statement. The resulting code was essentially
+written in the C subset of C++.&lt;/p&gt;
+
+&lt;p&gt;In some cases this meant ignoring recent improvements in the language in
+favour of much older approaches. For example, I distinguished &lt;a href=&quot;https://www.cppreference.com/cpp/language/storage_duration&quot;&gt;internal
+and external linkages&lt;/a&gt;
+via the longstanding &lt;code&gt;static&lt;/code&gt; and &lt;code&gt;extern&lt;/code&gt;
+keywords, rather than the more refined approach possible with &lt;a href=&quot;https://www.cppreference.com/cpp/language/namespace&quot;&gt;namespaces&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-special-case-of-web-constants-and-macros&quot;&gt;The special case of WEB constants and macros&lt;/h2&gt;
+
+&lt;p&gt;As you may recall from &lt;a href=&quot;https://kirkpatricktech.org/2026/09/03/reading-tex-the-program/&quot;&gt;Part 1&lt;/a&gt;, TeX’s code makes extensive use of the WEB preprocessor facilities.
+These are used to define named constants via the &lt;code&gt;=&lt;/code&gt; operator&lt;/p&gt;
+
+&lt;pre&gt;
+&lt;b&gt;define&lt;/b&gt; &lt;i&gt;width_offset&lt;/i&gt; = 1
+&lt;/pre&gt;
+
+&lt;p&gt;and to define macros using the &lt;code&gt;&amp;equiv;&lt;/code&gt; operator&lt;/p&gt;
+
+&lt;pre&gt;
+&lt;b&gt;define&lt;/b&gt; &lt;i&gt;width&lt;/i&gt;(&lt;b&gt;#&lt;/b&gt;) &amp;equiv; &lt;i&gt;mem&lt;/i&gt;[&lt;b&gt;#&lt;/b&gt; + &lt;i&gt;width_offset&lt;/i&gt;].&lt;i&gt;sc&lt;/i&gt;
+&lt;/pre&gt;
+
+&lt;p&gt;Part 1 describes how TeX makes extensive use of WEB constants and macros
+to implement higher-level abstractions on top of basic Pascal. The WEB constructs
+correspond closely to features in the C/C++ preprocessor. Indeed, the WEB preprocessor
+might well have been inspired by the C preprocessor.&lt;/p&gt;
+
+&lt;p&gt;But preprocessors have widely-discussed disadvantages. First, they introduce a
+new syntax and semantics, distinct from that of the underlying language. More
+importantly, they do not work within the standard type system and are not type-checked.
+Type checking is an essential feature of statically-typed
+languages and a design compatible with that is a much better
+fit.&lt;/p&gt;
+
+&lt;p&gt;In light of this, I decided to implement the WEB variables and functions not
+in preprocessor syntax but as &lt;a href=&quot;https://www.cppreference.com/cpp/language/constexpr&quot;&gt;&lt;code&gt;constexpr&lt;/code&gt; variables and functions&lt;/a&gt;, which work within regular C++ syntax and
+type-checking. They also ultimately generate the same object code as if they’d been
+implemented in the preprocessor. The route to that efficient object code is subtle
+however, resulting from coordinated choices in the language specification and the
+compilers implementing it.&lt;/p&gt;
+
+&lt;p&gt;Strap in, this one’s going to take a while to explain.&lt;/p&gt;
+
+&lt;h3 id=&quot;implementing-web-constants-as-constexpr-constants&quot;&gt;Implementing WEB constants as &lt;code&gt;constexpr&lt;/code&gt; constants&lt;/h3&gt;
+
+&lt;p&gt;The case of WEB constants is straightforward. Given the WEB definition of &lt;code&gt;&lt;i&gt;width_offset&lt;/i&gt;&lt;/code&gt; above, WEB translates the statement&lt;/p&gt;
+
+&lt;pre&gt;&lt;i&gt;a&lt;/i&gt; = &lt;i&gt;mem&lt;/i&gt;[&lt;i&gt;width_offset&lt;/i&gt;]&lt;/pre&gt;
+
+&lt;p&gt;to the Pascal statement&lt;/p&gt;
+
+&lt;pre&gt;&lt;i&gt;a&lt;/i&gt; = &lt;i&gt;mem&lt;/i&gt;[7]&lt;/pre&gt;
+
+&lt;p&gt;which is all the Pascal compiler sees. The &lt;i&gt;width_offset&lt;/i&gt; identifier
+simply doesn’t exist in Pascal because it’s been translated by WEB first.&lt;/p&gt;
+
+&lt;p&gt;In contrast, the C++ definition&lt;/p&gt;
+
+&lt;pre&gt;constexpr int width_offset = 7;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;is&lt;/em&gt; seen by the compiler, as it is a valid definition in the language, and &lt;i&gt;width_offset&lt;/i&gt; is
+entered in the symbol table. The &lt;code&gt;constexpr&lt;/code&gt; qualifier restricts the identifier’s
+initialization to a &lt;a href=&quot;https://www.cppreference.com/cpp/language/constant_expression&quot;&gt;constant expression&lt;/a&gt;,
+which can be evaluated at compile time. The identifier is also implicitly &lt;code&gt;const&lt;/code&gt;,
+meaning it is immutable. And so, unlike WEB, the C++ compiler will directly parse the statement&lt;/p&gt;
+
+&lt;pre&gt;a = mem[width_offset]&lt;/pre&gt;
+
+&lt;p&gt;but because &lt;code&gt;width_offset&lt;/code&gt; was initialized at compile time and known to
+be immutable, the compiler will replace it with the value &lt;code&gt;7&lt;/code&gt;, generating
+the same object code as the Pascal compiler.&lt;/p&gt;
+
+&lt;p&gt;Note the relationship between the language definition and the compiler: The
+requirements of the &lt;code&gt;constexpr&lt;/code&gt; qualifier, restricting the initialization
+to an expression executable at compile-time and guaranteeing that the value
+will not change during execution, give the compiler leeway to directly substitute
+the value whenever the identifier appears. The language definition specifically doesn’t
+&lt;em&gt;require&lt;/em&gt; this, leaving it as a potential optimization choice by compiler authors. A conformant compiler could in fact
+assign a memory location to &lt;code&gt;width_offset&lt;/code&gt;, initialize it to &lt;code&gt;7&lt;/code&gt;,
+and generate code to load the value from that location every time the identifier
+is referenced. The language definition just makes it easy for the compiler to
+generate the more optimal code and virtually all
+of them will.&lt;/p&gt;
+
+&lt;p&gt;There is one case however, where the language does require the compiler
+to replace the identifier with its constant value: when referenced
+in a constant expression, such as used to set array limits. The
+language expressly permits definitions such as&lt;/p&gt;
+
+&lt;pre&gt;int value[width_offset];&lt;/pre&gt;
+
+&lt;p&gt;and in this case the compiler must directly substitute the value the value
+&lt;code&gt;7&lt;/code&gt; to set the size of array &lt;code&gt;value&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I went into this level of detail for the simpler case of &lt;code&gt;constexpr&lt;/code&gt; constants
+because it provides a context for discussing the more complicated
+case of &lt;code&gt;constexpr&lt;/code&gt; functions.&lt;/p&gt;
+
+&lt;h3 id=&quot;implementing-web-macros-as-constexpr-functions&quot;&gt;Implementing WEB macros as &lt;code&gt;constexpr&lt;/code&gt; functions&lt;/h3&gt;
+
+&lt;p&gt;The broad principles of how &lt;code&gt;constexpr&lt;/code&gt; functions can be used
+in place of WEB macros are similar to how &lt;code&gt;constexpr&lt;/code&gt; constants
+can replace WEB constants but there are more steps to the logic.&lt;/p&gt;
+
+&lt;p&gt;In TeX, given the definitions above, the statement&lt;/p&gt;
+
+&lt;pre&gt;a = width(n)&lt;/pre&gt;
+
+&lt;p&gt;is translated by WEB to the Pascal statement&lt;/p&gt;
+
+&lt;pre&gt;a = &lt;i&gt;mem&lt;/i&gt;[&lt;i&gt;n&lt;/i&gt; + 7].&lt;i&gt;sc&lt;/i&gt;&lt;/pre&gt;
+
+&lt;p&gt;expanding the &lt;code&gt;width&lt;/code&gt; macro and the &lt;code&gt;width_offset&lt;/code&gt;
+constant to their definitions and substituting
+the variable &lt;code&gt;n&lt;/code&gt; for the parameter &lt;code&gt;#&lt;/code&gt;.
+As with WEB constants, the Pascal
+compiler only sees the result of the expansion; the names of the
+macro and constant do not exist in Pascal.&lt;/p&gt;
+
+&lt;p&gt;The use of WEB macros that are preprocessed into an inline
+expression has a potential efficiency benefit: Inline code is
+typically more efficient than a function call because the
+function call adds the overhead of parameter setup,
+a branch to different location, and a return. The inline
+code for this macro, by contrast, just does a simple addition
+and indexed memory reference, which is much faster.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, the corresponding &lt;code&gt;constexpr&lt;/code&gt; function in C++&lt;/p&gt;
+
+&lt;pre&gt;constexpr int width(int n) { return mem[n + width_offset].sc; }&lt;/pre&gt;
+
+&lt;p&gt;works differently. It is a C++ function parsed
+according to the language’s typing rules. As with constant definitions,
+the &lt;code&gt;constexpr&lt;/code&gt; qualifier states that the compiler
+&lt;i&gt;may&lt;/i&gt; execute this at compile time and, in specialized
+contexts, even &lt;i&gt;must&lt;/i&gt; do so. It so happens that, for
+all the functions corresponding to the WEB macros used in TeX,
+&lt;i&gt;none&lt;/i&gt; will be executed at compile time but all of them will
+ultimately produce the same inline code. Getting to that conclusion
+will a few steps.&lt;/p&gt;
+
+&lt;h4 id=&quot;when-c-requires-compile-time-execution-of-a-constexpr-function&quot;&gt;When C++ requires compile time execution of a &lt;code&gt;constexpr&lt;/code&gt; function&lt;/h4&gt;
+
+&lt;p&gt;I want to begin with the case of required compile-time execution,
+despite it never arising for my implementation of the TeX WEB
+macros, because it highlights some issues we’ll need to
+understand for those macros. Consider the following
+code (admittedly silly but it makes the point):&lt;/p&gt;
+
+&lt;pre&gt;// This case does not arise in TeX!
+constexpr int mem[8] {0, 1, 2, 3, 4, 5, 6, 7};
+constexpr int width_offset = 7;
+constexpr int width(int n) { return mem[n + width_offset]; }
+int array[width(0)]; // width(0) must be executed at compile-time
+&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; For this section, I’m going to elide the &lt;code&gt;.sc&lt;/code&gt;
+suffix in the actual definition of &lt;code&gt;width&lt;/code&gt;.  That simply
+selects an entry in the &lt;code&gt;memory_word&lt;/code&gt; union. For simplicity,
+I’ll assume that &lt;code&gt;mem&lt;/code&gt; is just an array of &lt;code&gt;int&lt;/code&gt;s
+and that is the return type of &lt;code&gt;width&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This compiles (&lt;a href=&quot;https://godbolt.org/z/K8x7KKfEa&quot;&gt;example on Compiler Explorer&lt;/a&gt;). The size of &lt;code&gt;array&lt;/code&gt; must be available at
+compile time, so &lt;code&gt;width(0)&lt;/code&gt; is executed by the
+compiler to compute the size, returning 7.&lt;/p&gt;
+
+&lt;h4 id=&quot;when-a-constexpr-function-cannot-be-executed-at-compile-time&quot;&gt;When a &lt;code&gt;constexpr&lt;/code&gt; function cannot be executed at compile time&lt;/h4&gt;
+
+&lt;p&gt;Compare that with a similar example where &lt;code&gt;mem&lt;/code&gt; is not
+qualified by &lt;code&gt;constexpr&lt;/code&gt; and is not initialized:&lt;/p&gt;
+
+&lt;pre&gt;// How mem is actually defined in TeX!
+int mem[8]; // Actual array is much bigger
+constexpr int width_offset = 7;
+constexpr int width(int n) { return mem[n + width_offset]; }
+// This line just illustrates the problem---it doesn&apos;t arise in TeX
+int array[width(0)]; // width(0) cannot be executed at compile time
+&lt;/pre&gt;
+
+&lt;p&gt;This fails to compile (&lt;a href=&quot;https://godbolt.org/z/3cEqshaPn&quot;&gt;example on Compiler Explorer&lt;/a&gt;) because
+the contents of &lt;code&gt;mem&lt;/code&gt; are unknown at compile time.
+Due to its reliance on &lt;code&gt;mem&lt;/code&gt;, the function &lt;code&gt;width&lt;/code&gt;
+can never be executed at compile time and so the required size of
+&lt;code&gt;array&lt;/code&gt; cannot be computed.&lt;/p&gt;
+
+&lt;h4 id=&quot;how-a-runtime-constexpr-function-gets-compiled-inline&quot;&gt;How a runtime &lt;code&gt;constexpr&lt;/code&gt; function gets compiled inline&lt;/h4&gt;
+
+&lt;p&gt;Given the actual definitions of &lt;code&gt;mem&lt;/code&gt; and &lt;code&gt;width&lt;/code&gt;,
+a C++ definition such as&lt;/p&gt;
+
+&lt;pre&gt;int q = width(n);&lt;/pre&gt;
+
+&lt;p&gt;will always generate runtime code for the &lt;code&gt;width(n)&lt;/code&gt; call. So how does its code become compiled inline rather than as a call? As with
+&lt;code&gt;constexpr&lt;/code&gt; constants, this results from the coordinated
+but separate designs of the language and its compilers.&lt;/p&gt;
+
+&lt;p&gt;A function like &lt;code&gt;width()&lt;/code&gt; poses an apparent paradox: Its
+&lt;code&gt;constexpr&lt;/code&gt; qualification supposedly makes it eligible
+for compile time execution but its reliance on the runtime contents
+of &lt;code&gt;mem&lt;/code&gt; makes actual execution at compile time impossible.
+What’s the point of &lt;code&gt;constexpr&lt;/code&gt; here?&lt;/p&gt;
+
+&lt;p&gt;The answer lies in an implied consequence of &lt;code&gt;constexpr&lt;/code&gt;,
+that &lt;a href=&quot;https://www.cppreference.com/cpp/language/constexpr&quot;&gt;&lt;code&gt;constexpr&lt;/code&gt; functions are also &lt;code&gt;inline&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The semantics of the &lt;code&gt;inline&lt;/code&gt; qualifier are themselves
+subtle. They don’t require a compiler to compile the function
+inline, as the C++ language definition does not wish to impose
+optimizations on the compiler. Instead, &lt;code&gt;inline&lt;/code&gt;
+&lt;em&gt;enables&lt;/em&gt; that optimization by specifying that &lt;a href=&quot;https://www.cppreference.com/cpp/language/inline&quot;&gt;identical
+definitions of this function are permtted in different files&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The practical way to insert the same definition of a function
+in multiple files (technically, in the language of the C++ specification, “translation units”)
+is to define the function body along with its signature in
+a header file. Defining an ordinary function that way will
+produce a link-time error but a &lt;code&gt;constexpr&lt;/code&gt;- 
+or &lt;code&gt;inline&lt;/code&gt;-qualified function is permitted.
+The header file will be included in every file where
+the function is called.&lt;/p&gt;
+
+&lt;p&gt;This creates the context for the compiler to perform
+an inline optimization of the function’s code. The language
+guarantees that every call will be to the identical
+function definition, allowing the compiler to directly
+compile the function body at each point of call. There
+is no need to create a single copy of the function referenced
+by every call.&lt;/p&gt;
+
+&lt;p&gt;This choice remains an option but it’s one that compilers
+typically take if any optimization is requested. For
+example, both gcc 15.2 and clang 19.1 compile
+&lt;code&gt;width()&lt;/code&gt; out of line at &lt;code&gt;-O0&lt;/code&gt; but
+begin inlining it at &lt;code&gt;-O1&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Examples in Compiler Explorer for ARM64 code generation:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://godbolt.org/z/h36Tv8fqM&quot;&gt;gcc 15.2 compiled with &lt;code&gt;-O0&lt;/code&gt;: out-of-line function call&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://godbolt.org/z/sff8f14jj&quot;&gt;gcc 15.2 compiled with &lt;code&gt;-O1&lt;/code&gt;: in-line function call&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;summary-of-constexpr-constants-and-functions&quot;&gt;Summary of &lt;code&gt;constexpr&lt;/code&gt; constants and functions&lt;/h4&gt;
+
+&lt;p&gt;Implementing the WEB macros as &lt;code&gt;constexpr&lt;/code&gt; constants and functions
+was a complete win. It kept the code within regular C++ syntax and type-checking while
+producing the same object code as if I’d used the C++ preprocessor. However, determining that
+this was going to be the outcome from any modern compiler required looking carefully
+into the semantics of the language, what the definition promised and what it
+left up to the compiler.&lt;/p&gt;
+
+&lt;p&gt;One final detail remains. Earlier, I wrote “Inline code is
+&lt;em&gt;typically&lt;/em&gt; more efficient than a function call” [emphasis added]. Under
+what circumstances might inline code in fact be slower than calling a function?
+The potential problem is the size of the executable. Replacing each
+function call with inline code increases that size and this in turn
+can cause key execution paths to be too large for the &lt;a href=&quot;https://en.wikipedia.org/wiki/CPU_cache&quot;&gt;instruction cache (I-cache)&lt;/a&gt;.
+This results in higher I-cache misses, slowing the program.&lt;/p&gt;
+
+&lt;p&gt;TeX is a small enough program that this effect is unlikely to arise. Ultimately
+though the question can only be answered through benchmarks, coming in future entries
+in this series.&lt;/p&gt;
+
+&lt;h2 id=&quot;some-other-small-uses-of-c-features&quot;&gt;Some other small uses of C++ features&lt;/h2&gt;
+
+&lt;p&gt;In addition to &lt;code&gt;constexpr&lt;/code&gt; constants and functions, I used
+a few other C++ features that don’t match the original WEB/Pascal code:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;I annotated functions that generate a node with &lt;code&gt;[[nodiscard]]&lt;/code&gt;, to
+take advantage of the greater error-checking that annotation provides.&lt;/li&gt;
+  &lt;li&gt;For files and functions that were not part of TeX but solely added for debugging,
+testing, and benchmarking, I used any C++ features that improved
+the code. For example, the debugging functions in &lt;code&gt;basic_memory.cpp&lt;/code&gt;
+are isolated in their own &lt;code&gt;dynmemdbg&lt;/code&gt; namespace.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;testing-was-exhaustive&quot;&gt;Testing was exhaustive&lt;/h2&gt;
+
+&lt;p&gt;Translating the TeX code required understanding subtle points
+of the underlying semantics. The essentially typeless
+Pascal code, where the macros expand down to make every value
+an 8-, 16-, or 32-bit integer, occasionally hid the underlying
+semantics. To check my translation, I wrote extensive test
+routines in the &lt;a href=&quot;https://catch2.org&quot;&gt;Catch2&lt;/a&gt; framework. I chose
+the v2 version, which is header-only.&lt;/p&gt;
+
+&lt;p&gt;The resulting tests feature almost 200 assertions, testing the
+underlying memory allocation routines in &lt;code&gt;basic_memory.{hpp,cpp}&lt;/code&gt; and the node routines built atop those in &lt;code&gt;boxes.{hpp,cpp}&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;These tests were essential for ensuring that my code matched
+the semantics of the original TeX.&lt;/p&gt;
+
+&lt;h2 id=&quot;reimplementing-in-modern-c-was-straightforward&quot;&gt;Reimplementing in modern C++ was straightforward&lt;/h2&gt;
+
+&lt;p&gt;In contrast to reimplementing the exact code, simply reimplementing
+its &lt;em&gt;intent&lt;/em&gt; in modern C++ was straightforward. 
+The reimplementation is in directory &lt;code&gt;modern-approach&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;There was no need to
+write underlying memory management (files &lt;code&gt;basic_memory.{hpp,cpp}&lt;/code&gt; in
+the original version) because in this version I was relying on the facilities
+provided by the base language. The complex macro structures
+defining the node types in the original simply became a class hierarchy in this version, with
+each class defining its specific fields. The hierarchy has
+only two levels, with the top level defining the base &lt;code&gt;Node&lt;/code&gt;
+and each node type (vertical box, horizontal box, etc.) derived
+from that.&lt;/p&gt;
+
+&lt;p&gt;The hierarchy made explicit a point that I found confusing in
+the original code: Although GlueSpecs are allocated
+from the same general memory pool as Nodes, they are not themselves
+Nodes because they do not link to anything else. The
+word that would have contained that link instead contains
+a reference count, as GlueSpecs can be linked to by multiple
+Nodes. This is a good example of how implementing the design
+in the actual types of the language clarified a point that
+was obscured by the more typeless approach in the original.&lt;/p&gt;
+
+&lt;h3 id=&quot;using-modern-c-11-smart-pointers&quot;&gt;Using modern (C++ 11) smart pointers&lt;/h3&gt;
+
+&lt;p&gt;In the Pascal code, pointers between Nodes (and from Nodes
+to GlueSpecs) are implemented as integer indices into the
+&lt;code&gt;mem&lt;/code&gt; array. In C++, I implemented pointers to Nodes
+using &lt;a href=&quot;https://www.cppreference.com/cpp/memory/unique_ptr&quot;&gt;&lt;code&gt;std::unique_ptr&lt;/code&gt;&lt;/a&gt; and pointers to GlueSpecs using
+&lt;a href=&quot;https://www.cppreference.com/cpp/memory/shared_ptr&quot;&gt;&lt;code&gt;std::shared_ptr&lt;/code&gt;&lt;/a&gt;. These features are sufficient to handle any structure
+used in TeX, which does not have circular references. They
+guarantee that there will be no memory leaks, as they ensure
+that the referenced object will be deleted whenever the
+single pointer to it (for Nodes) or the last pointer to it
+(for GlueSpecs) goes out of lifetime.&lt;/p&gt;
+
+&lt;p&gt;Consequently, my implementation never calls &lt;code&gt;delete&lt;/code&gt;,
+as that is done automatically by the smart pointers.
+This approach has one disadvantage that might arise for larger
+data structures: When the top-level object is deleted, the
+system must recurse down the hierarchy, traversing the tree
+of Nodes referred by the top object. If the height of the
+underlying tree is high, the recursive calls can exceed
+the function call stack size.&lt;/p&gt;
+
+&lt;p&gt;A robust implementation must
+either guarantee that the call stack is large enough to accommodate
+the deletion—a challenging guarantee—or implement
+a traversal with an explicit stack. In that case, the value
+of smart pointers is that any deletions missed by the traversal
+will be performed by the system. The traversal algorithm is the belt, the pointers are the suspenders.&lt;/p&gt;
+
+&lt;h2 id=&quot;testing-was-near-trivial&quot;&gt;Testing was near-trivial&lt;/h2&gt;
+
+&lt;p&gt;Where reimplementing the original Pascal code required extensive
+testing to ensure I had done it correctly, the was essentially
+one test case required for the modern C++ implementaton. I just
+wrote a function that creates an instance of every Node type
+and several GlueSpecs. Their deletion was performed automatically
+upon the top-level pointer leaving scope.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-modern-c-implementation-was-far-clearer&quot;&gt;The modern C++ implementation was far clearer&lt;/h2&gt;
+
+&lt;p&gt;Taking the above into account, the modern C++ was shorter, clearer,
+more direct, and supported far more comprehensive static checking
+at compile time.&lt;/p&gt;
+
+&lt;p&gt;If I had reimplemented the other layers of TeX atop this base,
+this code would have supported far cleaner separation between
+the layers, with decisions in lower levels hidden from their
+higher-level callers.&lt;/p&gt;
+
+&lt;p&gt;So the code was a win but what about performance?  My original
+speculation was that the facilities of a modern language
+should be better-adapted to the performance requirements of
+modern processors, which are quite different from the
+requirements of processors in the 1980s. I turned my attention
+to benchmarking the two approaches.&lt;/p&gt;
+
+&lt;p&gt;Performing reliable benchmarks requires an automated harness
+to run the tests under controlled conditions and reliably
+record the results. In Part 3 I’ll describe the
+requirements and the system of tools I built
+to meet them.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>Reading "TeX: The Program" in 2026</title>
-   <link href="http://0.0.0.0:5000/2026/09/03/reading-tex-the-program/"/>
+   <link href="/2026/09/03/reading-tex-the-program/"/>
    <updated>2026-09-03T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2026/09/03/reading-tex-the-program</id>
-   <content type="html">&lt;p&gt;According to the order slip tucked into my copy, I ordered &lt;em&gt;TeX: The
+   <id>/2026/09/03/reading-tex-the-program</id>
+   <content type="html">&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;[Start of series]&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;&lt;a href=&quot;/2026/09/28/reimplementing-the-tex-data-structures/&quot;&gt;Part 2: Reimplementing the TeX data structures in C++ -&amp;gt;&lt;/a&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;According to the order slip tucked into my copy, I ordered &lt;em&gt;TeX: The
 Program&lt;/em&gt; on June 5, 1986. For four decades as I moved through two countries and nine mailing
 addresses, that book lived in boxes and
 bookshelves. I took it out several times, intending to read it, each
 time setting it aside because I wanted to understand &lt;em&gt;TeX&lt;/em&gt;’s syntax
 first. So I took down its companion volume, &lt;em&gt;The TeXbook&lt;/em&gt;, read
 a few chapters in, set that aside and never returned to either one.&lt;/p&gt;
+
+&lt;!--more--&gt;
 
 &lt;p&gt;I made my last attempt sometime in the 1990s. Despite this lack of
 progress, the books survived multiple bookshelf culls, winding up in
@@ -665,9 +1205,9 @@ Along the way, I just may rediscover the fun in this work.&lt;/p&gt;
  
  <entry>
    <title>How much information is retained in an average of percentiles?</title>
-   <link href="http://0.0.0.0:5000/2021/09/02/averages-of-percentiles/"/>
+   <link href="/2021/09/02/averages-of-percentiles/"/>
    <updated>2021-09-02T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2021/09/02/averages-of-percentiles</id>
+   <id>/2021/09/02/averages-of-percentiles</id>
    <content type="html">&lt;p&gt;Experienced performance analysts caution against taking averages of
 percentiles. Gil Tene’s famous 2015 Strange Loop talk,
 &lt;a href=&quot;https://www.youtube.com/watch?v=lJ8ydIuPFeU?&amp;quot;start=482&quot;&gt;“How NOT to Measure Latency”&lt;/a&gt;,
@@ -1077,9 +1617,9 @@ apply and so the proof holds.&lt;/p&gt;
  
  <entry>
    <title>AWS Outpost vs. Oracle Region @ Customer: How do they differ?</title>
-   <link href="http://0.0.0.0:5000/2021/07/10/outpost-vs-region-at-customer/"/>
+   <link href="/2021/07/10/outpost-vs-region-at-customer/"/>
    <updated>2021-07-10T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2021/07/10/outpost-vs-region-at-customer</id>
+   <id>/2021/07/10/outpost-vs-region-at-customer</id>
    <content type="html">&lt;p&gt;Cloud vendors are rolling out products that place proprietary
 hardware in customer’s datacentres, delivering a selection of the
 vendor’s cloud services from the customer’s datacentre. These new
@@ -1403,9 +1943,9 @@ to handle these use cases as well.&lt;/p&gt;
  
  <entry>
    <title>The 'Descriptive' versus 'Prescriptive' distinction is irrelevant for actual writing</title>
-   <link href="http://0.0.0.0:5000/2021/06/13/prescriptive-descriptive/"/>
+   <link href="/2021/06/13/prescriptive-descriptive/"/>
    <updated>2021-06-13T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2021/06/13/prescriptive-descriptive</id>
+   <id>/2021/06/13/prescriptive-descriptive</id>
    <content type="html">&lt;p&gt;I sometimes get asked whether I’m a “prescriptivist” or
 “descriptivist”, or—worse still—labelled as one. This has always
 struck me as beside the point. In none of my roles, not as a writer,
@@ -1782,9 +2322,9 @@ simply distract from that fundamental task.&lt;/p&gt;
  
  <entry>
    <title>Designs don't have "superpowers"</title>
-   <link href="http://0.0.0.0:5000/2021/06/03/superpower/"/>
+   <link href="/2021/06/03/superpower/"/>
    <updated>2021-06-03T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2021/06/03/superpower</id>
+   <id>/2021/06/03/superpower</id>
    <content type="html">&lt;p&gt;Time for another rant about a word seeing increased use in technical
 discussions (and elsewhere): &lt;em&gt;superpower&lt;/em&gt;. It just doesn’t mean what
 people imply it means.&lt;/p&gt;
@@ -1846,9 +2386,9 @@ can I say? I’m a work in progress.&lt;/p&gt;
  
  <entry>
    <title>"Opinionated" design as design rationale</title>
-   <link href="http://0.0.0.0:5000/2021/05/31/opinionated-designs/"/>
+   <link href="/2021/05/31/opinionated-designs/"/>
    <updated>2021-05-31T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2021/05/31/opinionated-designs</id>
+   <id>/2021/05/31/opinionated-designs</id>
    <content type="html">&lt;p&gt;I see increasing use of the phrase “opinionated design”, frequent
 enough to risk it becoming a
 &lt;a href=&quot;https://www.thoughtco.com/vogue-word-1692599&quot;&gt;vogue word&lt;/a&gt; in our
@@ -2053,9 +2593,9 @@ usage. Other users may find it awkward for their purposes.&lt;/p&gt;
  
  <entry>
    <title>The <i>external</i> interfaces to Kubernetes ingress</title>
-   <link href="http://0.0.0.0:5000/2021/05/18/external-interfaces-to-kubernetes/"/>
+   <link href="/2021/05/18/external-interfaces-to-kubernetes/"/>
    <updated>2021-05-18T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2021/05/18/external-interfaces-to-kubernetes</id>
+   <id>/2021/05/18/external-interfaces-to-kubernetes</id>
    <content type="html">&lt;p&gt;Defining a Kubernetes ingress seems simple enough: Define a YAML file
 and you’re good. But that only defines the interface from services &lt;em&gt;inside&lt;/em&gt; the
 cluster to whatever external agent is connecting external client
@@ -2164,9 +2704,9 @@ address to a service inside the cluster.&lt;/p&gt;
  
  <entry>
    <title>Three rings of abstraction in Kubernetes</title>
-   <link href="http://0.0.0.0:5000/2021/05/17/three-rings-of-kubernetes/"/>
+   <link href="/2021/05/17/three-rings-of-kubernetes/"/>
    <updated>2021-05-17T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2021/05/17/three-rings-of-kubernetes</id>
+   <id>/2021/05/17/three-rings-of-kubernetes</id>
    <content type="html">&lt;p&gt;A common analogy for Kubernetes presents it as “the operating system
 for microservices”, identifying Kubernetes
 as a kind of operating system. I don’t think this analogy is wrong but
@@ -2622,9 +3162,9 @@ enough. Viewing it in terms of its many abstractions is far more informative.&lt
  
  <entry>
    <title>A manager cannot be a mentor&mdash;but should still give advice</title>
-   <link href="http://0.0.0.0:5000/2021/04/18/mentors-not-supervisors/"/>
+   <link href="/2021/04/18/mentors-not-supervisors/"/>
    <updated>2021-04-18T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2021/04/18/mentors-not-supervisors</id>
+   <id>/2021/04/18/mentors-not-supervisors</id>
    <content type="html">&lt;p&gt;Mentoring. Everyone thinks it’s a great idea and many claim to do it.
 Yet both formal studies and my personal observations suggest that such
 relationships are rarely sustained and often not retrospectively
@@ -2804,9 +3344,9 @@ contexts of such committees or the domain of teaching.&lt;/p&gt;
  
  <entry>
    <title>The basics of latency percentiles</title>
-   <link href="http://0.0.0.0:5000/2020/09/09/latency-basics/"/>
+   <link href="/2020/09/09/latency-basics/"/>
    <updated>2020-09-09T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2020/09/09/latency-basics</id>
+   <id>/2020/09/09/latency-basics</id>
    <content type="html">&lt;p&gt;Designers of distributed systems obsess over service latency. They
 forecast latencies of proposed designs, stress-test the latencies of
 systems under development, equalize latencies of
@@ -3020,9 +3560,9 @@ important concepts such as effective percentiles.&lt;/p&gt;
  
  <entry>
    <title>Extending "The Tail at Scale"</title>
-   <link href="http://0.0.0.0:5000/2020/07/24/extending-the-tail-at-scale/"/>
+   <link href="/2020/07/24/extending-the-tail-at-scale/"/>
    <updated>2020-07-24T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2020/07/24/extending-the-tail-at-scale</id>
+   <id>/2020/07/24/extending-the-tail-at-scale</id>
    <content type="html">&lt;p&gt;&lt;em&gt;A companion post goes into more detail on
   &lt;a href=&quot;/2020/09/09/latency-basics.html&quot;&gt;constructing the percentile function from a density function&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
@@ -3435,9 +3975,9 @@ far more common than their single-call percentile would indicate.&lt;/p&gt;
  
  <entry>
    <title>Guarantees vs. metrics: What the designers intend, what the clients see</title>
-   <link href="http://0.0.0.0:5000/2020/06/20/guarantees-vs-methods/"/>
+   <link href="/2020/06/20/guarantees-vs-methods/"/>
    <updated>2020-06-20T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2020/06/20/guarantees-vs-methods</id>
+   <id>/2020/06/20/guarantees-vs-methods</id>
    <content type="html">&lt;p&gt;In my
 &lt;a href=&quot;/2019/12/31/design-space-2020/&quot;&gt;distributed systems design space&lt;/a&gt;, I
 distinguish guarantees from metrics. A &lt;em&gt;guarantee&lt;/em&gt; is a property a
@@ -3622,9 +4162,9 @@ important.&lt;/p&gt;
  
  <entry>
    <title>Flambloozlement and the student enthusiasm for crunch mode</title>
-   <link href="http://0.0.0.0:5000/2020/04/03/flambloozlement/"/>
+   <link href="/2020/04/03/flambloozlement/"/>
    <updated>2020-04-03T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2020/04/03/flambloozlement</id>
+   <id>/2020/04/03/flambloozlement</id>
    <content type="html">&lt;p&gt;How do students assess the value of what they learn in class? On the
 one hand, years of attending school have made them sophisticated
 judges of teaching effectiveness: They know whether an approach is
@@ -3862,9 +4402,9 @@ principles that form the main learning outcomes of our courses.&lt;/p&gt;
  
  <entry>
    <title>How hard is it to implement replicated state machines?</title>
-   <link href="http://0.0.0.0:5000/2020/03/08/difficulty-of-state-machines/"/>
+   <link href="/2020/03/08/difficulty-of-state-machines/"/>
    <updated>2020-03-08T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2020/03/08/difficulty-of-state-machines</id>
+   <id>/2020/03/08/difficulty-of-state-machines</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Note: Over the past eight months, I have been working with the code for
 TenCent’s &lt;a href=&quot;https://github.com/Tencent/phxpaxos&quot;&gt;Phxpaxos&lt;/a&gt;, an
 open-source implementation of replicated state-machines, with
@@ -4262,9 +4802,9 @@ it correct for the many edge conditions and modes of partial failure.&lt;/p&gt;
  
  <entry>
    <title>Applying resilient design to my own systems</title>
-   <link href="http://0.0.0.0:5000/2020/02/13/systems-resilience-in-daily-life/"/>
+   <link href="/2020/02/13/systems-resilience-in-daily-life/"/>
    <updated>2020-02-13T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2020/02/13/systems-resilience-in-daily-life</id>
+   <id>/2020/02/13/systems-resilience-in-daily-life</id>
    <content type="html">&lt;p&gt;When I teach a course in modern distributed systems design, I spend a
 lot of time on topics such as engineering for resilience and
 automating production processes. It turns out that applying those big
@@ -4349,9 +4889,9 @@ than much individual activity.&lt;/p&gt;
  
  <entry>
    <title>"Distributed Systems" are not what they used to be</title>
-   <link href="http://0.0.0.0:5000/2020/02/11/meaning-of-distributed-systems/"/>
+   <link href="/2020/02/11/meaning-of-distributed-systems/"/>
    <updated>2020-02-11T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2020/02/11/meaning-of-distributed-systems</id>
+   <id>/2020/02/11/meaning-of-distributed-systems</id>
    <content type="html">&lt;p&gt;The phrase “distributed systems” has had several meanings over the
 last 50 years, from a mathematical topic to a style of
 engineering practice to a suite of technologies. What can
@@ -4617,9 +5157,9 @@ produce better solutions.&lt;/p&gt;
  
  <entry>
    <title>A strategy for more frequent posts</title>
-   <link href="http://0.0.0.0:5000/2020/01/29/increasing-post-frequency/"/>
+   <link href="/2020/01/29/increasing-post-frequency/"/>
    <updated>2020-01-29T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2020/01/29/increasing-post-frequency</id>
+   <id>/2020/01/29/increasing-post-frequency</id>
    <content type="html">&lt;p&gt;I have many incomplete threads on distributed systems. How do I
 balance my desire for complete and correct presentations with the need
 to post more frequently?&lt;/p&gt;
@@ -4668,9 +5208,9 @@ make them and instead accepting imperfections as the price of timeliness.&lt;/p&
  
  <entry>
    <title>When are "motivating" images useful in a presentation?</title>
-   <link href="http://0.0.0.0:5000/2020/01/25/motivating-images/"/>
+   <link href="/2020/01/25/motivating-images/"/>
    <updated>2020-01-25T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2020/01/25/motivating-images</id>
+   <id>/2020/01/25/motivating-images</id>
    <content type="html">&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; &lt;em&gt;I’m writing this post to clarify my thinking about an issue in
 presentation design. I’m using a stream-of-consciousness format,
 with little editing. You might want to skip this one if
@@ -4937,9 +5477,9 @@ but well-grounded result.&lt;/p&gt;
  
  <entry>
    <title>Figure failures (and successes!)</title>
-   <link href="http://0.0.0.0:5000/2020/01/21/figure-failures/"/>
+   <link href="/2020/01/21/figure-failures/"/>
    <updated>2020-01-21T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2020/01/21/figure-failures</id>
+   <id>/2020/01/21/figure-failures</id>
    <content type="html">&lt;p&gt;Well-designed figures are invaluable for presenting technical detail,
 including architectural diagrams, timing diagrams, data visualizations,
 category hierarchies, and many other forms. Yet the simplicity and
@@ -5084,9 +5624,9 @@ for.&lt;/p&gt;
  
  <entry>
    <title>A class is a story: Fitting content to sessions</title>
-   <link href="http://0.0.0.0:5000/2020/01/16/class-as-story/"/>
+   <link href="/2020/01/16/class-as-story/"/>
    <updated>2020-01-16T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2020/01/16/class-as-story</id>
+   <id>/2020/01/16/class-as-story</id>
    <content type="html">&lt;p&gt;Any given class is a story. It has a beginning, middle, and end. It
 arcs toward a conclusion.  The story can be deliberate and designed or
 it can be inadvertent and confused. Ultimately, the story will be
@@ -5164,9 +5704,9 @@ structure.&lt;/p&gt;
  
  <entry>
    <title>Roles vs. Silos, Contribution vs. Technology</title>
-   <link href="http://0.0.0.0:5000/2020/01/14/roles-vs-silos/"/>
+   <link href="/2020/01/14/roles-vs-silos/"/>
    <updated>2020-01-14T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2020/01/14/roles-vs-silos</id>
+   <id>/2020/01/14/roles-vs-silos</id>
    <content type="html">&lt;p&gt;With the developing maturity of chaos engineering techniques, I see
 people taking the job title, “Chaos Engineer”. Although I think chaos
 engineer&lt;em&gt;ing&lt;/em&gt; is a truly useful field based upon important principles,
@@ -5222,9 +5762,9 @@ descriptions serve both organization and employee best.&lt;/p&gt;
  
  <entry>
    <title>What genres of readings should be assigned to Prof. MSc. students?</title>
-   <link href="http://0.0.0.0:5000/2020/01/10/readings-in-prof-masters/"/>
+   <link href="/2020/01/10/readings-in-prof-masters/"/>
    <updated>2020-01-10T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2020/01/10/readings-in-prof-masters</id>
+   <id>/2020/01/10/readings-in-prof-masters</id>
    <content type="html">&lt;p&gt;What sort of materials should students read in a professional MSc.
 course in computing science? Journal articles? Research conference
 papers? Systems-oriented conference papers? Articles from
@@ -5474,9 +6014,9 @@ MSc. programs.&lt;/p&gt;
  
  <entry>
    <title>The service design space (2020 Edition)</title>
-   <link href="http://0.0.0.0:5000/2019/12/31/design-space-2020/"/>
+   <link href="/2019/12/31/design-space-2020/"/>
    <updated>2019-12-31T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2019/12/31/design-space-2020</id>
+   <id>/2019/12/31/design-space-2020</id>
    <content type="html">
 &lt;p&gt;&lt;em&gt;Post in an ongoing series on the issues constraining service design
  for datacentres. A previous post presented 2019’s
@@ -5959,9 +6499,9 @@ actual service—into a production service.&lt;/p&gt;
  
  <entry>
    <title>"Awareness" outcomes as preparation for internships</title>
-   <link href="http://0.0.0.0:5000/2019/12/16/awareness-outcomes/"/>
+   <link href="/2019/12/16/awareness-outcomes/"/>
    <updated>2019-12-16T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2019/12/16/awareness-outcomes</id>
+   <id>/2019/12/16/awareness-outcomes</id>
    <content type="html">&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; &lt;em&gt;Outside activities interrupted my posting here. Where did those five
 months go? I did generate a lot of potential posts on distributed
 systems, which I’ll discuss in coming posts. This post focusses
@@ -6257,9 +6797,9 @@ effective.&lt;/p&gt;
  
  <entry>
    <title>Why is distributed consensus so hard?</title>
-   <link href="http://0.0.0.0:5000/2019/06/12/why-consensus-is-hard/"/>
+   <link href="/2019/06/12/why-consensus-is-hard/"/>
    <updated>2019-06-12T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2019/06/12/why-consensus-is-hard</id>
+   <id>/2019/06/12/why-consensus-is-hard</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series describing Howard &amp;amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry &lt;a href=&quot;/2019/05/29/distributed-consensus-intro/&quot;&gt;introduced the source papers&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Updated &lt;strong&gt;May 27, 2020&lt;/strong&gt; to incorporate points from
@@ -6690,9 +7230,9 @@ description of Paxos.&lt;/p&gt;
  
  <entry>
    <title>Generalized distributed consensus in PlusCal: Introduction</title>
-   <link href="http://0.0.0.0:5000/2019/05/29/distributed-consensus-intro/"/>
+   <link href="/2019/05/29/distributed-consensus-intro/"/>
    <updated>2019-05-29T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2019/05/29/distributed-consensus-intro</id>
+   <id>/2019/05/29/distributed-consensus-intro</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series describing Howard &amp;amp; Mortier’s generalization of
 distributed consensus, expressed in PlusCal. The next post describes
 &lt;a href=&quot;/2019/06/12/why-consensus-is-hard/&quot;&gt;why consensus is hard&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -6838,9 +7378,9 @@ consensus can be so challenging&lt;/a&gt;.&lt;/p&gt;
  
  <entry>
    <title>Simulation checks of the PlusCal version of Lamport's algorithm</title>
-   <link href="http://0.0.0.0:5000/2019/05/07/simulation-checks-of-pluscal-lamport/"/>
+   <link href="/2019/05/07/simulation-checks-of-pluscal-lamport/"/>
    <updated>2019-05-07T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2019/05/07/simulation-checks-of-pluscal-lamport</id>
+   <id>/2019/05/07/simulation-checks-of-pluscal-lamport</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fifth in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The previous post was a
  &lt;a href=&quot;/2019/04/15/lamport-algorithm/&quot;&gt;description of Lamport’s 1978 mutual exclusion algorithm&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -7068,9 +7608,9 @@ when its assumptions are violated.&lt;/p&gt;
  
  <entry>
    <title>Lamport's 1978 mutual exclusion algorithm in PlusCal</title>
-   <link href="http://0.0.0.0:5000/2019/04/15/lamport-algorithm/"/>
+   <link href="/2019/04/15/lamport-algorithm/"/>
    <updated>2019-04-15T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2019/04/15/lamport-algorithm</id>
+   <id>/2019/04/15/lamport-algorithm</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fourth in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The previous post was a
  &lt;a href=&quot;/2019/01/18/fairness-semantics-of-pluscal/&quot;&gt;specialized discussion of the fairness semantics of PlusCal&lt;/a&gt;. The
@@ -7499,9 +8039,9 @@ end macro
  
  <entry>
    <title>Fairness semantics of PlusCal</title>
-   <link href="http://0.0.0.0:5000/2019/01/18/fairness-semantics-of-pluscal/"/>
+   <link href="/2019/01/18/fairness-semantics-of-pluscal/"/>
    <updated>2019-01-18T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2019/01/18/fairness-semantics-of-pluscal</id>
+   <id>/2019/01/18/fairness-semantics-of-pluscal</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The second post
  &lt;a href=&quot;/2019/01/03/distributed-algorithms-in-pluscal/&quot;&gt;presented some PlusCal conventions for writing distributed algorithms&lt;/a&gt;. The
@@ -7773,9 +8313,9 @@ impact.&lt;/p&gt;
  
  <entry>
    <title>Distributed algorithms in PlusCal</title>
-   <link href="http://0.0.0.0:5000/2019/01/03/distributed-algorithms-in-pluscal/"/>
+   <link href="/2019/01/03/distributed-algorithms-in-pluscal/"/>
    <updated>2019-01-03T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2019/01/03/distributed-algorithms-in-pluscal</id>
+   <id>/2019/01/03/distributed-algorithms-in-pluscal</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The first post
  &lt;a href=&quot;/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/&quot;&gt;presented the context and why the topic is important&lt;/a&gt;. The
@@ -8138,9 +8678,9 @@ syntax and explore a subtle point of the semantics of PlusCal.&lt;/p&gt;
  
  <entry>
    <title>Exploring distributed algorithm failures using TLA Toolbox</title>
-   <link href="http://0.0.0.0:5000/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/"/>
+   <link href="/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/"/>
    <updated>2018-10-31T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox</id>
+   <id>/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The next post describes
  &lt;a href=&quot;/2019/01/03/distributed-algorithms-in-pluscal/&quot;&gt;conventions for distributed algorithms in PlusCal&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -8331,9 +8871,9 @@ fodder for a whole series of posts.&lt;/p&gt;
  
  <entry>
    <title>Assignments with coding only teach coding</title>
-   <link href="http://0.0.0.0:5000/2018/10/26/assignments-with-coding-only-teach-coding/"/>
+   <link href="/2018/10/26/assignments-with-coding-only-teach-coding/"/>
    <updated>2018-10-26T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/10/26/assignments-with-coding-only-teach-coding</id>
+   <id>/2018/10/26/assignments-with-coding-only-teach-coding</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fourth in a series on designing a course on data engineering.  The
  previous post listed the
  &lt;a href=&quot;/2018/10/23/data-engineering-prerequisites/&quot;&gt;minimal operating system and networking knowlege&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -8510,9 +9050,9 @@ January 2019, so I must pick realistic goals.&lt;/p&gt;
  
  <entry>
    <title>Minimal OS and networking knowledge for a data engineering course</title>
-   <link href="http://0.0.0.0:5000/2018/10/23/data-engineering-prerequisites/"/>
+   <link href="/2018/10/23/data-engineering-prerequisites/"/>
    <updated>2018-10-23T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/10/23/data-engineering-prerequisites</id>
+   <id>/2018/10/23/data-engineering-prerequisites</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on designing a data engineering course.  The
  previous post presented
  &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;draft learning outcomes&lt;/a&gt;. The
@@ -8702,9 +9242,9 @@ the
  
  <entry>
    <title>Draft learning outcomes for data engineering course</title>
-   <link href="http://0.0.0.0:5000/2018/10/18/data-engineering-learning-outcomes/"/>
+   <link href="/2018/10/18/data-engineering-learning-outcomes/"/>
    <updated>2018-10-18T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/10/18/data-engineering-learning-outcomes</id>
+   <id>/2018/10/18/data-engineering-learning-outcomes</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series about designing a professional master’s course on
  data engineering.  The first post laid out the
  &lt;a href=&quot;/2018/10/13/data-engineering-design-space/&quot;&gt;data engineering design space&lt;/a&gt;. The
@@ -8805,9 +9345,9 @@ necessarily observe them closely as the actual course unfolds.&lt;/p&gt;
  
  <entry>
    <title>The data engineering design space (2019 Edition)</title>
-   <link href="http://0.0.0.0:5000/2018/10/13/data-engineering-design-space/"/>
+   <link href="/2018/10/13/data-engineering-design-space/"/>
    <updated>2018-10-13T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/10/13/data-engineering-design-space</id>
+   <id>/2018/10/13/data-engineering-design-space</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series on designing a course on data engineering.  The
  next post specifies the
  &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;learning outcomes&lt;/a&gt;.
@@ -9122,9 +9662,9 @@ actual service—into a production service.&lt;/p&gt;
  
  <entry>
    <title>Myth-spotting</title>
-   <link href="http://0.0.0.0:5000/2018/10/03/myth-spotting/"/>
+   <link href="/2018/10/03/myth-spotting/"/>
    <updated>2018-10-03T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/10/03/myth-spotting</id>
+   <id>/2018/10/03/myth-spotting</id>
    <content type="html">&lt;p&gt;As part of a larger project, I’m reading many articles from the
 management literature. This is a very different kind of writing and
 argument than I’m used to in the technical side of computing. The
@@ -9284,9 +9824,9 @@ part for the next post.&lt;/p&gt;
  
  <entry>
    <title>The vision: A culture of effective meetings</title>
-   <link href="http://0.0.0.0:5000/2018/09/26/the-vision-a-culture-of-effective-meetings/"/>
+   <link href="/2018/09/26/the-vision-a-culture-of-effective-meetings/"/>
    <updated>2018-09-26T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/09/26/the-vision-a-culture-of-effective-meetings</id>
+   <id>/2018/09/26/the-vision-a-culture-of-effective-meetings</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Seventh and final post in a series on group decision-making, based on
 Ch. 10–11 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -9356,9 +9896,9 @@ some distinct differences. Stay tuned!&lt;/p&gt;
  
  <entry>
    <title>Decision sculpting: Stepping back to see the whole mosaic</title>
-   <link href="http://0.0.0.0:5000/2018/09/21/decision-sculpting/"/>
+   <link href="/2018/09/21/decision-sculpting/"/>
    <updated>2018-09-21T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/09/21/decision-sculpting</id>
+   <id>/2018/09/21/decision-sculpting</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Sixth in a series on group decision-making, based on Ch. 10–11
 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;.
@@ -9443,9 +9983,9 @@ series on the topic of soft skills.&lt;/p&gt;
  
  <entry>
    <title>Three evidence-based books for better teaching</title>
-   <link href="http://0.0.0.0:5000/2018/09/19/three-evidence-based-books-for-better-teaching/"/>
+   <link href="/2018/09/19/three-evidence-based-books-for-better-teaching/"/>
    <updated>2018-09-19T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/09/19/three-evidence-based-books-for-better-teaching</id>
+   <id>/2018/09/19/three-evidence-based-books-for-better-teaching</id>
    <content type="html">&lt;p&gt;I’ve read many books on effective university education, covering a
 range of topics and perspectives.  An annotated bibliography of them
 all would be a &lt;em&gt;long&lt;/em&gt; post.&lt;/p&gt;
@@ -9637,9 +10177,9 @@ to avoid the traps of myths presented as received wisdom.&lt;/p&gt;
  
  <entry>
    <title>Learning decision crystallization</title>
-   <link href="http://0.0.0.0:5000/2018/09/16/learning-decision-crystallization/"/>
+   <link href="/2018/09/16/learning-decision-crystallization/"/>
    <updated>2018-09-16T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/09/16/learning-decision-crystallization</id>
+   <id>/2018/09/16/learning-decision-crystallization</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fifth in a series on group decision-making, based on Ch. 10–11 of &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The previous post
 showed &lt;a href=&quot;/2018/09/05/discussion-rounds-and-decision-crystallization/&quot;&gt;how to crystallize a decision out of a round of discussion&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
@@ -9758,9 +10298,9 @@ the final step,
  
  <entry>
    <title>Discussion rounds and decision crystallization</title>
-   <link href="http://0.0.0.0:5000/2018/09/05/discussion-rounds-and-decision-crystallization/"/>
+   <link href="/2018/09/05/discussion-rounds-and-decision-crystallization/"/>
    <updated>2018-09-05T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/09/05/discussion-rounds-and-decision-crystallization</id>
+   <id>/2018/09/05/discussion-rounds-and-decision-crystallization</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fourth in a series on group decision-making, based on Ch. 10–11 of &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The previous post
 showed &lt;a href=&quot;/2018/08/29/the-decision-mosaic-every-piece-in-place/&quot;&gt;how to pick the next decision element to discuss&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
@@ -9887,9 +10427,9 @@ why this ought to be the next item:&lt;/p&gt;
  
  <entry>
    <title>Disqus comments enabled</title>
-   <link href="http://0.0.0.0:5000/2018/09/04/disqus-enabled/"/>
+   <link href="/2018/09/04/disqus-enabled/"/>
    <updated>2018-09-04T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/09/04/disqus-enabled</id>
+   <id>/2018/09/04/disqus-enabled</id>
    <content type="html">&lt;p&gt;I have set up Disqus comments on each post. Google Analytics shows that recent posts are generating some views, so it seemed time to finally turn comments on.&lt;/p&gt;
 
 &lt;p&gt;I hope I’ve set everything up correctly but, as with any technical
@@ -9900,9 +10440,9 @@ me know at &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;te
  
  <entry>
    <title>The decision mosaic: Every piece in place</title>
-   <link href="http://0.0.0.0:5000/2018/08/29/the-decision-mosaic-every-piece-in-place/"/>
+   <link href="/2018/08/29/the-decision-mosaic-every-piece-in-place/"/>
    <updated>2018-08-29T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/08/29/the-decision-mosaic-every-piece-in-place</id>
+   <id>/2018/08/29/the-decision-mosaic-every-piece-in-place</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on group decision-making, based on Ch. 10–11
 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The
@@ -10106,9 +10646,9 @@ sequence&lt;/a&gt;.&lt;/p&gt;
  
  <entry>
    <title>Decision crystallization: Form emerging from solution</title>
-   <link href="http://0.0.0.0:5000/2018/08/24/decision-crystallization/"/>
+   <link href="/2018/08/24/decision-crystallization/"/>
    <updated>2018-08-24T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/08/24/decision-crystallization</id>
+   <id>/2018/08/24/decision-crystallization</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series on group decision-making, based on Ch. 10–11
 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;.
@@ -10149,9 +10689,9 @@ producing mediocre results?&lt;/p&gt;
  
  <entry>
    <title>Attributing causality has important practical consequences</title>
-   <link href="http://0.0.0.0:5000/2018/08/22/attributing-causality-has-important-consequences/"/>
+   <link href="/2018/08/22/attributing-causality-has-important-consequences/"/>
    <updated>2018-08-22T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/08/22/attributing-causality-has-important-consequences</id>
+   <id>/2018/08/22/attributing-causality-has-important-consequences</id>
    <content type="html">&lt;p&gt;Yesterday Matthew Zeitlin tweeted:&lt;/p&gt;
 
 &lt;blockquote class=&quot;twitter-tweet&quot; data-lang=&quot;en&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;If you uncover an interesting correlation, hoards of wonks and twitter pedants will bray that all you have is a correlation, but if you do the work to &amp;quot;show&amp;quot; causation, those same people will bury you in little detailed complaints about how you did it&lt;/p&gt;&amp;mdash; Matthew Zeitlin (@MattZeitlin) &lt;a href=&quot;https://twitter.com/MattZeitlin/status/1032064399203287040?ref_src=twsrc%5Etfw&quot;&gt;August 22, 2018&lt;/a&gt;&lt;/blockquote&gt;
@@ -10177,9 +10717,9 @@ producing mediocre results?&lt;/p&gt;
  
  <entry>
    <title>Don't let your babies grow up to be microbenchmarkers!</title>
-   <link href="http://0.0.0.0:5000/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/"/>
+   <link href="/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/"/>
    <updated>2018-08-20T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers</id>
+   <id>/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers</id>
    <content type="html">&lt;p&gt;I never wanted to be a microbenchmarker. I was OK with a modest but
 respectable career choice, such as programming in &lt;a href=&quot;https://en.wikipedia.org/wiki/IBM_RPG_II&quot;&gt;RPG II&lt;/a&gt;
 or &lt;a href=&quot;http://www.computerhistory.org/collections/catalog/102635171&quot;&gt;IBM 1604 assembler&lt;/a&gt;.&lt;/p&gt;
@@ -10332,9 +10872,9 @@ expectations to a more realistic level.&lt;/p&gt;
  
  <entry>
    <title>The best process for effective group decisions</title>
-   <link href="http://0.0.0.0:5000/2018/08/13/the-best-process-for-group-decisions/"/>
+   <link href="/2018/08/13/the-best-process-for-group-decisions/"/>
    <updated>2018-08-13T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2018/08/13/the-best-process-for-group-decisions</id>
+   <id>/2018/08/13/the-best-process-for-group-decisions</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First post in a series on group decision-making.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;The series:&lt;/em&gt;&lt;/p&gt;
@@ -10395,9 +10935,9 @@ expectations to a more realistic level.&lt;/p&gt;
  
  <entry>
    <title>The many and varied audiences for Big Data training</title>
-   <link href="http://0.0.0.0:5000/2017/08/13/the-many-and-varied-audiences-for-big-data-training/"/>
+   <link href="/2017/08/13/the-many-and-varied-audiences-for-big-data-training/"/>
    <updated>2017-08-13T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/08/13/the-many-and-varied-audiences-for-big-data-training</id>
+   <id>/2017/08/13/the-many-and-varied-audiences-for-big-data-training</id>
    <content type="html">&lt;p&gt;There’s a wide range of Big Data training on offer, from full in-person university degree programs (in the North American context, typically Master’s degrees), to certificates from online universities (such as Coursera or EdX), to short professional development courses from for-profit trainers.  A common element of the sales pitches is the presumed universality of the need.  Every discipline and nearly every profession, it is claimed, will benefit from the technologies of Big Data.  Some pitches make an even stronger claim, that incorporating data analysis is now &lt;em&gt;essential&lt;/em&gt; for success.&lt;/p&gt;
 
 &lt;p&gt;These pitches tacitly presume another form of universality: That a small suite of courses will be sufficient to cover all potential audiences. For example, the on-line courses in data analysis from Coursera fall into several distinct categories:&lt;/p&gt;
@@ -10456,9 +10996,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Random access to long string bodies incurs cache misses</title>
-   <link href="http://0.0.0.0:5000/2017/06/29/rand-access-long-cache-misses/"/>
+   <link href="/2017/06/29/rand-access-long-cache-misses/"/>
    <updated>2017-06-29T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/06/29/rand-access-long-cache-misses</id>
+   <id>/2017/06/29/rand-access-long-cache-misses</id>
    <content type="html">&lt;p&gt;As I &lt;a href=&quot;/2017/06/23/for-long-strings-access-order-determines-performance/&quot;&gt;described in the last post&lt;/a&gt;, shuffling the items in the source vector leaves the string handles in contiguous sequential order while introducing disorder into the sequence of string bodies. The NShuffled “data set” is really a family of 11 related data sets, differing in the fraction of their items that were shuffled.  All sets start with the same vector &lt;code&gt;src&lt;/code&gt; of 50,000 elements, then &lt;code&gt;std::shuffle()&lt;/code&gt; is run on the first &lt;i&gt;N&lt;/i&gt; items in the vector, where &lt;i&gt;N&lt;/i&gt; ranges from 0 (no items shuffled) to 50,000 (all items shuffled) in increments of 5,000. All the data sets will have 37,500 (75% of 50,000) of their source elements copied to the result vector.&lt;/p&gt;
 
 &lt;p&gt;These data sets allow us to correlate the degree of disorder in the string bodies with the execution time of the filter-and-transform algorithm.  More disorder in the string bodies produces more cache misses, slowing performance. I will use the NShuffle data sets to demonstrate this.&lt;/p&gt;
@@ -10578,9 +11118,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>For long strings, access order determines performance</title>
-   <link href="http://0.0.0.0:5000/2017/06/23/for-long-strings-access-order-determines-performance/"/>
+   <link href="/2017/06/23/for-long-strings-access-order-determines-performance/"/>
    <updated>2017-06-23T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/06/23/for-long-strings-access-order-determines-performance</id>
+   <id>/2017/06/23/for-long-strings-access-order-determines-performance</id>
    <content type="html">&lt;p&gt;In the last post, I described several possible causes of the slowdown for long strings in the by-value version of the idioms.  I concluded the most likely actual cause was the order in which the string bodies are accessed.&lt;/p&gt;
 
 &lt;h2&gt;Structure of long strings in &lt;code&gt;libstdc++&lt;/code&gt;&lt;/h2&gt;
@@ -10669,9 +11209,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Sidling up to the long string slowdown</title>
-   <link href="http://0.0.0.0:5000/2017/06/14/sidling-up-to-the-long-string-slowdown/"/>
+   <link href="/2017/06/14/sidling-up-to-the-long-string-slowdown/"/>
    <updated>2017-06-14T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/06/14/sidling-up-to-the-long-string-slowdown</id>
+   <id>/2017/06/14/sidling-up-to-the-long-string-slowdown</id>
    <content type="html">&lt;p&gt;In the last post, I highlighted an anomaly in the results for filtering long strings using the by-value implementation of the loop. The usual suspect for such outcomes, heap fragmentation, didn’t seem to apply in this case. What might be the actual source of the problem?&lt;/p&gt;
 
 &lt;p&gt;The slowdown arises only for long strings, which suggests it is related to the heap, as long strings are the only form of string considered in these posts that use the heap. Unique &lt;code&gt;char const *&lt;/code&gt; strings only move pointers, while short strings, &lt;code&gt;std::string&lt;/code&gt; instances less than 16 characters, are stored in the string handle by &lt;code&gt;libstdc++&lt;/code&gt; 6.2. The degree of slowdown correlates well with the number of elements that have been moved in the source vector after it was initially created.  This suggests that the slowdown is related to some measure of the “degree of disorder” in the heap.&lt;/p&gt;
@@ -10703,9 +11243,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Microbenchmarks are highly sensitive to the heap context!</title>
-   <link href="http://0.0.0.0:5000/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"/>
+   <link href="/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"/>
    <updated>2017-06-10T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context</id>
+   <id>/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context</id>
    <content type="html">&lt;p&gt;Over two weeks ago, I posted an article about &lt;a href=&quot;/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/&quot;&gt;by-value parameters in the loop and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;transform&lt;/code&gt; idioms&lt;/a&gt;. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis.  In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda.&lt;/p&gt;
 
 &lt;h2&gt;The anomaly&lt;/h2&gt;
@@ -10868,9 +11408,9 @@ end:
  
  <entry>
    <title>The elegant machine code for char const *</title>
-   <link href="http://0.0.0.0:5000/2017/05/24/the-elegant-machine-code-for-char-const/"/>
+   <link href="/2017/05/24/the-elegant-machine-code-for-char-const/"/>
    <updated>2017-05-24T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/05/24/the-elegant-machine-code-for-char-const</id>
+   <id>/2017/05/24/the-elegant-machine-code-for-char-const</id>
    <content type="html">&lt;p&gt;Unique strings—null-terminated strings uniquely identified by their &lt;code&gt;char const *&lt;/code&gt;—are the simplest type considered in this series of posts. Constructing, copying, moving, and assigning these strings are trivial operations on a single pointer. No destructor code is required.&lt;/p&gt;
 
 &lt;p&gt;This simplicity was reflected in the benchmarks. Unique strings were
@@ -11032,9 +11572,9 @@ generated identical code and &lt;a href=&quot;/2017/05/22/passing-stdstring-by-v
  
  <entry>
    <title>Passing std::string by-value noticeably slows the idioms</title>
-   <link href="http://0.0.0.0:5000/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/"/>
+   <link href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/"/>
    <updated>2017-05-22T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms</id>
+   <id>/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms</id>
    <content type="html">&lt;p&gt;The &lt;a href=&quot;/2017/05/19/benchmarking-the-transform-and-loop-idioms/&quot;&gt;benchmarks comparing &lt;code&gt;transform&lt;/code&gt; to a
 loop&lt;/a&gt; also highlighted the substantial contribution that copying values made to their performance. Copying costs become especially noticeable for complex types, such as standard strings too long to fit in the short string optimization.&lt;/p&gt;
 
@@ -11142,9 +11682,9 @@ loop&lt;/a&gt; also highlighted the substantial contribution that copying values
  
  <entry>
    <title>Benchmarking the transform and loop idioms</title>
-   <link href="http://0.0.0.0:5000/2017/05/19/benchmarking-the-transform-and-loop-idioms/"/>
+   <link href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/"/>
    <updated>2017-05-19T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/05/19/benchmarking-the-transform-and-loop-idioms</id>
+   <id>/2017/05/19/benchmarking-the-transform-and-loop-idioms</id>
    <content type="html">&lt;p&gt;&lt;strong&gt;Update: Mon Aug 20, 2018:&lt;/strong&gt; Also see this &lt;a href=&quot;/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/&quot;&gt;semi-rant about the limitations of microbenchmarkering&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;The last posts compared the machine code generated by &lt;code&gt;transform&lt;/code&gt; and the equivalent idiom using an explicit &lt;code&gt;for&lt;/code&gt; loop and &lt;code&gt;if&lt;/code&gt; statement.  The &lt;code&gt;transform&lt;/code&gt; idiom generated more intermediate copies of the &lt;code&gt;std::string&lt;/code&gt; member than the loop.&lt;/p&gt;
@@ -11562,9 +12102,9 @@ The &lt;code&gt;transform&lt;/code&gt; idiom used &lt;code&gt;push_back()&lt;/co
  
  <entry>
    <title>Analysis of code generated from the transform idiom</title>
-   <link href="http://0.0.0.0:5000/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/"/>
+   <link href="/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/"/>
    <updated>2017-05-03T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/05/03/analysis-of-code-generated-from-the-transform-idiom</id>
+   <id>/2017/05/03/analysis-of-code-generated-from-the-transform-idiom</id>
    <content type="html">&lt;p&gt;The last post presented the baseline C++ code and its generated machine code. Now it’s time to compare the code generated by the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;std::transform&lt;/code&gt; idiom and see how well it fares.&lt;/p&gt;
 
 &lt;h2&gt;Removing two inefficiencies&lt;/h2&gt;
@@ -11861,9 +12401,9 @@ in the element at &lt;code class=&quot;language-plaintext highlighter-rouge&quot
  
  <entry>
    <title>Performance of the STL idiom for list comprehension: Introduction</title>
-   <link href="http://0.0.0.0:5000/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/"/>
+   <link href="/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/"/>
    <updated>2017-05-02T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction</id>
+   <id>/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction</id>
    <content type="html">&lt;p&gt;In my &lt;a href=&quot;/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/&quot;&gt;last post&lt;/a&gt;, I promised to consider the machine code generated from the STL idiom equivalent to a basic Python list comprehension. As I proceeded, the project expanded to a broader analysis of the idiom’s performance. I am shocked at how much effort this project took.  I have spent much of the last five weeks generating and reading the output from g++ 6.2.  So. Many. Alternatives.  In this post, I’ll describe my baseline for comparison and the criteria I’ll use. In future posts, I’ll present the results.&lt;/p&gt;
 
 &lt;p&gt;All performance analyses are fraught. Conference speakers frequently argue that the gold standard is to run your actual code on your actual data, or as close to actual code and data as you can get. I think this claim is overly strong, but whatever its merits, by design this method by provides no general comparison of two approaches to writing code, only specific results for your context.&lt;/p&gt;
@@ -12068,9 +12608,9 @@ in the element at &lt;code class=&quot;language-plaintext highlighter-rouge&quot
  
  <entry>
    <title>A single STL statement equivalent to the basic Python list comprehension</title>
-   <link href="http://0.0.0.0:5000/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/"/>
+   <link href="/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/"/>
    <updated>2017-03-26T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension</id>
+   <id>/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension</id>
    <content type="html">&lt;p&gt;In &lt;a href=&quot;/2017/03/21/the-limits-of-list-comprehensions/&quot;&gt;the last post&lt;/a&gt;, I described the structure of the basic Python list comprehension&lt;/p&gt;
 
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[expression1(var) for var in expression2 if condition(var)]
@@ -12308,9 +12848,9 @@ to building the result vector&lt;/a&gt;, though the reserve/insert-back one used
  
  <entry>
    <title>The limits of list comprehensions</title>
-   <link href="http://0.0.0.0:5000/2017/03/21/the-limits-of-list-comprehensions/"/>
+   <link href="/2017/03/21/the-limits-of-list-comprehensions/"/>
    <updated>2017-03-21T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/03/21/the-limits-of-list-comprehensions</id>
+   <id>/2017/03/21/the-limits-of-list-comprehensions</id>
    <content type="html">&lt;p&gt;I’ve spent my recent posts unfavourably comparing the STL design of containers/iterators/algorithms with Python list comprehensions and their close relatives in Haskell.  This is an unfairly restrictive way to view the STL design, which addresses a wider range of use cases than the ones addressed by list comprehensions.  But it is also unfair in that it ignores the limitations of list comprehensions themselves, limitations avoided by the more general structure provided by the STL.  In this post, I’ll start from the other direction, considering the inherent limitations of Python list comprehensions. This in turn leads to an idiom in the STL that in fact provides virtually all the functionality of basic list comprehensions, with only slightly more complex syntax.&lt;/p&gt;
 
 &lt;h2&gt;The general and basic forms of Python list comprehensions&lt;/h2&gt;
@@ -12404,9 +12944,9 @@ to building the result vector&lt;/a&gt;, though the reserve/insert-back one used
  
  <entry>
    <title>A simpler, fourth idiom for appending</title>
-   <link href="http://0.0.0.0:5000/2017/03/09/a-simpler-fourth-idiom-for-appending/"/>
+   <link href="/2017/03/09/a-simpler-fourth-idiom-for-appending/"/>
    <updated>2017-03-09T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/03/09/a-simpler-fourth-idiom-for-appending</id>
+   <id>/2017/03/09/a-simpler-fourth-idiom-for-appending</id>
    <content type="html">&lt;p&gt;This morning, I realized that there is a fourth approach to appending items to a vector that combines &lt;a href=&quot;/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/&quot;&gt;elements of the first and third&lt;/a&gt;.  I’m embarrassed to have missed this one because it is a longstanding, well-understood approach that’s particularly applicable to the kinds of “list comprehension algorithms” I’m considering in this series.&lt;/p&gt;
 
 &lt;p&gt;Reviewing the output of the first method, a large proportion of the extra effort is due to the incremental &lt;em&gt;allocation&lt;/em&gt; of the vector’s data member, where the values are actually stored. In some use cases, this is the best you can do because you do not know in advance how large the result is going to be. However, in the case considered in our examples, we know exactly how many elements the result will have:  exactly as many elements as the source vector.  In such cases, we can pre-allocate a storage block of the right size and then the back insertions simply consist of moving the values into that allocated space, with no reallocations to expand the vector. This was a crucial part of the efficiency of the third idiom, using &lt;code&gt;emplace_back()&lt;/code&gt;.&lt;/p&gt;
@@ -12476,9 +13016,9 @@ Destructor for T0
  
  <entry>
    <title>Three idioms for appending values&mdash;a damaging decision?</title>
-   <link href="http://0.0.0.0:5000/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"/>
+   <link href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"/>
    <updated>2017-03-07T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/03/07/three-idioms-for-appending-values-a-damaging-decision</id>
+   <id>/2017/03/07/three-idioms-for-appending-values-a-damaging-decision</id>
    <content type="html">&lt;p&gt;&lt;b&gt;Update:&lt;/b&gt; See also the &lt;a href=&quot;/2017/03/09/a-simpler-fourth-idiom-for-appending/&quot;&gt;next post&lt;/a&gt;, which adds a fourth idiom and mitigates some of the criticisms in the conclusion of this post.&lt;/p&gt;
 
 &lt;p&gt;The &lt;a href=&quot;/2017/02/22/iterators-a-failure-case/&quot;&gt;STL code for squaring the positive values&lt;/a&gt;, included the following lines to create the intermediate result &lt;code&gt;t1&lt;/code&gt; containing the positive values of the original list &lt;code&gt;a&lt;/code&gt;:&lt;/p&gt;
@@ -13001,9 +13541,9 @@ Basic constructor for c3[4]
  
  <entry>
    <title>Iterators aren’t the problem, they just enable it</title>
-   <link href="http://0.0.0.0:5000/2017/03/03/iterators-arent-the-problem-they-just-enable-it/"/>
+   <link href="/2017/03/03/iterators-arent-the-problem-they-just-enable-it/"/>
    <updated>2017-03-03T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/03/03/iterators-arent-the-problem-they-just-enable-it</id>
+   <id>/2017/03/03/iterators-arent-the-problem-they-just-enable-it</id>
    <content type="html">&lt;p&gt;The post presenting the &lt;a href=&quot;/2017/02/22/iterators-a-failure-case/&quot;&gt;failure case for iterators&lt;/a&gt; contrasted this simple Python list comprehension:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
@@ -13047,9 +13587,9 @@ Basic constructor for c3[4]
  
  <entry>
    <title>The genius insight behind iterators</title>
-   <link href="http://0.0.0.0:5000/2017/03/01/the-genius-insight-behind-iterators/"/>
+   <link href="/2017/03/01/the-genius-insight-behind-iterators/"/>
    <updated>2017-03-01T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/03/01/the-genius-insight-behind-iterators</id>
+   <id>/2017/03/01/the-genius-insight-behind-iterators</id>
    <content type="html">&lt;p&gt;The story so far:&lt;/p&gt;
 
 &lt;ol&gt;
@@ -13218,9 +13758,9 @@ I’ll return to this below.&lt;/p&gt;
  
  <entry>
    <title>Lambdas: Typical use cases</title>
-   <link href="http://0.0.0.0:5000/2017/02/25/lambdas-typical-use-cases/"/>
+   <link href="/2017/02/25/lambdas-typical-use-cases/"/>
    <updated>2017-02-25T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/02/25/lambdas-typical-use-cases</id>
+   <id>/2017/02/25/lambdas-typical-use-cases</id>
    <content type="html">&lt;p&gt;My last post, highlighting the differences between C++ lambdas and the lambdas in languages based upon functional programs, went more deeply into the weeds than I had intended. I realized too late that it cried out for examples.  The rules for declaring free variables (the member variables of the anonymous class) in C++ lambdas can seem contorted but most uses of them fall into one of a few simple types.  In this post, I want to present three simple use cases of C++ lambdas, each demonstrating a different way to use free variables.&lt;/p&gt;
 
 &lt;h2&gt;Copy-constructed constant values&lt;/h2&gt;
@@ -13288,9 +13828,9 @@ I’ll return to this below.&lt;/p&gt;
  
  <entry>
    <title>Lambdas: Sweet, sweet syntactic sugar</title>
-   <link href="http://0.0.0.0:5000/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/"/>
+   <link href="/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/"/>
    <updated>2017-02-23T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/02/23/lambdas-sweet-sweet-syntactic-sugar</id>
+   <id>/2017/02/23/lambdas-sweet-sweet-syntactic-sugar</id>
    <content type="html">&lt;p&gt;&lt;b&gt;Update:&lt;/b&gt; The &lt;a href=&quot;/2017/02/25/lambdas-typical-use-cases/&quot;&gt;next post&lt;/a&gt; provides recipes for common use cases of lambdas.  If parts of this post seem too abstract, you might find the examples in the next post clarify things.&lt;/p&gt;
 
 &lt;p&gt;STL iterators and algorithms really can’t be discussed without also talking about lambdas. Although the STL design predates the introduction of lambdas by almost two decades, the introduction of lambdas in C++ 2011 improved the usability of STL algorithms substantially.  I don’t have statistics but I presume that the STL algorithms now receive substantially more use due to the greater simplicity of passing callbacks as lambdas rather than instances of named classes. Lambdas are purely a matter of convenience—they introduce nothing to the language that you couldn’t do before—but by making common use cases more convenient, they effectively extend the range of use cases where calling a standard algorithm makes sense.&lt;/p&gt;
@@ -13397,9 +13937,9 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
  
  <entry>
    <title>Iterators: A failure case</title>
-   <link href="http://0.0.0.0:5000/2017/02/22/iterators-a-failure-case/"/>
+   <link href="/2017/02/22/iterators-a-failure-case/"/>
    <updated>2017-02-22T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/02/22/iterators-a-failure-case</id>
+   <id>/2017/02/22/iterators-a-failure-case</id>
    <content type="html">&lt;p&gt;In my first post on iterators, I presented a case where they work well.  In this post, I’ll present a clear failure and begin discussing why the deep structure of the design leads to this failure.&lt;/p&gt;
 
 &lt;p&gt;Consider the simple Python list comprehension:&lt;/p&gt;
@@ -13448,9 +13988,9 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
  
  <entry>
    <title>Iterators: One success story</title>
-   <link href="http://0.0.0.0:5000/2017/02/21/iterators-one-success-story/"/>
+   <link href="/2017/02/21/iterators-one-success-story/"/>
    <updated>2017-02-21T00:00:00+00:00</updated>
-   <id>http://0.0.0.0:5000/2017/02/21/iterators-one-success-story</id>
+   <id>/2017/02/21/iterators-one-success-story</id>
    <content type="html">
 &lt;p&gt;Iterators intrigue me because they seem to bring to C++ facilities that I’ve found congenial in other languages. I’ve spent some time in Haskell and a lot of time in Python, which both support &lt;a href=&quot;https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions&quot;&gt;list comprehensions&lt;/a&gt;. I’ve also enjoyed the limited amount of C# &lt;a href=&quot;https://msdn.microsoft.com/en-us/library/bb397933.aspx&quot;&gt;Language-Integrated Query (LINQ)&lt;/a&gt; programming that I’ve done.&lt;/p&gt;
 
