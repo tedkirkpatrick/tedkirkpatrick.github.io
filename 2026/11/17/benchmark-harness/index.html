@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Blog for A. E. Kirkpatrick and  Kirkpatrick Computing Services">
+  <meta name="author" content="Arthur E. Kirkpatrick">
+  <meta name="copyright" content="Arthur E. Kirkpatrick, 2018, 2019, 2020, 2021">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Part 3: Building the benchmark harness &middot; All my marbles in one place
+    
+  </title>
+
+    <!-- Asychronously-loaded JavaScript -->
+    
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66576928-4', 'auto');
+  ga('send', 'pageview');
+  </script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- Begin Jekyll SEO tag v2.9.0 -->
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Part 3: Building the benchmark harness" />
+<meta name="author" content="Ted Kirkpatrick" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;- Part 2: Reimplementing the TeX data structures in C++ Part 4: Running the benchmarks -&gt; (Not yet published)     Benchmarks purport to give generalizable results. We don’t really care that one specific run, of a specific program, on a specific machine configuration, took a specified time. We care what that might indicate more generally. For a benchmark to provide useful generalizations, its conditions must be accurately recorded. In my experience, recording the run conditions is surprisingly difficult. Just recording the timing results isn’t informative. What optimization level did I compile the program with? And was every file compiled…" />
+<meta name="twitter:description" property="og:description" content="&lt;- Part 2: Reimplementing the TeX data structures in C++ Part 4: Running the benchmarks -&gt; (Not yet published)     Benchmarks purport to give generalizable results. We don’t really care that one specific run, of a specific program, on a specific machine configuration, took a specified time. We care what that might indicate more generally. For a benchmark to provide useful generalizations, its conditions must be accurately recorded. In my experience, recording the run conditions is surprisingly difficult. Just recording the timing results isn’t informative. What optimization level did I compile the program with? And was every file compiled…" />
+<link rel="canonical" href="http://0.0.0.0:5000/2026/11/17/benchmark-harness/" />
+<meta property="og:url" content="http://0.0.0.0:5000/2026/11/17/benchmark-harness/" />
+<meta property="og:site_name" content="All my marbles in one place" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-11-17T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-11-17T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Part 3: Building the benchmark harness" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Ted Kirkpatrick"},"dateModified":"2026-11-17T00:00:00+00:00","datePublished":"2026-11-17T00:00:00+00:00","description":"&lt;- Part 2: Reimplementing the TeX data structures in C++ Part 4: Running the benchmarks -&gt; (Not yet published)     Benchmarks purport to give generalizable results. We don’t really care that one specific run, of a specific program, on a specific machine configuration, took a specified time. We care what that might indicate more generally. For a benchmark to provide useful generalizations, its conditions must be accurately recorded. In my experience, recording the run conditions is surprisingly difficult. Just recording the timing results isn’t informative. What optimization level did I compile the program with? And was every file compiled…","headline":"Part 3: Building the benchmark harness","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:5000/2026/11/17/benchmark-harness/"},"url":"http://0.0.0.0:5000/2026/11/17/benchmark-harness/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0c layout-reverse">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          All my marbles in one place
+        </a>
+      </h1>
+      <p class="lead">A blog about course design, data display, C++, and Python.  Yes, these are related, at least as I see them.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      
+      
+        
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/about/">About</a>
+          
+        
+      
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/comment-policy/">Comment policy</a>
+          
+        
+      
+        
+          
+            <a class="sidebar-nav-item" href="/credits/">Credits</a>
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+
+    
+        <div class="sidebar-tags">
+        Tags:<br/>
+        
+	   
+	    <a href="/tag/C++/">C++</a>,
+	  
+        
+	   
+	    <a href="/tag/Python/">Python</a>,
+	  
+        
+	   
+	    <a href="/tag/Course design/">Course design</a>,
+	  
+        
+	   
+	    <a href="/tag/Big data/">Big data</a>,
+	  
+        
+	   
+	    <a href="/tag/Soft skills/">Soft skills</a>,
+	  
+        
+	   
+	    <a href="/tag/Statistics/">Statistics</a>,
+	  
+        
+	   
+	    <a href="/tag/Experimental design/">Experimental design</a>,
+	  
+        
+	   
+	    <a href="/tag/Rhetoric/">Rhetoric</a>,
+	  
+        
+	   
+	    <a href="/tag/Admin/">Admin</a>,
+	  
+        
+	   
+	    <a href="/tag/Distributed systems/">Distributed systems</a>,
+	  
+        
+	  	    
+            <a href="/tag/Programming/">Programming</a>
+          
+        
+	</div>
+      
+
+    </nav>
+
+    <p>&copy; 2026. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Part 3: Building the benchmark harness</h1>
+  <span class="post-date">17 Nov 2026
+  
+    <span class="tag-block">Tags: 
+    
+      
+      <a href="/tag/Programming">Programming</a>,
+      
+    
+      
+      <a href="/tag/C++">C++</a>
+      
+    
+    </span>
+  
+  </span>
+  
+  <table>
+  <thead>
+    <tr>
+      <th style="text-align: left"><a href="/2026/09/28/reimplementing-the-tex-data-structures/">&lt;- Part 2: Reimplementing the TeX data structures in C++</a></th>
+      <th style="text-align: right">Part 4: Running the benchmarks -&gt; (Not yet published)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: right"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Benchmarks purport to give generalizable results. We don’t really care that one
+specific run, of a specific program, on a specific machine configuration,
+took a specified time. We care what that might indicate more generally.
+For a benchmark to provide useful generalizations, its conditions must
+be accurately recorded.</p>
+
+<p>In my experience, recording the run conditions is surprisingly difficult.
+Just recording the timing results isn’t informative. What optimization
+level did I compile the program with?  And was every file compiled with the
+same level? Which version of the code produced that output?</p>
+
+<!--more-->
+
+<p>Furthermore, first runs of the benchmarks don’t answer questions definitively, they
+suggest new avenues to investigate. The benchmarks get parameterized and
+new options are introduced in the code. These new conditions must
+be stored with the timing results so that the analysis can attribute the
+results to the run conditions.</p>
+
+<p>As the conditions mount and the questions become more detailed, the
+analysis becomes more complicated. The data must be recorded in a
+format supporting detailed analysis.</p>
+
+<p>All these requirements are too much for any manual recording method.
+A test harness has to be built that ensures the benchmark is built
+according to a specification, sets any runtime parameters, then
+records the timing results alongside the conditions that produced them.</p>
+
+<p>My harness for these benchmarks comprises a Makefile target, benchmarking code within
+the C++ app, and a Python program. The output of each run is lines in
+a CSV file of specified columns.</p>
+
+<h2 id="strengths-and-limitations-of-microbenchmarks">Strengths and limitations of microbenchmarks</h2>
+
+<p>These are microbenchmarks, estimates of the relative performance of
+several data structures for specified patterns of access.
+Their results are never definitive or final and
+the choice of data structures is informed by other considerations
+(security, clarity, suitability for future use cases, separation
+of concerns, and so forth), considerations that might well
+be more important than raw performance.</p>
+
+<p>Furthermore, microbenchmarks will rarely point to the actual hot
+spots in an application that dominate performance. That requires profiling
+runs of the full application.</p>
+
+<p>Finally, microbenchmarks are strongly tied to the circumstances of
+their execution: the specific operating system, compiler, and
+machine on which they were run.</p>
+
+<p>Taking all the above into account, although the scope of microbenchmarks
+is limited, they do have a use. They help to refine a programmer’s intuition
+of what data structures might be best-suited to a given
+use case. They inform the range of initial choices you might make
+when designing a solution. So long as you’re mindful of their limitations,
+microbenchmarks are useful.</p>
+
+<h2 id="how-catch2--nonius-benchmarks-run">How Catch2 / nonius benchmarks run</h2>
+
+<p>A Catch2/nonius benchmark run comprises the following steps:</p>
+
+<ol>
+  <li>Estimate the clock resolution: Call the clock repeatedly over a 500 ms
+  interval and take the mean duration.</li>
+  <li>Estimate the clock cost: Estimate how much time it takes to call the clock
+  twice and compute the difference.</li>
+  <li>Compute the number of iterations required per sample: A single sample consists
+  of repeated calls to the benchmarked code long enough to consume 1000 clock ticks.</li>
+  <li>Warm up the memory hierarchy: The benchmarked code is called several times, as is
+  the timing code. These calls serve only to load the code and data into the memory hiearchy
+  and their results and timings are discarded.</li>
+  <li>Take the samples: The number of samples (a command-line parameter with a default
+of 100) are taken. Each sample measures the time to run <code>iterations/sample</code>
+iterations of the benchmarked code. The cost of the two clock calls is subtracted
+from the elapsed time and the result is divided by the iteration count,
+producing the time required for a single iteration.</li>
+  <li>Analyze the samples.</li>
+</ol>
+
+<p>These steps are executed by function <a href="https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L7316-L7351">Catch::Benchmark::Benchmark::run()</a>:</p>
+
+<ul>
+  <li>Steps 1 and 2 are performed by calling function
+<a href="https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L7168-L7180">Catch::Benchmark::Detail::measure_environment()</a>.
+The estimates are only done once, before the first benchmark, then saved and reused
+for any succeeding benchmarks.</li>
+  <li>Steps 3 and the first half of Step 4 are performed by calling function <a href="https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L7307-L7313">Catch::Benchmark::Benchmark::prepare()</a>.</li>
+  <li>The second half of Step 4 and all of Step 5 are performed by calling function <a href="https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L6918-L6932">Catch::Benchmark::ExecutionPlan::run()</a>.</li>
+  <li>Step 6 is performed by calling function<a href="https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L7237-L7284">Catch::Benchmark::Detail::analyse()</a>.</li>
+</ul>
+
+<p>An interesting note about the clock tick estimation (Step 1):
+On my configuration, the estimate produced by code compiled
+without optimization (<code>-O0</code>) is around 45 ns / tick,
+while the estimate produced when compiled with full optimization
+(<code>-O3</code>) is half that, around 21 ns / tick.</p>
+
+<h3 id="analysis">Analysis</h3>
+
+<p>A benchmark is ultimately not a single estimate but an estimated
+range of possible performance of the routine under test. The execution time of a routine can vary for any number
+of reasons. In the language of experimental design, we can
+seprate these into two categories:</p>
+
+<ul>
+  <li><strong>Inherent variability</strong>: Variations in execution time due to
+nondeterminism in the code, initial contents of the cache
+and other portions of the memory hierarchy, branch prediction
+results, calls to other services,
+kernel data structures, and similar factors.</li>
+  <li><strong>Confounding factors</strong>: Variability imposed by external
+factors unrelated to the code under test, such as other
+processes running concurrently, unrealistic initial conditions
+due to the benchmarking harness, and similar factors.</li>
+</ul>
+
+<p>Ideally, we want to remove most confounds, account
+for the effect of any that remain, and be left with the inherent
+variability of the routine of interest. In practice, it
+is impossible to completely separate the confounds and
+our performance estimates are a mixture of the actual
+performance and artifacts of our experiment.</p>
+
+<p>Ultimately though, a benchmark is not considered in isolation
+but in comparison with the benchmarks of alternative approaches.
+So long as the estimated ranges of the alternatives are sufficiently
+distinct, the benchmarks provide useful guidance for 
+choosing the preferred approach.</p>
+
+<p>Details of Catch2’s benchmark analysis code are
+provided in Appendix 1.</p>
+
+<h2 id="reporters">Reporters</h2>
+
+<p>Catch2 can report its benchmark results in several serialization formats.
+The caller selects a format by specifying a <em>reporter</em>, a
+module that outputs in a given format, via the <code>-r/--reporter</code>
+command-line option. For these benchmarks,
+I only use two reporters:</p>
+
+<ul>
+  <li><code>console</code>: The default reporter, this summarizes
+the results in a short text paragraph. This reporter is only
+useful for initial tests. Its output does not include all
+statistics and the format is unsuitable for
+detailed analysis.</li>
+  <li><code>xml</code>: Full statistics in XMl syntax. I specify
+this reporter for runs that will feed into later analysis.
+The XML output is parsed by the Python program <code>parse-benchmarks.py</code>, which appends the run
+statistics as a single line to a CSV file. The CSV file
+in turn can be loaded into a statistical analysis package.</li>
+</ul>
+
+<p>A full listing of available reporters is available by
+specifying <code>--list-reporters</code> on the command-line.</p>
+
+<h2 id="capturing-all-pertinent-factors-of-the-benchmark">Capturing all pertinent factors of the benchmark</h2>
+
+<p>Although the Catch2 <code>xml</code> reporter records all the statistics
+from the benchmark analysis, this is an incomplete record
+of the benchmark conditions. Other factors essential to
+the analysis include:</p>
+
+<ul>
+  <li>The optimization level under which the code was compiled.</li>
+  <li>The primary factor being compared, in the case of these
+benchmarks either “original” or “modern” code styles.</li>
+  <li>The timestamp the benchmark was run. Although not inherently
+a factor in performance, this can distinguish different
+versions of the code and external conditions as the
+benchmarking process develops.</li>
+  <li>The values of any benchmark parameters. For example,
+the initial benchmarks include a traversal count,
+specified on the command line.</li>
+  <li>External factors, such as concurrent processes introducing
+contention, or other special circumstances.</li>
+</ul>
+
+<p>All the above are fixed for every benchmark in a given
+run. In addition to them, each benchmark must have a
+distinct name to identify its line in the resulting CSV.</p>
+
+<p>These values are not entered in the XML output by the
+standard Catch2 code, so I had to find a way to encode
+them into the standard output, then split them out into
+dedicated columns of the CSV. I solve this by extending
+the benchmark name with a field for each factor, separated
+from the actual benchmark name by a designated separator
+character, ‘|’. The Python code processing the XML output
+separates the encoded name into its constituent parts,
+writing each in its dedicated CSV column.</p>
+
+<h3 id="ensuring-accuracy-of-command-line-values">Ensuring accuracy of command-line values</h3>
+
+<p>Note that while some of the above can be computed in
+the C++ code, such as the timestamp, or hardcoded,
+such as the basic benchmark name,
+other factors, such as the optimization level, must be passed in
+from the command line. This introduces the risk that the command-line
+values are inaccurate. For example, how do we ensure that the
+optimization level passed in was the actual value with which
+the code was compiled?</p>
+
+<p>The <code>Makefile</code> is written to ensure this. The standard
+way to run a benchmark is the <code>benchmark</code> target,
+potentially specifying a non-default optimization level and
+traversal count,</p>
+
+<pre>make TRAVERSALS=100 OPT_LEVEL=-O3 benchmark</pre>
+
+<p>which first recompiles all the files at the specified optimization,
+encodes that optimization level into the benchmark names,
+then runs the benchmarks with the specified traversals
+and appends the resulting benchmark values into the
+default results file, <code>../benchmarks.csv</code>.</p>
+
+<p>Recompiling before <em>every</em> benchmark is inconvenient, so
+the <code>Makefile</code> includes an alternative target,
+<code>fast_benchmark</code>, that takes the same arguments
+but does not recompile the code. Note that although the
+<code>OPT_LEVEL</code> argument can still be specified,
+it is <strong>ignored</strong>, as the optimization level was compiled
+in to the code when the executable was built.</p>
+
+<p>Both <code>Makefile</code> targets support an optional
+<code>EXTERNALS</code> argument, used for noting any
+external factors about a given run that might be pertinent
+for later analsysis. For example, you might use this
+to note that noisy programs were deliberately run
+in the background during the benchmarks to assess
+the benchmarks’ sensitivity to contention. This
+argument can be nearly any string, typically enclosed
+in single quotes to protect from the shell, though
+the string cannot contain commas or pipe (‘|’)
+characters. See the repository README for details.</p>
+
+<h2 id="output-of-harness">Output of harness</h2>
+
+<p>The benchmark processes described above append one
+line to <code>../benchmarks.csv</code> for each benchmark,
+with the following fields. All times are in nanoseconds,
+as indicated by the <code>_ns</code> suffix of the fieldnames:</p>
+
+<ul>
+  <li><strong>name</strong>: Name of the benchmark. This is the name passed as
+the first argument to <code>benchmark_utils::create_benchmark_name()</code>.
+The other arguments multiplexed into the name by that routine, such
+as optimization level, are split out by <code>parse-benchmarks.py</code>
+and written into their respective CSV columns.</li>
+  <li><strong>code</strong>: Name of the code version. For this project, it will typically be
+either <code>original</code> or <code>modern</code>.</li>
+  <li><strong>traversals</strong>: Number of traversals for benchmarks that traverse the 
+data structures. For benchmarks that do not do traversals, this field
+will be 0.</li>
+  <li><strong>optimization</strong>: The optimization parameter passed to the compiler when
+the executable was built. Typically either <code>-O0</code> or <code>-O3</code>.</li>
+  <li><strong>externals</strong>: Any string passed as the EXTERNALS argument, if one was specified.</li>
+  <li><strong>UTC</strong>: The full UTC when this benchmark was started. If several benchmarks are
+performed in sequence in a run, their timestamps will be in close sequence.</li>
+  <li><strong>samples</strong>: The number of samples the benchmark routines should take. The
+<code>Makefile</code> specifies a value of 100. To specify a different
+value, either call the benchmark executable directly or modify the
+<code>Makefile</code>.</li>
+  <li><strong>resamples</strong>: The number of resamples used in the BCa bootstrap algorithm
+(see Appendix 1) for the statistical analysis. This defaults to 100,000
+and should likely be unchanged. However, if you increase the samples
+to a large value, say 1,000 or more, you will want to reduce the
+resample count to keep analysis time reasonable.</li>
+  <li><strong>iterations</strong>: Number of calls to the routine being benchmarked for
+each sample. This value is calculated by the benchmark routines
+and is not a settable parameter.</li>
+  <li><strong>clock_resolution_ns</strong>: Estimated resolution of the system clock.
+Note this includes the time to call the operating system, which
+is likely why different optimization levels produce different
+estimated resolutions.</li>
+  <li><strong>estimated_duration_ns</strong>: Estimated time to run the requested number
+of samples. This is computed by the benchmark routines and is
+for information only.</li>
+  <li><strong>mean_value_ns</strong>: Mean time to run a single iteration of the benchmarked routine.</li>
+  <li><strong>mean_lower_bound_ns</strong>: Lower bound of the confidence interval for
+mean execution time.</li>
+  <li><strong>mean_upper_bound_ns</strong>: Upper bound of the confidence interval for
+mean execution time. As the confidence interval is nonparametric,
+it will not necessarily be symmetric about the estimated mean.</li>
+  <li><strong>mean_ci</strong>: Confidence level for the interval of the mean.
+Default to 0.95 and not modified in runs.</li>
+  <li><strong>sd_value_ns</strong>: Estimated standard deviation of the execution time
+of the benchmarked routine.</li>
+  <li><strong>sd_lower_bound_ns</strong>: Lower bound of the confidence interval for
+standard deviation.</li>
+  <li><strong>sd_upper_bound_ns</strong>: Upper bound of the confidence interval for
+standard deviation.  As the confidence interval is nonparametric,
+it will not necessarily be symmetric about the estimated standard deviation.</li>
+  <li><strong>sd_ci</strong>: Confidence level of the interval for the standard
+deviation. Default to 0.95 and not modified in runs.</li>
+  <li><strong>outliers_variance_ratio</strong>: The variance ratio statistic for
+estimating the effect of outliers. See Appendix 1.</li>
+  <li><strong>outliers_low_severe</strong>: Count of low outliers meeting the Tukey
+fence criterion of 3 * IQR. See Appendix 1.</li>
+  <li><strong>outliers_low_mild</strong>: Count of low outliers meeting the Tukey
+fence criterion of 1.5 * IQR. See Appendix 1.</li>
+  <li><strong>outliers_high_mild</strong>: Count of high outliers meeting the Tukey
+fence criterion of 1.5 * IQR. See Appendix 1.</li>
+  <li><strong>outliers_high_severe</strong>: Count of high outliers meeting the Tukey
+fence criterion of 3 * IQR. See Appendix 1.</li>
+</ul>
+
+<p>The above entries record all the factors that might vary between
+benchmark runs. These will vary against the backdrop of the 
+fixed environment for all runs, described in Appendix 2.</p>
+
+<h2 id="final-thoughts">Final thoughts</h2>
+
+<p>This harness automatically captures as much of the crucial details about
+a benchmark as possible and stores them in a format that is
+readily accessible to analysis software. The analyst only has
+to ensure that any external factors are recorded in the
+<code>EXTERNALS</code> parameter, factors that by definition
+are inaccessible to the harness.</p>
+
+<p>Benchmarks even benefit the analyst before they are run.
+The planning and the consideration of what factors to
+measure and which to control, the effort to eliminate
+potential confounds, all prompt the analyst to think
+more deeply about their code, how it might be called
+by higher-level routines, and in what sort of environment
+it might be run. Actually running the benchmarks and
+analysing the results typically prompts a new round
+of questions and perhaps more benchmarks. The
+process does not really have a definitive endpoint,
+only the exhaustion of the analyst. (Or in this
+case, the reader.)</p>
+
+<p>In any case, at this point we’ve done enough initial
+work to start the process, so in the next chapter
+we’ll run our first benchmarks.</p>
+
+<h2 id="appendix-1-details-of-the-analysis-code">Appendix 1: Details of the analysis code</h2>
+
+<p>This appendix describes the computation of the Catch2 / nonius
+benchmark statistics, with links to the code performing
+the computations.</p>
+
+<h3 id="mean-and-standard-deviation">Mean and standard deviation</h3>
+
+<p>The  benchmark code estimates point values and 95% confidence intervals each for the mean and
+standard deviation of every benchmark. These estimates are computed using the bias-corrected and accelerated (BCa) bootstrap.
+For details, read the <a href="https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L7038-L7075">Catch::Benchmark::Detail::bootstrap()</a> code
+alongside the section “Approach #3: Bias corrected and accelerated (BCa) bootstrap”
+of Erik Drysdale’s <a href="https://www.erikdrysdale.com/bca_python/">“Implementing the bias-corrected and accelerated bootstrap in Python”</a>.</p>
+
+<h3 id="outliers">Outliers</h3>
+
+<p>The estimates of the mean and standard deviation are supplemented with two analyses of outliers. The first analysis uses <a href="https://aakinshin.net/posts/tukey-outlier-probability/">Tukey’s fence criterion</a>
+to count the number of “mild outliers”, defined as 1.5 times the IQR from the 25th or 75th percentiles,
+and “severe outliers”, defined as 3 times the IQR from the 25th or 75th percentiles
+(see <a href="https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L6967-L6988">classify_outliers()</a>).</p>
+
+<p>The second analysis uses a formula (see <a href="https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L7784-L7808">outlier_variance()</a>)
+whose provenance I have not tracked down.
+The formula takes the estimates of the mean and sample deviation, together with the sample size,
+and computes a modified variance assuming one sample value was substantially far from the mean.
+It returns the ratio of this modified variance to the original estimate.</p>
+
+<p>A hint to interpreting this statistic comes from the
+<a href="https://github.com/haskell/criterion/blob/master/README.markdown">Haskell Criterion benchmarking package</a>,
+the basis of the Catch2 benchmarking routines.
+The Criterion function for computing the <a href="https://github.com/haskell/criterion/blob/master/Criterion/Analysis.hs#L83-L112">identical outlier variance formula</a>
+suggests a criterion for interpretation of the resulting ratio <em>r</em>:</p>
+
+<ul>
+  <li><em>r</em> &lt; 0.01: No effect</li>
+  <li><em>r</em> &lt; 0.10: Slight effect</li>
+  <li><em>r</em> &lt; 0.50: Moderate effect</li>
+  <li><em>r</em> ≥ 0.50: Severe effect</li>
+</ul>
+
+<p>My initial benchmarks have always produced results above 0.90,
+which these criteria consider a massive outlier effect. The
+only way I was able to produce a “slight effect” by
+this criterion was to contrive a highly consistent routine that simply does a 100 ms
+wait and the only way I was able to produce a “no effect” was to
+increase that wait to 500 ms. The criterion seems sensitive
+to the length of the routine being benchmarked, penalizing short
+routines.</p>
+
+<p>I remain unclear how to really interpret this statistic and so I
+do not refer to it often in my benchmark analyses.</p>
+
+<h2 id="appendix-2-fixed-run-conditions">Appendix 2: Fixed run conditions</h2>
+
+<p>All the benchmark runs are done on the same combination of computer and
+operating system:</p>
+
+<ul>
+  <li>Computer: MacBook Pro, Apple M1 Pro CPU, 32 GB RAM.</li>
+  <li>Operating system: macOS Tahoe, Version 26.4.1.</li>
+  <li>Runtime environment: Docker container running Ubuntu 25.10.</li>
+  <li>Compiler: g++ 15.2.0.</li>
+  <li>Bencharking tool: <a href="https://github.com/catchorg/Catch2/blob/v2.13.10/docs/benchmarks.md">Catch2 v2.13 benchmarking</a>, donated from the 2019 version of <a href="https://github.com/libnonius/nonius">nonius</a> (which appears to now be unsupported).</li>
+</ul>
+
+<p>I chose to build and run the software in a container to ensure an
+exact, reproducible environment. This inevitably introduces
+potential confounding interactions between the Ubuntu container
+and the underlying macOS. In particular, an Ubuntu-based memory
+allocator might be suboptimal for macOS or even pathologically bad.
+On the other hand, running TeX in a Linux container atop macOS
+is a plausible use case, as it’s a simple way to distribute the code.</p>
+
+
+</div>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+this.page.url = "http://kirkpatricktech.com/2026/11/17/benchmark-harness/";
+//this.page.identifier = "/2026/11/17/benchmark-harness";
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://kirkpatricktech-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
+  </body>
+</html>

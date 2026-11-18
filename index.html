@@ -52,13 +52,15 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
 <meta name="twitter:description" property="og:description" content="A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them." />
+<link rel="canonical" href="http://0.0.0.0:5000/" />
+<meta property="og:url" content="http://0.0.0.0:5000/" />
 <meta property="og:site_name" content="All my marbles in one place" />
 <meta property="og:type" content="website" />
-<link rel="next" href="/page2" />
+<link rel="next" href="http://0.0.0.0:5000/page2" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Home" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","headline":"Home","name":"All my marbles in one place","url":"/"}</script>
+{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"Ted Kirkpatrick"},"description":"A blog about course design, data display, C++, and Python. Yes, these are related, at least as I see them.","headline":"Home","name":"All my marbles in one place","url":"http://0.0.0.0:5000/"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -272,6 +274,58 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="/2026/11/17/benchmark-harness/">
+        Part 3: Building the benchmark harness
+      </a>
+    </h1>
+    
+    <span class="post-date">17 Nov 2026
+    
+      <span class="tag-block">Tags: 
+      
+        
+        <a href="/tag/Programming">Programming</a>,
+        
+      
+        
+        <a href="/tag/C++">C++</a>
+        
+      
+      </span>
+    
+    </span>
+
+    <table>
+  <thead>
+    <tr>
+      <th style="text-align: left"><a href="/2026/09/28/reimplementing-the-tex-data-structures/">&lt;- Part 2: Reimplementing the TeX data structures in C++</a></th>
+      <th style="text-align: right">Part 4: Running the benchmarks -&gt; (Not yet published)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: right"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Benchmarks purport to give generalizable results. We don’t really care that one
+specific run, of a specific program, on a specific machine configuration,
+took a specified time. We care what that might indicate more generally.
+For a benchmark to provide useful generalizations, its conditions must
+be accurately recorded.</p>
+
+<p>In my experience, recording the run conditions is surprisingly difficult.
+Just recording the timing results isn’t informative. What optimization
+level did I compile the program with?  And was every file compiled with the
+same level? Which version of the code produced that output?</p>
+
+ <a href="/2026/11/17/benchmark-harness/">more ...</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="/2026/09/28/reimplementing-the-tex-data-structures/">
         Part 2: Reimplementing the TeX data structures in C++
       </a>
@@ -297,7 +351,7 @@
   <thead>
     <tr>
       <th style="text-align: left">&lt;- <a href="/2026/09/03/reading-tex-the-program/">Part 1: Reading TeX: The Program in 2026</a></th>
-      <th style="text-align: right">Part 3: A Benchmark Harness  -&gt; (Not yet published)</th>
+      <th style="text-align: right"><a href="/2026/11/17/benchmark-harness/">Part 3: A Benchmark Harness</a>  -&gt;</th>
     </tr>
   </thead>
   <tbody>
@@ -429,38 +483,6 @@ and
 according to these criteria. What do these comparisons tell us about
 the new possibilities such products create?</p>
  <a href="/2021/07/10/outpost-vs-region-at-customer/">more ...</a>
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2021/06/13/prescriptive-descriptive/">
-        The 'Descriptive' versus 'Prescriptive' distinction is irrelevant for actual writing
-      </a>
-    </h1>
-    
-    <span class="post-date">13 Jun 2021
-    
-      <span class="tag-block">Tags: 
-      
-        
-        <a href="/tag/Rhetoric">Rhetoric</a>
-        
-      
-      </span>
-    
-    </span>
-
-    <p>I sometimes get asked whether I’m a “prescriptivist” or
-“descriptivist”, or—worse still—labelled as one. This has always
-struck me as beside the point. In none of my roles, not as a writer,
-teacher of writing, or editor, has this distinction ever provided useful
-guidance. Instead, I base my usage choices upon some combination of
-assessed ambiguity to the reader, existing convention, degree of
-formality, emotional impact, and other considerations. The resulting
-choices might sometimes conform to prescriptive rules or existing
-usage or neither. Effective writing is a balance of competing
-requirements, not rote adherence to an overarching “philosophy”.</p>
- <a href="/2021/06/13/prescriptive-descriptive/">more ...</a>
   </div>
   
 </div>

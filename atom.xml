@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
  <title>All my marbles in one place</title>
- <link href="/atom.xml" rel="self"/>
- <link href="/"/>
- <updated>2026-09-28T22:03:00+00:00</updated>
- <id></id>
+ <link href="http://0.0.0.0:5000/atom.xml" rel="self"/>
+ <link href="http://0.0.0.0:5000/"/>
+ <updated>2026-11-18T00:01:18+00:00</updated>
+ <id>http://0.0.0.0:5000</id>
  <author>
    <name>Ted Kirkpatrick</name>
    <email></email>
@@ -13,15 +13,447 @@
 
  
  <entry>
+   <title>Part 3: Building the benchmark harness</title>
+   <link href="http://0.0.0.0:5000/2026/11/17/benchmark-harness/"/>
+   <updated>2026-11-17T00:00:00+00:00</updated>
+   <id>http://0.0.0.0:5000/2026/11/17/benchmark-harness</id>
+   <content type="html">&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;&lt;a href=&quot;/2026/09/28/reimplementing-the-tex-data-structures/&quot;&gt;&amp;lt;- Part 2: Reimplementing the TeX data structures in C++&lt;/a&gt;&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Part 4: Running the benchmarks -&amp;gt; (Not yet published)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Benchmarks purport to give generalizable results. We don’t really care that one
+specific run, of a specific program, on a specific machine configuration,
+took a specified time. We care what that might indicate more generally.
+For a benchmark to provide useful generalizations, its conditions must
+be accurately recorded.&lt;/p&gt;
+
+&lt;p&gt;In my experience, recording the run conditions is surprisingly difficult.
+Just recording the timing results isn’t informative. What optimization
+level did I compile the program with?  And was every file compiled with the
+same level? Which version of the code produced that output?&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;Furthermore, first runs of the benchmarks don’t answer questions definitively, they
+suggest new avenues to investigate. The benchmarks get parameterized and
+new options are introduced in the code. These new conditions must
+be stored with the timing results so that the analysis can attribute the
+results to the run conditions.&lt;/p&gt;
+
+&lt;p&gt;As the conditions mount and the questions become more detailed, the
+analysis becomes more complicated. The data must be recorded in a
+format supporting detailed analysis.&lt;/p&gt;
+
+&lt;p&gt;All these requirements are too much for any manual recording method.
+A test harness has to be built that ensures the benchmark is built
+according to a specification, sets any runtime parameters, then
+records the timing results alongside the conditions that produced them.&lt;/p&gt;
+
+&lt;p&gt;My harness for these benchmarks comprises a Makefile target, benchmarking code within
+the C++ app, and a Python program. The output of each run is lines in
+a CSV file of specified columns.&lt;/p&gt;
+
+&lt;h2 id=&quot;strengths-and-limitations-of-microbenchmarks&quot;&gt;Strengths and limitations of microbenchmarks&lt;/h2&gt;
+
+&lt;p&gt;These are microbenchmarks, estimates of the relative performance of
+several data structures for specified patterns of access.
+Their results are never definitive or final and
+the choice of data structures is informed by other considerations
+(security, clarity, suitability for future use cases, separation
+of concerns, and so forth), considerations that might well
+be more important than raw performance.&lt;/p&gt;
+
+&lt;p&gt;Furthermore, microbenchmarks will rarely point to the actual hot
+spots in an application that dominate performance. That requires profiling
+runs of the full application.&lt;/p&gt;
+
+&lt;p&gt;Finally, microbenchmarks are strongly tied to the circumstances of
+their execution: the specific operating system, compiler, and
+machine on which they were run.&lt;/p&gt;
+
+&lt;p&gt;Taking all the above into account, although the scope of microbenchmarks
+is limited, they do have a use. They help to refine a programmer’s intuition
+of what data structures might be best-suited to a given
+use case. They inform the range of initial choices you might make
+when designing a solution. So long as you’re mindful of their limitations,
+microbenchmarks are useful.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-catch2--nonius-benchmarks-run&quot;&gt;How Catch2 / nonius benchmarks run&lt;/h2&gt;
+
+&lt;p&gt;A Catch2/nonius benchmark run comprises the following steps:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Estimate the clock resolution: Call the clock repeatedly over a 500 ms
+  interval and take the mean duration.&lt;/li&gt;
+  &lt;li&gt;Estimate the clock cost: Estimate how much time it takes to call the clock
+  twice and compute the difference.&lt;/li&gt;
+  &lt;li&gt;Compute the number of iterations required per sample: A single sample consists
+  of repeated calls to the benchmarked code long enough to consume 1000 clock ticks.&lt;/li&gt;
+  &lt;li&gt;Warm up the memory hierarchy: The benchmarked code is called several times, as is
+  the timing code. These calls serve only to load the code and data into the memory hiearchy
+  and their results and timings are discarded.&lt;/li&gt;
+  &lt;li&gt;Take the samples: The number of samples (a command-line parameter with a default
+of 100) are taken. Each sample measures the time to run &lt;code&gt;iterations/sample&lt;/code&gt;
+iterations of the benchmarked code. The cost of the two clock calls is subtracted
+from the elapsed time and the result is divided by the iteration count,
+producing the time required for a single iteration.&lt;/li&gt;
+  &lt;li&gt;Analyze the samples.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;These steps are executed by function &lt;a href=&quot;https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L7316-L7351&quot;&gt;Catch::Benchmark::Benchmark::run()&lt;/a&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Steps 1 and 2 are performed by calling function
+&lt;a href=&quot;https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L7168-L7180&quot;&gt;Catch::Benchmark::Detail::measure_environment()&lt;/a&gt;.
+The estimates are only done once, before the first benchmark, then saved and reused
+for any succeeding benchmarks.&lt;/li&gt;
+  &lt;li&gt;Steps 3 and the first half of Step 4 are performed by calling function &lt;a href=&quot;https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L7307-L7313&quot;&gt;Catch::Benchmark::Benchmark::prepare()&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;The second half of Step 4 and all of Step 5 are performed by calling function &lt;a href=&quot;https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L6918-L6932&quot;&gt;Catch::Benchmark::ExecutionPlan::run()&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;Step 6 is performed by calling function&lt;a href=&quot;https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L7237-L7284&quot;&gt;Catch::Benchmark::Detail::analyse()&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;An interesting note about the clock tick estimation (Step 1):
+On my configuration, the estimate produced by code compiled
+without optimization (&lt;code&gt;-O0&lt;/code&gt;) is around 45 ns / tick,
+while the estimate produced when compiled with full optimization
+(&lt;code&gt;-O3&lt;/code&gt;) is half that, around 21 ns / tick.&lt;/p&gt;
+
+&lt;h3 id=&quot;analysis&quot;&gt;Analysis&lt;/h3&gt;
+
+&lt;p&gt;A benchmark is ultimately not a single estimate but an estimated
+range of possible performance of the routine under test. The execution time of a routine can vary for any number
+of reasons. In the language of experimental design, we can
+seprate these into two categories:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Inherent variability&lt;/strong&gt;: Variations in execution time due to
+nondeterminism in the code, initial contents of the cache
+and other portions of the memory hierarchy, branch prediction
+results, calls to other services,
+kernel data structures, and similar factors.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Confounding factors&lt;/strong&gt;: Variability imposed by external
+factors unrelated to the code under test, such as other
+processes running concurrently, unrealistic initial conditions
+due to the benchmarking harness, and similar factors.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Ideally, we want to remove most confounds, account
+for the effect of any that remain, and be left with the inherent
+variability of the routine of interest. In practice, it
+is impossible to completely separate the confounds and
+our performance estimates are a mixture of the actual
+performance and artifacts of our experiment.&lt;/p&gt;
+
+&lt;p&gt;Ultimately though, a benchmark is not considered in isolation
+but in comparison with the benchmarks of alternative approaches.
+So long as the estimated ranges of the alternatives are sufficiently
+distinct, the benchmarks provide useful guidance for 
+choosing the preferred approach.&lt;/p&gt;
+
+&lt;p&gt;Details of Catch2’s benchmark analysis code are
+provided in Appendix 1.&lt;/p&gt;
+
+&lt;h2 id=&quot;reporters&quot;&gt;Reporters&lt;/h2&gt;
+
+&lt;p&gt;Catch2 can report its benchmark results in several serialization formats.
+The caller selects a format by specifying a &lt;em&gt;reporter&lt;/em&gt;, a
+module that outputs in a given format, via the &lt;code&gt;-r/--reporter&lt;/code&gt;
+command-line option. For these benchmarks,
+I only use two reporters:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code&gt;console&lt;/code&gt;: The default reporter, this summarizes
+the results in a short text paragraph. This reporter is only
+useful for initial tests. Its output does not include all
+statistics and the format is unsuitable for
+detailed analysis.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;xml&lt;/code&gt;: Full statistics in XMl syntax. I specify
+this reporter for runs that will feed into later analysis.
+The XML output is parsed by the Python program &lt;code&gt;parse-benchmarks.py&lt;/code&gt;, which appends the run
+statistics as a single line to a CSV file. The CSV file
+in turn can be loaded into a statistical analysis package.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A full listing of available reporters is available by
+specifying &lt;code&gt;--list-reporters&lt;/code&gt; on the command-line.&lt;/p&gt;
+
+&lt;h2 id=&quot;capturing-all-pertinent-factors-of-the-benchmark&quot;&gt;Capturing all pertinent factors of the benchmark&lt;/h2&gt;
+
+&lt;p&gt;Although the Catch2 &lt;code&gt;xml&lt;/code&gt; reporter records all the statistics
+from the benchmark analysis, this is an incomplete record
+of the benchmark conditions. Other factors essential to
+the analysis include:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The optimization level under which the code was compiled.&lt;/li&gt;
+  &lt;li&gt;The primary factor being compared, in the case of these
+benchmarks either “original” or “modern” code styles.&lt;/li&gt;
+  &lt;li&gt;The timestamp the benchmark was run. Although not inherently
+a factor in performance, this can distinguish different
+versions of the code and external conditions as the
+benchmarking process develops.&lt;/li&gt;
+  &lt;li&gt;The values of any benchmark parameters. For example,
+the initial benchmarks include a traversal count,
+specified on the command line.&lt;/li&gt;
+  &lt;li&gt;External factors, such as concurrent processes introducing
+contention, or other special circumstances.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;All the above are fixed for every benchmark in a given
+run. In addition to them, each benchmark must have a
+distinct name to identify its line in the resulting CSV.&lt;/p&gt;
+
+&lt;p&gt;These values are not entered in the XML output by the
+standard Catch2 code, so I had to find a way to encode
+them into the standard output, then split them out into
+dedicated columns of the CSV. I solve this by extending
+the benchmark name with a field for each factor, separated
+from the actual benchmark name by a designated separator
+character, ‘|’. The Python code processing the XML output
+separates the encoded name into its constituent parts,
+writing each in its dedicated CSV column.&lt;/p&gt;
+
+&lt;h3 id=&quot;ensuring-accuracy-of-command-line-values&quot;&gt;Ensuring accuracy of command-line values&lt;/h3&gt;
+
+&lt;p&gt;Note that while some of the above can be computed in
+the C++ code, such as the timestamp, or hardcoded,
+such as the basic benchmark name,
+other factors, such as the optimization level, must be passed in
+from the command line. This introduces the risk that the command-line
+values are inaccurate. For example, how do we ensure that the
+optimization level passed in was the actual value with which
+the code was compiled?&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;Makefile&lt;/code&gt; is written to ensure this. The standard
+way to run a benchmark is the &lt;code&gt;benchmark&lt;/code&gt; target,
+potentially specifying a non-default optimization level and
+traversal count,&lt;/p&gt;
+
+&lt;pre&gt;make TRAVERSALS=100 OPT_LEVEL=-O3 benchmark&lt;/pre&gt;
+
+&lt;p&gt;which first recompiles all the files at the specified optimization,
+encodes that optimization level into the benchmark names,
+then runs the benchmarks with the specified traversals
+and appends the resulting benchmark values into the
+default results file, &lt;code&gt;../benchmarks.csv&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Recompiling before &lt;em&gt;every&lt;/em&gt; benchmark is inconvenient, so
+the &lt;code&gt;Makefile&lt;/code&gt; includes an alternative target,
+&lt;code&gt;fast_benchmark&lt;/code&gt;, that takes the same arguments
+but does not recompile the code. Note that although the
+&lt;code&gt;OPT_LEVEL&lt;/code&gt; argument can still be specified,
+it is &lt;strong&gt;ignored&lt;/strong&gt;, as the optimization level was compiled
+in to the code when the executable was built.&lt;/p&gt;
+
+&lt;p&gt;Both &lt;code&gt;Makefile&lt;/code&gt; targets support an optional
+&lt;code&gt;EXTERNALS&lt;/code&gt; argument, used for noting any
+external factors about a given run that might be pertinent
+for later analsysis. For example, you might use this
+to note that noisy programs were deliberately run
+in the background during the benchmarks to assess
+the benchmarks’ sensitivity to contention. This
+argument can be nearly any string, typically enclosed
+in single quotes to protect from the shell, though
+the string cannot contain commas or pipe (‘|’)
+characters. See the repository README for details.&lt;/p&gt;
+
+&lt;h2 id=&quot;output-of-harness&quot;&gt;Output of harness&lt;/h2&gt;
+
+&lt;p&gt;The benchmark processes described above append one
+line to &lt;code&gt;../benchmarks.csv&lt;/code&gt; for each benchmark,
+with the following fields. All times are in nanoseconds,
+as indicated by the &lt;code&gt;_ns&lt;/code&gt; suffix of the fieldnames:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;name&lt;/strong&gt;: Name of the benchmark. This is the name passed as
+the first argument to &lt;code&gt;benchmark_utils::create_benchmark_name()&lt;/code&gt;.
+The other arguments multiplexed into the name by that routine, such
+as optimization level, are split out by &lt;code&gt;parse-benchmarks.py&lt;/code&gt;
+and written into their respective CSV columns.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;code&lt;/strong&gt;: Name of the code version. For this project, it will typically be
+either &lt;code&gt;original&lt;/code&gt; or &lt;code&gt;modern&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;traversals&lt;/strong&gt;: Number of traversals for benchmarks that traverse the 
+data structures. For benchmarks that do not do traversals, this field
+will be 0.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;optimization&lt;/strong&gt;: The optimization parameter passed to the compiler when
+the executable was built. Typically either &lt;code&gt;-O0&lt;/code&gt; or &lt;code&gt;-O3&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;externals&lt;/strong&gt;: Any string passed as the EXTERNALS argument, if one was specified.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;UTC&lt;/strong&gt;: The full UTC when this benchmark was started. If several benchmarks are
+performed in sequence in a run, their timestamps will be in close sequence.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;samples&lt;/strong&gt;: The number of samples the benchmark routines should take. The
+&lt;code&gt;Makefile&lt;/code&gt; specifies a value of 100. To specify a different
+value, either call the benchmark executable directly or modify the
+&lt;code&gt;Makefile&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;resamples&lt;/strong&gt;: The number of resamples used in the BCa bootstrap algorithm
+(see Appendix 1) for the statistical analysis. This defaults to 100,000
+and should likely be unchanged. However, if you increase the samples
+to a large value, say 1,000 or more, you will want to reduce the
+resample count to keep analysis time reasonable.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;iterations&lt;/strong&gt;: Number of calls to the routine being benchmarked for
+each sample. This value is calculated by the benchmark routines
+and is not a settable parameter.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;clock_resolution_ns&lt;/strong&gt;: Estimated resolution of the system clock.
+Note this includes the time to call the operating system, which
+is likely why different optimization levels produce different
+estimated resolutions.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;estimated_duration_ns&lt;/strong&gt;: Estimated time to run the requested number
+of samples. This is computed by the benchmark routines and is
+for information only.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;mean_value_ns&lt;/strong&gt;: Mean time to run a single iteration of the benchmarked routine.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;mean_lower_bound_ns&lt;/strong&gt;: Lower bound of the confidence interval for
+mean execution time.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;mean_upper_bound_ns&lt;/strong&gt;: Upper bound of the confidence interval for
+mean execution time. As the confidence interval is nonparametric,
+it will not necessarily be symmetric about the estimated mean.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;mean_ci&lt;/strong&gt;: Confidence level for the interval of the mean.
+Default to 0.95 and not modified in runs.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;sd_value_ns&lt;/strong&gt;: Estimated standard deviation of the execution time
+of the benchmarked routine.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;sd_lower_bound_ns&lt;/strong&gt;: Lower bound of the confidence interval for
+standard deviation.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;sd_upper_bound_ns&lt;/strong&gt;: Upper bound of the confidence interval for
+standard deviation.  As the confidence interval is nonparametric,
+it will not necessarily be symmetric about the estimated standard deviation.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;sd_ci&lt;/strong&gt;: Confidence level of the interval for the standard
+deviation. Default to 0.95 and not modified in runs.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;outliers_variance_ratio&lt;/strong&gt;: The variance ratio statistic for
+estimating the effect of outliers. See Appendix 1.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;outliers_low_severe&lt;/strong&gt;: Count of low outliers meeting the Tukey
+fence criterion of 3 * IQR. See Appendix 1.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;outliers_low_mild&lt;/strong&gt;: Count of low outliers meeting the Tukey
+fence criterion of 1.5 * IQR. See Appendix 1.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;outliers_high_mild&lt;/strong&gt;: Count of high outliers meeting the Tukey
+fence criterion of 1.5 * IQR. See Appendix 1.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;outliers_high_severe&lt;/strong&gt;: Count of high outliers meeting the Tukey
+fence criterion of 3 * IQR. See Appendix 1.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The above entries record all the factors that might vary between
+benchmark runs. These will vary against the backdrop of the 
+fixed environment for all runs, described in Appendix 2.&lt;/p&gt;
+
+&lt;h2 id=&quot;final-thoughts&quot;&gt;Final thoughts&lt;/h2&gt;
+
+&lt;p&gt;This harness automatically captures as much of the crucial details about
+a benchmark as possible and stores them in a format that is
+readily accessible to analysis software. The analyst only has
+to ensure that any external factors are recorded in the
+&lt;code&gt;EXTERNALS&lt;/code&gt; parameter, factors that by definition
+are inaccessible to the harness.&lt;/p&gt;
+
+&lt;p&gt;Benchmarks even benefit the analyst before they are run.
+The planning and the consideration of what factors to
+measure and which to control, the effort to eliminate
+potential confounds, all prompt the analyst to think
+more deeply about their code, how it might be called
+by higher-level routines, and in what sort of environment
+it might be run. Actually running the benchmarks and
+analysing the results typically prompts a new round
+of questions and perhaps more benchmarks. The
+process does not really have a definitive endpoint,
+only the exhaustion of the analyst. (Or in this
+case, the reader.)&lt;/p&gt;
+
+&lt;p&gt;In any case, at this point we’ve done enough initial
+work to start the process, so in the next chapter
+we’ll run our first benchmarks.&lt;/p&gt;
+
+&lt;h2 id=&quot;appendix-1-details-of-the-analysis-code&quot;&gt;Appendix 1: Details of the analysis code&lt;/h2&gt;
+
+&lt;p&gt;This appendix describes the computation of the Catch2 / nonius
+benchmark statistics, with links to the code performing
+the computations.&lt;/p&gt;
+
+&lt;h3 id=&quot;mean-and-standard-deviation&quot;&gt;Mean and standard deviation&lt;/h3&gt;
+
+&lt;p&gt;The  benchmark code estimates point values and 95% confidence intervals each for the mean and
+standard deviation of every benchmark. These estimates are computed using the bias-corrected and accelerated (BCa) bootstrap.
+For details, read the &lt;a href=&quot;https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L7038-L7075&quot;&gt;Catch::Benchmark::Detail::bootstrap()&lt;/a&gt; code
+alongside the section “Approach #3: Bias corrected and accelerated (BCa) bootstrap”
+of Erik Drysdale’s &lt;a href=&quot;https://www.erikdrysdale.com/bca_python/&quot;&gt;“Implementing the bias-corrected and accelerated bootstrap in Python”&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;outliers&quot;&gt;Outliers&lt;/h3&gt;
+
+&lt;p&gt;The estimates of the mean and standard deviation are supplemented with two analyses of outliers. The first analysis uses &lt;a href=&quot;https://aakinshin.net/posts/tukey-outlier-probability/&quot;&gt;Tukey’s fence criterion&lt;/a&gt;
+to count the number of “mild outliers”, defined as 1.5 times the IQR from the 25th or 75th percentiles,
+and “severe outliers”, defined as 3 times the IQR from the 25th or 75th percentiles
+(see &lt;a href=&quot;https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L6967-L6988&quot;&gt;classify_outliers()&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;The second analysis uses a formula (see &lt;a href=&quot;https://github.com/tedkirkpatrick/tex-memory/blob/main/include/catch2.hpp#L7784-L7808&quot;&gt;outlier_variance()&lt;/a&gt;)
+whose provenance I have not tracked down.
+The formula takes the estimates of the mean and sample deviation, together with the sample size,
+and computes a modified variance assuming one sample value was substantially far from the mean.
+It returns the ratio of this modified variance to the original estimate.&lt;/p&gt;
+
+&lt;p&gt;A hint to interpreting this statistic comes from the
+&lt;a href=&quot;https://github.com/haskell/criterion/blob/master/README.markdown&quot;&gt;Haskell Criterion benchmarking package&lt;/a&gt;,
+the basis of the Catch2 benchmarking routines.
+The Criterion function for computing the &lt;a href=&quot;https://github.com/haskell/criterion/blob/master/Criterion/Analysis.hs#L83-L112&quot;&gt;identical outlier variance formula&lt;/a&gt;
+suggests a criterion for interpretation of the resulting ratio &lt;em&gt;r&lt;/em&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;em&gt;r&lt;/em&gt; &amp;lt; 0.01: No effect&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;r&lt;/em&gt; &amp;lt; 0.10: Slight effect&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;r&lt;/em&gt; &amp;lt; 0.50: Moderate effect&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;r&lt;/em&gt; ≥ 0.50: Severe effect&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;My initial benchmarks have always produced results above 0.90,
+which these criteria consider a massive outlier effect. The
+only way I was able to produce a “slight effect” by
+this criterion was to contrive a highly consistent routine that simply does a 100 ms
+wait and the only way I was able to produce a “no effect” was to
+increase that wait to 500 ms. The criterion seems sensitive
+to the length of the routine being benchmarked, penalizing short
+routines.&lt;/p&gt;
+
+&lt;p&gt;I remain unclear how to really interpret this statistic and so I
+do not refer to it often in my benchmark analyses.&lt;/p&gt;
+
+&lt;h2 id=&quot;appendix-2-fixed-run-conditions&quot;&gt;Appendix 2: Fixed run conditions&lt;/h2&gt;
+
+&lt;p&gt;All the benchmark runs are done on the same combination of computer and
+operating system:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Computer: MacBook Pro, Apple M1 Pro CPU, 32 GB RAM.&lt;/li&gt;
+  &lt;li&gt;Operating system: macOS Tahoe, Version 26.4.1.&lt;/li&gt;
+  &lt;li&gt;Runtime environment: Docker container running Ubuntu 25.10.&lt;/li&gt;
+  &lt;li&gt;Compiler: g++ 15.2.0.&lt;/li&gt;
+  &lt;li&gt;Bencharking tool: &lt;a href=&quot;https://github.com/catchorg/Catch2/blob/v2.13.10/docs/benchmarks.md&quot;&gt;Catch2 v2.13 benchmarking&lt;/a&gt;, donated from the 2019 version of &lt;a href=&quot;https://github.com/libnonius/nonius&quot;&gt;nonius&lt;/a&gt; (which appears to now be unsupported).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I chose to build and run the software in a container to ensure an
+exact, reproducible environment. This inevitably introduces
+potential confounding interactions between the Ubuntu container
+and the underlying macOS. In particular, an Ubuntu-based memory
+allocator might be suboptimal for macOS or even pathologically bad.
+On the other hand, running TeX in a Linux container atop macOS
+is a plausible use case, as it’s a simple way to distribute the code.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>Part 2: Reimplementing the TeX data structures in C++</title>
-   <link href="/2026/09/28/reimplementing-the-tex-data-structures/"/>
+   <link href="http://0.0.0.0:5000/2026/09/28/reimplementing-the-tex-data-structures/"/>
    <updated>2026-09-28T00:00:00+00:00</updated>
-   <id>/2026/09/28/reimplementing-the-tex-data-structures</id>
+   <id>http://0.0.0.0:5000/2026/09/28/reimplementing-the-tex-data-structures</id>
    <content type="html">&lt;table&gt;
   &lt;thead&gt;
     &lt;tr&gt;
       &lt;th style=&quot;text-align: left&quot;&gt;&amp;lt;- &lt;a href=&quot;/2026/09/03/reading-tex-the-program/&quot;&gt;Part 1: Reading TeX: The Program in 2026&lt;/a&gt;&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;Part 3: A Benchmark Harness  -&amp;gt; (Not yet published)&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;&lt;a href=&quot;/2026/11/17/benchmark-harness/&quot;&gt;Part 3: A Benchmark Harness&lt;/a&gt;  -&amp;gt;&lt;/th&gt;
     &lt;/tr&gt;
   &lt;/thead&gt;
   &lt;tbody&gt;
@@ -537,9 +969,9 @@ to meet them.&lt;/p&gt;
  
  <entry>
    <title>Reading "TeX: The Program" in 2026</title>
-   <link href="/2026/09/03/reading-tex-the-program/"/>
+   <link href="http://0.0.0.0:5000/2026/09/03/reading-tex-the-program/"/>
    <updated>2026-09-03T00:00:00+00:00</updated>
-   <id>/2026/09/03/reading-tex-the-program</id>
+   <id>http://0.0.0.0:5000/2026/09/03/reading-tex-the-program</id>
    <content type="html">&lt;table&gt;
   &lt;thead&gt;
     &lt;tr&gt;
@@ -1205,9 +1637,9 @@ Along the way, I just may rediscover the fun in this work.&lt;/p&gt;
  
  <entry>
    <title>How much information is retained in an average of percentiles?</title>
-   <link href="/2021/09/02/averages-of-percentiles/"/>
+   <link href="http://0.0.0.0:5000/2021/09/02/averages-of-percentiles/"/>
    <updated>2021-09-02T00:00:00+00:00</updated>
-   <id>/2021/09/02/averages-of-percentiles</id>
+   <id>http://0.0.0.0:5000/2021/09/02/averages-of-percentiles</id>
    <content type="html">&lt;p&gt;Experienced performance analysts caution against taking averages of
 percentiles. Gil Tene’s famous 2015 Strange Loop talk,
 &lt;a href=&quot;https://www.youtube.com/watch?v=lJ8ydIuPFeU?&amp;quot;start=482&quot;&gt;“How NOT to Measure Latency”&lt;/a&gt;,
@@ -1617,9 +2049,9 @@ apply and so the proof holds.&lt;/p&gt;
  
  <entry>
    <title>AWS Outpost vs. Oracle Region @ Customer: How do they differ?</title>
-   <link href="/2021/07/10/outpost-vs-region-at-customer/"/>
+   <link href="http://0.0.0.0:5000/2021/07/10/outpost-vs-region-at-customer/"/>
    <updated>2021-07-10T00:00:00+00:00</updated>
-   <id>/2021/07/10/outpost-vs-region-at-customer</id>
+   <id>http://0.0.0.0:5000/2021/07/10/outpost-vs-region-at-customer</id>
    <content type="html">&lt;p&gt;Cloud vendors are rolling out products that place proprietary
 hardware in customer’s datacentres, delivering a selection of the
 vendor’s cloud services from the customer’s datacentre. These new
@@ -1943,9 +2375,9 @@ to handle these use cases as well.&lt;/p&gt;
  
  <entry>
    <title>The 'Descriptive' versus 'Prescriptive' distinction is irrelevant for actual writing</title>
-   <link href="/2021/06/13/prescriptive-descriptive/"/>
+   <link href="http://0.0.0.0:5000/2021/06/13/prescriptive-descriptive/"/>
    <updated>2021-06-13T00:00:00+00:00</updated>
-   <id>/2021/06/13/prescriptive-descriptive</id>
+   <id>http://0.0.0.0:5000/2021/06/13/prescriptive-descriptive</id>
    <content type="html">&lt;p&gt;I sometimes get asked whether I’m a “prescriptivist” or
 “descriptivist”, or—worse still—labelled as one. This has always
 struck me as beside the point. In none of my roles, not as a writer,
@@ -2322,9 +2754,9 @@ simply distract from that fundamental task.&lt;/p&gt;
  
  <entry>
    <title>Designs don't have "superpowers"</title>
-   <link href="/2021/06/03/superpower/"/>
+   <link href="http://0.0.0.0:5000/2021/06/03/superpower/"/>
    <updated>2021-06-03T00:00:00+00:00</updated>
-   <id>/2021/06/03/superpower</id>
+   <id>http://0.0.0.0:5000/2021/06/03/superpower</id>
    <content type="html">&lt;p&gt;Time for another rant about a word seeing increased use in technical
 discussions (and elsewhere): &lt;em&gt;superpower&lt;/em&gt;. It just doesn’t mean what
 people imply it means.&lt;/p&gt;
@@ -2386,9 +2818,9 @@ can I say? I’m a work in progress.&lt;/p&gt;
  
  <entry>
    <title>"Opinionated" design as design rationale</title>
-   <link href="/2021/05/31/opinionated-designs/"/>
+   <link href="http://0.0.0.0:5000/2021/05/31/opinionated-designs/"/>
    <updated>2021-05-31T00:00:00+00:00</updated>
-   <id>/2021/05/31/opinionated-designs</id>
+   <id>http://0.0.0.0:5000/2021/05/31/opinionated-designs</id>
    <content type="html">&lt;p&gt;I see increasing use of the phrase “opinionated design”, frequent
 enough to risk it becoming a
 &lt;a href=&quot;https://www.thoughtco.com/vogue-word-1692599&quot;&gt;vogue word&lt;/a&gt; in our
@@ -2593,9 +3025,9 @@ usage. Other users may find it awkward for their purposes.&lt;/p&gt;
  
  <entry>
    <title>The <i>external</i> interfaces to Kubernetes ingress</title>
-   <link href="/2021/05/18/external-interfaces-to-kubernetes/"/>
+   <link href="http://0.0.0.0:5000/2021/05/18/external-interfaces-to-kubernetes/"/>
    <updated>2021-05-18T00:00:00+00:00</updated>
-   <id>/2021/05/18/external-interfaces-to-kubernetes</id>
+   <id>http://0.0.0.0:5000/2021/05/18/external-interfaces-to-kubernetes</id>
    <content type="html">&lt;p&gt;Defining a Kubernetes ingress seems simple enough: Define a YAML file
 and you’re good. But that only defines the interface from services &lt;em&gt;inside&lt;/em&gt; the
 cluster to whatever external agent is connecting external client
@@ -2704,9 +3136,9 @@ address to a service inside the cluster.&lt;/p&gt;
  
  <entry>
    <title>Three rings of abstraction in Kubernetes</title>
-   <link href="/2021/05/17/three-rings-of-kubernetes/"/>
+   <link href="http://0.0.0.0:5000/2021/05/17/three-rings-of-kubernetes/"/>
    <updated>2021-05-17T00:00:00+00:00</updated>
-   <id>/2021/05/17/three-rings-of-kubernetes</id>
+   <id>http://0.0.0.0:5000/2021/05/17/three-rings-of-kubernetes</id>
    <content type="html">&lt;p&gt;A common analogy for Kubernetes presents it as “the operating system
 for microservices”, identifying Kubernetes
 as a kind of operating system. I don’t think this analogy is wrong but
@@ -3162,9 +3594,9 @@ enough. Viewing it in terms of its many abstractions is far more informative.&lt
  
  <entry>
    <title>A manager cannot be a mentor&mdash;but should still give advice</title>
-   <link href="/2021/04/18/mentors-not-supervisors/"/>
+   <link href="http://0.0.0.0:5000/2021/04/18/mentors-not-supervisors/"/>
    <updated>2021-04-18T00:00:00+00:00</updated>
-   <id>/2021/04/18/mentors-not-supervisors</id>
+   <id>http://0.0.0.0:5000/2021/04/18/mentors-not-supervisors</id>
    <content type="html">&lt;p&gt;Mentoring. Everyone thinks it’s a great idea and many claim to do it.
 Yet both formal studies and my personal observations suggest that such
 relationships are rarely sustained and often not retrospectively
@@ -3344,9 +3776,9 @@ contexts of such committees or the domain of teaching.&lt;/p&gt;
  
  <entry>
    <title>The basics of latency percentiles</title>
-   <link href="/2020/09/09/latency-basics/"/>
+   <link href="http://0.0.0.0:5000/2020/09/09/latency-basics/"/>
    <updated>2020-09-09T00:00:00+00:00</updated>
-   <id>/2020/09/09/latency-basics</id>
+   <id>http://0.0.0.0:5000/2020/09/09/latency-basics</id>
    <content type="html">&lt;p&gt;Designers of distributed systems obsess over service latency. They
 forecast latencies of proposed designs, stress-test the latencies of
 systems under development, equalize latencies of
@@ -3560,9 +3992,9 @@ important concepts such as effective percentiles.&lt;/p&gt;
  
  <entry>
    <title>Extending "The Tail at Scale"</title>
-   <link href="/2020/07/24/extending-the-tail-at-scale/"/>
+   <link href="http://0.0.0.0:5000/2020/07/24/extending-the-tail-at-scale/"/>
    <updated>2020-07-24T00:00:00+00:00</updated>
-   <id>/2020/07/24/extending-the-tail-at-scale</id>
+   <id>http://0.0.0.0:5000/2020/07/24/extending-the-tail-at-scale</id>
    <content type="html">&lt;p&gt;&lt;em&gt;A companion post goes into more detail on
   &lt;a href=&quot;/2020/09/09/latency-basics.html&quot;&gt;constructing the percentile function from a density function&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
@@ -3975,9 +4407,9 @@ far more common than their single-call percentile would indicate.&lt;/p&gt;
  
  <entry>
    <title>Guarantees vs. metrics: What the designers intend, what the clients see</title>
-   <link href="/2020/06/20/guarantees-vs-methods/"/>
+   <link href="http://0.0.0.0:5000/2020/06/20/guarantees-vs-methods/"/>
    <updated>2020-06-20T00:00:00+00:00</updated>
-   <id>/2020/06/20/guarantees-vs-methods</id>
+   <id>http://0.0.0.0:5000/2020/06/20/guarantees-vs-methods</id>
    <content type="html">&lt;p&gt;In my
 &lt;a href=&quot;/2019/12/31/design-space-2020/&quot;&gt;distributed systems design space&lt;/a&gt;, I
 distinguish guarantees from metrics. A &lt;em&gt;guarantee&lt;/em&gt; is a property a
@@ -4162,9 +4594,9 @@ important.&lt;/p&gt;
  
  <entry>
    <title>Flambloozlement and the student enthusiasm for crunch mode</title>
-   <link href="/2020/04/03/flambloozlement/"/>
+   <link href="http://0.0.0.0:5000/2020/04/03/flambloozlement/"/>
    <updated>2020-04-03T00:00:00+00:00</updated>
-   <id>/2020/04/03/flambloozlement</id>
+   <id>http://0.0.0.0:5000/2020/04/03/flambloozlement</id>
    <content type="html">&lt;p&gt;How do students assess the value of what they learn in class? On the
 one hand, years of attending school have made them sophisticated
 judges of teaching effectiveness: They know whether an approach is
@@ -4402,9 +4834,9 @@ principles that form the main learning outcomes of our courses.&lt;/p&gt;
  
  <entry>
    <title>How hard is it to implement replicated state machines?</title>
-   <link href="/2020/03/08/difficulty-of-state-machines/"/>
+   <link href="http://0.0.0.0:5000/2020/03/08/difficulty-of-state-machines/"/>
    <updated>2020-03-08T00:00:00+00:00</updated>
-   <id>/2020/03/08/difficulty-of-state-machines</id>
+   <id>http://0.0.0.0:5000/2020/03/08/difficulty-of-state-machines</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Note: Over the past eight months, I have been working with the code for
 TenCent’s &lt;a href=&quot;https://github.com/Tencent/phxpaxos&quot;&gt;Phxpaxos&lt;/a&gt;, an
 open-source implementation of replicated state-machines, with
@@ -4802,9 +5234,9 @@ it correct for the many edge conditions and modes of partial failure.&lt;/p&gt;
  
  <entry>
    <title>Applying resilient design to my own systems</title>
-   <link href="/2020/02/13/systems-resilience-in-daily-life/"/>
+   <link href="http://0.0.0.0:5000/2020/02/13/systems-resilience-in-daily-life/"/>
    <updated>2020-02-13T00:00:00+00:00</updated>
-   <id>/2020/02/13/systems-resilience-in-daily-life</id>
+   <id>http://0.0.0.0:5000/2020/02/13/systems-resilience-in-daily-life</id>
    <content type="html">&lt;p&gt;When I teach a course in modern distributed systems design, I spend a
 lot of time on topics such as engineering for resilience and
 automating production processes. It turns out that applying those big
@@ -4889,9 +5321,9 @@ than much individual activity.&lt;/p&gt;
  
  <entry>
    <title>"Distributed Systems" are not what they used to be</title>
-   <link href="/2020/02/11/meaning-of-distributed-systems/"/>
+   <link href="http://0.0.0.0:5000/2020/02/11/meaning-of-distributed-systems/"/>
    <updated>2020-02-11T00:00:00+00:00</updated>
-   <id>/2020/02/11/meaning-of-distributed-systems</id>
+   <id>http://0.0.0.0:5000/2020/02/11/meaning-of-distributed-systems</id>
    <content type="html">&lt;p&gt;The phrase “distributed systems” has had several meanings over the
 last 50 years, from a mathematical topic to a style of
 engineering practice to a suite of technologies. What can
@@ -5157,9 +5589,9 @@ produce better solutions.&lt;/p&gt;
  
  <entry>
    <title>A strategy for more frequent posts</title>
-   <link href="/2020/01/29/increasing-post-frequency/"/>
+   <link href="http://0.0.0.0:5000/2020/01/29/increasing-post-frequency/"/>
    <updated>2020-01-29T00:00:00+00:00</updated>
-   <id>/2020/01/29/increasing-post-frequency</id>
+   <id>http://0.0.0.0:5000/2020/01/29/increasing-post-frequency</id>
    <content type="html">&lt;p&gt;I have many incomplete threads on distributed systems. How do I
 balance my desire for complete and correct presentations with the need
 to post more frequently?&lt;/p&gt;
@@ -5208,9 +5640,9 @@ make them and instead accepting imperfections as the price of timeliness.&lt;/p&
  
  <entry>
    <title>When are "motivating" images useful in a presentation?</title>
-   <link href="/2020/01/25/motivating-images/"/>
+   <link href="http://0.0.0.0:5000/2020/01/25/motivating-images/"/>
    <updated>2020-01-25T00:00:00+00:00</updated>
-   <id>/2020/01/25/motivating-images</id>
+   <id>http://0.0.0.0:5000/2020/01/25/motivating-images</id>
    <content type="html">&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; &lt;em&gt;I’m writing this post to clarify my thinking about an issue in
 presentation design. I’m using a stream-of-consciousness format,
 with little editing. You might want to skip this one if
@@ -5477,9 +5909,9 @@ but well-grounded result.&lt;/p&gt;
  
  <entry>
    <title>Figure failures (and successes!)</title>
-   <link href="/2020/01/21/figure-failures/"/>
+   <link href="http://0.0.0.0:5000/2020/01/21/figure-failures/"/>
    <updated>2020-01-21T00:00:00+00:00</updated>
-   <id>/2020/01/21/figure-failures</id>
+   <id>http://0.0.0.0:5000/2020/01/21/figure-failures</id>
    <content type="html">&lt;p&gt;Well-designed figures are invaluable for presenting technical detail,
 including architectural diagrams, timing diagrams, data visualizations,
 category hierarchies, and many other forms. Yet the simplicity and
@@ -5624,9 +6056,9 @@ for.&lt;/p&gt;
  
  <entry>
    <title>A class is a story: Fitting content to sessions</title>
-   <link href="/2020/01/16/class-as-story/"/>
+   <link href="http://0.0.0.0:5000/2020/01/16/class-as-story/"/>
    <updated>2020-01-16T00:00:00+00:00</updated>
-   <id>/2020/01/16/class-as-story</id>
+   <id>http://0.0.0.0:5000/2020/01/16/class-as-story</id>
    <content type="html">&lt;p&gt;Any given class is a story. It has a beginning, middle, and end. It
 arcs toward a conclusion.  The story can be deliberate and designed or
 it can be inadvertent and confused. Ultimately, the story will be
@@ -5704,9 +6136,9 @@ structure.&lt;/p&gt;
  
  <entry>
    <title>Roles vs. Silos, Contribution vs. Technology</title>
-   <link href="/2020/01/14/roles-vs-silos/"/>
+   <link href="http://0.0.0.0:5000/2020/01/14/roles-vs-silos/"/>
    <updated>2020-01-14T00:00:00+00:00</updated>
-   <id>/2020/01/14/roles-vs-silos</id>
+   <id>http://0.0.0.0:5000/2020/01/14/roles-vs-silos</id>
    <content type="html">&lt;p&gt;With the developing maturity of chaos engineering techniques, I see
 people taking the job title, “Chaos Engineer”. Although I think chaos
 engineer&lt;em&gt;ing&lt;/em&gt; is a truly useful field based upon important principles,
@@ -5762,9 +6194,9 @@ descriptions serve both organization and employee best.&lt;/p&gt;
  
  <entry>
    <title>What genres of readings should be assigned to Prof. MSc. students?</title>
-   <link href="/2020/01/10/readings-in-prof-masters/"/>
+   <link href="http://0.0.0.0:5000/2020/01/10/readings-in-prof-masters/"/>
    <updated>2020-01-10T00:00:00+00:00</updated>
-   <id>/2020/01/10/readings-in-prof-masters</id>
+   <id>http://0.0.0.0:5000/2020/01/10/readings-in-prof-masters</id>
    <content type="html">&lt;p&gt;What sort of materials should students read in a professional MSc.
 course in computing science? Journal articles? Research conference
 papers? Systems-oriented conference papers? Articles from
@@ -6014,9 +6446,9 @@ MSc. programs.&lt;/p&gt;
  
  <entry>
    <title>The service design space (2020 Edition)</title>
-   <link href="/2019/12/31/design-space-2020/"/>
+   <link href="http://0.0.0.0:5000/2019/12/31/design-space-2020/"/>
    <updated>2019-12-31T00:00:00+00:00</updated>
-   <id>/2019/12/31/design-space-2020</id>
+   <id>http://0.0.0.0:5000/2019/12/31/design-space-2020</id>
    <content type="html">
 &lt;p&gt;&lt;em&gt;Post in an ongoing series on the issues constraining service design
  for datacentres. A previous post presented 2019’s
@@ -6499,9 +6931,9 @@ actual service—into a production service.&lt;/p&gt;
  
  <entry>
    <title>"Awareness" outcomes as preparation for internships</title>
-   <link href="/2019/12/16/awareness-outcomes/"/>
+   <link href="http://0.0.0.0:5000/2019/12/16/awareness-outcomes/"/>
    <updated>2019-12-16T00:00:00+00:00</updated>
-   <id>/2019/12/16/awareness-outcomes</id>
+   <id>http://0.0.0.0:5000/2019/12/16/awareness-outcomes</id>
    <content type="html">&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; &lt;em&gt;Outside activities interrupted my posting here. Where did those five
 months go? I did generate a lot of potential posts on distributed
 systems, which I’ll discuss in coming posts. This post focusses
@@ -6797,9 +7229,9 @@ effective.&lt;/p&gt;
  
  <entry>
    <title>Why is distributed consensus so hard?</title>
-   <link href="/2019/06/12/why-consensus-is-hard/"/>
+   <link href="http://0.0.0.0:5000/2019/06/12/why-consensus-is-hard/"/>
    <updated>2019-06-12T00:00:00+00:00</updated>
-   <id>/2019/06/12/why-consensus-is-hard</id>
+   <id>http://0.0.0.0:5000/2019/06/12/why-consensus-is-hard</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series describing Howard &amp;amp; Mortier’s generalization of distributed consensus, expressed in PlusCal. The first entry &lt;a href=&quot;/2019/05/29/distributed-consensus-intro/&quot;&gt;introduced the source papers&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Updated &lt;strong&gt;May 27, 2020&lt;/strong&gt; to incorporate points from
@@ -7230,9 +7662,9 @@ description of Paxos.&lt;/p&gt;
  
  <entry>
    <title>Generalized distributed consensus in PlusCal: Introduction</title>
-   <link href="/2019/05/29/distributed-consensus-intro/"/>
+   <link href="http://0.0.0.0:5000/2019/05/29/distributed-consensus-intro/"/>
    <updated>2019-05-29T00:00:00+00:00</updated>
-   <id>/2019/05/29/distributed-consensus-intro</id>
+   <id>http://0.0.0.0:5000/2019/05/29/distributed-consensus-intro</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series describing Howard &amp;amp; Mortier’s generalization of
 distributed consensus, expressed in PlusCal. The next post describes
 &lt;a href=&quot;/2019/06/12/why-consensus-is-hard/&quot;&gt;why consensus is hard&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -7378,9 +7810,9 @@ consensus can be so challenging&lt;/a&gt;.&lt;/p&gt;
  
  <entry>
    <title>Simulation checks of the PlusCal version of Lamport's algorithm</title>
-   <link href="/2019/05/07/simulation-checks-of-pluscal-lamport/"/>
+   <link href="http://0.0.0.0:5000/2019/05/07/simulation-checks-of-pluscal-lamport/"/>
    <updated>2019-05-07T00:00:00+00:00</updated>
-   <id>/2019/05/07/simulation-checks-of-pluscal-lamport</id>
+   <id>http://0.0.0.0:5000/2019/05/07/simulation-checks-of-pluscal-lamport</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fifth in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The previous post was a
  &lt;a href=&quot;/2019/04/15/lamport-algorithm/&quot;&gt;description of Lamport’s 1978 mutual exclusion algorithm&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -7608,9 +8040,9 @@ when its assumptions are violated.&lt;/p&gt;
  
  <entry>
    <title>Lamport's 1978 mutual exclusion algorithm in PlusCal</title>
-   <link href="/2019/04/15/lamport-algorithm/"/>
+   <link href="http://0.0.0.0:5000/2019/04/15/lamport-algorithm/"/>
    <updated>2019-04-15T00:00:00+00:00</updated>
-   <id>/2019/04/15/lamport-algorithm</id>
+   <id>http://0.0.0.0:5000/2019/04/15/lamport-algorithm</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fourth in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The previous post was a
  &lt;a href=&quot;/2019/01/18/fairness-semantics-of-pluscal/&quot;&gt;specialized discussion of the fairness semantics of PlusCal&lt;/a&gt;. The
@@ -8039,9 +8471,9 @@ end macro
  
  <entry>
    <title>Fairness semantics of PlusCal</title>
-   <link href="/2019/01/18/fairness-semantics-of-pluscal/"/>
+   <link href="http://0.0.0.0:5000/2019/01/18/fairness-semantics-of-pluscal/"/>
    <updated>2019-01-18T00:00:00+00:00</updated>
-   <id>/2019/01/18/fairness-semantics-of-pluscal</id>
+   <id>http://0.0.0.0:5000/2019/01/18/fairness-semantics-of-pluscal</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The second post
  &lt;a href=&quot;/2019/01/03/distributed-algorithms-in-pluscal/&quot;&gt;presented some PlusCal conventions for writing distributed algorithms&lt;/a&gt;. The
@@ -8313,9 +8745,9 @@ impact.&lt;/p&gt;
  
  <entry>
    <title>Distributed algorithms in PlusCal</title>
-   <link href="/2019/01/03/distributed-algorithms-in-pluscal/"/>
+   <link href="http://0.0.0.0:5000/2019/01/03/distributed-algorithms-in-pluscal/"/>
    <updated>2019-01-03T00:00:00+00:00</updated>
-   <id>/2019/01/03/distributed-algorithms-in-pluscal</id>
+   <id>http://0.0.0.0:5000/2019/01/03/distributed-algorithms-in-pluscal</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The first post
  &lt;a href=&quot;/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/&quot;&gt;presented the context and why the topic is important&lt;/a&gt;. The
@@ -8678,9 +9110,9 @@ syntax and explore a subtle point of the semantics of PlusCal.&lt;/p&gt;
  
  <entry>
    <title>Exploring distributed algorithm failures using TLA Toolbox</title>
-   <link href="/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/"/>
+   <link href="http://0.0.0.0:5000/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox/"/>
    <updated>2018-10-31T00:00:00+00:00</updated>
-   <id>/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox</id>
+   <id>http://0.0.0.0:5000/2018/10/31/exploring-distributed-algorithm-failures-using-tla-toolbox</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series on using the TLA Toolbox to explore the failure
  tolerance of distributed algorithms. The next post describes
  &lt;a href=&quot;/2019/01/03/distributed-algorithms-in-pluscal/&quot;&gt;conventions for distributed algorithms in PlusCal&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -8871,9 +9303,9 @@ fodder for a whole series of posts.&lt;/p&gt;
  
  <entry>
    <title>Assignments with coding only teach coding</title>
-   <link href="/2018/10/26/assignments-with-coding-only-teach-coding/"/>
+   <link href="http://0.0.0.0:5000/2018/10/26/assignments-with-coding-only-teach-coding/"/>
    <updated>2018-10-26T00:00:00+00:00</updated>
-   <id>/2018/10/26/assignments-with-coding-only-teach-coding</id>
+   <id>http://0.0.0.0:5000/2018/10/26/assignments-with-coding-only-teach-coding</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fourth in a series on designing a course on data engineering.  The
  previous post listed the
  &lt;a href=&quot;/2018/10/23/data-engineering-prerequisites/&quot;&gt;minimal operating system and networking knowlege&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -9050,9 +9482,9 @@ January 2019, so I must pick realistic goals.&lt;/p&gt;
  
  <entry>
    <title>Minimal OS and networking knowledge for a data engineering course</title>
-   <link href="/2018/10/23/data-engineering-prerequisites/"/>
+   <link href="http://0.0.0.0:5000/2018/10/23/data-engineering-prerequisites/"/>
    <updated>2018-10-23T00:00:00+00:00</updated>
-   <id>/2018/10/23/data-engineering-prerequisites</id>
+   <id>http://0.0.0.0:5000/2018/10/23/data-engineering-prerequisites</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on designing a data engineering course.  The
  previous post presented
  &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;draft learning outcomes&lt;/a&gt;. The
@@ -9242,9 +9674,9 @@ the
  
  <entry>
    <title>Draft learning outcomes for data engineering course</title>
-   <link href="/2018/10/18/data-engineering-learning-outcomes/"/>
+   <link href="http://0.0.0.0:5000/2018/10/18/data-engineering-learning-outcomes/"/>
    <updated>2018-10-18T00:00:00+00:00</updated>
-   <id>/2018/10/18/data-engineering-learning-outcomes</id>
+   <id>http://0.0.0.0:5000/2018/10/18/data-engineering-learning-outcomes</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series about designing a professional master’s course on
  data engineering.  The first post laid out the
  &lt;a href=&quot;/2018/10/13/data-engineering-design-space/&quot;&gt;data engineering design space&lt;/a&gt;. The
@@ -9345,9 +9777,9 @@ necessarily observe them closely as the actual course unfolds.&lt;/p&gt;
  
  <entry>
    <title>The data engineering design space (2019 Edition)</title>
-   <link href="/2018/10/13/data-engineering-design-space/"/>
+   <link href="http://0.0.0.0:5000/2018/10/13/data-engineering-design-space/"/>
    <updated>2018-10-13T00:00:00+00:00</updated>
-   <id>/2018/10/13/data-engineering-design-space</id>
+   <id>http://0.0.0.0:5000/2018/10/13/data-engineering-design-space</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First in a series on designing a course on data engineering.  The
  next post specifies the
  &lt;a href=&quot;/2018/10/18/data-engineering-learning-outcomes/&quot;&gt;learning outcomes&lt;/a&gt;.
@@ -9662,9 +10094,9 @@ actual service—into a production service.&lt;/p&gt;
  
  <entry>
    <title>Myth-spotting</title>
-   <link href="/2018/10/03/myth-spotting/"/>
+   <link href="http://0.0.0.0:5000/2018/10/03/myth-spotting/"/>
    <updated>2018-10-03T00:00:00+00:00</updated>
-   <id>/2018/10/03/myth-spotting</id>
+   <id>http://0.0.0.0:5000/2018/10/03/myth-spotting</id>
    <content type="html">&lt;p&gt;As part of a larger project, I’m reading many articles from the
 management literature. This is a very different kind of writing and
 argument than I’m used to in the technical side of computing. The
@@ -9824,9 +10256,9 @@ part for the next post.&lt;/p&gt;
  
  <entry>
    <title>The vision: A culture of effective meetings</title>
-   <link href="/2018/09/26/the-vision-a-culture-of-effective-meetings/"/>
+   <link href="http://0.0.0.0:5000/2018/09/26/the-vision-a-culture-of-effective-meetings/"/>
    <updated>2018-09-26T00:00:00+00:00</updated>
-   <id>/2018/09/26/the-vision-a-culture-of-effective-meetings</id>
+   <id>http://0.0.0.0:5000/2018/09/26/the-vision-a-culture-of-effective-meetings</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Seventh and final post in a series on group decision-making, based on
 Ch. 10–11 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -9896,9 +10328,9 @@ some distinct differences. Stay tuned!&lt;/p&gt;
  
  <entry>
    <title>Decision sculpting: Stepping back to see the whole mosaic</title>
-   <link href="/2018/09/21/decision-sculpting/"/>
+   <link href="http://0.0.0.0:5000/2018/09/21/decision-sculpting/"/>
    <updated>2018-09-21T00:00:00+00:00</updated>
-   <id>/2018/09/21/decision-sculpting</id>
+   <id>http://0.0.0.0:5000/2018/09/21/decision-sculpting</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Sixth in a series on group decision-making, based on Ch. 10–11
 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;.
@@ -9983,9 +10415,9 @@ series on the topic of soft skills.&lt;/p&gt;
  
  <entry>
    <title>Three evidence-based books for better teaching</title>
-   <link href="/2018/09/19/three-evidence-based-books-for-better-teaching/"/>
+   <link href="http://0.0.0.0:5000/2018/09/19/three-evidence-based-books-for-better-teaching/"/>
    <updated>2018-09-19T00:00:00+00:00</updated>
-   <id>/2018/09/19/three-evidence-based-books-for-better-teaching</id>
+   <id>http://0.0.0.0:5000/2018/09/19/three-evidence-based-books-for-better-teaching</id>
    <content type="html">&lt;p&gt;I’ve read many books on effective university education, covering a
 range of topics and perspectives.  An annotated bibliography of them
 all would be a &lt;em&gt;long&lt;/em&gt; post.&lt;/p&gt;
@@ -10177,9 +10609,9 @@ to avoid the traps of myths presented as received wisdom.&lt;/p&gt;
  
  <entry>
    <title>Learning decision crystallization</title>
-   <link href="/2018/09/16/learning-decision-crystallization/"/>
+   <link href="http://0.0.0.0:5000/2018/09/16/learning-decision-crystallization/"/>
    <updated>2018-09-16T00:00:00+00:00</updated>
-   <id>/2018/09/16/learning-decision-crystallization</id>
+   <id>http://0.0.0.0:5000/2018/09/16/learning-decision-crystallization</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fifth in a series on group decision-making, based on Ch. 10–11 of &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The previous post
 showed &lt;a href=&quot;/2018/09/05/discussion-rounds-and-decision-crystallization/&quot;&gt;how to crystallize a decision out of a round of discussion&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
@@ -10298,9 +10730,9 @@ the final step,
  
  <entry>
    <title>Discussion rounds and decision crystallization</title>
-   <link href="/2018/09/05/discussion-rounds-and-decision-crystallization/"/>
+   <link href="http://0.0.0.0:5000/2018/09/05/discussion-rounds-and-decision-crystallization/"/>
    <updated>2018-09-05T00:00:00+00:00</updated>
-   <id>/2018/09/05/discussion-rounds-and-decision-crystallization</id>
+   <id>http://0.0.0.0:5000/2018/09/05/discussion-rounds-and-decision-crystallization</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Fourth in a series on group decision-making, based on Ch. 10–11 of &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The previous post
 showed &lt;a href=&quot;/2018/08/29/the-decision-mosaic-every-piece-in-place/&quot;&gt;how to pick the next decision element to discuss&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
@@ -10427,9 +10859,9 @@ why this ought to be the next item:&lt;/p&gt;
  
  <entry>
    <title>Disqus comments enabled</title>
-   <link href="/2018/09/04/disqus-enabled/"/>
+   <link href="http://0.0.0.0:5000/2018/09/04/disqus-enabled/"/>
    <updated>2018-09-04T00:00:00+00:00</updated>
-   <id>/2018/09/04/disqus-enabled</id>
+   <id>http://0.0.0.0:5000/2018/09/04/disqus-enabled</id>
    <content type="html">&lt;p&gt;I have set up Disqus comments on each post. Google Analytics shows that recent posts are generating some views, so it seemed time to finally turn comments on.&lt;/p&gt;
 
 &lt;p&gt;I hope I’ve set everything up correctly but, as with any technical
@@ -10440,9 +10872,9 @@ me know at &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;te
  
  <entry>
    <title>The decision mosaic: Every piece in place</title>
-   <link href="/2018/08/29/the-decision-mosaic-every-piece-in-place/"/>
+   <link href="http://0.0.0.0:5000/2018/08/29/the-decision-mosaic-every-piece-in-place/"/>
    <updated>2018-08-29T00:00:00+00:00</updated>
-   <id>/2018/08/29/the-decision-mosaic-every-piece-in-place</id>
+   <id>http://0.0.0.0:5000/2018/08/29/the-decision-mosaic-every-piece-in-place</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Third in a series on group decision-making, based on Ch. 10–11
 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;. The
@@ -10646,9 +11078,9 @@ sequence&lt;/a&gt;.&lt;/p&gt;
  
  <entry>
    <title>Decision crystallization: Form emerging from solution</title>
-   <link href="/2018/08/24/decision-crystallization/"/>
+   <link href="http://0.0.0.0:5000/2018/08/24/decision-crystallization/"/>
    <updated>2018-08-24T00:00:00+00:00</updated>
-   <id>/2018/08/24/decision-crystallization</id>
+   <id>http://0.0.0.0:5000/2018/08/24/decision-crystallization</id>
    <content type="html">&lt;p&gt;&lt;em&gt;Second in a series on group decision-making, based on Ch. 10–11
 of
 &lt;a href=&quot;https://www.amazon.com/Making-Meetings-Work-Achieving-Decisions/dp/0761927050/&quot;&gt;Making Meetings Work&lt;/a&gt;.
@@ -10689,9 +11121,9 @@ producing mediocre results?&lt;/p&gt;
  
  <entry>
    <title>Attributing causality has important practical consequences</title>
-   <link href="/2018/08/22/attributing-causality-has-important-consequences/"/>
+   <link href="http://0.0.0.0:5000/2018/08/22/attributing-causality-has-important-consequences/"/>
    <updated>2018-08-22T00:00:00+00:00</updated>
-   <id>/2018/08/22/attributing-causality-has-important-consequences</id>
+   <id>http://0.0.0.0:5000/2018/08/22/attributing-causality-has-important-consequences</id>
    <content type="html">&lt;p&gt;Yesterday Matthew Zeitlin tweeted:&lt;/p&gt;
 
 &lt;blockquote class=&quot;twitter-tweet&quot; data-lang=&quot;en&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;If you uncover an interesting correlation, hoards of wonks and twitter pedants will bray that all you have is a correlation, but if you do the work to &amp;quot;show&amp;quot; causation, those same people will bury you in little detailed complaints about how you did it&lt;/p&gt;&amp;mdash; Matthew Zeitlin (@MattZeitlin) &lt;a href=&quot;https://twitter.com/MattZeitlin/status/1032064399203287040?ref_src=twsrc%5Etfw&quot;&gt;August 22, 2018&lt;/a&gt;&lt;/blockquote&gt;
@@ -10717,9 +11149,9 @@ producing mediocre results?&lt;/p&gt;
  
  <entry>
    <title>Don't let your babies grow up to be microbenchmarkers!</title>
-   <link href="/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/"/>
+   <link href="http://0.0.0.0:5000/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/"/>
    <updated>2018-08-20T00:00:00+00:00</updated>
-   <id>/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers</id>
+   <id>http://0.0.0.0:5000/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers</id>
    <content type="html">&lt;p&gt;I never wanted to be a microbenchmarker. I was OK with a modest but
 respectable career choice, such as programming in &lt;a href=&quot;https://en.wikipedia.org/wiki/IBM_RPG_II&quot;&gt;RPG II&lt;/a&gt;
 or &lt;a href=&quot;http://www.computerhistory.org/collections/catalog/102635171&quot;&gt;IBM 1604 assembler&lt;/a&gt;.&lt;/p&gt;
@@ -10872,9 +11304,9 @@ expectations to a more realistic level.&lt;/p&gt;
  
  <entry>
    <title>The best process for effective group decisions</title>
-   <link href="/2018/08/13/the-best-process-for-group-decisions/"/>
+   <link href="http://0.0.0.0:5000/2018/08/13/the-best-process-for-group-decisions/"/>
    <updated>2018-08-13T00:00:00+00:00</updated>
-   <id>/2018/08/13/the-best-process-for-group-decisions</id>
+   <id>http://0.0.0.0:5000/2018/08/13/the-best-process-for-group-decisions</id>
    <content type="html">&lt;p&gt;&lt;em&gt;First post in a series on group decision-making.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;The series:&lt;/em&gt;&lt;/p&gt;
@@ -10935,9 +11367,9 @@ expectations to a more realistic level.&lt;/p&gt;
  
  <entry>
    <title>The many and varied audiences for Big Data training</title>
-   <link href="/2017/08/13/the-many-and-varied-audiences-for-big-data-training/"/>
+   <link href="http://0.0.0.0:5000/2017/08/13/the-many-and-varied-audiences-for-big-data-training/"/>
    <updated>2017-08-13T00:00:00+00:00</updated>
-   <id>/2017/08/13/the-many-and-varied-audiences-for-big-data-training</id>
+   <id>http://0.0.0.0:5000/2017/08/13/the-many-and-varied-audiences-for-big-data-training</id>
    <content type="html">&lt;p&gt;There’s a wide range of Big Data training on offer, from full in-person university degree programs (in the North American context, typically Master’s degrees), to certificates from online universities (such as Coursera or EdX), to short professional development courses from for-profit trainers.  A common element of the sales pitches is the presumed universality of the need.  Every discipline and nearly every profession, it is claimed, will benefit from the technologies of Big Data.  Some pitches make an even stronger claim, that incorporating data analysis is now &lt;em&gt;essential&lt;/em&gt; for success.&lt;/p&gt;
 
 &lt;p&gt;These pitches tacitly presume another form of universality: That a small suite of courses will be sufficient to cover all potential audiences. For example, the on-line courses in data analysis from Coursera fall into several distinct categories:&lt;/p&gt;
@@ -10996,9 +11428,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Random access to long string bodies incurs cache misses</title>
-   <link href="/2017/06/29/rand-access-long-cache-misses/"/>
+   <link href="http://0.0.0.0:5000/2017/06/29/rand-access-long-cache-misses/"/>
    <updated>2017-06-29T00:00:00+00:00</updated>
-   <id>/2017/06/29/rand-access-long-cache-misses</id>
+   <id>http://0.0.0.0:5000/2017/06/29/rand-access-long-cache-misses</id>
    <content type="html">&lt;p&gt;As I &lt;a href=&quot;/2017/06/23/for-long-strings-access-order-determines-performance/&quot;&gt;described in the last post&lt;/a&gt;, shuffling the items in the source vector leaves the string handles in contiguous sequential order while introducing disorder into the sequence of string bodies. The NShuffled “data set” is really a family of 11 related data sets, differing in the fraction of their items that were shuffled.  All sets start with the same vector &lt;code&gt;src&lt;/code&gt; of 50,000 elements, then &lt;code&gt;std::shuffle()&lt;/code&gt; is run on the first &lt;i&gt;N&lt;/i&gt; items in the vector, where &lt;i&gt;N&lt;/i&gt; ranges from 0 (no items shuffled) to 50,000 (all items shuffled) in increments of 5,000. All the data sets will have 37,500 (75% of 50,000) of their source elements copied to the result vector.&lt;/p&gt;
 
 &lt;p&gt;These data sets allow us to correlate the degree of disorder in the string bodies with the execution time of the filter-and-transform algorithm.  More disorder in the string bodies produces more cache misses, slowing performance. I will use the NShuffle data sets to demonstrate this.&lt;/p&gt;
@@ -11118,9 +11550,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>For long strings, access order determines performance</title>
-   <link href="/2017/06/23/for-long-strings-access-order-determines-performance/"/>
+   <link href="http://0.0.0.0:5000/2017/06/23/for-long-strings-access-order-determines-performance/"/>
    <updated>2017-06-23T00:00:00+00:00</updated>
-   <id>/2017/06/23/for-long-strings-access-order-determines-performance</id>
+   <id>http://0.0.0.0:5000/2017/06/23/for-long-strings-access-order-determines-performance</id>
    <content type="html">&lt;p&gt;In the last post, I described several possible causes of the slowdown for long strings in the by-value version of the idioms.  I concluded the most likely actual cause was the order in which the string bodies are accessed.&lt;/p&gt;
 
 &lt;h2&gt;Structure of long strings in &lt;code&gt;libstdc++&lt;/code&gt;&lt;/h2&gt;
@@ -11209,9 +11641,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Sidling up to the long string slowdown</title>
-   <link href="/2017/06/14/sidling-up-to-the-long-string-slowdown/"/>
+   <link href="http://0.0.0.0:5000/2017/06/14/sidling-up-to-the-long-string-slowdown/"/>
    <updated>2017-06-14T00:00:00+00:00</updated>
-   <id>/2017/06/14/sidling-up-to-the-long-string-slowdown</id>
+   <id>http://0.0.0.0:5000/2017/06/14/sidling-up-to-the-long-string-slowdown</id>
    <content type="html">&lt;p&gt;In the last post, I highlighted an anomaly in the results for filtering long strings using the by-value implementation of the loop. The usual suspect for such outcomes, heap fragmentation, didn’t seem to apply in this case. What might be the actual source of the problem?&lt;/p&gt;
 
 &lt;p&gt;The slowdown arises only for long strings, which suggests it is related to the heap, as long strings are the only form of string considered in these posts that use the heap. Unique &lt;code&gt;char const *&lt;/code&gt; strings only move pointers, while short strings, &lt;code&gt;std::string&lt;/code&gt; instances less than 16 characters, are stored in the string handle by &lt;code&gt;libstdc++&lt;/code&gt; 6.2. The degree of slowdown correlates well with the number of elements that have been moved in the source vector after it was initially created.  This suggests that the slowdown is related to some measure of the “degree of disorder” in the heap.&lt;/p&gt;
@@ -11243,9 +11675,9 @@ create a much larger number of domain-specific courses.&lt;/p&gt;
  
  <entry>
    <title>Microbenchmarks are highly sensitive to the heap context!</title>
-   <link href="/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"/>
+   <link href="http://0.0.0.0:5000/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context/"/>
    <updated>2017-06-10T00:00:00+00:00</updated>
-   <id>/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context</id>
+   <id>http://0.0.0.0:5000/2017/06/10/microbenchmarks-are-highly-sensitive-to-the-heap-context</id>
    <content type="html">&lt;p&gt;Over two weeks ago, I posted an article about &lt;a href=&quot;/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/&quot;&gt;by-value parameters in the loop and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;transform&lt;/code&gt; idioms&lt;/a&gt;. Included in one of the plots was an anomaly that, when I considered it more closely, blew up the analysis.  In fact, I’ve spent most of the past two weeks following up on the implications of this seemingly small anomaly. Ultimately, it’s given me reason to question the reliability of microbenchmarks in a wide range of circumstances. And after two weeks of work, using a variety of tools, I remain unclear about the underlying phenomenon. I’m writing a series of posts to clarify what I’ve learned to date and to set my future agenda.&lt;/p&gt;
 
 &lt;h2&gt;The anomaly&lt;/h2&gt;
@@ -11408,9 +11840,9 @@ end:
  
  <entry>
    <title>The elegant machine code for char const *</title>
-   <link href="/2017/05/24/the-elegant-machine-code-for-char-const/"/>
+   <link href="http://0.0.0.0:5000/2017/05/24/the-elegant-machine-code-for-char-const/"/>
    <updated>2017-05-24T00:00:00+00:00</updated>
-   <id>/2017/05/24/the-elegant-machine-code-for-char-const</id>
+   <id>http://0.0.0.0:5000/2017/05/24/the-elegant-machine-code-for-char-const</id>
    <content type="html">&lt;p&gt;Unique strings—null-terminated strings uniquely identified by their &lt;code&gt;char const *&lt;/code&gt;—are the simplest type considered in this series of posts. Constructing, copying, moving, and assigning these strings are trivial operations on a single pointer. No destructor code is required.&lt;/p&gt;
 
 &lt;p&gt;This simplicity was reflected in the benchmarks. Unique strings were
@@ -11572,9 +12004,9 @@ generated identical code and &lt;a href=&quot;/2017/05/22/passing-stdstring-by-v
  
  <entry>
    <title>Passing std::string by-value noticeably slows the idioms</title>
-   <link href="/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/"/>
+   <link href="http://0.0.0.0:5000/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms/"/>
    <updated>2017-05-22T00:00:00+00:00</updated>
-   <id>/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms</id>
+   <id>http://0.0.0.0:5000/2017/05/22/passing-stdstring-by-value-noticeably-slows-the-idioms</id>
    <content type="html">&lt;p&gt;The &lt;a href=&quot;/2017/05/19/benchmarking-the-transform-and-loop-idioms/&quot;&gt;benchmarks comparing &lt;code&gt;transform&lt;/code&gt; to a
 loop&lt;/a&gt; also highlighted the substantial contribution that copying values made to their performance. Copying costs become especially noticeable for complex types, such as standard strings too long to fit in the short string optimization.&lt;/p&gt;
 
@@ -11682,9 +12114,9 @@ loop&lt;/a&gt; also highlighted the substantial contribution that copying values
  
  <entry>
    <title>Benchmarking the transform and loop idioms</title>
-   <link href="/2017/05/19/benchmarking-the-transform-and-loop-idioms/"/>
+   <link href="http://0.0.0.0:5000/2017/05/19/benchmarking-the-transform-and-loop-idioms/"/>
    <updated>2017-05-19T00:00:00+00:00</updated>
-   <id>/2017/05/19/benchmarking-the-transform-and-loop-idioms</id>
+   <id>http://0.0.0.0:5000/2017/05/19/benchmarking-the-transform-and-loop-idioms</id>
    <content type="html">&lt;p&gt;&lt;strong&gt;Update: Mon Aug 20, 2018:&lt;/strong&gt; Also see this &lt;a href=&quot;/2018/08/20/dont-let-your-babies-grow-up-to-be-microbenchmarkers/&quot;&gt;semi-rant about the limitations of microbenchmarkering&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;The last posts compared the machine code generated by &lt;code&gt;transform&lt;/code&gt; and the equivalent idiom using an explicit &lt;code&gt;for&lt;/code&gt; loop and &lt;code&gt;if&lt;/code&gt; statement.  The &lt;code&gt;transform&lt;/code&gt; idiom generated more intermediate copies of the &lt;code&gt;std::string&lt;/code&gt; member than the loop.&lt;/p&gt;
@@ -12102,9 +12534,9 @@ The &lt;code&gt;transform&lt;/code&gt; idiom used &lt;code&gt;push_back()&lt;/co
  
  <entry>
    <title>Analysis of code generated from the transform idiom</title>
-   <link href="/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/"/>
+   <link href="http://0.0.0.0:5000/2017/05/03/analysis-of-code-generated-from-the-transform-idiom/"/>
    <updated>2017-05-03T00:00:00+00:00</updated>
-   <id>/2017/05/03/analysis-of-code-generated-from-the-transform-idiom</id>
+   <id>http://0.0.0.0:5000/2017/05/03/analysis-of-code-generated-from-the-transform-idiom</id>
    <content type="html">&lt;p&gt;The last post presented the baseline C++ code and its generated machine code. Now it’s time to compare the code generated by the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;std::transform&lt;/code&gt; idiom and see how well it fares.&lt;/p&gt;
 
 &lt;h2&gt;Removing two inefficiencies&lt;/h2&gt;
@@ -12401,9 +12833,9 @@ in the element at &lt;code class=&quot;language-plaintext highlighter-rouge&quot
  
  <entry>
    <title>Performance of the STL idiom for list comprehension: Introduction</title>
-   <link href="/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/"/>
+   <link href="http://0.0.0.0:5000/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction/"/>
    <updated>2017-05-02T00:00:00+00:00</updated>
-   <id>/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction</id>
+   <id>http://0.0.0.0:5000/2017/05/02/performance-of-the-stl-idiom-for-list-comprehension-introduction</id>
    <content type="html">&lt;p&gt;In my &lt;a href=&quot;/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/&quot;&gt;last post&lt;/a&gt;, I promised to consider the machine code generated from the STL idiom equivalent to a basic Python list comprehension. As I proceeded, the project expanded to a broader analysis of the idiom’s performance. I am shocked at how much effort this project took.  I have spent much of the last five weeks generating and reading the output from g++ 6.2.  So. Many. Alternatives.  In this post, I’ll describe my baseline for comparison and the criteria I’ll use. In future posts, I’ll present the results.&lt;/p&gt;
 
 &lt;p&gt;All performance analyses are fraught. Conference speakers frequently argue that the gold standard is to run your actual code on your actual data, or as close to actual code and data as you can get. I think this claim is overly strong, but whatever its merits, by design this method by provides no general comparison of two approaches to writing code, only specific results for your context.&lt;/p&gt;
@@ -12608,9 +13040,9 @@ in the element at &lt;code class=&quot;language-plaintext highlighter-rouge&quot
  
  <entry>
    <title>A single STL statement equivalent to the basic Python list comprehension</title>
-   <link href="/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/"/>
+   <link href="http://0.0.0.0:5000/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension/"/>
    <updated>2017-03-26T00:00:00+00:00</updated>
-   <id>/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension</id>
+   <id>http://0.0.0.0:5000/2017/03/26/a-single-stl-statement-equivalent-to-the-basic-python-list-comprehension</id>
    <content type="html">&lt;p&gt;In &lt;a href=&quot;/2017/03/21/the-limits-of-list-comprehensions/&quot;&gt;the last post&lt;/a&gt;, I described the structure of the basic Python list comprehension&lt;/p&gt;
 
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[expression1(var) for var in expression2 if condition(var)]
@@ -12848,9 +13280,9 @@ to building the result vector&lt;/a&gt;, though the reserve/insert-back one used
  
  <entry>
    <title>The limits of list comprehensions</title>
-   <link href="/2017/03/21/the-limits-of-list-comprehensions/"/>
+   <link href="http://0.0.0.0:5000/2017/03/21/the-limits-of-list-comprehensions/"/>
    <updated>2017-03-21T00:00:00+00:00</updated>
-   <id>/2017/03/21/the-limits-of-list-comprehensions</id>
+   <id>http://0.0.0.0:5000/2017/03/21/the-limits-of-list-comprehensions</id>
    <content type="html">&lt;p&gt;I’ve spent my recent posts unfavourably comparing the STL design of containers/iterators/algorithms with Python list comprehensions and their close relatives in Haskell.  This is an unfairly restrictive way to view the STL design, which addresses a wider range of use cases than the ones addressed by list comprehensions.  But it is also unfair in that it ignores the limitations of list comprehensions themselves, limitations avoided by the more general structure provided by the STL.  In this post, I’ll start from the other direction, considering the inherent limitations of Python list comprehensions. This in turn leads to an idiom in the STL that in fact provides virtually all the functionality of basic list comprehensions, with only slightly more complex syntax.&lt;/p&gt;
 
 &lt;h2&gt;The general and basic forms of Python list comprehensions&lt;/h2&gt;
@@ -12944,9 +13376,9 @@ to building the result vector&lt;/a&gt;, though the reserve/insert-back one used
  
  <entry>
    <title>A simpler, fourth idiom for appending</title>
-   <link href="/2017/03/09/a-simpler-fourth-idiom-for-appending/"/>
+   <link href="http://0.0.0.0:5000/2017/03/09/a-simpler-fourth-idiom-for-appending/"/>
    <updated>2017-03-09T00:00:00+00:00</updated>
-   <id>/2017/03/09/a-simpler-fourth-idiom-for-appending</id>
+   <id>http://0.0.0.0:5000/2017/03/09/a-simpler-fourth-idiom-for-appending</id>
    <content type="html">&lt;p&gt;This morning, I realized that there is a fourth approach to appending items to a vector that combines &lt;a href=&quot;/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/&quot;&gt;elements of the first and third&lt;/a&gt;.  I’m embarrassed to have missed this one because it is a longstanding, well-understood approach that’s particularly applicable to the kinds of “list comprehension algorithms” I’m considering in this series.&lt;/p&gt;
 
 &lt;p&gt;Reviewing the output of the first method, a large proportion of the extra effort is due to the incremental &lt;em&gt;allocation&lt;/em&gt; of the vector’s data member, where the values are actually stored. In some use cases, this is the best you can do because you do not know in advance how large the result is going to be. However, in the case considered in our examples, we know exactly how many elements the result will have:  exactly as many elements as the source vector.  In such cases, we can pre-allocate a storage block of the right size and then the back insertions simply consist of moving the values into that allocated space, with no reallocations to expand the vector. This was a crucial part of the efficiency of the third idiom, using &lt;code&gt;emplace_back()&lt;/code&gt;.&lt;/p&gt;
@@ -13016,9 +13448,9 @@ Destructor for T0
  
  <entry>
    <title>Three idioms for appending values&mdash;a damaging decision?</title>
-   <link href="/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"/>
+   <link href="http://0.0.0.0:5000/2017/03/07/three-idioms-for-appending-values-a-damaging-decision/"/>
    <updated>2017-03-07T00:00:00+00:00</updated>
-   <id>/2017/03/07/three-idioms-for-appending-values-a-damaging-decision</id>
+   <id>http://0.0.0.0:5000/2017/03/07/three-idioms-for-appending-values-a-damaging-decision</id>
    <content type="html">&lt;p&gt;&lt;b&gt;Update:&lt;/b&gt; See also the &lt;a href=&quot;/2017/03/09/a-simpler-fourth-idiom-for-appending/&quot;&gt;next post&lt;/a&gt;, which adds a fourth idiom and mitigates some of the criticisms in the conclusion of this post.&lt;/p&gt;
 
 &lt;p&gt;The &lt;a href=&quot;/2017/02/22/iterators-a-failure-case/&quot;&gt;STL code for squaring the positive values&lt;/a&gt;, included the following lines to create the intermediate result &lt;code&gt;t1&lt;/code&gt; containing the positive values of the original list &lt;code&gt;a&lt;/code&gt;:&lt;/p&gt;
@@ -13541,9 +13973,9 @@ Basic constructor for c3[4]
  
  <entry>
    <title>Iterators aren’t the problem, they just enable it</title>
-   <link href="/2017/03/03/iterators-arent-the-problem-they-just-enable-it/"/>
+   <link href="http://0.0.0.0:5000/2017/03/03/iterators-arent-the-problem-they-just-enable-it/"/>
    <updated>2017-03-03T00:00:00+00:00</updated>
-   <id>/2017/03/03/iterators-arent-the-problem-they-just-enable-it</id>
+   <id>http://0.0.0.0:5000/2017/03/03/iterators-arent-the-problem-they-just-enable-it</id>
    <content type="html">&lt;p&gt;The post presenting the &lt;a href=&quot;/2017/02/22/iterators-a-failure-case/&quot;&gt;failure case for iterators&lt;/a&gt; contrasted this simple Python list comprehension:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
@@ -13587,9 +14019,9 @@ Basic constructor for c3[4]
  
  <entry>
    <title>The genius insight behind iterators</title>
-   <link href="/2017/03/01/the-genius-insight-behind-iterators/"/>
+   <link href="http://0.0.0.0:5000/2017/03/01/the-genius-insight-behind-iterators/"/>
    <updated>2017-03-01T00:00:00+00:00</updated>
-   <id>/2017/03/01/the-genius-insight-behind-iterators</id>
+   <id>http://0.0.0.0:5000/2017/03/01/the-genius-insight-behind-iterators</id>
    <content type="html">&lt;p&gt;The story so far:&lt;/p&gt;
 
 &lt;ol&gt;
@@ -13758,9 +14190,9 @@ I’ll return to this below.&lt;/p&gt;
  
  <entry>
    <title>Lambdas: Typical use cases</title>
-   <link href="/2017/02/25/lambdas-typical-use-cases/"/>
+   <link href="http://0.0.0.0:5000/2017/02/25/lambdas-typical-use-cases/"/>
    <updated>2017-02-25T00:00:00+00:00</updated>
-   <id>/2017/02/25/lambdas-typical-use-cases</id>
+   <id>http://0.0.0.0:5000/2017/02/25/lambdas-typical-use-cases</id>
    <content type="html">&lt;p&gt;My last post, highlighting the differences between C++ lambdas and the lambdas in languages based upon functional programs, went more deeply into the weeds than I had intended. I realized too late that it cried out for examples.  The rules for declaring free variables (the member variables of the anonymous class) in C++ lambdas can seem contorted but most uses of them fall into one of a few simple types.  In this post, I want to present three simple use cases of C++ lambdas, each demonstrating a different way to use free variables.&lt;/p&gt;
 
 &lt;h2&gt;Copy-constructed constant values&lt;/h2&gt;
@@ -13828,9 +14260,9 @@ I’ll return to this below.&lt;/p&gt;
  
  <entry>
    <title>Lambdas: Sweet, sweet syntactic sugar</title>
-   <link href="/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/"/>
+   <link href="http://0.0.0.0:5000/2017/02/23/lambdas-sweet-sweet-syntactic-sugar/"/>
    <updated>2017-02-23T00:00:00+00:00</updated>
-   <id>/2017/02/23/lambdas-sweet-sweet-syntactic-sugar</id>
+   <id>http://0.0.0.0:5000/2017/02/23/lambdas-sweet-sweet-syntactic-sugar</id>
    <content type="html">&lt;p&gt;&lt;b&gt;Update:&lt;/b&gt; The &lt;a href=&quot;/2017/02/25/lambdas-typical-use-cases/&quot;&gt;next post&lt;/a&gt; provides recipes for common use cases of lambdas.  If parts of this post seem too abstract, you might find the examples in the next post clarify things.&lt;/p&gt;
 
 &lt;p&gt;STL iterators and algorithms really can’t be discussed without also talking about lambdas. Although the STL design predates the introduction of lambdas by almost two decades, the introduction of lambdas in C++ 2011 improved the usability of STL algorithms substantially.  I don’t have statistics but I presume that the STL algorithms now receive substantially more use due to the greater simplicity of passing callbacks as lambdas rather than instances of named classes. Lambdas are purely a matter of convenience—they introduce nothing to the language that you couldn’t do before—but by making common use cases more convenient, they effectively extend the range of use cases where calling a standard algorithm makes sense.&lt;/p&gt;
@@ -13937,9 +14369,9 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
  
  <entry>
    <title>Iterators: A failure case</title>
-   <link href="/2017/02/22/iterators-a-failure-case/"/>
+   <link href="http://0.0.0.0:5000/2017/02/22/iterators-a-failure-case/"/>
    <updated>2017-02-22T00:00:00+00:00</updated>
-   <id>/2017/02/22/iterators-a-failure-case</id>
+   <id>http://0.0.0.0:5000/2017/02/22/iterators-a-failure-case</id>
    <content type="html">&lt;p&gt;In my first post on iterators, I presented a case where they work well.  In this post, I’ll present a clear failure and begin discussing why the deep structure of the design leads to this failure.&lt;/p&gt;
 
 &lt;p&gt;Consider the simple Python list comprehension:&lt;/p&gt;
@@ -13988,9 +14420,9 @@ Following Algol, Scheme is a statically scoped programming language. Each use of
  
  <entry>
    <title>Iterators: One success story</title>
-   <link href="/2017/02/21/iterators-one-success-story/"/>
+   <link href="http://0.0.0.0:5000/2017/02/21/iterators-one-success-story/"/>
    <updated>2017-02-21T00:00:00+00:00</updated>
-   <id>/2017/02/21/iterators-one-success-story</id>
+   <id>http://0.0.0.0:5000/2017/02/21/iterators-one-success-story</id>
    <content type="html">
 &lt;p&gt;Iterators intrigue me because they seem to bring to C++ facilities that I’ve found congenial in other languages. I’ve spent some time in Haskell and a lot of time in Python, which both support &lt;a href=&quot;https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions&quot;&gt;list comprehensions&lt;/a&gt;. I’ve also enjoyed the limited amount of C# &lt;a href=&quot;https://msdn.microsoft.com/en-us/library/bb397933.aspx&quot;&gt;Language-Integrated Query (LINQ)&lt;/a&gt; programming that I’ve done.&lt;/p&gt;
 
